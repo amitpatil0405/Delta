@@ -10,6 +10,16 @@ export default function LiveMarketCards() {
   const { marketStatus, setActiveSymbol } = useMarket();
 
   useEffect(() => {
+    // Dynamically load TradingView Widget script
+    const scriptId = 'tv-market-data-script';
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement('script');
+      script.id = scriptId;
+      script.type = 'module';
+      script.src = 'https://widgets.tradingview-widget.com/w/en/tv-market-data.js';
+      document.head.appendChild(script);
+    }
+
     async function loadData() {
       const res = await getIndices();
       if (res.success) {
@@ -69,6 +79,13 @@ export default function LiveMarketCards() {
             <span>UPDATED: {marketStatus.istTime}</span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
           </div>
+        </div>
+
+        {/* TradingView Live Market Data Widget */}
+        <div className="mb-12 glass-card rounded-2xl p-4 sm:p-6 border border-amber-500/30 shadow-[0_0_25px_rgba(217,119,6,0.15)] overflow-hidden">
+          <tv-market-data
+            symbol-sectors='[{"sectionName":"Indices","symbols":["NSE:RELIANCE","NSE:TCS","NSE:HDFCBANK","NSE:SBICARD","NSE:HINDUNILVR","NSE:BAJAJ_AUTO","NSE:MARUTI","NSE:BAJFINANCE","NSE:TATASTEEL","NSE:ASIANPAINT","NSE:BANKNIFTY","NSE:NIFTY","BSE:SENSEX","NSE:ICICIBANK","NSE:CNXIT","NSE:CNXFINANCE","NSE:CNXMIDCAP"]},{"sectionName":"Futures","symbols":["BMFBOVESPA:ISP1!","BMFBOVESPA:EUR1!","CMCMARKETS:GOLD","TVC:USOIL","BMFBOVESPA:CCM1!"]},{"sectionName":"Bonds","symbols":["EUREX:FGBL1!","EUREX:FBTP1!","EUREX:FGBM1!"]},{"sectionName":"Forex","symbols":["FX:EURUSD","FX:GBPUSD","FX:USDJPY","FX:USDCHF","FX:AUDUSD","FX:USDCAD"]}]'
+          ></tv-market-data>
         </div>
 
         {/* Live Market Cards Grid */}
