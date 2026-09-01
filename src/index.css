@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html, body {
+    background-color: #050505;
+    color: #f3f4f6;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #222222;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d97706;
+}
+
+/* Glassmorphism utility classes */
+.glass-panel {
+  background: rgba(15, 15, 15, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(18, 18, 20, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card-glow {
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.3) 0%, rgba(34, 197, 94, 0.1) 50%, transparent 100%);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.glass-card-glow:hover::before {
+  opacity: 1;
+}
+
+/* Positive / Negative value pulses */
+@keyframes greenPulse {
+  0% { background-color: rgba(34, 197, 94, 0.3); }
+  100% { background-color: transparent; }
+}
+
+@keyframes redPulse {
+  0% { background-color: rgba(239, 68, 68, 0.3); }
+  100% { background-color: transparent; }
+}
+
+.pulse-green {
+  animation: greenPulse 1.2s ease-out;
+}
+
+.pulse-red {
+  animation: redPulse 1.2s ease-out;
+}
+
+/* Ticker marquee animation fallback */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* 3D Perspective Container */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
