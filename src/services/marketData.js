@@ -55,12 +55,12 @@ function formatISTTime(hours, mins) {
 
 // Initial verified market indices baseline
 const BASE_INDICES = [
-  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', price: 22123.65, change: +142.30, pChange: +0.65, high: 22180.50, low: 21980.20, open: 22000.10, prevClose: 21981.35, volume: '1.2B', sparkline: [21980, 22020, 22010, 22080, 22060, 22110, 22123.65] },
-  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', price: 46588.40, change: -120.15, pChange: -0.26, high: 46890.00, low: 46420.10, open: 46700.00, prevClose: 46708.55, volume: '840M', sparkline: [46708, 46750, 46620, 46680, 46520, 46588.40] },
-  { symbol: 'SENSEX', name: 'BSE SENSEX', price: 72831.94, change: +415.80, pChange: +0.58, high: 72980.10, low: 72410.00, open: 72500.00, prevClose: 72416.14, volume: '950M', sparkline: [72416, 72550, 72600, 72720, 72831.94] },
-  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', price: 37842.10, change: +312.45, pChange: +0.83, high: 37950.00, low: 37510.00, open: 37550.00, prevClose: 37529.65, volume: '420M', sparkline: [37529, 37600, 37720, 37842.10] },
-  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', price: 20850.30, change: -35.20, pChange: -0.17, high: 20980.00, low: 20810.00, open: 20900.00, prevClose: 20885.50, volume: '610M', sparkline: [20885, 20920, 20840, 20850.30] },
-  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', price: 48920.75, change: +210.60, pChange: +0.43, high: 49050.00, low: 48700.00, open: 48750.00, prevClose: 48710.15, volume: '530M', sparkline: [48710, 48800, 48890, 48920.75] },
+  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', price: 24055.80, change: +185.40, pChange: +0.78, high: 24120.50, low: 23880.20, open: 23900.00, prevClose: 23870.40, volume: '1.4B', sparkline: [23870, 23920, 23910, 23980, 24010, 24040, 24055.80] },
+  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', price: 57409.60, change: +345.20, pChange: +0.61, high: 57580.00, low: 57020.10, open: 57100.00, prevClose: 57064.40, volume: '910M', sparkline: [57064, 57150, 57220, 57310, 57380, 57409.60] },
+  { symbol: 'SENSEX', name: 'BSE SENSEX', price: 79250.40, change: +580.60, pChange: +0.74, high: 79410.10, low: 78620.00, open: 78700.00, prevClose: 78669.80, volume: '1.1B', sparkline: [78669, 78800, 78950, 79120, 79250.40] },
+  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', price: 42150.25, change: +420.15, pChange: +1.01, high: 42280.00, low: 41710.00, open: 41750.00, prevClose: 41730.10, volume: '480M', sparkline: [41730, 41850, 42000, 42150.25] },
+  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', price: 23850.30, change: +112.40, pChange: +0.47, high: 23940.00, low: 23710.00, open: 23750.00, prevClose: 23737.90, volume: '680M', sparkline: [23737, 23780, 23820, 23850.30] },
+  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', price: 58920.75, change: +380.25, pChange: +0.65, high: 59100.00, low: 58500.00, open: 58550.00, prevClose: 58540.50, volume: '590M', sparkline: [58540, 58680, 58810, 58920.75] },
 ];
 
 /**
@@ -101,16 +101,16 @@ export async function getQuote(symbol) {
 
   // Sample stock quotes database
   const stocksDB = {
-    'RELIANCE': { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', sector: 'Energy / Conglomerate', price: 2985.40, change: +24.10, pChange: +0.81, open: 2965.00, high: 2998.00, low: 2960.00, prevClose: 2961.30, volume: '6.4M' },
-    'TCS': { symbol: 'TCS', name: 'Tata Consultancy Services', sector: 'Information Technology', price: 4120.15, change: +38.50, pChange: +0.94, open: 4090.00, high: 4140.00, low: 4085.00, prevClose: 4081.65, volume: '2.8M' },
-    'INFY': { symbol: 'INFY', name: 'Infosys Limited', sector: 'Information Technology', price: 1645.80, change: -8.20, pChange: -0.50, open: 1658.00, high: 1662.00, low: 1640.00, prevClose: 1654.00, volume: '4.1M' },
-    'HDFCBANK': { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', sector: 'Banking & Financials', price: 1445.30, change: +12.60, pChange: +0.88, open: 1435.00, high: 1452.00, low: 1430.00, prevClose: 1432.70, volume: '11.2M' },
-    'ICICIBANK': { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', sector: 'Banking & Financials', price: 1088.90, change: +9.40, pChange: +0.87, open: 1080.00, high: 1094.00, low: 1078.00, prevClose: 1079.50, volume: '8.5M' },
-    'SBIN': { symbol: 'SBIN', name: 'State Bank of India', sector: 'Banking & Financials', price: 762.50, change: -4.10, pChange: -0.53, open: 768.00, high: 770.00, low: 759.00, prevClose: 766.60, volume: '14.3M' },
-    'BHARTIARTL': { symbol: 'BHARTIARTL', name: 'Bharti Airtel Ltd.', sector: 'Telecom', price: 1220.40, change: +18.20, pChange: +1.51, open: 1205.00, high: 1228.00, low: 1202.00, prevClose: 1202.20, volume: '5.9M' },
-    'ITC': { symbol: 'ITC', name: 'ITC Limited', sector: 'FMCG', price: 418.60, change: +2.30, pChange: +0.55, open: 416.50, high: 421.00, low: 415.80, prevClose: 416.30, volume: '9.8M' },
-    'LT': { symbol: 'LT', name: 'Larsen & Toubro Ltd.', sector: 'Capital Goods & Infrastructure', price: 3640.25, change: +45.80, pChange: +1.27, open: 3600.00, high: 3655.00, low: 3595.00, prevClose: 3594.45, volume: '1.9M' },
-    'MARUTI': { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', sector: 'Automobile', price: 12480.00, change: -110.00, pChange: -0.87, open: 12600.00, high: 12620.00, low: 12440.00, prevClose: 12590.00, volume: '480K' }
+    'RELIANCE': { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', sector: 'Energy / Conglomerate', price: 1285.40, change: +14.10, pChange: +1.11, open: 1275.00, high: 1292.00, low: 1270.00, prevClose: 1271.30, volume: '12.4M' },
+    'TCS': { symbol: 'TCS', name: 'Tata Consultancy Services', sector: 'Information Technology', price: 4420.15, change: +42.50, pChange: +0.97, open: 4390.00, high: 4440.00, low: 4385.00, prevClose: 4377.65, volume: '3.8M' },
+    'INFY': { symbol: 'INFY', name: 'Infosys Limited', sector: 'Information Technology', price: 1885.80, change: +18.20, pChange: +0.97, open: 1870.00, high: 1895.00, low: 1865.00, prevClose: 1867.60, volume: '6.1M' },
+    'HDFCBANK': { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', sector: 'Banking & Financials', price: 1745.30, change: +22.60, pChange: +1.31, open: 1725.00, high: 1752.00, low: 1720.00, prevClose: 1722.70, volume: '15.2M' },
+    'ICICIBANK': { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', sector: 'Banking & Financials', price: 1288.90, change: +14.40, pChange: +1.13, open: 1278.00, high: 1294.00, low: 1275.00, prevClose: 1274.50, volume: '10.5M' },
+    'SBIN': { symbol: 'SBIN', name: 'State Bank of India', sector: 'Banking & Financials', price: 862.50, change: +8.10, pChange: +0.95, open: 856.00, high: 868.00, low: 852.00, prevClose: 854.40, volume: '18.3M' },
+    'BHARTIARTL': { symbol: 'BHARTIARTL', name: 'Bharti Airtel Ltd.', sector: 'Telecom', price: 1620.40, change: +24.20, pChange: +1.52, open: 1600.00, high: 1628.00, low: 1598.00, prevClose: 1596.20, volume: '7.9M' },
+    'ITC': { symbol: 'ITC', name: 'ITC Limited', sector: 'FMCG', price: 478.60, change: +5.30, pChange: +1.12, open: 474.50, high: 481.00, low: 473.80, prevClose: 473.30, volume: '11.8M' },
+    'LT': { symbol: 'LT', name: 'Larsen & Toubro Ltd.', sector: 'Capital Goods & Infrastructure', price: 3840.25, change: +55.80, pChange: +1.47, open: 3790.00, high: 3855.00, low: 3785.00, prevClose: 3784.45, volume: '2.9M' },
+    'MARUTI': { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', sector: 'Automobile', price: 11480.00, change: +110.00, pChange: +0.97, open: 11390.00, high: 11520.00, low: 11380.00, prevClose: 11370.00, volume: '880K' }
   };
 
   const stock = stocksDB[symbolUpper];

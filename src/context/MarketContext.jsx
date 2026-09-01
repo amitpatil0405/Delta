@@ -7,39 +7,39 @@ const INITIAL_SECTOR_WATCHLIST = [
   {
     sectorName: 'Indices',
     stocks: [
-      { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', price: 22123.65, change: 142.30, pChange: 0.65, high: 22180.50, low: 21980.20, volume: '1.2B' },
-      { symbol: 'BANK NIFTY', name: 'NIFTY Bank', price: 46588.40, change: -120.15, pChange: -0.26, high: 46890.00, low: 46420.10, volume: '840M' },
-      { symbol: 'SENSEX', name: 'BSE SENSEX', price: 72831.94, change: 415.80, pChange: 0.58, high: 72980.10, low: 72410.00, volume: '950M' }
+      { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', price: 24055.80, change: 185.40, pChange: 0.78, high: 24120.50, low: 23880.20, volume: '1.4B' },
+      { symbol: 'BANK NIFTY', name: 'NIFTY Bank', price: 57409.60, change: 345.20, pChange: 0.61, high: 57580.00, low: 57020.10, volume: '910M' },
+      { symbol: 'SENSEX', name: 'BSE SENSEX', price: 79250.40, change: 580.60, pChange: 0.74, high: 79410.10, low: 78620.00, volume: '1.1B' }
     ]
   },
   {
     sectorName: 'Energy & Heavy Weight',
     stocks: [
-      { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 2985.40, change: 24.10, pChange: 0.81, high: 2998.00, low: 2960.00, volume: '6.4M' },
-      { symbol: 'LT', name: 'Larsen & Toubro Ltd.', price: 3640.25, change: 45.80, pChange: 1.27, high: 3655.00, low: 3595.00, volume: '1.9M' }
+      { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 1285.40, change: 14.10, pChange: 1.11, high: 1292.00, low: 1270.00, volume: '12.4M' },
+      { symbol: 'LT', name: 'Larsen & Toubro Ltd.', price: 3840.25, change: 55.80, pChange: 1.47, high: 3855.00, low: 3785.00, volume: '2.9M' }
     ]
   },
   {
     sectorName: 'Technology & IT',
     stocks: [
-      { symbol: 'TCS', name: 'Tata Consultancy Services', price: 4120.15, change: 38.50, pChange: 0.94, high: 4140.00, low: 4085.00, volume: '2.8M' },
-      { symbol: 'INFY', name: 'Infosys Limited', price: 1645.80, change: -8.20, pChange: -0.50, high: 1662.00, low: 1640.00, volume: '4.1M' }
+      { symbol: 'TCS', name: 'Tata Consultancy Services', price: 4420.15, change: 42.50, pChange: 0.97, high: 4440.00, low: 4385.00, volume: '3.8M' },
+      { symbol: 'INFY', name: 'Infosys Limited', price: 1885.80, change: 18.20, pChange: 0.97, high: 1895.00, low: 1865.00, volume: '6.1M' }
     ]
   },
   {
     sectorName: 'Banking & Finance',
     stocks: [
-      { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', price: 1445.30, change: 12.60, pChange: 0.88, high: 1452.00, low: 1430.00, volume: '11.2M' },
-      { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', price: 1088.90, change: 9.40, pChange: 0.87, high: 1094.00, low: 1078.00, volume: '8.5M' },
-      { symbol: 'SBIN', name: 'State Bank of India', price: 762.50, change: -4.10, pChange: -0.53, high: 770.00, low: 759.00, volume: '14.3M' }
+      { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', price: 1745.30, change: 22.60, pChange: 1.31, high: 1752.00, low: 1720.00, volume: '15.2M' },
+      { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', price: 1288.90, change: 14.40, pChange: 1.13, high: 1294.00, low: 1275.00, volume: '10.5M' },
+      { symbol: 'SBIN', name: 'State Bank of India', price: 862.50, change: 8.10, pChange: 0.95, high: 868.00, low: 852.00, volume: '18.3M' }
     ]
   },
   {
     sectorName: 'Telecom, FMCG & Auto',
     stocks: [
-      { symbol: 'BHARTIARTL', name: 'Bharti Airtel Ltd.', price: 1220.40, change: 18.20, pChange: 1.51, high: 1228.00, low: 1202.00, volume: '5.9M' },
-      { symbol: 'ITC', name: 'ITC Limited', price: 418.60, change: 2.30, pChange: 0.55, high: 421.00, low: 415.80, volume: '9.8M' },
-      { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', price: 12480.00, change: -110.00, pChange: -0.87, high: 12620.00, low: 12440.00, volume: '480K' }
+      { symbol: 'BHARTIARTL', name: 'Bharti Airtel Ltd.', price: 1620.40, change: 24.20, pChange: 1.52, high: 1628.00, low: 1598.00, volume: '7.9M' },
+      { symbol: 'ITC', name: 'ITC Limited', price: 478.60, change: 5.30, pChange: 1.12, high: 481.00, low: 473.80, volume: '11.8M' },
+      { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', price: 11480.00, change: 110.00, pChange: 0.97, high: 11520.00, low: 11380.00, volume: '880K' }
     ]
   }
 ];
