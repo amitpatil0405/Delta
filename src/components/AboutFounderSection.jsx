@@ -31,21 +31,20 @@ export default function AboutFounderSection() {
 
           {/* Founder Photo Presentation */}
           <div className="lg:col-span-5 flex flex-col items-center">
-            <div className="relative w-64 h-80 rounded-2xl overflow-hidden border-2 border-amber-500/50 shadow-[0_0_35px_rgba(217,119,6,0.25)] group">
+            <div className="relative w-64 h-80 rounded-2xl overflow-hidden border-2 border-amber-500/50 shadow-[0_0_35px_rgba(217,119,6,0.25)] group mb-4">
               <img
                 src={myPic}
                 alt="Amit Patil - Founder of DeltaFox"
                 className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 right-4 text-center">
-                <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest block">
-                  FOUNDER & OPTIONS STRATEGIST
-                </span>
-                <h3 className="text-2xl font-extrabold text-white font-mono mt-0.5">
-                  AMIT PATIL
-                </h3>
-              </div>
+            </div>
+            <div className="text-center space-y-1">
+              <h3 className="text-2xl font-extrabold text-white font-mono tracking-wide">
+                AMIT PATIL
+              </h3>
+              <p className="text-xs font-mono text-amber-400 font-semibold tracking-wider uppercase">
+                Founder & Lead derivative strategies
+              </p>
             </div>
           </div>
 

@@ -10,7 +10,7 @@ import { getHistoricalData, getQuote } from '../services/marketData';
 export default function InteractiveMarketChart() {
   const { activeSymbol, setActiveSymbol, allAvailableSymbols } = useMarket();
   const [timeframe, setTimeframe] = useState('1M');
-  const [chartType, setChartType] = useState('area'); // area, line, bar
+  const [chartType, setChartType] = useState('candlestick'); // area, line, bar, candlestick
   const [chartData, setChartData] = useState([]);
   const [quoteInfo, setQuoteInfo] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -92,6 +92,14 @@ export default function InteractiveMarketChart() {
           {/* Chart type selector */}
           <div className="flex items-center bg-neutral-900/90 p-1 rounded-xl border border-white/10 text-xs font-mono">
             <button
+              onClick={() => setChartType('candlestick')}
+              className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+                chartType === 'candlestick' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'text-gray-400'
+              }`}
+            >
+              CANDLES
+            </button>
+            <button
               onClick={() => setChartType('area')}
               className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
                 chartType === 'area' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'text-gray-400'
@@ -126,6 +134,65 @@ export default function InteractiveMarketChart() {
         {loading ? (
           <div className="h-full flex items-center justify-center text-amber-500 font-mono text-sm animate-pulse">
             LOADING CHART DATA...
+          </div>
+        ) : chartType === 'candlestick' ? (
+          <div className="h-full w-full flex flex-col justify-end">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#222222" />
+                <XAxis dataKey="date" stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
+                <YAxis domain={['auto', 'auto']} stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#0a0a0c', borderColor: '#333', borderRadius: '8px', color: '#fff' }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload;
+                      const isUp = data.close >= data.open;
+                      return (
+                        <div className="bg-[#0a0a0c] border border-white/20 p-3 rounded-lg font-mono text-xs space-y-1">
+                          <div className="font-bold text-amber-400">{data.date}</div>
+                          <div className="grid grid-cols-2 gap-x-3 text-gray-300">
+                            <span>Open: <strong className="text-white">₹{data.open}</strong></span>
+                            <span>High: <strong className="text-emerald-400">₹{data.high}</strong></span>
+                            <span>Low: <strong className="text-rose-400">₹{data.low}</strong></span>
+                            <span>Close: <strong className={isUp ? 'text-emerald-400' : 'text-rose-400'}>₹{data.close}</strong></span>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Bar
+                  dataKey="close"
+                  shape={(props) => {
+                    const { x, y, width, height, payload } = props;
+                    const isUp = payload.close >= payload.open;
+                    const color = isUp ? '#22c55e' : '#ef4444';
+                    return (
+                      <g key={payload.date}>
+                        <line
+                          x1={x + width / 2}
+                          y1={y - 4}
+                          x2={x + width / 2}
+                          y2={y + height + 4}
+                          stroke={color}
+                          strokeWidth={1.5}
+                        />
+                        <rect
+                          x={x + 2}
+                          y={y}
+                          width={Math.max(width - 4, 3)}
+                          height={Math.max(height, 2)}
+                          fill={color}
+                          rx={1}
+                        />
+                      </g>
+                    );
+                  }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">

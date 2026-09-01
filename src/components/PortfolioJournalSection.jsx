@@ -16,16 +16,17 @@ const INITIAL_TRADES_FY24_25 = [
 ];
 
 export default function PortfolioJournalSection() {
-  const [financialYear, setFinancialYear] = useState('FY 2024-25');
   const [trades, setTrades] = useState(INITIAL_TRADES_FY24_25);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
   // New trade form state
   const [newTrade, setNewTrade] = useState({
     date: new Date().toISOString().split('T')[0],
     symbol: 'NIFTY 50',
     strategy: 'Short Strangle',
-    expiry: '28-MAR-2025',
+    expiry: '2025-03-27',
     entryPrice: '',
     exitPrice: '',
     qty: 50,
@@ -33,18 +34,15 @@ export default function PortfolioJournalSection() {
     manualPnl: 0
   });
 
-  const handleFinancialYearChange = (fy) => {
-    setFinancialYear(fy);
-    if (fy === 'FY 2024-25') {
-      setTrades(INITIAL_TRADES_FY24_25);
-    } else {
-      // New Financial Year sheet reset (no previous FY data shown)
-      setTrades([]);
-    }
-  };
-
   const handleCreateTrade = (e) => {
     e.preventDefault();
+
+    if (adminPassword !== 'Pass123#$') {
+      setPasswordError('Invalid Admin Password. Access Denied.');
+      return;
+    }
+
+    setPasswordError('');
     const entryP = parseFloat(newTrade.entryPrice) || 0;
     const exitP = newTrade.exitPrice !== '' ? parseFloat(newTrade.exitPrice) : null;
     const isClosed = exitP !== null && newTrade.status === 'CLOSED';
@@ -74,11 +72,12 @@ export default function PortfolioJournalSection() {
 
     setTrades([created, ...trades]);
     setShowAddForm(false);
+    setAdminPassword('');
     setNewTrade({
       date: new Date().toISOString().split('T')[0],
       symbol: 'NIFTY 50',
       strategy: 'Short Strangle',
-      expiry: '28-MAR-2025',
+      expiry: '2025-03-27',
       entryPrice: '',
       exitPrice: '',
       qty: 50,
@@ -158,22 +157,13 @@ export default function PortfolioJournalSection() {
             </p>
           </div>
 
-          {/* Financial Year Selection & Add Trade CTA */}
+          {/* Add Trade CTA */}
           <div className="mt-4 md:mt-0 flex items-center space-x-3">
-            <div className="flex items-center space-x-2 bg-neutral-900 px-3 py-1.5 rounded-xl border border-white/10 text-xs font-mono">
-              <Calendar className="w-4 h-4 text-amber-400" />
-              <select
-                value={financialYear}
-                onChange={(e) => handleFinancialYearChange(e.target.value)}
-                className="bg-transparent text-white font-bold focus:outline-none cursor-pointer"
-              >
-                <option value="FY 2024-25" className="bg-neutral-900">FY 2024-25 (Current)</option>
-                <option value="FY 2025-26" className="bg-neutral-900">FY 2025-26 (New Sheet)</option>
-              </select>
-            </div>
-
             <button
-              onClick={() => setShowAddForm(!showAddForm)}
+              onClick={() => {
+                setShowAddForm(!showAddForm);
+                setPasswordError('');
+              }}
               className="inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold font-mono uppercase bg-amber-500 text-black rounded-xl hover:bg-amber-400 transition-all shadow-lg"
             >
               <Plus className="w-4 h-4" />
@@ -202,7 +192,7 @@ export default function PortfolioJournalSection() {
             <div className={`text-2xl font-extrabold font-mono mt-1 ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {totalPnl >= 0 ? '+' : ''}₹{totalPnl.toLocaleString('en-IN')}
             </div>
-            <span className="text-[10px] font-mono text-gray-400">{financialYear} Statement</span>
+            <span className="text-[10px] font-mono text-gray-400">Current FY Statement</span>
           </div>
 
           <div className="glass-card rounded-2xl p-5 border border-white/10">
@@ -218,9 +208,19 @@ export default function PortfolioJournalSection() {
         {/* New Trade Entry Form Modal / Drawer */}
         {showAddForm && (
           <form onSubmit={handleCreateTrade} className="glass-card rounded-2xl p-6 border border-amber-500/40 space-y-4">
-            <h3 className="text-sm font-extrabold font-mono text-amber-400 uppercase tracking-wider">
-              NEW TRADE ENTRY — FINANCIAL YEAR {financialYear}
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-extrabold font-mono text-amber-400 uppercase tracking-wider">
+                NEW TRADE ENTRY — CURRENT FINANCIAL YEAR
+              </h3>
+              <span className="text-[10px] font-mono text-gray-400">ADMIN AUTH REQUIRED</span>
+            </div>
+
+            {passwordError && (
+              <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono">
+                {passwordError}
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-mono">
               <div>
                 <label className="block text-gray-400 mb-1">TRADE DATE</label>
@@ -266,8 +266,8 @@ export default function PortfolioJournalSection() {
               <div>
                 <label className="block text-gray-400 mb-1">EXPIRY DATE</label>
                 <input
-                  type="text"
-                  placeholder="28-MAR-2025"
+                  type="date"
+                  required
                   value={newTrade.expiry}
                   onChange={(e) => setNewTrade({ ...newTrade, expiry: e.target.value })}
                   className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
@@ -334,6 +334,21 @@ export default function PortfolioJournalSection() {
                   />
                 </div>
               )}
+
+              <div className="md:col-span-2">
+                <label className="block text-amber-400 mb-1 font-bold">ADMIN PASSWORD</label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Enter Admin Password"
+                  value={adminPassword}
+                  onChange={(e) => {
+                    setAdminPassword(e.target.value);
+                    setPasswordError('');
+                  }}
+                  className="w-full bg-neutral-900 border border-amber-500/30 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                />
+              </div>
             </div>
 
             <div className="flex justify-end space-x-3 pt-3">
@@ -358,7 +373,7 @@ export default function PortfolioJournalSection() {
         {pnlCurveData.length > 0 && (
           <div className="glass-card rounded-2xl p-6 border border-white/10 space-y-4">
             <h3 className="text-sm font-extrabold font-mono text-white uppercase">
-              CUMULATIVE P&L CURVE — {financialYear}
+              CUMULATIVE P&L CURVE — CURRENT FINANCIAL YEAR
             </h3>
             <div className="h-[280px] w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
@@ -405,7 +420,7 @@ export default function PortfolioJournalSection() {
                 {trades.length === 0 ? (
                   <tr>
                     <td colSpan="10" className="py-12 text-center text-gray-500 font-mono text-sm">
-                      NO TRADES RECORDED FOR {financialYear}. RECORD A NEW TRADE TO BEGIN.
+                      NO TRADES RECORDED FOR CURRENT FINANCIAL YEAR. RECORD A NEW TRADE TO BEGIN.
                     </td>
                   </tr>
                 ) : (

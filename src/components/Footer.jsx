@@ -19,8 +19,8 @@ export default function Footer({ onNavigate }) {
       <div className="py-20 border-b border-white/5 text-center relative">
         <div className="max-w-4xl mx-auto px-4 space-y-6">
 
-          <div className="w-20 h-20 mx-auto relative rounded-2xl overflow-hidden border border-amber-500/40 p-2 shadow-[0_0_40px_rgba(217,119,6,0.3)] group cursor-pointer" onClick={() => handleLinkClick('home')}>
-            <img src={logoImg} alt="DELTAFOX Emblem" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+          <div className="w-24 h-24 mx-auto relative group cursor-pointer" onClick={() => handleLinkClick('home')}>
+            <img src={logoImg} alt="DELTAFOX Emblem" className="w-full h-full object-contain filter drop-shadow-[0_0_20px_rgba(217,119,6,0.4)] group-hover:scale-110 transition-transform duration-500" />
           </div>
 
           <h2 className="text-2xl sm:text-4xl font-extrabold text-white font-mono tracking-tight uppercase">
@@ -40,11 +40,8 @@ export default function Footer({ onNavigate }) {
 
           {/* Brand Info */}
           <div className="md:col-span-5 space-y-4">
-            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => handleLinkClick('home')}>
-              <img src={logoImg} alt="DeltaFox" className="w-8 h-8 rounded-lg" />
-              <span className="font-extrabold text-xl text-white font-mono tracking-wider">
-                DELTA<span className="text-amber-500">FOX</span>
-              </span>
+            <div className="flex items-center cursor-pointer" onClick={() => handleLinkClick('home')}>
+              <img src={logoImg} alt="DeltaFox" className="h-10 w-auto object-contain filter drop-shadow-[0_0_10px_rgba(217,119,6,0.3)]" />
             </div>
             <p className="text-xs text-gray-400 leading-relaxed font-sans max-w-sm">
               DeltaFox is a premium market intelligence and options trading platform built around disciplined strategies, data-driven decisions and risk management.

@@ -15,6 +15,8 @@ export default function StockWatchlistSection() {
   const [selectedSector, setSelectedSector] = useState(watchlistSectors[0]?.sectorName || 'Indices');
   const [newStockSymbol, setNewStockSymbol] = useState('');
   const [newSectorName, setNewSectorName] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [isAdding, setIsAdding] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
 
@@ -22,11 +24,18 @@ export default function StockWatchlistSection() {
     e.preventDefault();
     if (!newStockSymbol) return;
 
+    if (adminPassword !== 'Pass123#$') {
+      setPasswordError('Invalid Admin Password. Access Denied.');
+      return;
+    }
+
+    setPasswordError('');
     const sectorToUse = newSectorName.trim() || selectedSector;
     const success = await addStockToWatchlist(sectorToUse, newStockSymbol);
     if (success) {
       setNewStockSymbol('');
       setNewSectorName('');
+      setAdminPassword('');
       setIsAdding(false);
       setSelectedSector(sectorToUse);
     }
@@ -78,23 +87,35 @@ export default function StockWatchlistSection() {
           {/* Admin Stock Addition Drawer */}
           {isAdding && (
             <form onSubmit={handleAddStock} className="mb-6 p-4 rounded-xl bg-neutral-900/90 border border-amber-500/30 space-y-4">
-              <div className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">
-                Admin Control — Add Symbol To Central Watchlist & Terminal
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider">
+                  Admin Control — Add Symbol To Central Watchlist & Terminal
+                </div>
+                <div className="text-[10px] font-mono text-gray-400">
+                  Authentication Required
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+              {passwordError && (
+                <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono">
+                  {passwordError}
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-[11px] font-mono text-gray-400 mb-1">STOCK SYMBOL (e.g. RELIANCE, TCS)</label>
+                  <label className="block text-[11px] font-mono text-gray-400 mb-1">STOCK SYMBOL</label>
                   <input
                     type="text"
                     required
-                    placeholder="ENTER SYMBOL"
+                    placeholder="RELIANCE, TCS, etc."
                     value={newStockSymbol}
                     onChange={(e) => setNewStockSymbol(e.target.value)}
                     className="w-full bg-neutral-950 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-white focus:border-amber-500 focus:outline-none uppercase"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-mono text-gray-400 mb-1">SECTOR NAME (OR SELECT EXISTING)</label>
+                  <label className="block text-[11px] font-mono text-gray-400 mb-1">SECTOR NAME</label>
                   <input
                     type="text"
                     placeholder={`e.g. ${selectedSector}`}
@@ -103,12 +124,26 @@ export default function StockWatchlistSection() {
                     className="w-full bg-neutral-950 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono text-white focus:border-amber-500 focus:outline-none"
                   />
                 </div>
+                <div>
+                  <label className="block text-[11px] font-mono text-amber-400 mb-1">ADMIN PASSWORD</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter Admin Password"
+                    value={adminPassword}
+                    onChange={(e) => {
+                      setAdminPassword(e.target.value);
+                      setPasswordError('');
+                    }}
+                    className="w-full bg-neutral-950 border border-amber-500/30 rounded-lg px-3 py-2 text-xs font-mono text-white focus:border-amber-500 focus:outline-none"
+                  />
+                </div>
                 <div className="flex items-end">
                   <button
                     type="submit"
                     className="w-full bg-amber-500 hover:bg-amber-400 text-black font-mono font-bold text-xs py-2 px-4 rounded-lg transition-all uppercase"
                   >
-                    CONFIRM & ADD SYMBOL
+                    CONFIRM & ADD
                   </button>
                 </div>
               </div>

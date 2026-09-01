@@ -6,18 +6,44 @@ import { useMarket } from '../context/MarketContext';
 export default function Navbar({ activePage = 'home', onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [currentSection, setCurrentSection] = useState(activePage);
   const { marketStatus } = useMarket();
 
   useEffect(() => {
+    setCurrentSection(activePage);
+  }, [activePage]);
+
+  useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 30) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 30);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    const sectionIds = ['home', 'markets', 'options', 'strategies', 'news', 'portfolio', 'about', 'contact'];
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -60% 0px',
+      threshold: 0
+    };
+
+    const handleIntersect = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setCurrentSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(handleIntersect, observerOptions);
+    sectionIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, []);
 
   const navItems = [
@@ -54,26 +80,16 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
 
-          {/* Brand Logo & Title */}
+          {/* Direct Clean Brand Logo (No Box / No Text Overlay) */}
           <div
-            className="flex items-center space-x-3 cursor-pointer group"
+            className="flex items-center cursor-pointer group"
             onClick={() => handleNavClick('home')}
           >
-            <div className="relative w-10 h-10 rounded-xl overflow-hidden border border-amber-500/30 group-hover:border-amber-500/80 transition-all duration-300 shadow-[0_0_15px_rgba(217,119,6,0.2)]">
-              <img
-                src={logoImg}
-                alt="DELTAFOX Logo"
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-xl tracking-wider text-white font-mono flex items-center space-x-1">
-                DELTA<span className="text-amber-500">FOX</span>
-              </span>
-              <span className="text-[9px] text-gray-400 tracking-widest font-mono uppercase">
-                Institutional Intel
-              </span>
-            </div>
+            <img
+              src={logoImg}
+              alt="DELTAFOX"
+              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_12px_rgba(217,119,6,0.3)]"
+            />
           </div>
 
           {/* Center Navigation Links */}
@@ -83,7 +99,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
                 className={`px-4 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 ${
-                  activePage === item.id
+                  currentSection === item.id
                     ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-[0_0_10px_rgba(217,119,6,0.3)]'
                     : 'text-gray-300 hover:text-white hover:bg-white/5'
                 }`}
@@ -147,7 +163,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
                 className={`px-4 py-2.5 rounded-lg text-left text-sm font-medium transition-all ${
-                  activePage === item.id
+                  currentSection === item.id
                     ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
                     : 'text-gray-300 hover:bg-white/5'
                 }`}
