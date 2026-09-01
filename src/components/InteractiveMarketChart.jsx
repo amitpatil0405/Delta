@@ -1,11 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import { useMarket } from '../context/MarketContext';
 
-export default function InteractiveMarketChart() {
-  const { activeSymbol, setActiveSymbol, allAvailableSymbols } = useMarket();
-  const containerRef = useRef(null);
+const TradingViewChartWidget = memo(({ activeSymbol }) => {
+  const container = useRef();
 
-  // Convert internal symbol name to TradingView symbol format
   const getTvSymbol = (sym) => {
     const uppercase = sym.toUpperCase();
     if (uppercase === 'NIFTY 50' || uppercase === 'NIFTY') return 'NSE:NIFTY';
@@ -20,28 +18,22 @@ export default function InteractiveMarketChart() {
   const currentTvSymbol = getTvSymbol(activeSymbol);
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    containerRef.current.innerHTML = '';
+    if (!container.current) return;
+    container.current.innerHTML = '';
 
-    const widgetContainer = document.createElement('div');
-    widgetContainer.className = 'tradingview-widget-container';
-    widgetContainer.style.height = '100%';
-    widgetContainer.style.width = '100%';
+    const widgetHolder = document.createElement("div");
+    widgetHolder.className = "tradingview-widget-container__widget";
+    widgetHolder.style.height = "calc(100% - 32px)";
+    widgetHolder.style.width = "100%";
 
-    const widgetHolder = document.createElement('div');
-    widgetHolder.className = 'tradingview-widget-container__widget';
-    widgetHolder.style.height = 'calc(100% - 32px)';
-    widgetHolder.style.width = '100%';
-
-    const copyrightDiv = document.createElement('div');
-    copyrightDiv.className = 'tradingview-widget-copyright';
+    const copyrightDiv = document.createElement("div");
+    copyrightDiv.className = "tradingview-widget-copyright";
     copyrightDiv.innerHTML = `<a href="https://www.tradingview.com/symbols/${currentTvSymbol.replace(':', '-')}/" rel="noopener nofollow" target="_blank"><span class="blue-text">${activeSymbol} chart</span></a><span class="trademark"> by TradingView</span>`;
 
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    script.type = "text/javascript";
     script.async = true;
-
     script.innerHTML = JSON.stringify({
       allow_symbol_change: true,
       calendar: false,
@@ -60,15 +52,7 @@ export default function InteractiveMarketChart() {
       timezone: "Etc/UTC",
       backgroundColor: "#0F0F0F",
       gridColor: "rgba(242, 242, 242, 0.2)",
-      watchlist: [
-        "NSE:RELIANCE",
-        "NSE:TCS",
-        "NSE:M&M",
-        "NSE:TECHM",
-        "NSE:WIPRO",
-        "NSE:SBICARD",
-        "NSE:INFY"
-      ],
+      watchlist: [],
       withdateranges: false,
       compareSymbols: [],
       support_host: "https://www.tradingview.com",
@@ -76,12 +60,18 @@ export default function InteractiveMarketChart() {
       autosize: true
     });
 
-    widgetContainer.appendChild(widgetHolder);
-    widgetContainer.appendChild(copyrightDiv);
-    widgetContainer.appendChild(script);
-
-    containerRef.current.appendChild(widgetContainer);
+    container.current.appendChild(widgetHolder);
+    container.current.appendChild(copyrightDiv);
+    container.current.appendChild(script);
   }, [activeSymbol, currentTvSymbol]);
+
+  return (
+    <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }} />
+  );
+});
+
+export default function InteractiveMarketChart() {
+  const { activeSymbol, setActiveSymbol, allAvailableSymbols } = useMarket();
 
   return (
     <div className="glass-card rounded-2xl p-4 sm:p-6 border border-amber-500/30 shadow-[0_0_30px_rgba(217,119,6,0.15)] relative overflow-hidden">
@@ -113,8 +103,10 @@ export default function InteractiveMarketChart() {
         </div>
       </div>
 
-      {/* TradingView Advanced Chart Container */}
-      <div ref={containerRef} className="h-[520px] w-full" />
+      {/* Memoized TradingView Advanced Chart Widget */}
+      <div className="h-[520px] w-full">
+        <TradingViewChartWidget activeSymbol={activeSymbol} />
+      </div>
 
     </div>
   );
