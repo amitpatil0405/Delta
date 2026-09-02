@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
@@ -98,15 +98,17 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   }, []);
 
   // Frame animation reacting to mouse cursor & scroll position
-  useFrame((state, delta) => {
+  useFrame((state) => {
     if (!meshRef.current) return;
 
-    // Target rotation derived from mouse movement (Left/Right -> Y-rot, Up/Down -> X-rot)
-    const targetRotX = mousePos.current.y * 0.45 + scrollYProgress * 0.8;
-    const targetRotY = mousePos.current.x * 0.6 + scrollYProgress * 2.2;
-    const targetRotZ = scrollYProgress * 0.4;
+    // Mouse orientation mapping:
+    // mousePos.x: -1 (left) to +1 (right) -> look left (Y rot positive) / look right (Y rot negative)
+    // mousePos.y: -1 (bottom/down) to +1 (top/up) -> look down (X rot positive) / look up (X rot negative)
+    const targetRotY = mousePos.current.x * 0.7 + scrollYProgress * 1.8;
+    const targetRotX = -mousePos.current.y * 0.5 + scrollYProgress * 0.6;
+    const targetRotZ = mousePos.current.x * 0.15 + scrollYProgress * 0.3;
 
-    // Smooth lerp rotation towards cursor/scroll
+    // Smooth lerp rotation towards target direction
     meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
     meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
     meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
@@ -158,81 +160,80 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   );
 }
 
-// 3D Vertical Moving Red/Green Stock Market Candlesticks Component
-function VerticalMovingCandlesticks({ scrollYProgress }) {
+// 3D Vertically Moving Metallic Boxes / Pillars Component
+function VerticalMovingBoxes({ scrollYProgress }) {
   const groupRef = useRef();
-  const candlesRef = useRef([]);
+  const boxesRef = useRef([]);
 
-  // Generate 26 sleek stock market red/green candlesticks with high/low wicks
-  const candlesData = useMemo(() => {
-    const candles = [];
-    const count = 26;
+  // Generate 24 sleek financial 3D box pillars with amber & neon green glowing borders
+  const boxesData = useMemo(() => {
+    const boxes = [];
+    const count = 24;
     for (let i = 0; i < count; i++) {
-      const x = (i - count / 2) * 0.52;
-      const z = -2.2 - Math.random() * 1.2;
-      const initialY = (Math.random() - 0.5) * 3;
-      const speed = 0.7 + Math.random() * 1.2;
-      const bodyHeight = 0.4 + Math.random() * 0.8;
-      const wickHeight = bodyHeight + 0.4 + Math.random() * 0.6;
-      const isGreen = i % 2 === 0; // Alternating green/red financial candles
-      const color = isGreen ? '#22c55e' : '#ef4444';
+      const x = (i - count / 2) * 0.58;
+      const z = -2.5 - Math.random() * 1.5;
+      const initialY = (Math.random() - 0.5) * 3.5;
+      const speed = 0.6 + Math.random() * 1.1;
+      const width = 0.18 + Math.random() * 0.12;
+      const height = 0.6 + Math.random() * 1.2;
+      const depth = 0.18 + Math.random() * 0.12;
+      const isGreen = i % 2 === 0;
+      const color = isGreen ? '#22c55e' : '#f59e0b'; // Neon green or amber gold
 
-      candles.push({
+      boxes.push({
         id: i,
         x,
         z,
         initialY,
         speed,
-        bodyHeight,
-        wickHeight,
+        width,
+        height,
+        depth,
         color
       });
     }
-    return candles;
+    return boxes;
   }, []);
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
-    candlesRef.current.forEach((group, idx) => {
-      if (group) {
-        const data = candlesData[idx];
-        // Smooth continuous vertical oscillation (up/down movement)
-        group.position.y = data.initialY + Math.sin(time * data.speed + idx) * 1.2 - scrollYProgress * 2.0;
+    boxesRef.current.forEach((mesh, idx) => {
+      if (mesh) {
+        const data = boxesData[idx];
+        // Smooth continuous vertical movement (up/down oscillation)
+        mesh.position.y = data.initialY + Math.sin(time * data.speed + idx) * 1.5 - scrollYProgress * 2.2;
       }
     });
   });
 
   return (
     <group ref={groupRef}>
-      {candlesData.map((candle, idx) => (
+      {boxesData.map((box, idx) => (
         <group
-          key={candle.id}
-          ref={(el) => (candlesRef.current[idx] = el)}
-          position={[candle.x, candle.initialY, candle.z]}
+          key={box.id}
+          ref={(el) => (boxesRef.current[idx] = el)}
+          position={[box.x, box.initialY, box.z]}
         >
-          {/* High / Low Wick */}
-          <mesh position={[0, 0, 0]}>
-            <cylinderGeometry args={[0.012, 0.012, candle.wickHeight, 8]} />
+          {/* Solid Dark Metallic Box Body */}
+          <mesh>
+            <boxGeometry args={[box.width, box.height, box.depth]} />
             <meshStandardMaterial
-              color={candle.color}
-              emissive={candle.color}
-              emissiveIntensity={0.4}
+              color="#0d0d12"
+              metalness={0.9}
+              roughness={0.2}
               transparent={true}
-              opacity={0.65}
+              opacity={0.85}
             />
           </mesh>
 
-          {/* Real Body Rectangular Box */}
-          <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[0.14, candle.bodyHeight, 0.14]} />
-            <meshStandardMaterial
-              color={candle.color}
-              emissive={candle.color}
-              emissiveIntensity={0.5}
+          {/* Wireframe Glowing Border Lines for Tech Aesthetic */}
+          <mesh scale={1.02}>
+            <boxGeometry args={[box.width, box.height, box.depth]} />
+            <meshBasicMaterial
+              color={box.color}
+              wireframe={true}
               transparent={true}
-              opacity={0.8}
-              roughness={0.2}
-              metalness={0.6}
+              opacity={0.45}
             />
           </mesh>
         </group>
@@ -245,17 +246,20 @@ function VerticalMovingCandlesticks({ scrollYProgress }) {
 export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
   const mousePos = useRef({ x: 0, y: 0 });
 
-  const handleMouseMove = (e) => {
-    const x = (e.clientX / window.innerWidth) * 2 - 1;
-    const y = -(e.clientY / window.innerHeight) * 2 + 1;
-    mousePos.current = { x, y };
-  };
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Normalize cursor position: x from -1 (left) to 1 (right), y from -1 (bottom) to 1 (top)
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = -(e.clientY / window.innerHeight) * 2 + 1;
+      mousePos.current = { x, y };
+    };
+
+    window.addEventListener('pointermove', handleMouseMove);
+    return () => window.removeEventListener('pointermove', handleMouseMove);
+  }, []);
 
   return (
-    <div
-      className="absolute inset-0 z-0 pointer-events-none overflow-hidden"
-      onMouseMove={handleMouseMove}
-    >
+    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
       <Canvas
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ width: '100%', height: '100%' }}
@@ -268,13 +272,13 @@ export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
         <directionalLight position={[-5, -4, -2]} intensity={1.2} color="#d97706" />
         <pointLight position={[0, 4, 2]} intensity={2} color="#22c55e" />
 
-        {/* 3D Metallic Fox Head Emblem */}
-        <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
+        {/* 3D Metallic Fox Head Emblem tracking cursor orientation */}
+        <Float speed={1.5} rotationIntensity={0.15} floatIntensity={0.25}>
           <MetallicFoxHead mousePos={mousePos} scrollYProgress={scrollYProgress} />
         </Float>
 
-        {/* Vertical Moving Red/Green Stock Market Candlesticks (Grid removed) */}
-        <VerticalMovingCandlesticks scrollYProgress={scrollYProgress} />
+        {/* Vertically Moving 3D Metallic Boxes / Pillars */}
+        <VerticalMovingBoxes scrollYProgress={scrollYProgress} />
       </Canvas>
     </div>
   );
