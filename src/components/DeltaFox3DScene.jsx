@@ -177,6 +177,73 @@ function FinancialGrid({ scrollYProgress }) {
   );
 }
 
+// Minimalist 3D Vertical Moving Bars Component
+function VerticalMovingBars({ scrollYProgress }) {
+  const groupRef = useRef();
+  const barsRef = useRef([]);
+
+  // Generate 28 sleek vertical financial bars positioned across the background
+  const barsData = useMemo(() => {
+    const bars = [];
+    const count = 28;
+    for (let i = 0; i < count; i++) {
+      const x = (i - count / 2) * 0.5;
+      const z = -2.0 - Math.random() * 1.5;
+      const initialY = (Math.random() - 0.5) * 3;
+      const speed = 0.8 + Math.random() * 1.4;
+      const height = 0.8 + Math.random() * 1.6;
+      const isAmber = i % 4 === 0;
+      const isGreen = i % 3 === 0 && !isAmber;
+      const color = isAmber ? '#f59e0b' : isGreen ? '#10b981' : '#3f3f46';
+
+      bars.push({
+        id: i,
+        x,
+        z,
+        initialY,
+        speed,
+        height,
+        color
+      });
+    }
+    return bars;
+  }, []);
+
+  useFrame((state) => {
+    const time = state.clock.elapsedTime;
+    barsRef.current.forEach((mesh, idx) => {
+      if (mesh) {
+        const data = barsData[idx];
+        // Smooth continuous vertical oscillation (up/down movement)
+        mesh.position.y = data.initialY + Math.sin(time * data.speed + idx) * 1.2 - scrollYProgress * 2.0;
+      }
+    });
+  });
+
+  return (
+    <group ref={groupRef}>
+      {barsData.map((bar, idx) => (
+        <mesh
+          key={bar.id}
+          ref={(el) => (barsRef.current[idx] = el)}
+          position={[bar.x, bar.initialY, bar.z]}
+        >
+          <boxGeometry args={[0.08, bar.height, 0.08]} />
+          <meshStandardMaterial
+            color={bar.color}
+            emissive={bar.color}
+            emissiveIntensity={0.35}
+            transparent={true}
+            opacity={0.65}
+            roughness={0.2}
+            metalness={0.8}
+          />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
 // Main 3D Canvas Scene Container
 export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
   const mousePos = useRef({ x: 0, y: 0 });
@@ -211,6 +278,9 @@ export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
 
         {/* Minimal Perspective Financial Grid */}
         <FinancialGrid scrollYProgress={scrollYProgress} />
+
+        {/* Vertical Moving Financial Bars */}
+        <VerticalMovingBars scrollYProgress={scrollYProgress} />
       </Canvas>
     </div>
   );
