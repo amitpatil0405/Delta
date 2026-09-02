@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, ChevronRight } from 'lucide-react';
+import { BarChart3, ChevronRight, TrendingUp, TrendingDown } from 'lucide-react';
 import DeltaFox3DScene from './DeltaFox3DScene';
+import { getIndices } from '../services/marketData';
 
 export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
+  const [indices, setIndices] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [scrollYProgress, setScrollYProgress] = useState(0);
 
   useEffect(() => {
-    const scriptId = 'tv-ticker-tape-script';
-    if (!document.getElementById(scriptId)) {
-      const script = document.createElement('script');
-      script.id = scriptId;
-      script.type = 'module';
-      script.src = 'https://widgets.tradingview-widget.com/w/en/tv-ticker-tape.js';
-      script.async = true;
-      document.head.appendChild(script);
+    async function loadTickerData() {
+      const res = await getIndices();
+      if (res.success && res.data) {
+        setIndices(res.data);
+      }
     }
+    loadTickerData();
+    const interval = setInterval(loadTickerData, 10000);
 
     const handleScroll = () => {
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -28,6 +29,7 @@ export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
     const timer = setTimeout(() => setLoaded(true), 100);
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      clearInterval(interval);
       clearTimeout(timer);
     };
   }, []);
@@ -108,11 +110,49 @@ export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
 
       </div>
 
-      {/* Live TradingView Ticker Tape Bar */}
-      <div className="relative z-20 mt-12 border-t border-b border-white/10 bg-neutral-950/90 backdrop-blur-md overflow-hidden">
-        <tv-ticker-tape
-          symbols="FOREXCOM:SPXUSD,FOREXCOM:NSXUSD,FOREXCOM:DJI,NSE:NIFTY,NSE:BANKNIFTY,BSE:SENSEX,NSE:RELIANCE,NSE:TCS,NSE:M&M,NSE:HDFCBANK,NSE:ICICIBANK,NSE:AXISBANK,NSE:BAJAJFINSV,NSE:SBICARD,NSE:INFY,NSE:WIPRO,NSE:TECHM,NSE:HCLTECH,NSE:LTM,NSE:ONGC,NSE:BPCL,NSE:GAIL,NSE:ATGL,NSE:HINDPETRO,NSE:ITC,NSE:HINDUNILVR,NSE:NESTLEIND,NSE:BRITANNIA,NSE:TATACONSUM,NSE:GODREJCP,NSE:MARICO,NSE:DABUR,NSE:EICHERMOT,NSE:MARUTI,NSE:TVSMOTOR,NSE:BAJAJ_AUTO,NSE:TMPV,NSE:HEROMOTOCO"
-        ></tv-ticker-tape>
+      {/* Live Horizontal Yahoo Finance Market Ticker Bar */}
+      <div className="relative z-20 mt-12 border-t border-b border-white/10 bg-neutral-950/90 backdrop-blur-md py-3 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 flex items-center">
+          <div className="flex items-center space-x-2 pr-4 border-r border-white/10 text-xs font-mono text-amber-400 whitespace-nowrap z-10 bg-neutral-950">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>YAHOO LIVE TICKER</span>
+          </div>
+
+          <div className="flex-1 overflow-hidden relative">
+            {indices.length === 0 ? (
+              <div className="text-xs font-mono text-amber-500/80 px-4">
+                LOADING LIVE MARKET TICKER DATA...
+              </div>
+            ) : (
+              <div className="animate-marquee flex items-center space-x-8 pl-4">
+                {indices.concat(indices).map((item, idx) => {
+                  const isPos = item.change >= 0;
+                  return (
+                    <div
+                      key={`${item.symbol}-${idx}`}
+                      className="flex items-center space-x-3 whitespace-nowrap text-xs font-mono bg-neutral-900/50 px-3 py-1 rounded border border-white/5"
+                    >
+                      <span className="font-bold text-gray-200">{item.symbol}</span>
+                      <span className="text-gray-100">₹{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+                      <span
+                        className={`flex items-center space-x-0.5 font-semibold ${
+                          isPos ? 'text-emerald-400' : 'text-rose-400'
+                        }`}
+                      >
+                        {isPos ? <TrendingUp className="w-3 h-3 inline" /> : <TrendingDown className="w-3 h-3 inline" />}
+                        <span>
+                          {isPos ? '+' : ''}
+                          {item.change.toFixed(2)} ({isPos ? '+' : ''}
+                          {item.pChange.toFixed(2)}%)
+                        </span>
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
     </section>

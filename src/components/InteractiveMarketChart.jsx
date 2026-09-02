@@ -1,111 +1,140 @@
-import React, { useEffect, useRef, memo } from 'react';
+import React, { useEffect, useState } from 'react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { getHistoricalData, getQuote } from '../services/marketData';
 import { useMarket } from '../context/MarketContext';
-
-const TradingViewChartWidget = memo(({ activeSymbol }) => {
-  const container = useRef();
-
-  const getTvSymbol = (sym) => {
-    const uppercase = sym.toUpperCase();
-    if (uppercase === 'NIFTY 50' || uppercase === 'NIFTY') return 'NSE:NIFTY';
-    if (uppercase === 'BANK NIFTY' || uppercase === 'BANKNIFTY') return 'NSE:BANKNIFTY';
-    if (uppercase === 'SENSEX') return 'BSE:SENSEX';
-    if (uppercase === 'NIFTY IT') return 'NSE:CNXIT';
-    if (uppercase === 'NIFTY FIN SERVICE') return 'NSE:CNXFINANCE';
-    if (uppercase === 'NIFTY MIDCAP 100') return 'NSE:CNXMIDCAP';
-    return `NSE:${uppercase}`;
-  };
-
-  const currentTvSymbol = getTvSymbol(activeSymbol);
-
-  useEffect(() => {
-    if (!container.current) return;
-    container.current.innerHTML = '';
-
-    const widgetHolder = document.createElement("div");
-    widgetHolder.className = "tradingview-widget-container__widget";
-    widgetHolder.style.height = "calc(100% - 32px)";
-    widgetHolder.style.width = "100%";
-
-    const copyrightDiv = document.createElement("div");
-    copyrightDiv.className = "tradingview-widget-copyright";
-    copyrightDiv.innerHTML = `<a href="https://www.tradingview.com/symbols/${currentTvSymbol.replace(':', '-')}/" rel="noopener nofollow" target="_blank"><span class="blue-text">${activeSymbol} chart</span></a><span class="trademark"> by TradingView</span>`;
-
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-    script.type = "text/javascript";
-    script.async = true;
-    script.innerHTML = JSON.stringify({
-      allow_symbol_change: true,
-      calendar: false,
-      details: false,
-      hide_side_toolbar: true,
-      hide_top_toolbar: false,
-      hide_legend: false,
-      hide_volume: false,
-      hotlist: false,
-      interval: "D",
-      locale: "en",
-      save_image: true,
-      style: "1",
-      symbol: currentTvSymbol,
-      theme: "dark",
-      timezone: "Etc/UTC",
-      backgroundColor: "#0F0F0F",
-      gridColor: "rgba(242, 242, 242, 0.2)",
-      watchlist: [],
-      withdateranges: false,
-      compareSymbols: [],
-      support_host: "https://www.tradingview.com",
-      studies: [],
-      autosize: true
-    });
-
-    container.current.appendChild(widgetHolder);
-    container.current.appendChild(copyrightDiv);
-    container.current.appendChild(script);
-  }, [activeSymbol, currentTvSymbol]);
-
-  return (
-    <div className="tradingview-widget-container" ref={container} style={{ height: "100%", width: "100%" }} />
-  );
-});
+import { TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
 
 export default function InteractiveMarketChart() {
   const { activeSymbol, setActiveSymbol, allAvailableSymbols } = useMarket();
+  const [timeframe, setTimeframe] = useState('1M');
+  const [chartData, setChartData] = useState([]);
+  const [quoteInfo, setQuoteInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadChartAndQuote() {
+      setLoading(true);
+      const [histRes, quoteRes] = await Promise.all([
+        getHistoricalData(activeSymbol, timeframe),
+        getQuote(activeSymbol)
+      ]);
+
+      if (histRes.success) setChartData(histRes.data);
+      if (quoteRes.success) setQuoteInfo(quoteRes.data);
+      setLoading(false);
+    }
+
+    loadChartAndQuote();
+    const interval = setInterval(loadChartAndQuote, 10000);
+    return () => clearInterval(interval);
+  }, [activeSymbol, timeframe]);
+
+  const isPositive = quoteInfo ? quoteInfo.change >= 0 : true;
 
   return (
     <div className="glass-card rounded-2xl p-4 sm:p-6 border border-amber-500/30 shadow-[0_0_30px_rgba(217,119,6,0.15)] relative overflow-hidden">
 
       {/* Control Selector Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10 mb-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-white/10 mb-6">
         <div>
-          <span className="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-widest block">
-            ADVANCED TRADING TERMINAL
-          </span>
-          <h3 className="text-xl font-extrabold text-white font-mono">
-            {activeSymbol} LIVE CHART
-          </h3>
+          <div className="flex items-center space-x-2">
+            <span className="text-[10px] font-mono text-amber-400 font-bold uppercase tracking-widest">
+              YAHOO FINANCE LIVE DATA
+            </span>
+            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          </div>
+          <div className="flex items-baseline space-x-3 mt-1">
+            <h3 className="text-2xl font-extrabold text-white font-mono tracking-wide">
+              {activeSymbol}
+            </h3>
+            {quoteInfo && (
+              <span className="text-xl font-mono font-bold text-gray-200">
+                ₹{quoteInfo.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+              </span>
+            )}
+            {quoteInfo && (
+              <span className={`text-xs font-mono font-bold flex items-center space-x-1 ${isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {isPositive ? <TrendingUp className="w-3.5 h-3.5 inline" /> : <TrendingDown className="w-3.5 h-3.5 inline" />}
+                <span>{isPositive ? '+' : ''}{quoteInfo.change.toFixed(2)} ({isPositive ? '+' : ''}{quoteInfo.pChange.toFixed(2)}%)</span>
+              </span>
+            )}
+          </div>
         </div>
 
-        <div className="flex items-center space-x-2 bg-neutral-900 px-3 py-1.5 rounded-xl border border-amber-500/40">
-          <span className="text-[11px] font-mono text-gray-400">SELECT ASSET:</span>
-          <select
-            value={activeSymbol}
-            onChange={(e) => setActiveSymbol(e.target.value)}
-            className="bg-transparent text-amber-400 font-mono font-bold text-xs focus:outline-none cursor-pointer"
-          >
-            {allAvailableSymbols.map((sym) => (
-              <option key={sym} value={sym} className="bg-neutral-900 text-white">
-                {sym}
-              </option>
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Timeframe selector */}
+          <div className="flex bg-neutral-900 rounded-lg p-1 border border-white/10">
+            {['1D', '1W', '1M', '3M', '1Y'].map((tf) => (
+              <button
+                key={tf}
+                onClick={() => setTimeframe(tf)}
+                className={`px-3 py-1 rounded text-xs font-mono font-bold transition-all ${
+                  timeframe === tf
+                    ? 'bg-amber-500 text-black shadow'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                {tf}
+              </button>
             ))}
-          </select>
+          </div>
+
+          {/* Symbol Selector */}
+          <div className="flex items-center space-x-2 bg-neutral-900 px-3 py-1.5 rounded-xl border border-amber-500/40">
+            <span className="text-[11px] font-mono text-gray-400">SELECT ASSET:</span>
+            <select
+              value={activeSymbol}
+              onChange={(e) => setActiveSymbol(e.target.value)}
+              className="bg-transparent text-amber-400 font-mono font-bold text-xs focus:outline-none cursor-pointer"
+            >
+              {allAvailableSymbols.map((sym) => (
+                <option key={sym} value={sym} className="bg-neutral-900 text-white">
+                  {sym}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      {/* Memoized TradingView Advanced Chart Widget */}
-      <div className="h-[520px] w-full">
-        <TradingViewChartWidget activeSymbol={activeSymbol} />
+      {/* Chart Display Area */}
+      <div className="h-[460px] w-full relative">
+        {loading && (
+          <div className="absolute inset-0 z-10 bg-neutral-950/70 backdrop-blur-sm flex items-center justify-center space-x-2 text-amber-400 text-sm font-mono">
+            <RefreshCw className="w-5 h-5 animate-spin" />
+            <span>Loading Live Yahoo Finance Chart Data...</span>
+          </div>
+        )}
+
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={chartData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+            <defs>
+              <linearGradient id="chartGradientPos" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#10B981" stopOpacity={0.4}/>
+                <stop offset="95%" stopColor="#10B981" stopOpacity={0.0}/>
+              </linearGradient>
+              <linearGradient id="chartGradientNeg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#F43F5E" stopOpacity={0.4}/>
+                <stop offset="95%" stopColor="#F43F5E" stopOpacity={0.0}/>
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+            <XAxis dataKey="date" stroke="#6B7280" fontSize={11} tickLine={false} />
+            <YAxis domain={['auto', 'auto']} stroke="#6B7280" fontSize={11} orientation="right" tickFormatter={(val) => val.toLocaleString('en-IN')} />
+            <Tooltip
+              contentStyle={{ backgroundColor: '#0A0A0C', borderColor: 'rgba(217, 119, 6, 0.4)', borderRadius: '12px', color: '#fff', fontSize: '12px', fontFamily: 'monospace' }}
+              formatter={(value) => [`₹${value.toLocaleString('en-IN')}`, 'Close Price']}
+            />
+            <Area
+              type="monotone"
+              dataKey="close"
+              stroke={isPositive ? '#10B981' : '#F43F5E'}
+              strokeWidth={2.5}
+              fillOpacity={1}
+              fill={isPositive ? 'url(#chartGradientPos)' : 'url(#chartGradientNeg)'}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
       </div>
 
     </div>

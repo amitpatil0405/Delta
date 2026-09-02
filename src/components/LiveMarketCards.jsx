@@ -6,30 +6,19 @@ import { useMarket } from '../context/MarketContext';
 export default function LiveMarketCards() {
   const [indices, setIndices] = useState([]);
   const [updatedTime, setUpdatedTime] = useState('');
-  const [hoveredCard, setHoveredCard] = useState(null);
   const { marketStatus, setActiveSymbol } = useMarket();
 
   useEffect(() => {
-    // Dynamically load TradingView Widget script
-    const scriptId = 'tv-market-data-script';
-    if (!document.getElementById(scriptId)) {
-      const script = document.createElement('script');
-      script.id = scriptId;
-      script.type = 'module';
-      script.src = 'https://widgets.tradingview-widget.com/w/en/tv-market-data.js';
-      document.head.appendChild(script);
-    }
-
     async function loadData() {
       const res = await getIndices();
       if (res.success) {
         setIndices(res.data);
-        setUpdatedTime(res.timestamp);
+        setUpdatedTime(res.timestamp || new Date().toLocaleTimeString('en-IN'));
       }
     }
     loadData();
 
-    // Refresh quotes periodically
+    // Refresh quotes periodically from Yahoo Finance
     const interval = setInterval(loadData, 8000);
     return () => clearInterval(interval);
   }, []);
@@ -81,12 +70,6 @@ export default function LiveMarketCards() {
           </div>
         </div>
 
-        {/* TradingView Live Market Data Widget */}
-        <div className="mb-12 glass-card rounded-2xl p-4 sm:p-6 border border-amber-500/30 shadow-[0_0_25px_rgba(217,119,6,0.15)] overflow-hidden">
-          <tv-market-data
-            symbol-sectors='[{"sectionName":"Indices","symbols":["NSE:NIFTY","NSE:BANKNIFTY","BSE:SENSEX","NSE:CNXIT","NSE:CNX100"]},{"sectionName":"Major Equities","symbols":["NSE:RELIANCE","NSE:TCS","NSE:HDFCBANK","NSE:ICICIBANK","NSE:SBICARD","NSE:HINDUNILVR","NSE:MARUTI"]}]'
-          ></tv-market-data>
-        </div>
 
         {/* Live Market Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
