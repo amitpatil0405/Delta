@@ -8,7 +8,7 @@ import OptionsChainSection from './components/OptionsChainSection';
 import OptionsStrategiesSection from './components/OptionsStrategiesSection';
 import MarketNewsSection from './components/MarketNewsSection';
 import TrainingSection from './components/TrainingSection';
-import SentimentAndPhilosophySection from './components/SentimentAndPhilosophySection';
+import BlueprintSection from './components/BlueprintSection';
 import PortfolioJournalSection from './components/PortfolioJournalSection';
 import AboutFounderSection from './components/AboutFounderSection';
 import ContactSection from './components/ContactSection';
@@ -58,16 +58,16 @@ export default function App() {
           {/* 7. Training & Options Education */}
           <TrainingSection />
 
-          {/* 8. Market Sentiment & DeltaFox Philosophy */}
-          <SentimentAndPhilosophySection />
+          {/* 8. The DeltaFox Blueprint: Trader Mindset & Market Cycles */}
+          <BlueprintSection />
 
           {/* 9. Portfolio & Trading Journal */}
           <PortfolioJournalSection />
 
-          {/* 9. About DeltaFox & Founder Amit Patil */}
+          {/* 10. About DeltaFox & Founder Amit Patil */}
           <AboutFounderSection />
 
-          {/* 10. Contact Section */}
+          {/* 11. Contact Section */}
           <ContactSection />
         </main>
 
