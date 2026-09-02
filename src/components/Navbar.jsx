@@ -19,7 +19,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     };
     window.addEventListener('scroll', handleScroll);
 
-    const sectionIds = ['home', 'markets', 'options', 'strategies', 'news', 'portfolio', 'about', 'contact'];
+    const sectionIds = ['home', 'strategies', 'news', 'training', 'portfolio', 'about', 'contact'];
     const observerOptions = {
       root: null,
       rootMargin: '-20% 0px -60% 0px',
@@ -48,10 +48,9 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'markets', label: 'Markets' },
-    { id: 'options', label: 'Options' },
     { id: 'strategies', label: 'Strategies' },
     { id: 'news', label: 'News' },
+    { id: 'training', label: 'Training' },
     { id: 'portfolio', label: 'Portfolio' },
     { id: 'about', label: 'About' },
     { id: 'contact', label: 'Contact' }
@@ -126,7 +125,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
             {/* Terminal CTA */}
             <button
-              onClick={() => handleNavClick('options')}
+              onClick={() => handleNavClick('strategies')}
               className="relative inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 to-amber-600 rounded-lg hover:from-amber-300 hover:to-amber-500 transition-all duration-300 shadow-[0_0_20px_rgba(217,119,6,0.4)] group active:scale-95"
             >
               <Activity className="w-3.5 h-3.5" />
@@ -174,11 +173,11 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
           </div>
 
           <button
-            onClick={() => handleNavClick('options')}
+            onClick={() => handleNavClick('strategies')}
             className="w-full mt-3 flex items-center justify-center space-x-2 py-3 text-sm font-bold uppercase text-black bg-amber-500 rounded-lg shadow-lg"
           >
             <Activity className="w-4 h-4" />
-            <span>OPEN MARKET TERMINAL</span>
+            <span>EXPLORE STRATEGIES</span>
           </button>
         </div>
       )}

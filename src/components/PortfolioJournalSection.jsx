@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { BookOpen, Plus, TrendingUp, TrendingDown, DollarSign, Award, Percent, ShieldAlert, Calendar } from 'lucide-react';
+import { BookOpen, Plus, TrendingUp, TrendingDown, DollarSign, Award, Percent, ShieldAlert, Calendar, Lock, Unlock, Trash2 } from 'lucide-react';
 
 // Benchmark trade history records (Supports up to 200 records per financial year)
 const INITIAL_TRADES_FY24_25 = [
@@ -18,8 +18,39 @@ const INITIAL_TRADES_FY24_25 = [
 export default function PortfolioJournalSection() {
   const [trades, setTrades] = useState(INITIAL_TRADES_FY24_25);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
+
+  const handleUnlockAdmin = () => {
+    if (adminPassword === 'Pass123#$') {
+      setIsAdminUnlocked(true);
+      setPasswordError('');
+      setAdminPassword('');
+    } else {
+      setPasswordError('Invalid Admin Password. Access Denied.');
+    }
+  };
+
+  const handleLockAdmin = () => {
+    setIsAdminUnlocked(false);
+    setShowAddForm(false);
+    setPasswordError('');
+  };
+
+  const handleDeleteTrade = (tradeId) => {
+    if (!isAdminUnlocked) {
+      const pass = prompt('Enter Admin Password to Delete Record:');
+      if (pass !== 'Pass123#$') {
+        alert('Invalid Admin Password. Record deletion denied.');
+        return;
+      }
+    }
+
+    if (confirm('Are you sure you want to delete this trade record from the journal?')) {
+      setTrades(prev => prev.filter(t => t.id !== tradeId));
+    }
+  };
 
   // New trade form state
   const [newTrade, setNewTrade] = useState({
@@ -37,7 +68,7 @@ export default function PortfolioJournalSection() {
   const handleCreateTrade = (e) => {
     e.preventDefault();
 
-    if (adminPassword !== 'Pass123#$') {
+    if (!isAdminUnlocked && adminPassword !== 'Pass123#$') {
       setPasswordError('Invalid Admin Password. Access Denied.');
       return;
     }
@@ -157,8 +188,28 @@ export default function PortfolioJournalSection() {
             </p>
           </div>
 
-          {/* Add Trade CTA */}
+          {/* Add Trade & Admin Status CTA */}
           <div className="mt-4 md:mt-0 flex items-center space-x-3">
+            {isAdminUnlocked ? (
+              <div className="flex items-center space-x-2">
+                <span className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                  <Unlock className="w-3.5 h-3.5" />
+                  <span>ADMIN MODE</span>
+                </span>
+                <button
+                  onClick={handleLockAdmin}
+                  className="px-3 py-1.5 rounded-lg bg-neutral-900 border border-white/10 text-xs font-mono text-gray-400 hover:text-white"
+                >
+                  LOCK
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 bg-neutral-900/80 px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono">
+                <Lock className="w-3.5 h-3.5 text-amber-400" />
+                <span className="text-gray-400">VIEW-ONLY MODE</span>
+              </div>
+            )}
+
             <button
               onClick={() => {
                 setShowAddForm(!showAddForm);
@@ -335,20 +386,31 @@ export default function PortfolioJournalSection() {
                 </div>
               )}
 
-              <div className="md:col-span-2">
-                <label className="block text-amber-400 mb-1 font-bold">ADMIN PASSWORD</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="Enter Admin Password"
-                  value={adminPassword}
-                  onChange={(e) => {
-                    setAdminPassword(e.target.value);
-                    setPasswordError('');
-                  }}
-                  className="w-full bg-neutral-900 border border-amber-500/30 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
-                />
-              </div>
+              {!isAdminUnlocked && (
+                <div className="md:col-span-2">
+                  <label className="block text-amber-400 mb-1 font-bold">ADMIN PASSWORD</label>
+                  <div className="flex space-x-2">
+                    <input
+                      type="password"
+                      required
+                      placeholder="Enter Admin Password (Pass123#$)"
+                      value={adminPassword}
+                      onChange={(e) => {
+                        setAdminPassword(e.target.value);
+                        setPasswordError('');
+                      }}
+                      className="flex-1 bg-neutral-900 border border-amber-500/30 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleUnlockAdmin}
+                      className="px-4 py-2 bg-neutral-800 text-amber-400 font-mono font-bold text-xs rounded-lg border border-amber-500/30 hover:bg-neutral-700"
+                    >
+                      UNLOCK
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end space-x-3 pt-3">
@@ -413,7 +475,7 @@ export default function PortfolioJournalSection() {
                   <th className="py-3 px-3 text-right">Qty</th>
                   <th className="py-3 px-3 text-right">Status</th>
                   <th className="py-3 px-3 text-right">P&L (₹)</th>
-                  <th className="py-3 px-3 text-center">Action</th>
+                  <th className="py-3 px-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -453,14 +515,23 @@ export default function PortfolioJournalSection() {
                           {isOpen ? '₹0.00' : `${isPos ? '+' : ''}₹${t.manualPnl.toLocaleString('en-IN')}`}
                         </td>
                         <td className="py-3 px-3 text-center">
-                          {isOpen && (
+                          <div className="flex items-center justify-center space-x-2">
+                            {isOpen && (
+                              <button
+                                onClick={() => handleCloseTrade(t.id)}
+                                className="px-2.5 py-1 text-[10px] font-bold bg-amber-500 text-black rounded hover:bg-amber-400 transition-all"
+                              >
+                                CLOSE
+                              </button>
+                            )}
                             <button
-                              onClick={() => handleCloseTrade(t.id)}
-                              className="px-2.5 py-1 text-[10px] font-bold bg-amber-500 text-black rounded hover:bg-amber-400 transition-all"
+                              onClick={() => handleDeleteTrade(t.id)}
+                              title="Delete Record (Admin)"
+                              className="p-1 text-gray-500 hover:text-rose-400 transition-colors"
                             >
-                              CLOSE TRADE
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
-                          )}
+                          </div>
                         </td>
                       </tr>
                     );
