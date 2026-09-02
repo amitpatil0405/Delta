@@ -51,11 +51,6 @@ export default function ContactSection() {
             Connect with us regarding training programs, options trading strategies, or platform inquiries.
           </p>
 
-          {/* Email Destination Notice */}
-          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono">
-            <Inbox className="w-4 h-4 text-amber-400 shrink-0" />
-            <span>All inquiries are directly transmitted to: <strong className="text-white underline">amitpatil0405@gmail.com</strong></span>
-          </div>
         </div>
 
         {/* Form Container */}
@@ -142,7 +137,7 @@ export default function ContactSection() {
                 className="w-full py-4 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-black font-extrabold text-sm rounded-xl hover:brightness-110 transition-all shadow-[0_0_25px_rgba(217,119,6,0.3)] flex items-center justify-center space-x-2 uppercase tracking-wider"
               >
                 <Send className="w-4 h-4" />
-                <span>SUBMIT INQUIRY (TO AMITPATIL0405@GMAIL.COM)</span>
+                <span>Submit enquiry</span>
               </button>
 
             </form>

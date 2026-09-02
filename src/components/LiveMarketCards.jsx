@@ -18,10 +18,15 @@ export default function LiveMarketCards() {
     }
     loadData();
 
-    // Refresh quotes periodically from Yahoo Finance
-    const interval = setInterval(loadData, 8000);
-    return () => clearInterval(interval);
-  }, []);
+    // Only set refresh interval if market is currently open
+    let interval;
+    if (marketStatus.isOpen) {
+      interval = setInterval(loadData, 10000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [marketStatus.isOpen]);
 
   // Card 3D Tilt helper logic
   const handleMouseMove = (e, index) => {
@@ -132,11 +137,6 @@ export default function LiveMarketCards() {
                   </div>
                 </div>
 
-                {/* Card Footer Action */}
-                <div className="mt-4 flex items-center justify-between text-xs text-amber-500/80 font-mono font-semibold pt-2">
-                  <span>SELECT FOR TERMINAL</span>
-                  <BarChart2 className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </div>
 
               </div>
             );

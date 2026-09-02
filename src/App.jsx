@@ -27,7 +27,11 @@ export default function App() {
 
   return (
     <MarketProvider>
-      <div className="min-h-screen bg-[#050505] text-gray-100 flex flex-col selection:bg-amber-500/30 selection:text-amber-200">
+      <div className="relative min-h-screen bg-[#050505] text-gray-100 flex flex-col selection:bg-amber-500/30 selection:text-amber-200 overflow-x-hidden">
+
+        {/* Site-Wide Continuous Ambient Grid & Particle Overlay */}
+        <div className="fixed inset-0 pointer-events-none z-0 opacity-40 bg-[radial-gradient(#1c1917_1px,transparent_1px)] [background-size:24px_24px]" />
+        <div className="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/10 via-transparent to-transparent blur-3xl" />
 
         {/* Transparent Glass Navigation */}
         <Navbar activePage={activePage} onNavigate={handleNavigate} />

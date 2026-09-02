@@ -87,7 +87,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             <img
               src={logoImg}
               alt="DELTAFOX"
-              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_12px_rgba(217,119,6,0.3)]"
+              className="h-12 sm:h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105 filter drop-shadow-[0_0_16px_rgba(217,119,6,0.4)]"
             />
           </div>
 
@@ -123,13 +123,13 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
               </span>
             </div>
 
-            {/* Terminal CTA */}
+            {/* Market Strategies CTA */}
             <button
               onClick={() => handleNavClick('strategies')}
               className="relative inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 to-amber-600 rounded-lg hover:from-amber-300 hover:to-amber-500 transition-all duration-300 shadow-[0_0_20px_rgba(217,119,6,0.4)] group active:scale-95"
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>MARKET TERMINAL</span>
+              <span>Market strategies</span>
             </button>
           </div>
 

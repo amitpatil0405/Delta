@@ -32,7 +32,7 @@ export default function AboutFounderSection() {
         <div className="glass-card rounded-3xl p-8 sm:p-12 border border-amber-500/30 relative overflow-hidden bg-gradient-to-br from-neutral-950 via-[#0a0a0c] to-black">
 
           <div className="text-center mb-10">
-            <span className="text-xs font-mono text-amber-400 uppercase tracking-widest font-bold">
+            <span className="text-base sm:text-lg font-mono text-amber-400 uppercase tracking-widest font-extrabold">
               MEET THE FOUNDER
             </span>
           </div>
@@ -44,16 +44,16 @@ export default function AboutFounderSection() {
               <div className="relative w-64 h-80 rounded-2xl overflow-hidden border-2 border-amber-500/50 shadow-[0_0_35px_rgba(217,119,6,0.25)] group mb-4">
                 <img
                   src={myPic}
-                  alt="Amit Patil - Founder of DeltaFox"
+                  alt="MR. AMIT PATIL - Founder of DeltaFox"
                   className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
               <div className="text-center space-y-1">
                 <h3 className="text-2xl font-extrabold text-white font-mono tracking-wide">
-                  AMIT PATIL
+                  MR. AMIT PATIL
                 </h3>
                 <p className="text-xs font-mono text-amber-400 font-semibold tracking-wider uppercase">
-                  Founder & Private Fund Manager
+                  Founder, Derivatives Trader & Private Fund Manager
                 </p>
               </div>
             </div>
@@ -63,15 +63,19 @@ export default function AboutFounderSection() {
 
               <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono">
                 <Cpu className="w-3.5 h-3.5" />
-                <span>IT Engineer & Systematic Derivatives Trader</span>
+                <span>Computer Science Degree & Quantitative Intelligence</span>
               </div>
 
-              <p className="text-sm text-gray-200 leading-relaxed font-sans">
-                Blending a strong technical foundation as an IT Engineer with deep expertise in financial markets, Amit Patil leads DeltaFox with a logic-driven, systematic approach. His engineering background brings structural precision, automation thinking, and rigorous risk control into quantitative trading.
+              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-sans">
+                Holding a Computer Science degree, Mr. Amit Patil combines technological expertise with deep derivatives market intelligence. As Founder, Derivatives Trader & Private Fund Manager at DeltaFox, he leads with complete operational transparency, utilizing real-time live data and systematic non-directional options strategies.
               </p>
 
-              <p className="text-sm text-gray-200 leading-relaxed font-sans">
-                Specializing in advanced options trading strategies—particularly non-directional frameworks, credit spreads, and volatility-based execution—he focuses on building and scaling portfolios where data and math take precedence over emotion. His core philosophy revolves around capital preservation, strict rule execution, and navigating changing market regimes with absolute composure.
+              <p className="text-sm text-gray-300 leading-relaxed font-sans">
+                Specializing in institutional risk management, credit spreads, and volatility-driven execution, his focus remains steadfast on capital preservation, disciplined rule execution, and mathematical probabilities.
+              </p>
+
+              <p className="text-xs text-amber-400/90 font-mono italic bg-neutral-900/80 p-3 rounded-xl border border-amber-500/20">
+                Note: DeltaFox is an educational and market intelligence platform. Enrollment in training programs and strategy participation are strictly governed by terms and risk disclosure agreements.
               </p>
 
               {/* Core Values */}

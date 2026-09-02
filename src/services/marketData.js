@@ -61,7 +61,7 @@ export function getYahooSymbol(symbol) {
   if (s === 'SENSEX' || s === 'BSE SENSEX') return '^BSESN';
   if (s === 'NIFTY IT' || s === 'CNXIT') return '^CNXIT';
   if (s === 'NIFTY FIN SERVICE' || s === 'NIFTY FINANCIAL SERVICES') return 'NIFTY_FIN_SERVICE.NS';
-  if (s === 'NIFTY MIDCAP 100' || s === 'NIFTY MIDCAP') return '^CRSLDX';
+  if (s === 'NIFTY MIDCAP 100' || s === 'NIFTY MIDCAP') return 'NIFTY_MIDCAP_100.NS';
 
   // If already contains suffix like .NS or ^
   if (s.includes('.NS') || s.includes('.BO') || s.startsWith('^')) return s;
@@ -104,7 +104,7 @@ const BASE_INDICES = [
   { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 79250.40, change: +580.60, pChange: +0.74, high: 79410.10, low: 78620.00, open: 78700.00, prevClose: 78669.80, volume: '1.1B', sparkline: [78669, 78800, 78950, 79120, 79250.40] },
   { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 42150.25, change: +420.15, pChange: +1.01, high: 42280.00, low: 41710.00, open: 41750.00, prevClose: 41730.10, volume: '480M', sparkline: [41730, 41850, 42000, 42150.25] },
   { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 23850.30, change: +112.40, pChange: +0.47, high: 23940.00, low: 23710.00, open: 23750.00, prevClose: 23737.90, volume: '680M', sparkline: [23737, 23780, 23820, 23850.30] },
-  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: '^CRSLDX', price: 58920.75, change: +380.25, pChange: +0.65, high: 59100.00, low: 58500.00, open: 58550.00, prevClose: 58540.50, volume: '590M', sparkline: [58540, 58680, 58810, 58920.75] },
+  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63001.60, change: +425.30, pChange: +0.68, high: 63250.00, low: 62700.00, open: 62750.00, prevClose: 62576.30, volume: '590M', sparkline: [62576, 62700, 62850, 63001.60] },
 ];
 
 /**
@@ -293,7 +293,7 @@ export async function getHistoricalData(symbol = 'NIFTY 50', timeframe = '1M') {
 /**
  * Fetch Options Chain Data
  */
-export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '28-MAR-2025') {
+export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '26-MAR-2026') {
   const quoteRes = await getQuote(symbol);
   const spotPrice = quoteRes.data ? quoteRes.data.price : 22123.65;
 

@@ -9,8 +9,8 @@ export default function OptionsChainSection() {
   // Index underlyings have weekly expiries; stock underlyings have monthly expiries
   const isIndex = ['NIFTY 50', 'BANK NIFTY', 'SENSEX', 'NIFTY IT', 'NIFTY FIN SERVICE', 'NIFTY MIDCAP 100'].includes(activeSymbol.toUpperCase());
 
-  const indexExpiries = ['06-MAR-2025 (Weekly)', '13-MAR-2025 (Weekly)', '20-MAR-2025 (Weekly)', '27-MAR-2025 (Monthly)'];
-  const stockExpiries = ['27-MAR-2025 (Monthly)', '24-APR-2025 (Monthly)', '29-MAY-2025 (Monthly)'];
+  const indexExpiries = ['12-MAR-2026 (Weekly)', '19-MAR-2026 (Weekly)', '26-MAR-2026 (Monthly)', '02-APR-2026 (Weekly)'];
+  const stockExpiries = ['26-MAR-2026 (Monthly)', '30-APR-2026 (Monthly)', '28-MAY-2026 (Monthly)'];
 
   const expiries = isIndex ? indexExpiries : stockExpiries;
   const [expiry, setExpiry] = useState(expiries[0]);

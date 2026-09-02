@@ -20,6 +20,13 @@ export default function MarketNewsSection() {
 
   useEffect(() => {
     loadNews(category);
+
+    // Auto update news every 2 hours (2 * 60 * 60 * 1000 ms)
+    const interval = setInterval(() => {
+      loadNews(category);
+    }, 7200000);
+
+    return () => clearInterval(interval);
   }, [category]);
 
   return (

@@ -16,8 +16,29 @@ const INITIAL_TRADES_FY24_25 = [
 ];
 
 export default function PortfolioJournalSection() {
-  const [trades, setTrades] = useState(INITIAL_TRADES_FY24_25);
+  const [trades, setTrades] = useState(() => {
+    try {
+      const saved = localStorage.getItem('deltafox_portfolio_trades_v2');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn('Could not load stored trades:', e);
+    }
+    return INITIAL_TRADES_FY24_25;
+  });
+
   const [showAddForm, setShowAddForm] = useState(false);
+
+  // Synchronize trades array to localStorage (Persistent Storage for 200+ records)
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('deltafox_portfolio_trades_v2', JSON.stringify(trades.slice(0, 200)));
+    } catch (e) {
+      console.warn('Could not save trades to localStorage:', e);
+    }
+  }, [trades]);
   const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
   const [adminPassword, setAdminPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
