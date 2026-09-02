@@ -150,56 +150,166 @@ export default function InteractiveMarketChart() {
         )}
 
         {chartType === 'candlestick' ? (
-          /* Candlestick Visualizer Representation */
-          <div className="w-full h-full flex flex-col justify-between py-2 font-mono">
-            <div className="flex-1 flex items-end space-x-1.5 overflow-x-auto pb-6 border-b border-white/10 px-2 pt-4">
-              {displayedData.map((d, i) => {
-                const isBull = d.close >= d.open;
-                const bodyTop = Math.max(d.open, d.close);
-                const bodyBottom = Math.min(d.open, d.close);
+          /* Institutional TradingView-Style Candlestick Chart Engine */
+          <div className="w-full h-full relative font-mono select-none">
+            {displayedData.length > 0 && (
+              <svg className="w-full h-full overflow-visible" viewBox="0 0 1000 400" preserveAspectRatio="none">
+                {(() => {
+                  const padding = { top: 20, right: 85, bottom: 35, left: 10 };
+                  const width = 1000 - padding.left - padding.right;
+                  const height = 400 - padding.top - padding.bottom;
 
-                // Scale helper relative to min/max
-                const allCloses = displayedData.map(c => c.close);
-                const minP = Math.min(...allCloses) * 0.995;
-                const maxP = Math.max(...allCloses) * 1.005;
-                const range = maxP - minP || 1;
+                  // High/Low Bounds Calculation
+                  const highs = displayedData.map(d => d.high);
+                  const lows = displayedData.map(d => d.low);
+                  const maxPrice = Math.max(...highs) * 1.002;
+                  const minPrice = Math.min(...lows) * 0.998;
+                  const priceRange = maxPrice - minPrice || 1;
 
-                const highPct = ((d.high - minP) / range) * 100;
-                const lowPct = ((d.low - minP) / range) * 100;
-                const bodyTopPct = ((bodyTop - minP) / range) * 100;
-                const bodyBottomPct = ((bodyBottom - minP) / range) * 100;
-                const bodyHeightPct = Math.max(1.5, bodyTopPct - bodyBottomPct);
+                  const priceToY = (price) =>
+                    padding.top + (1 - (price - minPrice) / priceRange) * height;
 
-                return (
-                  <div key={i} className="flex-1 min-w-[12px] h-full flex flex-col justify-end items-center group relative cursor-pointer">
-                    {/* Hover Tooltip */}
-                    <div className="absolute bottom-full mb-2 hidden group-hover:flex flex-col bg-neutral-900 border border-amber-500/50 p-2 rounded-lg text-[10px] z-30 whitespace-nowrap shadow-xl">
-                      <span className="text-amber-400 font-bold">{d.date}</span>
-                      <span>O: ₹{d.open}</span>
-                      <span>H: ₹{d.high}</span>
-                      <span>L: ₹{d.low}</span>
-                      <span>C: ₹{d.close}</span>
-                    </div>
+                  // Y-Axis Price Ticks (Right Side)
+                  const tickCount = 6;
+                  const priceTicks = Array.from({ length: tickCount }, (_, i) => {
+                    return minPrice + (i / (tickCount - 1)) * priceRange;
+                  });
 
-                    {/* Candle Wick */}
-                    <div
-                      className={`w-[1.5px] ${isBull ? 'bg-emerald-400' : 'bg-rose-500'}`}
-                      style={{ height: `${Math.max(2, highPct - lowPct)}%` }}
-                    />
-                    {/* Candle Body */}
-                    <div
-                      className={`w-full max-w-[10px] rounded-sm ${isBull ? 'bg-emerald-500 border border-emerald-400' : 'bg-rose-500 border border-rose-400'}`}
-                      style={{ height: `${bodyHeightPct}%` }}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-            <div className="flex justify-between text-[10px] text-gray-500 pt-2 font-mono">
-              <span>{displayedData[0]?.date}</span>
-              <span>Zoom Level: {zoomLevel}x</span>
-              <span>{displayedData[displayedData.length - 1]?.date}</span>
-            </div>
+                  // X-Axis Date Ticks (Bottom Side)
+                  const step = Math.max(1, Math.floor(displayedData.length / 6));
+                  const xTicks = displayedData.filter((_, idx) => idx % step === 0);
+
+                  const candleWidth = Math.max(4, Math.min(16, (width / displayedData.length) * 0.65));
+                  const lastCandle = displayedData[displayedData.length - 1];
+                  const currentPriceY = priceToY(lastCandle.close);
+
+                  return (
+                    <g>
+                      {/* Horizontal Gridlines & Right Y-Axis Labels */}
+                      {priceTicks.map((p, idx) => {
+                        const y = priceToY(p);
+                        return (
+                          <g key={`yTick-${idx}`}>
+                            <line
+                              x1={padding.left}
+                              y1={y}
+                              x2={1000 - padding.right}
+                              y2={y}
+                              stroke="rgba(255, 255, 255, 0.07)"
+                              strokeDasharray="3 3"
+                            />
+                            <text
+                              x={1000 - padding.right + 8}
+                              y={y + 4}
+                              fill="#9ca3af"
+                              fontSize="11"
+                              fontFamily="monospace"
+                            >
+                              {p.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </text>
+                          </g>
+                        );
+                      })}
+
+                      {/* Vertical Gridlines & Bottom X-Axis Date/Time Labels */}
+                      {xTicks.map((d, idx) => {
+                        const dataIndex = displayedData.indexOf(d);
+                        const x = padding.left + (dataIndex + 0.5) * (width / displayedData.length);
+                        return (
+                          <g key={`xTick-${idx}`}>
+                            <line
+                              x1={x}
+                              y1={padding.top}
+                              x2={x}
+                              y2={400 - padding.bottom}
+                              stroke="rgba(255, 255, 255, 0.05)"
+                            />
+                            <text
+                              x={x}
+                              y={400 - padding.bottom + 20}
+                              fill="#6b7280"
+                              fontSize="11"
+                              fontFamily="monospace"
+                              textAnchor="middle"
+                            >
+                              {d.date}
+                            </text>
+                          </g>
+                        );
+                      })}
+
+                      {/* Live Market Price Horizontal Dotted Line & Badge */}
+                      <line
+                        x1={padding.left}
+                        y1={currentPriceY}
+                        x2={1000 - padding.right}
+                        y2={currentPriceY}
+                        stroke="#22d3ee"
+                        strokeDasharray="2 2"
+                        strokeWidth="1.5"
+                      />
+                      <rect
+                        x={1000 - padding.right + 2}
+                        y={currentPriceY - 11}
+                        width="80"
+                        height="22"
+                        rx="4"
+                        fill="#0891b2"
+                      />
+                      <text
+                        x={1000 - padding.right + 42}
+                        y={currentPriceY + 4}
+                        fill="#ffffff"
+                        fontSize="11"
+                        fontWeight="bold"
+                        fontFamily="monospace"
+                        textAnchor="middle"
+                      >
+                        {lastCandle.close.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      </text>
+
+                      {/* Render Candlesticks (Wicks + Bodies) */}
+                      {displayedData.map((d, i) => {
+                        const x = padding.left + (i + 0.5) * (width / displayedData.length);
+                        const isBull = d.close >= d.open;
+                        const candleColor = isBull ? '#10b981' : '#f43f5e';
+
+                        const yHigh = priceToY(d.high);
+                        const yLow = priceToY(d.low);
+                        const yOpen = priceToY(d.open);
+                        const yClose = priceToY(d.close);
+
+                        const yBodyTop = Math.min(yOpen, yClose);
+                        const bodyHeight = Math.max(2, Math.abs(yOpen - yClose));
+
+                        return (
+                          <g key={`candle-${i}`} className="cursor-pointer group">
+                            {/* High-Low Wick Line */}
+                            <line
+                              x1={x}
+                              y1={yHigh}
+                              x2={x}
+                              y2={yLow}
+                              stroke={candleColor}
+                              strokeWidth="1.5"
+                            />
+                            {/* Open-Close Body Rect */}
+                            <rect
+                              x={x - candleWidth / 2}
+                              y={yBodyTop}
+                              width={candleWidth}
+                              height={bodyHeight}
+                              fill={candleColor}
+                              rx="1"
+                            />
+                          </g>
+                        );
+                      })}
+                    </g>
+                  );
+                })()}
+              </svg>
+            )}
           </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
