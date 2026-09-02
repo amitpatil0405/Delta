@@ -158,87 +158,84 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   );
 }
 
-// Interactive 3D Perspective Grid reacting to scroll
-function FinancialGrid({ scrollYProgress }) {
-  const gridRef = useRef();
-
-  useFrame((state) => {
-    if (gridRef.current) {
-      const speed = 0.5 + scrollYProgress * 1.5;
-      gridRef.current.position.z = (state.clock.elapsedTime * speed) % 2;
-      gridRef.current.rotation.x = -Math.PI / (2.3 - scrollYProgress * 0.4);
-    }
-  });
-
-  return (
-    <group position={[0, -2.5 - scrollYProgress * 1.2, -scrollYProgress * 2]} rotation={[-Math.PI / 2.3, 0, 0]}>
-      <gridHelper args={[50, 50, '#d97706', '#222222']} ref={gridRef} />
-    </group>
-  );
-}
-
-// Minimalist 3D Vertical Moving Bars Component
-function VerticalMovingBars({ scrollYProgress }) {
+// 3D Vertical Moving Red/Green Stock Market Candlesticks Component
+function VerticalMovingCandlesticks({ scrollYProgress }) {
   const groupRef = useRef();
-  const barsRef = useRef([]);
+  const candlesRef = useRef([]);
 
-  // Generate 28 sleek vertical financial bars positioned across the background
-  const barsData = useMemo(() => {
-    const bars = [];
-    const count = 28;
+  // Generate 26 sleek stock market red/green candlesticks with high/low wicks
+  const candlesData = useMemo(() => {
+    const candles = [];
+    const count = 26;
     for (let i = 0; i < count; i++) {
-      const x = (i - count / 2) * 0.5;
-      const z = -2.0 - Math.random() * 1.5;
+      const x = (i - count / 2) * 0.52;
+      const z = -2.2 - Math.random() * 1.2;
       const initialY = (Math.random() - 0.5) * 3;
-      const speed = 0.8 + Math.random() * 1.4;
-      const height = 0.8 + Math.random() * 1.6;
-      const isAmber = i % 4 === 0;
-      const isGreen = i % 3 === 0 && !isAmber;
-      const color = isAmber ? '#f59e0b' : isGreen ? '#10b981' : '#3f3f46';
+      const speed = 0.7 + Math.random() * 1.2;
+      const bodyHeight = 0.4 + Math.random() * 0.8;
+      const wickHeight = bodyHeight + 0.4 + Math.random() * 0.6;
+      const isGreen = i % 2 === 0; // Alternating green/red financial candles
+      const color = isGreen ? '#22c55e' : '#ef4444';
 
-      bars.push({
+      candles.push({
         id: i,
         x,
         z,
         initialY,
         speed,
-        height,
+        bodyHeight,
+        wickHeight,
         color
       });
     }
-    return bars;
+    return candles;
   }, []);
 
   useFrame((state) => {
     const time = state.clock.elapsedTime;
-    barsRef.current.forEach((mesh, idx) => {
-      if (mesh) {
-        const data = barsData[idx];
+    candlesRef.current.forEach((group, idx) => {
+      if (group) {
+        const data = candlesData[idx];
         // Smooth continuous vertical oscillation (up/down movement)
-        mesh.position.y = data.initialY + Math.sin(time * data.speed + idx) * 1.2 - scrollYProgress * 2.0;
+        group.position.y = data.initialY + Math.sin(time * data.speed + idx) * 1.2 - scrollYProgress * 2.0;
       }
     });
   });
 
   return (
     <group ref={groupRef}>
-      {barsData.map((bar, idx) => (
-        <mesh
-          key={bar.id}
-          ref={(el) => (barsRef.current[idx] = el)}
-          position={[bar.x, bar.initialY, bar.z]}
+      {candlesData.map((candle, idx) => (
+        <group
+          key={candle.id}
+          ref={(el) => (candlesRef.current[idx] = el)}
+          position={[candle.x, candle.initialY, candle.z]}
         >
-          <boxGeometry args={[0.08, bar.height, 0.08]} />
-          <meshStandardMaterial
-            color={bar.color}
-            emissive={bar.color}
-            emissiveIntensity={0.35}
-            transparent={true}
-            opacity={0.65}
-            roughness={0.2}
-            metalness={0.8}
-          />
-        </mesh>
+          {/* High / Low Wick */}
+          <mesh position={[0, 0, 0]}>
+            <cylinderGeometry args={[0.012, 0.012, candle.wickHeight, 8]} />
+            <meshStandardMaterial
+              color={candle.color}
+              emissive={candle.color}
+              emissiveIntensity={0.4}
+              transparent={true}
+              opacity={0.65}
+            />
+          </mesh>
+
+          {/* Real Body Rectangular Box */}
+          <mesh position={[0, 0, 0]}>
+            <boxGeometry args={[0.14, candle.bodyHeight, 0.14]} />
+            <meshStandardMaterial
+              color={candle.color}
+              emissive={candle.color}
+              emissiveIntensity={0.5}
+              transparent={true}
+              opacity={0.8}
+              roughness={0.2}
+              metalness={0.6}
+            />
+          </mesh>
+        </group>
       ))}
     </group>
   );
@@ -276,11 +273,8 @@ export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
           <MetallicFoxHead mousePos={mousePos} scrollYProgress={scrollYProgress} />
         </Float>
 
-        {/* Minimal Perspective Financial Grid */}
-        <FinancialGrid scrollYProgress={scrollYProgress} />
-
-        {/* Vertical Moving Financial Bars */}
-        <VerticalMovingBars scrollYProgress={scrollYProgress} />
+        {/* Vertical Moving Red/Green Stock Market Candlesticks (Grid removed) */}
+        <VerticalMovingCandlesticks scrollYProgress={scrollYProgress} />
       </Canvas>
     </div>
   );
