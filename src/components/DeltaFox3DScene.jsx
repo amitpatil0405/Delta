@@ -1,6 +1,6 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, PerspectiveCamera, Html } from '@react-three/drei';
+import { Float, PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Procedural Metallic DeltaFox Emblem Mesh Component
@@ -177,108 +177,6 @@ function FinancialGrid({ scrollYProgress }) {
   );
 }
 
-// 3D Stock Market Candlestick Wave Background
-function StockMarketCandlesticks({ scrollYProgress }) {
-  const groupRef = useRef();
-
-  // Generate 22 realistic 3D candlesticks forming a stock market curve behind the Fox
-  const candlesticks = useMemo(() => {
-    const candles = [];
-    const count = 22;
-    for (let i = 0; i < count; i++) {
-      const x = (i - count / 2) * 0.55;
-      // Simulated stock price wave pattern
-      const baseY = Math.sin(i * 0.4) * 0.8 + Math.cos(i * 0.2) * 0.5 - 0.2;
-      const isGreen = (i % 3 !== 0); // 70% bullish, 30% bearish
-      const bodyHeight = 0.3 + Math.random() * 0.6;
-      const wickHeight = bodyHeight + 0.3 + Math.random() * 0.5;
-
-      candles.push({
-        id: i,
-        x,
-        y: baseY,
-        z: -1.8 - Math.sin(i * 0.3) * 0.8,
-        isGreen,
-        bodyHeight,
-        wickHeight,
-        color: isGreen ? '#22c55e' : '#ef4444'
-      });
-    }
-    return candles;
-  }, []);
-
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.08;
-      groupRef.current.position.y = Math.cos(state.clock.elapsedTime * 0.5) * 0.05 - scrollYProgress * 1.2;
-    }
-  });
-
-  return (
-    <group ref={groupRef} position={[0, 0, -0.5]}>
-      {candlesticks.map((c) => (
-        <group key={c.id} position={[c.x, c.y, c.z]}>
-          {/* Candlestick Wick */}
-          <mesh position={[0, 0, 0]}>
-            <cylinderGeometry args={[0.015, 0.015, c.wickHeight, 8]} />
-            <meshStandardMaterial
-              color={c.color}
-              emissive={c.color}
-              emissiveIntensity={0.3}
-              roughness={0.2}
-            />
-          </mesh>
-
-          {/* Candlestick Body */}
-          <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[0.18, c.bodyHeight, 0.18]} />
-            <meshStandardMaterial
-              color={c.color}
-              emissive={c.color}
-              emissiveIntensity={0.6}
-              roughness={0.1}
-              metalness={0.5}
-            />
-          </mesh>
-        </group>
-      ))}
-
-      {/* Dynamic Stock Market Metrics Floating Labels */}
-      <Html position={[-4.5, 1.8, -1]} center distanceFactor={8} transform>
-        <div className="flex items-center space-x-2 bg-black/80 backdrop-blur-md border border-emerald-500/40 px-3 py-1.5 rounded-lg text-emerald-400 font-mono text-xs shadow-lg shadow-emerald-500/10 pointer-events-none select-none">
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="font-bold">NIFTY</span>
-          <span>24,850.40</span>
-          <span className="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded text-[10px]">+1.42%</span>
-        </div>
-      </Html>
-
-      <Html position={[4.2, 1.2, -1.2]} center distanceFactor={8} transform>
-        <div className="flex items-center space-x-2 bg-black/80 backdrop-blur-md border border-emerald-500/40 px-3 py-1.5 rounded-lg text-emerald-400 font-mono text-xs shadow-lg shadow-emerald-500/10 pointer-events-none select-none">
-          <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="font-bold">BANKNIFTY</span>
-          <span>52,410.15</span>
-          <span className="bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded text-[10px]">+0.88%</span>
-        </div>
-      </Html>
-
-      <Html position={[-3.8, -1.5, -1.5]} center distanceFactor={8} transform>
-        <div className="flex items-center space-x-2 bg-black/80 backdrop-blur-md border border-amber-500/40 px-2.5 py-1 rounded text-amber-400 font-mono text-[11px] pointer-events-none select-none">
-          <span>ATM IV: 13.8</span>
-          <span className="text-zinc-400">|</span>
-          <span>PCR: 1.24</span>
-        </div>
-      </Html>
-
-      <Html position={[3.6, -1.6, -1.5]} center distanceFactor={8} transform>
-        <div className="flex items-center space-x-2 bg-black/80 backdrop-blur-md border border-amber-500/40 px-2.5 py-1 rounded text-amber-400 font-mono text-[11px] pointer-events-none select-none">
-          <span>MAX PAIN: 24,800</span>
-        </div>
-      </Html>
-    </group>
-  );
-}
-
 // Main 3D Canvas Scene Container
 export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
   const mousePos = useRef({ x: 0, y: 0 });
@@ -300,22 +198,19 @@ export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
       >
         <PerspectiveCamera makeDefault position={[0, 0, 6]} fov={50} />
 
-        {/* Cinematic Lighting Setup */}
+        {/* Minimalistic Cinematic Lighting Setup */}
         <ambientLight intensity={0.4} />
         <directionalLight position={[5, 8, 5]} intensity={2.5} color="#ffffff" />
         <directionalLight position={[-5, -4, -2]} intensity={1.2} color="#d97706" />
         <pointLight position={[0, 4, 2]} intensity={2} color="#22c55e" />
 
-        {/* 3D Fox Head Emblem */}
+        {/* 3D Metallic Fox Head Emblem */}
         <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
           <MetallicFoxHead mousePos={mousePos} scrollYProgress={scrollYProgress} />
         </Float>
 
-        {/* Financial 3D Grid with Scroll Perspective */}
+        {/* Minimal Perspective Financial Grid */}
         <FinancialGrid scrollYProgress={scrollYProgress} />
-
-        {/* 3D Stock Market Candlestick Wave & Financial Indicators */}
-        <StockMarketCandlesticks scrollYProgress={scrollYProgress} />
       </Canvas>
     </div>
   );
