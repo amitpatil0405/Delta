@@ -84,7 +84,7 @@ export default function LiveMarketCards() {
         {/* TradingView Live Market Data Widget */}
         <div className="mb-12 glass-card rounded-2xl p-4 sm:p-6 border border-amber-500/30 shadow-[0_0_25px_rgba(217,119,6,0.15)] overflow-hidden">
           <tv-market-data
-            symbol-sectors='[{"sectionName":"Indices","symbols":["NSE:RELIANCE","NSE:TCS","NSE:HDFCBANK","NSE:SBICARD","NSE:HINDUNILVR","NSE:BAJAJ_AUTO","NSE:MARUTI","NSE:BAJFINANCE","NSE:TATASTEEL","NSE:ASIANPAINT","NSE:ICICIBANK"]},{"sectionName":"Index","symbols":["NSE:CNXIT","NSE:NIFTY","BSE:SENSEX","NSE:CNX100"]}]'
+            symbol-sectors='[{"sectionName":"Indices","symbols":["NSE:NIFTY","NSE:BANKNIFTY","BSE:SENSEX","NSE:CNXIT","NSE:CNX100"]},{"sectionName":"Major Equities","symbols":["NSE:RELIANCE","NSE:TCS","NSE:HDFCBANK","NSE:ICICIBANK","NSE:SBICARD","NSE:HINDUNILVR","NSE:MARUTI"]}]'
           ></tv-market-data>
         </div>
 
