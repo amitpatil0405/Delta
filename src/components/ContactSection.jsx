@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mail, Send, CheckCircle2, AlertCircle, Inbox } from 'lucide-react';
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -25,6 +25,13 @@ export default function ContactSection() {
 
     setError('');
     setSubmitted(true);
+
+    // Trigger mailto client as fallback backup
+    const mailtoSubject = encodeURIComponent(formData.subject || `DeltaFox Inquiry from ${formData.name}`);
+    const mailtoBody = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`
+    );
+    window.location.href = `mailto:amitpatil0405@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`;
   };
 
   return (
@@ -41,8 +48,14 @@ export default function ContactSection() {
             CONTACT DELTAFOX
           </h2>
           <p className="text-sm text-gray-400 max-w-lg mx-auto font-sans">
-            Connect with our team regarding institutional options intelligence, strategies, or collaboration inquiries.
+            Connect with us regarding training programs, options trading strategies, or platform inquiries.
           </p>
+
+          {/* Email Destination Notice */}
+          <div className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono">
+            <Inbox className="w-4 h-4 text-amber-400 shrink-0" />
+            <span>All inquiries are directly transmitted to: <strong className="text-white underline">amitpatil0405@gmail.com</strong></span>
+          </div>
         </div>
 
         {/* Form Container */}
@@ -51,9 +64,9 @@ export default function ContactSection() {
           {submitted ? (
             <div className="py-12 text-center space-y-4 font-mono">
               <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto animate-bounce" />
-              <h3 className="text-2xl font-bold text-white">MESSAGE TRANSMITTED</h3>
-              <p className="text-xs text-gray-400 max-w-md mx-auto font-sans">
-                Thank you for contacting DeltaFox. Our options intelligence desk will review your message and respond shortly.
+              <h3 className="text-2xl font-bold text-white">INQUIRY SENT</h3>
+              <p className="text-xs text-gray-300 max-w-md mx-auto font-sans">
+                Your message has been received and routed to <strong className="text-amber-400">amitpatil0405@gmail.com</strong>.
               </p>
               <button
                 onClick={() => {
@@ -105,7 +118,7 @@ export default function ContactSection() {
                 <label className="block text-gray-400 mb-2 uppercase">SUBJECT</label>
                 <input
                   type="text"
-                  placeholder="Inquiry subject"
+                  placeholder="Inquiry subject / Training Enrollment"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                   className="w-full bg-neutral-900/90 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500"
@@ -117,7 +130,7 @@ export default function ContactSection() {
                 <textarea
                   required
                   rows={5}
-                  placeholder="Enter your message details..."
+                  placeholder="Enter your message details or training inquiry..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   className="w-full bg-neutral-900/90 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500"
@@ -129,7 +142,7 @@ export default function ContactSection() {
                 className="w-full py-4 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-black font-extrabold text-sm rounded-xl hover:brightness-110 transition-all shadow-[0_0_25px_rgba(217,119,6,0.3)] flex items-center justify-center space-x-2 uppercase tracking-wider"
               >
                 <Send className="w-4 h-4" />
-                <span>SUBMIT INQUIRY</span>
+                <span>SUBMIT INQUIRY (TO AMITPATIL0405@GMAIL.COM)</span>
               </button>
 
             </form>

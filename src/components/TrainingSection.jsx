@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, GraduationCap, Award, CheckCircle, ArrowRight, ShieldCheck, TrendingUp, Layers, Play, FileText } from 'lucide-react';
+import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio } from 'lucide-react';
 
 export default function TrainingSection() {
   const [selectedModule, setSelectedModule] = useState(0);
@@ -7,61 +7,74 @@ export default function TrainingSection() {
   const modules = [
     {
       id: 'm1',
-      title: '01. Systematic Options Foundations',
-      subtitle: 'Core principles of options contracts, intrinsic vs time value, and probability-based trading.',
+      title: '01. Options Trading Foundations (Basics)',
+      subtitle: 'Understanding calls, puts, strike prices, moneyness, and options contracts fundamentals.',
       level: 'FOUNDATION',
-      duration: '4 Hours',
+      duration: 'Comprehensive Level 1',
       lessons: [
-        'Understanding Option Mechanics: Calls, Puts & Moneyness',
-        'Implied Volatility (IV) & Volatility Rank (IVR)',
-        'Option Pricing Models & Decay (Theta Drivers)',
-        'Probability of Profit (POP) vs Expected Value'
+        'Call & Put Options Definition and Payoff Structures',
+        'In-The-Money (ITM), At-The-Money (ATM), and Out-Of-The-Money (OTM) Moneyness',
+        'Option Premium Components: Intrinsic Value vs Extrinsic (Time) Value',
+        'Contract Specifications, Lot Sizes, Expiry Dates & Settlement Mechanics',
+        'Buying Options vs Selling (Writing) Options Risk Profiles'
       ],
-      description: 'Master the foundational mathematics of options pricing to trade with statistical edge rather than market guesswork.'
+      description: 'Master the core mechanics and foundational concepts of options contracts. Learn how derivative prices behave before executing directional or non-directional trades in live market environments.'
     },
     {
       id: 'm2',
-      title: '02. Advanced Option Greeks & Volatility Surface',
-      subtitle: 'In-depth analysis of Delta, Gamma, Theta, Vega, and Rho in portfolio hedging.',
+      title: '02. Option Greeks & Volatility Surface',
+      subtitle: 'In-depth breakdown of Delta, Gamma, Theta, Vega, Rho, and Implied Volatility (IV).',
       level: 'INTERMEDIATE',
-      duration: '6 Hours',
+      duration: 'Comprehensive Level 2',
       lessons: [
-        'Delta Neutrality & Gamma Risk Management',
-        'Theta Decay Curves & Optimal Expiry Cycles',
-        'Vega Skew & Trading Volatility Crush on Earnings',
-        'Dynamic Delta Adjustments for Open Positions'
+        'Delta: Directional Sensitivity, Probability Metric & Hedge Ratios',
+        'Gamma: Acceleration Risk, Near-Expiry Volatility & Gamma Squeeze Mechanics',
+        'Theta: Time Decay Dynamics, Decay Curves & Expiry Selection Edge',
+        'Vega & Implied Volatility (IV): IV Rank, IV Percentile & Volatility Crush Events',
+        'Rho & Interest Rate Sensitivity in Long-Term Options'
       ],
-      description: 'Learn how to read volatility skew and construct Greek-balanced portfolios that generate income across all market regimes.'
+      description: 'Deconstruct the underlying mathematical pricing model of options. Understand how volatility skew, implied volatility (IV), and time decay affect position profitability across changing market volatility regimes.'
     },
     {
       id: 'm3',
-      title: '03. High-Probability Income Strategies',
-      subtitle: 'Execution and adjustment protocols for Short Strangles, Iron Condors, and Spreads.',
+      title: '03. Systematic Options Trading Strategies',
+      subtitle: 'Step-by-step frameworks for income, directional, neutral, and volatile market strategies.',
       level: 'ADVANCED',
-      duration: '8 Hours',
+      duration: 'Comprehensive Level 3',
       lessons: [
-        'Short Strangle Mechanics & Margin Optimization',
-        'Defined-Risk Iron Condor Setup & Strike Selection',
-        'Bull Put & Bear Call Credit Spread Frameworks',
-        'Defensive Adjustments: Rolling, Inverting & Hedging'
+        'Income Strategies: Short Strangles, Iron Condors & Credit Spreads',
+        'Hedging & Portfolio Protection: Bull Put Spreads, Bear Call Spreads & Collar Strategies',
+        'Volatile Market Strategies: Long Straddles, Long Strangles & Ratio Spreads',
+        'Covered Calls & Cash-Secured Puts for Stock Yield Generation',
+        'Dynamic Position Adjustments: Rolling, Widening, Delta Hedging & Inverting Positions'
       ],
-      description: 'Step-by-step blueprints for non-directional and directional options strategies with institutional risk-reward parameters.'
+      description: 'Build a repeatable playbook of systematic options strategies. Learn exact entry protocols, strike selection algorithms, profit targets, and defensive adjustment triggers for all market conditions.'
     },
     {
       id: 'm4',
-      title: '04. Institutional Risk & Portfolio Growth Roadmap',
-      subtitle: 'Disciplined capital allocation, drawdown control, and scaling trading capital.',
+      title: '04. Live Market Execution & Institutional Risk Management',
+      subtitle: 'Real-time market order flow, position sizing, drawdown protection, and portfolio compounding.',
       level: 'INSTITUTIONAL',
-      duration: '5 Hours',
+      duration: 'Comprehensive Level 4',
       lessons: [
-        'Position Sizing & Maximum Risk per Trade Protocols',
-        'Managing Portfolio Drawdowns & Stress Testing',
-        'Constructing a Daily Market Prep & Execution Journal',
-        'Compounding Rules & Capital Scaling Roadmap'
+        'Live Market Analysis & Real-Time Open Interest (OI) / PCR Interpretation',
+        'Strict Capital Allocation: Maximum 1-3% Portfolio Risk Protocols',
+        'Order Execution Mechanics: Limit Orders, Slippage Reduction & Bid-Ask Spread Management',
+        'Drawdown Control, Stress Testing & Max Pain Level Tracking',
+        'Trading Journal Discipline, Performance Analytics & Systematic Capital Scaling'
       ],
-      description: 'Develop the institutional discipline and risk management framework required to build and preserve long-term trading wealth.'
+      description: 'Transition from theoretical knowledge to live market execution. Receive hands-on live market training with real-time derivative data, market sentiment tracking, and disciplined risk-first capital allocation.'
     }
   ];
+
+  const scrollToContact = () => {
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.hash = '#contact';
+    }
+  };
 
   return (
     <section id="training" className="relative py-24 bg-[#050505] border-t border-white/5 overflow-hidden">
@@ -72,17 +85,48 @@ export default function TrainingSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-12">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase mb-4">
             <GraduationCap className="w-4 h-4" />
-            <span>DeltaFox Academy & Portfolio Growth</span>
+            <span>DeltaFox Options Training Program</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
-            OPTIONS TRADING INTELLIGENCE & TRAINING
+            OPTIONS TRADING CURRICULUM
           </h2>
           <p className="mt-4 text-base text-gray-400 font-medium">
-            Structured educational modules and institutional risk frameworks designed to guide traders in building, managing, and compounding sustainable portfolios.
+            From basic options concepts to advanced live market strategy execution, DeltaFox provides structured, live market training focused on systematic probability and disciplined risk management.
           </p>
+        </div>
+
+        {/* Banner Callout: Live Market Training Provided */}
+        <div className="mb-12 glass-card rounded-2xl p-6 border border-amber-500/40 bg-gradient-to-r from-neutral-950 via-amber-950/20 to-neutral-950 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_30px_rgba(217,119,6,0.1)]">
+          <div className="flex items-center space-x-4">
+            <div className="p-3.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 shrink-0">
+              <Radio className="w-6 h-6 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
+                  Live Market Training Included
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-white mt-1">
+                We Provide Hands-On Training with Live Market Orders & Real-Time Data
+              </h3>
+              <p className="text-xs text-gray-300 mt-1">
+                Learn options trading directly in live market conditions with practical strike selection, risk adjustments, and real-time open interest dynamics.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={scrollToContact}
+            className="shrink-0 px-6 py-3.5 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] flex items-center space-x-2"
+          >
+            <Mail className="w-4 h-4" />
+            <span>CONTACT US TO JOIN TRAINING PROGRAM</span>
+          </button>
         </div>
 
         {/* Module Selection Grid */}
@@ -110,7 +154,7 @@ export default function TrainingSection() {
                     </span>
                     <span className="text-xs font-mono text-gray-400">{mod.duration}</span>
                   </div>
-                  <h3 className={`text-lg font-bold font-mono transition-colors ${
+                  <h3 className={`text-base font-bold font-mono transition-colors ${
                     active ? 'text-amber-400' : 'text-white'
                   }`}>
                     {mod.title}
@@ -130,7 +174,7 @@ export default function TrainingSection() {
               <div>
                 <div className="flex items-center space-x-3 text-xs font-mono text-amber-400 mb-3">
                   <BookOpen className="w-4 h-4" />
-                  <span>CURRICULUM BREAKDOWN</span>
+                  <span>DETAILED CURRICULUM TOPICS</span>
                 </div>
 
                 <h3 className="text-2xl font-extrabold text-white font-mono mb-3">
@@ -142,8 +186,8 @@ export default function TrainingSection() {
                 </p>
 
                 <div className="border-t border-white/10 pt-6 mb-6">
-                  <h4 className="text-xs font-mono text-gray-400 uppercase tracking-widest mb-4">
-                    Key Learning Objectives & Lessons:
+                  <h4 className="text-xs font-mono text-amber-400 uppercase tracking-widest mb-4">
+                    Detailed Learning Topics Covered:
                   </h4>
                   <div className="space-y-3">
                     {modules[selectedModule].lessons.map((lesson, idx) => (
@@ -156,19 +200,19 @@ export default function TrainingSection() {
                 </div>
               </div>
 
-              {/* Action & Resource Card */}
+              {/* Action & Contact Redirection */}
               <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center space-x-2 text-xs font-mono text-gray-400">
                   <ShieldCheck className="w-4 h-4 text-amber-400" />
-                  <span>Systematic Portfolio Discipline Included</span>
+                  <span>Live Market Mentorship & Practical Setup</span>
                 </div>
 
                 <button
-                  onClick={() => alert("Enrollment / Access link: Detailed training material is available for active DeltaFox platform members.")}
+                  onClick={scrollToContact}
                   className="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] flex items-center justify-center space-x-2"
                 >
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>ACCESS MODULE</span>
+                  <Mail className="w-4 h-4" />
+                  <span>CONTACT US TO JOIN TRAINING PROGRAM</span>
                 </button>
               </div>
 
@@ -183,9 +227,9 @@ export default function TrainingSection() {
             <div className="p-3 w-fit rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-4">
               <TrendingUp className="w-6 h-6" />
             </div>
-            <h4 className="text-lg font-bold text-white font-mono mb-2">Probability Edge</h4>
+            <h4 className="text-lg font-bold text-white font-mono mb-2">Probability & Statistical Edge</h4>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Trade strategies with built-in 70%+ win rates, capturing theta decay and volatility overpricing systematically.
+              Understand market probabilities, implied volatility skew, and theta decay to construct high-probability option trades with statistical edge.
             </p>
           </div>
 
@@ -193,9 +237,9 @@ export default function TrainingSection() {
             <div className="p-3 w-fit rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mb-4">
               <ShieldCheck className="w-6 h-6" />
             </div>
-            <h4 className="text-lg font-bold text-white font-mono mb-2">Controlled Capital Allocation</h4>
+            <h4 className="text-lg font-bold text-white font-mono mb-2">Live Market Execution</h4>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Enforce strict position sizing rules (1-3% max risk per trade) to prevent drawdown catastrophic losses.
+              Experience hands-on live market analysis, order execution, position sizing, and real-time adjustments during actual trading hours.
             </p>
           </div>
 
@@ -203,9 +247,9 @@ export default function TrainingSection() {
             <div className="p-3 w-fit rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-4">
               <Layers className="w-6 h-6" />
             </div>
-            <h4 className="text-lg font-bold text-white font-mono mb-2">Compounding Growth</h4>
+            <h4 className="text-lg font-bold text-white font-mono mb-2">Institutional Risk Management</h4>
             <p className="text-xs text-gray-400 leading-relaxed">
-              Standardized trade entry and exit playbooks that allow consistent compounding of trading profits over financial cycles.
+              Protect trading capital using strict position sizing rules, dynamic delta hedging, and systematic drawdown limits across financial cycles.
             </p>
           </div>
         </div>
