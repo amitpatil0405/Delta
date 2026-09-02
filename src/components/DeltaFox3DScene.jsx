@@ -101,66 +101,78 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
-    // Target rotation derived from mouse position
-    const targetRotX = mousePos.current.y * 0.4 + (scrollYProgress ? scrollYProgress * 0.5 : 0);
-    const targetRotY = mousePos.current.x * 0.5 + (scrollYProgress ? scrollYProgress * 1.2 : 0);
+    // Target rotation derived from mouse movement (Left/Right -> Y-rot, Up/Down -> X-rot)
+    const targetRotX = mousePos.current.y * 0.45 + scrollYProgress * 0.8;
+    const targetRotY = mousePos.current.x * 0.6 + scrollYProgress * 2.2;
+    const targetRotZ = scrollYProgress * 0.4;
 
-    // Smooth lerp interaction
-    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.05);
-    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.05);
+    // Smooth lerp rotation towards cursor/scroll
+    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
+    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
+    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
 
-    // Scroll-driven position translation
-    if (scrollYProgress) {
-      meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, -scrollYProgress * 3, 0.05);
-      meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, -scrollYProgress * 1.5, 0.05);
-    }
+    // Scroll-driven transition: Rotate, shift to side (+X), move backward (-Z), scale down
+    const targetPosX = scrollYProgress * 2.2 + mousePos.current.x * 0.3;
+    const targetPosY = -scrollYProgress * 1.8 + mousePos.current.y * 0.3;
+    const targetPosZ = -scrollYProgress * 4.5;
+    const targetScale = Math.max(0.45, 1 - scrollYProgress * 0.55);
 
-    // Continuous subtle floating animation
-    meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 1.5) * 0.002;
+    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetPosX, 0.08);
+    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetPosY, 0.08);
+    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetPosZ, 0.08);
+
+    meshRef.current.scale.setScalar(
+      THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.08)
+    );
+
+    // Continuous subtle breathing motion
+    meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 1.8) * 0.003;
   });
 
   return (
     <group ref={meshRef}>
-      {/* Outer Metallic Sharp Mesh */}
+      {/* Outer Metallic Premium Facet Mesh with Soft Reflections */}
       <mesh geometry={geometry}>
         <meshStandardMaterial
-          color="#151518"
-          metalness={0.92}
-          roughness={0.18}
-          envMapIntensity={2.5}
+          color="#18181b"
+          metalness={0.96}
+          roughness={0.12}
+          envMapIntensity={3.2}
           wireframe={false}
         />
       </mesh>
 
-      {/* Gold/Orange Accented Wireframe Overlay for High-Tech feel */}
-      <mesh geometry={geometry} scale={1.01} ref={wireframeRef}>
+      {/* Amber/Gold Accented High-Tech Facet Wireframe */}
+      <mesh geometry={geometry} scale={1.012} ref={wireframeRef}>
         <meshBasicMaterial
           color="#d97706"
           wireframe={true}
           transparent={true}
-          opacity={0.35}
+          opacity={0.4}
         />
       </mesh>
 
-      {/* Internal Core Amber Glow */}
-      <pointLight color="#f59e0b" intensity={3.5} distance={5} position={[0, 0, 0.2]} />
+      {/* Internal Core Amber/Gold Subtle Glow */}
+      <pointLight color="#f59e0b" intensity={4.5} distance={6} position={[0, 0, 0.3]} />
     </group>
   );
 }
 
-// Interactive 3D Perspective Grid
-function FinancialGrid() {
+// Interactive 3D Perspective Grid reacting to scroll
+function FinancialGrid({ scrollYProgress }) {
   const gridRef = useRef();
 
   useFrame((state) => {
     if (gridRef.current) {
-      gridRef.current.position.z = (state.clock.elapsedTime * 0.5) % 2;
+      const speed = 0.5 + scrollYProgress * 1.5;
+      gridRef.current.position.z = (state.clock.elapsedTime * speed) % 2;
+      gridRef.current.rotation.x = -Math.PI / (2.3 - scrollYProgress * 0.4);
     }
   });
 
   return (
-    <group position={[0, -2.5, 0]} rotation={[-Math.PI / 2.3, 0, 0]}>
-      <gridHelper args={[40, 40, '#d97706', '#222222']} ref={gridRef} />
+    <group position={[0, -2.5 - scrollYProgress * 1.2, -scrollYProgress * 2]} rotation={[-Math.PI / 2.3, 0, 0]}>
+      <gridHelper args={[50, 50, '#d97706', '#222222']} ref={gridRef} />
     </group>
   );
 }
@@ -237,8 +249,8 @@ export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
           <MetallicFoxHead mousePos={mousePos} scrollYProgress={scrollYProgress} />
         </Float>
 
-        {/* Financial 3D Grid */}
-        <FinancialGrid />
+        {/* Financial 3D Grid with Scroll Perspective */}
+        <FinancialGrid scrollYProgress={scrollYProgress} />
 
         {/* Floating Particles */}
         <FloatingParticles count={50} />
