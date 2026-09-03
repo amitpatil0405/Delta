@@ -103,13 +103,45 @@ async function fetchYahooFinanceChart(yahooSymbol, range = '1d', interval = '5m'
 
 // Initial verified market indices baseline (Updated real market close values)
 const BASE_INDICES = [
-  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23873.45, change: -302.20, pChange: -1.25, high: 24025.40, low: 23873.45, open: 24010.00, prevClose: 24175.65, volume: '1.4B', sparkline: [24175, 24120, 24080, 24025, 23950, 23900, 23873.45] },
-  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57380.60, change: -115.70, pChange: -0.20, high: 57753.60, low: 57380.60, open: 57500.00, prevClose: 57496.30, volume: '910M', sparkline: [57496, 57620, 57753, 57600, 57480, 57380.60] },
-  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76152.86, change: -804.41, pChange: -1.05, high: 76924.48, low: 76152.86, open: 76800.00, prevClose: 76957.27, volume: '1.1B', sparkline: [76957, 76850, 76600, 76400, 76250, 76152.86] },
-  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30838.85, change: -442.85, pChange: -1.42, high: 31185.70, low: 30621.65, open: 31100.00, prevClose: 31281.70, volume: '480M', sparkline: [31281, 31185, 31050, 30900, 30750, 30838.85] },
-  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 25923.05, change: +110.00, pChange: +0.43, high: 26100.10, low: 25922.90, open: 25850.00, prevClose: 25813.05, volume: '680M', sparkline: [25813, 25890, 26020, 26100, 25980, 25923.05] },
-  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63235.20, change: +233.60, pChange: +0.37, high: 63253.20, low: 62902.35, open: 63050.00, prevClose: 63001.60, volume: '590M', sparkline: [63001, 63100, 62950, 63150, 63253, 63235.20] },
+  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23873.45, change: -41.00, pChange: -0.17, high: 24025.40, low: 23873.45, open: 23997.95, prevClose: 23914.45, volume: '1.4B', sparkline: [23914, 23980, 24025, 23990, 23920, 23880, 23873.45] },
+  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57380.60, change: 208.60, pChange: 0.36, high: 57753.60, low: 57380.60, open: 57497.85, prevClose: 57172.00, volume: '910M', sparkline: [57172, 57300, 57550, 57753, 57600, 57450, 57380.60] },
+  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76152.86, change: -417.49, pChange: -0.55, high: 76924.48, low: 76152.86, open: 76724.95, prevClose: 76570.35, volume: '1.1B', sparkline: [76570, 76724, 76924, 76600, 76400, 76250, 76152.86] },
+  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30838.85, change: -264.05, pChange: -0.85, high: 31185.70, low: 30621.65, open: 31180.80, prevClose: 31102.90, volume: '480M', sparkline: [31102, 31185, 31050, 30900, 30750, 30838.85] },
+  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 25923.05, change: 110.00, pChange: 0.43, high: 26100.10, low: 25922.90, open: 25967.05, prevClose: 25813.05, volume: '680M', sparkline: [25813, 25890, 26020, 26100, 25980, 25923.05] },
+  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63235.20, change: 233.60, pChange: 0.37, high: 63253.20, low: 62902.35, open: 63186.15, prevClose: 63001.60, volume: '590M', sparkline: [63001, 63100, 62950, 63150, 63253, 63235.20] },
 ];
+
+const BASE_STOCKS = {
+  'HDFCBANK': { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', price: 706.65, change: 5.85, pChange: 0.83, high: 712.60, low: 705.00, open: 705.00, prevClose: 700.80, volume: '27.7M' },
+  'ICICIBANK': { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', price: 1430.00, change: 3.50, pChange: 0.25, high: 1452.00, low: 1430.00, open: 1438.30, prevClose: 1426.50, volume: '10.5M' },
+  'SBIN': { symbol: 'SBIN', name: 'State Bank of India', price: 1023.40, change: 2.50, pChange: 0.24, high: 1036.00, low: 1021.10, open: 1028.90, prevClose: 1020.90, volume: '18.3M' },
+  'KOTAKBANK': { symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank', price: 421.15, change: -2.35, pChange: -0.55, high: 426.90, low: 421.15, open: 425.00, prevClose: 423.50, volume: '4.2M' },
+  'AXISBANK': { symbol: 'AXISBANK', name: 'Axis Bank Ltd.', price: 1267.00, change: 13.10, pChange: 1.04, high: 1278.90, low: 1260.20, open: 1265.00, prevClose: 1253.90, volume: '6.7M' },
+  'BAJAJFINSV': { symbol: 'BAJAJFINSV', name: 'Bajaj Finserv Ltd.', price: 1992.10, change: 2.10, pChange: 0.11, high: 1998.00, low: 1970.00, open: 1998.00, prevClose: 1990.00, volume: '3.1M' },
+  'SBICARD': { symbol: 'SBICARD', name: 'SBI Cards & Payment Services', price: 661.00, change: 25.85, pChange: 4.07, high: 667.40, low: 641.00, open: 641.00, prevClose: 635.15, volume: '2.8M' },
+  'TCS': { symbol: 'TCS', name: 'Tata Consultancy Services', price: 2320.10, change: -27.90, pChange: -1.19, high: 2353.60, low: 2316.10, open: 2353.60, prevClose: 2348.00, volume: '1.9M' },
+  'INFY': { symbol: 'INFY', name: 'Infosys Limited', price: 1130.30, change: -9.70, pChange: -0.85, high: 1144.00, low: 1122.50, open: 1144.00, prevClose: 1140.00, volume: '6.1M' },
+  'WIPRO': { symbol: 'WIPRO', name: 'Wipro Limited', price: 175.72, change: -1.37, pChange: -0.77, high: 178.04, low: 175.72, open: 177.50, prevClose: 177.09, volume: '8.4M' },
+  'HCLTECH': { symbol: 'HCLTECH', name: 'HCL Technologies', price: 1319.00, change: -12.50, pChange: -0.94, high: 1345.00, low: 1308.00, open: 1345.00, prevClose: 1331.50, volume: '3.2M' },
+  'TECHM': { symbol: 'TECHM', name: 'Tech Mahindra Ltd.', price: 1598.00, change: -25.00, pChange: -1.54, high: 1625.60, low: 1592.00, open: 1623.00, prevClose: 1623.00, volume: '2.5M' },
+  'RELIANCE': { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 1302.50, change: -10.60, pChange: -0.81, high: 1316.80, low: 1302.50, open: 1313.10, prevClose: 1313.10, volume: '9.7M' },
+  'ONGC': { symbol: 'ONGC', name: 'Oil & Natural Gas Corp', price: 236.00, change: -1.50, pChange: -0.63, high: 237.80, low: 235.00, open: 237.50, prevClose: 237.50, volume: '14.1M' },
+  'BPCL': { symbol: 'BPCL', name: 'Bharat Petroleum Corp', price: 320.05, change: 0.45, pChange: 0.14, high: 321.95, low: 317.20, open: 318.40, prevClose: 319.60, volume: '9.3M' },
+  'IOC': { symbol: 'IOC', name: 'Indian Oil Corporation', price: 137.80, change: 0.80, pChange: 0.58, high: 137.80, low: 136.25, open: 136.30, prevClose: 137.00, volume: '11.2M' },
+  'ATGL': { symbol: 'ATGL', name: 'Adani Total Gas Ltd.', price: 614.05, change: -0.90, pChange: -0.15, high: 622.00, low: 612.95, open: 618.80, prevClose: 614.95, volume: '4.5M' },
+  'GAIL': { symbol: 'GAIL', name: 'GAIL (India) Ltd.', price: 174.67, change: 1.67, pChange: 0.97, high: 174.67, low: 172.01, open: 173.19, prevClose: 173.00, volume: '8.7M' },
+  'ITC': { symbol: 'ITC', name: 'ITC Limited', price: 263.00, change: -3.30, pChange: -1.24, high: 267.60, low: 262.35, open: 266.50, prevClose: 266.30, volume: '11.8M' },
+  'HINDUNILVR': { symbol: 'HINDUNILVR', name: 'Hindustan Unilever Ltd.', price: 1962.00, change: -13.00, pChange: -0.66, high: 1978.90, low: 1959.90, open: 1978.90, prevClose: 1975.00, volume: '2.1M' },
+  'BRITANNIA': { symbol: 'BRITANNIA', name: 'Britannia Industries', price: 5130.00, change: -24.00, pChange: -0.47, high: 5146.00, low: 5079.00, open: 5131.50, prevClose: 5154.00, volume: '620K' },
+  'MARICO': { symbol: 'MARICO', name: 'Marico Limited', price: 827.40, change: -1.95, pChange: -0.24, high: 832.85, low: 817.80, open: 829.35, prevClose: 829.35, volume: '3.4M' },
+  'GODREJCP': { symbol: 'GODREJCP', name: 'Godrej Consumer Products', price: 880.00, change: -25.00, pChange: -2.76, high: 893.00, low: 859.55, open: 893.00, prevClose: 905.00, volume: '2.2M' },
+  'TATACONSUM': { symbol: 'TATACONSUM', name: 'Tata Consumer Products', price: 1019.20, change: 7.20, pChange: 0.71, high: 1023.00, low: 1008.00, open: 1012.50, prevClose: 1012.00, volume: '1.9M' },
+  'MARUTI': { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', price: 12857.00, change: 8.00, pChange: 0.06, high: 12927.00, low: 12780.00, open: 12853.00, prevClose: 12849.00, volume: '880K' },
+  'M&M': { symbol: 'M&M', name: 'Mahindra & Mahindra Ltd.', price: 3150.00, change: -40.00, pChange: -1.25, high: 3210.00, low: 3150.00, open: 3200.00, prevClose: 3190.00, volume: '3.4M' },
+  'HEROMOTOCO': { symbol: 'HEROMOTOCO', name: 'Hero MotoCorp Ltd.', price: 5308.50, change: 8.50, pChange: 0.16, high: 5315.00, low: 5271.00, open: 5315.00, prevClose: 5300.00, volume: '750K' },
+  'BAJAJ-AUTO': { symbol: 'BAJAJ-AUTO', name: 'Bajaj Auto Ltd.', price: 11920.00, change: -210.00, pChange: -1.73, high: 12191.00, low: 11920.00, open: 12191.00, prevClose: 12130.00, volume: '620K' },
+  'EICHERMOT': { symbol: 'EICHERMOT', name: 'Eicher Motors Ltd.', price: 7690.00, change: -21.50, pChange: -0.28, high: 7738.50, low: 7597.00, open: 7715.00, prevClose: 7711.50, volume: '890K' }
+};
 
 /**
  * Fetch Live Indices Data from Yahoo Finance
@@ -117,11 +149,25 @@ const BASE_INDICES = [
 export async function getIndices() {
   const updatedIndices = await Promise.all(
     BASE_INDICES.map(async (item) => {
-      const result = await fetchYahooFinanceChart(item.yahooSymbol, '1d', '5m');
+      const result = await fetchYahooFinanceChart(item.yahooSymbol, '5d', '1d');
       if (result && result.meta) {
         const meta = result.meta;
-        const currentPrice = meta.regularMarketPrice ?? item.price;
-        const prevClose = meta.chartPreviousClose ?? meta.previousClose ?? item.prevClose;
+        let currentPrice = meta.regularMarketPrice ?? item.price;
+        let prevClose = item.prevClose;
+
+        if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
+          const closes = result.indicators.quote[0].close.filter(c => c !== null);
+          if (closes.length >= 2) {
+            currentPrice = closes[closes.length - 1];
+            prevClose = closes[closes.length - 2];
+          } else if (closes.length === 1) {
+            currentPrice = closes[0];
+            if (meta.chartPreviousClose || meta.previousClose) {
+              prevClose = meta.chartPreviousClose || meta.previousClose;
+            }
+          }
+        }
+
         const change = currentPrice - prevClose;
         const pChange = prevClose ? (change / prevClose) * 100 : 0;
 
@@ -162,11 +208,25 @@ export async function getQuote(symbol) {
   const symbolUpper = symbol.toUpperCase().trim();
   const yahooSymbol = getYahooSymbol(symbolUpper);
 
-  const result = await fetchYahooFinanceChart(yahooSymbol, '1d', '5m');
+  const result = await fetchYahooFinanceChart(yahooSymbol, '5d', '1d');
   if (result && result.meta) {
     const meta = result.meta;
-    const price = meta.regularMarketPrice ?? 0;
-    const prevClose = meta.chartPreviousClose ?? meta.previousClose ?? price;
+    let price = meta.regularMarketPrice ?? 0;
+    let prevClose = BASE_STOCKS[symbolUpper]?.prevClose ?? price;
+
+    if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
+      const closes = result.indicators.quote[0].close.filter(c => c !== null);
+      if (closes.length >= 2) {
+        price = closes[closes.length - 1];
+        prevClose = closes[closes.length - 2];
+      } else if (closes.length === 1) {
+        price = closes[0];
+        if (meta.chartPreviousClose || meta.previousClose) {
+          prevClose = meta.chartPreviousClose || meta.previousClose;
+        }
+      }
+    }
+
     const change = price - prevClose;
     const pChange = prevClose ? (change / prevClose) * 100 : 0;
 
@@ -174,7 +234,7 @@ export async function getQuote(symbol) {
       success: true,
       data: {
         symbol: symbolUpper,
-        name: meta.longName || meta.shortName || `${symbolUpper} Equity`,
+        name: meta.longName || meta.shortName || BASE_STOCKS[symbolUpper]?.name || `${symbolUpper} Equity`,
         sector: meta.instrumentType || 'Equity / Market Asset',
         price: parseFloat(price.toFixed(2)),
         change: parseFloat(change.toFixed(2)),
@@ -183,7 +243,7 @@ export async function getQuote(symbol) {
         high: meta.regularMarketDayHigh ? parseFloat(meta.regularMarketDayHigh.toFixed(2)) : price,
         low: meta.regularMarketDayLow ? parseFloat(meta.regularMarketDayLow.toFixed(2)) : price,
         prevClose: parseFloat(prevClose.toFixed(2)),
-        volume: meta.regularMarketVolume ? meta.regularMarketVolume.toLocaleString('en-IN') : 'N/A'
+        volume: meta.regularMarketVolume ? meta.regularMarketVolume.toLocaleString('en-IN') : (BASE_STOCKS[symbolUpper]?.volume || 'N/A')
       }
     };
   }
@@ -191,6 +251,9 @@ export async function getQuote(symbol) {
   // Fallback baseline search
   const foundIndex = BASE_INDICES.find(i => i.symbol === symbolUpper);
   if (foundIndex) return { success: true, data: foundIndex };
+
+  const foundStock = BASE_STOCKS[symbolUpper];
+  if (foundStock) return { success: true, data: foundStock };
 
   return {
     success: true,
