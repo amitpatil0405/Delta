@@ -48,10 +48,9 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'strategies', label: 'Strategies' },
-    { id: 'news', label: 'News' },
-    { id: 'training', label: 'Training' },
     { id: 'portfolio', label: 'Portfolio' },
+    { id: 'strategies', label: 'Strategies' },
+    { id: 'training', label: 'Training' },
     { id: 'about', label: 'About' },
     { id: 'contact', label: 'Contact' }
   ];
@@ -108,28 +107,14 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             ))}
           </div>
 
-          {/* Right Action & Market Status */}
+          {/* Right Action Button */}
           <div className="hidden sm:flex items-center space-x-4">
-
-            {/* IST Market Status Indicator */}
-            <div className="flex items-center space-x-2 bg-neutral-900/80 px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono">
-              <span
-                className={`w-2 h-2 rounded-full ${
-                  marketStatus.isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'
-                }`}
-              />
-              <span className="text-gray-300 text-[11px] uppercase font-semibold">
-                {marketStatus.status}
-              </span>
-            </div>
-
-            {/* Market Strategies CTA */}
             <button
-              onClick={() => handleNavClick('strategies')}
+              onClick={() => handleNavClick('portfolio')}
               className="relative inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 to-amber-600 rounded-lg hover:from-amber-300 hover:to-amber-500 transition-all duration-300 shadow-[0_0_20px_rgba(217,119,6,0.4)] group active:scale-95"
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>Market strategies</span>
+              <span>TRADING PORTFOLIO</span>
             </button>
           </div>
 

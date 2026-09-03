@@ -3,14 +3,10 @@ import { MarketProvider } from './context/MarketContext';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import DeltaFox3DScene from './components/DeltaFox3DScene';
-import LiveMarketCards from './components/LiveMarketCards';
-import StockWatchlistSection from './components/StockWatchlistSection';
-import OptionsChainSection from './components/OptionsChainSection';
+import PortfolioJournalSection from './components/PortfolioJournalSection';
 import OptionsStrategiesSection from './components/OptionsStrategiesSection';
-import MarketNewsSection from './components/MarketNewsSection';
 import TrainingSection from './components/TrainingSection';
 import BlueprintSection from './components/BlueprintSection';
-import PortfolioJournalSection from './components/PortfolioJournalSection';
 import AboutFounderSection from './components/AboutFounderSection';
 import ContactSection from './components/ContactSection';
 import Footer from './components/Footer';
@@ -40,38 +36,26 @@ export default function App() {
         <main className="flex-1 relative z-10">
           {/* 1. Hero Viewport */}
           <HeroSection
-            onExploreMarkets={() => handleNavigate('markets')}
+            onExplorePortfolio={() => handleNavigate('portfolio')}
             onExploreStrategies={() => handleNavigate('strategies')}
           />
 
-          {/* 2. Real-Time Market Overview */}
-          <LiveMarketCards />
-
-          {/* 3. Interactive Chart & Sector Watchlist */}
-          <StockWatchlistSection />
-
-          {/* 4. Options Chain & Terminal */}
-          <OptionsChainSection />
-
-          {/* 5. 3D Scroll-Driven Options Strategies & Payoff Diagrams */}
-          <OptionsStrategiesSection />
-
-          {/* 6. Market News & Insights */}
-          <MarketNewsSection />
-
-          {/* 7. Training & Options Education */}
-          <TrainingSection />
-
-          {/* 8. The DeltaFox Blueprint: Trader Mindset & Market Cycles */}
-          <BlueprintSection />
-
-          {/* 9. Portfolio & Trading Journal */}
+          {/* 2. Portfolio & Trading Journal */}
           <PortfolioJournalSection />
 
-          {/* 10. About DeltaFox & Founder Amit Patil */}
+          {/* 3. 3D Scroll-Driven Options Strategies & Payoff Diagrams */}
+          <OptionsStrategiesSection />
+
+          {/* 4. Training & Options Education */}
+          <TrainingSection />
+
+          {/* 5. The DeltaFox Blueprint: Trader Mindset & Market Cycles */}
+          <BlueprintSection />
+
+          {/* 6. About DeltaFox & Founder Amit Patil */}
           <AboutFounderSection />
 
-          {/* 11. Contact Section */}
+          {/* 7. Contact Section */}
           <ContactSection />
         </main>
 

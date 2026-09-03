@@ -1,37 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, ChevronRight, TrendingUp, TrendingDown } from 'lucide-react';
-import { getIndices } from '../services/marketData';
+import { BarChart3, ChevronRight, BookOpen } from 'lucide-react';
 
-export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
-  const [indices, setIndices] = useState([]);
+export default function HeroSection({ onExplorePortfolio, onExploreStrategies }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    async function loadTickerData() {
-      const res = await getIndices();
-      if (res.success && res.data) {
-        setIndices(res.data);
-      }
-    }
-    loadTickerData();
-    const interval = setInterval(loadTickerData, 10000);
-
     const timer = setTimeout(() => setLoaded(true), 100);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen pt-28 pb-16 flex flex-col justify-between overflow-hidden bg-transparent">
+    <section id="home" className="relative min-h-[85vh] pt-28 pb-16 flex flex-col justify-center items-center overflow-hidden bg-transparent">
 
       {/* Hero Lighting Gradients */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Main Viewport Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 md:pt-16 text-center flex-1 flex flex-col justify-center items-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
 
         {/* Animated Brand Badge */}
         <div
@@ -40,7 +26,7 @@ export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
           }`}
         >
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-          <span>Institutional Options & Market Intelligence</span>
+          <span>Systematic Options Trading & Portfolio Intelligence</span>
         </div>
 
         {/* Main Brand Title & Headings */}
@@ -60,7 +46,7 @@ export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          Systematic Options Trading • Market Intelligence • Risk Management
+          Systematic Options Trading • Portfolio Journal • Risk Management
         </p>
 
         <p
@@ -68,7 +54,7 @@ export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          DeltaFox is a premium market intelligence and options trading platform built around disciplined strategies, data-driven decisions and mathematical risk management.
+          DeltaFox is a premium options trading and market intelligence platform built around disciplined strategies, trade journaling, and mathematical risk management.
         </p>
 
         {/* Interactive CTA Buttons */}
@@ -78,10 +64,11 @@ export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
           }`}
         >
           <button
-            onClick={onExploreMarkets}
+            onClick={onExplorePortfolio}
             className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all duration-300 shadow-[0_0_30px_rgba(217,119,6,0.4)] flex items-center justify-center space-x-3 group active:scale-95"
           >
-            <span>EXPLORE MARKETS</span>
+            <BookOpen className="w-4 h-4 text-black" />
+            <span>VIEW TRADING PORTFOLIO</span>
             <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
 
@@ -94,51 +81,6 @@ export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
           </button>
         </div>
 
-      </div>
-
-      {/* Live Horizontal Yahoo Finance Market Ticker Bar */}
-      <div className="relative z-20 mt-12 border-t border-b border-white/10 bg-neutral-950/90 backdrop-blur-md py-3 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 flex items-center">
-          <div className="flex items-center space-x-2 pr-4 border-r border-white/10 text-xs font-mono text-amber-400 whitespace-nowrap z-10 bg-neutral-950">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>YAHOO LIVE TICKER</span>
-          </div>
-
-          <div className="flex-1 overflow-hidden relative">
-            {indices.length === 0 ? (
-              <div className="text-xs font-mono text-amber-500/80 px-4">
-                LOADING LIVE MARKET TICKER DATA...
-              </div>
-            ) : (
-              <div className="animate-marquee flex items-center space-x-8 pl-4">
-                {indices.concat(indices).map((item, idx) => {
-                  const isPos = item.change >= 0;
-                  return (
-                    <div
-                      key={`${item.symbol}-${idx}`}
-                      className="flex items-center space-x-3 whitespace-nowrap text-xs font-mono bg-neutral-900/50 px-3 py-1 rounded border border-white/5"
-                    >
-                      <span className="font-bold text-gray-200">{item.symbol}</span>
-                      <span className="text-gray-100">₹{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
-                      <span
-                        className={`flex items-center space-x-0.5 font-semibold ${
-                          isPos ? 'text-emerald-400' : 'text-rose-400'
-                        }`}
-                      >
-                        {isPos ? <TrendingUp className="w-3 h-3 inline" /> : <TrendingDown className="w-3 h-3 inline" />}
-                        <span>
-                          {isPos ? '+' : ''}
-                          {item.change.toFixed(2)} ({isPos ? '+' : ''}
-                          {item.pChange.toFixed(2)}%)
-                        </span>
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
     </section>
