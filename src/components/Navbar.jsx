@@ -48,6 +48,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
   const navItems = [
     { id: 'home', label: 'Home' },
+    { id: 'market-section', label: 'Market' },
     { id: 'portfolio', label: 'Portfolio' },
     { id: 'strategies', label: 'Strategies' },
     { id: 'training', label: 'Training' },

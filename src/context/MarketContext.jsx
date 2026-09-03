@@ -12,7 +12,7 @@ const INITIAL_SECTOR_WATCHLIST = [
       { symbol: 'SBIN', name: 'State Bank of India', price: 1023.40, change: 2.50, pChange: 0.24, high: 1036.00, low: 1021.10, volume: '18.3M' },
       { symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank', price: 421.15, change: -2.35, pChange: -0.55, high: 426.90, low: 421.15, volume: '4.2M' },
       { symbol: 'AXISBANK', name: 'Axis Bank Ltd.', price: 1267.00, change: 13.10, pChange: 1.04, high: 1278.90, low: 1260.20, volume: '6.7M' },
-      { symbol: 'BAJAJFINSV', name: 'Bajaj Finserv Ltd.', price: 1992.10, change: 2.10, pChange: 0.11, high: 1998.00, low: 1970.00, volume: '3.1M' },
+      { symbol: 'BAJFINANCE', name: 'Bajaj Finance Ltd.', price: 6845.00, change: 42.50, pChange: 0.62, high: 6890.00, low: 6802.00, volume: '2.1M' },
       { symbol: 'SBICARD', name: 'SBI Cards & Payment Services', price: 661.00, change: 25.85, pChange: 4.07, high: 667.40, low: 641.00, volume: '2.8M' }
     ]
   },
@@ -135,15 +135,43 @@ export function MarketProvider({ children }) {
     });
   };
 
-  // List all available unique symbols including indices and sector equities
-  const INDEX_SYMBOLS = ['NIFTY 50', 'BANK NIFTY', 'SENSEX', 'NIFTY IT', 'NIFTY FIN SERVICE', 'NIFTY MIDCAP 100'];
-  const ADDITIONAL_STOCKS = ['BHARTIARTL', 'SUNPHARMA', 'ADANIENT', 'ADANIPORTS', 'NTPC', 'POWERGRID'];
+  // List all 29 underlying assets required for Option Chain and Centralized Chart selection
+  const REQUIRED_UNDERLYINGS = [
+    'NIFTY 50',
+    'BANK NIFTY',
+    'SENSEX',
+    'RELIANCE',
+    'BHARTIARTL',
+    'HDFCBANK',
+    'ICICIBANK',
+    'SBIN',
+    'SBICARD',
+    'TCS',
+    'BAJFINANCE',
+    'LT',
+    'INFY',
+    'HINDUNILVR',
+    'SUNPHARMA',
+    'TITAN',
+    'KOTAKBANK',
+    'MARUTI',
+    'M&M',
+    'ADANIENT',
+    'ADANIPORTS',
+    'AXISBANK',
+    'TATAMOTORS',
+    'ITC',
+    'WIPRO',
+    'HCLTECH',
+    'BAJAJ-AUTO',
+    'NTPC',
+    'POWERGRID'
+  ];
 
   const allAvailableSymbols = Array.from(
     new Set([
-      ...INDEX_SYMBOLS,
-      ...watchlistSectors.flatMap(sec => sec.stocks.map(s => s.symbol)),
-      ...ADDITIONAL_STOCKS
+      ...REQUIRED_UNDERLYINGS,
+      ...watchlistSectors.flatMap(sec => sec.stocks.map(s => s.symbol))
     ])
   );
 

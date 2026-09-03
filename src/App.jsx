@@ -3,6 +3,10 @@ import { MarketProvider } from './context/MarketContext';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import DeltaFox3DScene from './components/DeltaFox3DScene';
+import MarketOverviewSection from './components/MarketOverviewSection';
+import ChartSection from './components/ChartSection';
+import SectorWatchlistSection from './components/SectorWatchlistSection';
+import OptionChainSection from './components/OptionChainSection';
 import PortfolioJournalSection from './components/PortfolioJournalSection';
 import OptionsStrategiesSection from './components/OptionsStrategiesSection';
 import TrainingSection from './components/TrainingSection';
@@ -40,7 +44,19 @@ export default function App() {
             onExploreStrategies={() => handleNavigate('strategies')}
           />
 
-          {/* 2. Portfolio & Trading Journal */}
+          {/* 2. Market Overview Section (Real Time Indices) */}
+          <MarketOverviewSection />
+
+          {/* 3. Institutional Line Chart */}
+          <ChartSection />
+
+          {/* 4. Sector Watchlist */}
+          <SectorWatchlistSection />
+
+          {/* 5. Institutional Options Chain */}
+          <OptionChainSection />
+
+          {/* 6. Portfolio & Trading Journal */}
           <PortfolioJournalSection />
 
           {/* 3. 3D Scroll-Driven Options Strategies & Payoff Diagrams */}

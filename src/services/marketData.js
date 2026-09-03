@@ -112,35 +112,55 @@ const BASE_INDICES = [
 ];
 
 const BASE_STOCKS = {
+  // Finance
   'HDFCBANK': { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', price: 706.65, change: 5.85, pChange: 0.83, high: 712.60, low: 705.00, open: 705.00, prevClose: 700.80, volume: '27.7M' },
   'ICICIBANK': { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', price: 1430.00, change: 3.50, pChange: 0.25, high: 1452.00, low: 1430.00, open: 1438.30, prevClose: 1426.50, volume: '10.5M' },
   'SBIN': { symbol: 'SBIN', name: 'State Bank of India', price: 1023.40, change: 2.50, pChange: 0.24, high: 1036.00, low: 1021.10, open: 1028.90, prevClose: 1020.90, volume: '18.3M' },
   'KOTAKBANK': { symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank', price: 421.15, change: -2.35, pChange: -0.55, high: 426.90, low: 421.15, open: 425.00, prevClose: 423.50, volume: '4.2M' },
   'AXISBANK': { symbol: 'AXISBANK', name: 'Axis Bank Ltd.', price: 1267.00, change: 13.10, pChange: 1.04, high: 1278.90, low: 1260.20, open: 1265.00, prevClose: 1253.90, volume: '6.7M' },
-  'BAJAJFINSV': { symbol: 'BAJAJFINSV', name: 'Bajaj Finserv Ltd.', price: 1992.10, change: 2.10, pChange: 0.11, high: 1998.00, low: 1970.00, open: 1998.00, prevClose: 1990.00, volume: '3.1M' },
+  'BAJFINANCE': { symbol: 'BAJFINANCE', name: 'Bajaj Finance Ltd.', price: 6845.00, change: 42.50, pChange: 0.62, high: 6890.00, low: 6802.00, open: 6810.00, prevClose: 6802.50, volume: '2.1M' },
   'SBICARD': { symbol: 'SBICARD', name: 'SBI Cards & Payment Services', price: 661.00, change: 25.85, pChange: 4.07, high: 667.40, low: 641.00, open: 641.00, prevClose: 635.15, volume: '2.8M' },
+
+  // IT
   'TCS': { symbol: 'TCS', name: 'Tata Consultancy Services', price: 2320.10, change: -27.90, pChange: -1.19, high: 2353.60, low: 2316.10, open: 2353.60, prevClose: 2348.00, volume: '1.9M' },
   'INFY': { symbol: 'INFY', name: 'Infosys Limited', price: 1130.30, change: -9.70, pChange: -0.85, high: 1144.00, low: 1122.50, open: 1144.00, prevClose: 1140.00, volume: '6.1M' },
   'WIPRO': { symbol: 'WIPRO', name: 'Wipro Limited', price: 175.72, change: -1.37, pChange: -0.77, high: 178.04, low: 175.72, open: 177.50, prevClose: 177.09, volume: '8.4M' },
   'HCLTECH': { symbol: 'HCLTECH', name: 'HCL Technologies', price: 1319.00, change: -12.50, pChange: -0.94, high: 1345.00, low: 1308.00, open: 1345.00, prevClose: 1331.50, volume: '3.2M' },
   'TECHM': { symbol: 'TECHM', name: 'Tech Mahindra Ltd.', price: 1598.00, change: -25.00, pChange: -1.54, high: 1625.60, low: 1592.00, open: 1623.00, prevClose: 1623.00, volume: '2.5M' },
+
+  // Oil & Gas
   'RELIANCE': { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 1302.50, change: -10.60, pChange: -0.81, high: 1316.80, low: 1302.50, open: 1313.10, prevClose: 1313.10, volume: '9.7M' },
   'ONGC': { symbol: 'ONGC', name: 'Oil & Natural Gas Corp', price: 236.00, change: -1.50, pChange: -0.63, high: 237.80, low: 235.00, open: 237.50, prevClose: 237.50, volume: '14.1M' },
   'BPCL': { symbol: 'BPCL', name: 'Bharat Petroleum Corp', price: 320.05, change: 0.45, pChange: 0.14, high: 321.95, low: 317.20, open: 318.40, prevClose: 319.60, volume: '9.3M' },
   'IOC': { symbol: 'IOC', name: 'Indian Oil Corporation', price: 137.80, change: 0.80, pChange: 0.58, high: 137.80, low: 136.25, open: 136.30, prevClose: 137.00, volume: '11.2M' },
   'ATGL': { symbol: 'ATGL', name: 'Adani Total Gas Ltd.', price: 614.05, change: -0.90, pChange: -0.15, high: 622.00, low: 612.95, open: 618.80, prevClose: 614.95, volume: '4.5M' },
   'GAIL': { symbol: 'GAIL', name: 'GAIL (India) Ltd.', price: 174.67, change: 1.67, pChange: 0.97, high: 174.67, low: 172.01, open: 173.19, prevClose: 173.00, volume: '8.7M' },
+
+  // FMCG
   'ITC': { symbol: 'ITC', name: 'ITC Limited', price: 263.00, change: -3.30, pChange: -1.24, high: 267.60, low: 262.35, open: 266.50, prevClose: 266.30, volume: '11.8M' },
   'HINDUNILVR': { symbol: 'HINDUNILVR', name: 'Hindustan Unilever Ltd.', price: 1962.00, change: -13.00, pChange: -0.66, high: 1978.90, low: 1959.90, open: 1978.90, prevClose: 1975.00, volume: '2.1M' },
   'BRITANNIA': { symbol: 'BRITANNIA', name: 'Britannia Industries', price: 5130.00, change: -24.00, pChange: -0.47, high: 5146.00, low: 5079.00, open: 5131.50, prevClose: 5154.00, volume: '620K' },
   'MARICO': { symbol: 'MARICO', name: 'Marico Limited', price: 827.40, change: -1.95, pChange: -0.24, high: 832.85, low: 817.80, open: 829.35, prevClose: 829.35, volume: '3.4M' },
   'GODREJCP': { symbol: 'GODREJCP', name: 'Godrej Consumer Products', price: 880.00, change: -25.00, pChange: -2.76, high: 893.00, low: 859.55, open: 893.00, prevClose: 905.00, volume: '2.2M' },
   'TATACONSUM': { symbol: 'TATACONSUM', name: 'Tata Consumer Products', price: 1019.20, change: 7.20, pChange: 0.71, high: 1023.00, low: 1008.00, open: 1012.50, prevClose: 1012.00, volume: '1.9M' },
+
+  // Automobile
   'MARUTI': { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', price: 12857.00, change: 8.00, pChange: 0.06, high: 12927.00, low: 12780.00, open: 12853.00, prevClose: 12849.00, volume: '880K' },
   'M&M': { symbol: 'M&M', name: 'Mahindra & Mahindra Ltd.', price: 3150.00, change: -40.00, pChange: -1.25, high: 3210.00, low: 3150.00, open: 3200.00, prevClose: 3190.00, volume: '3.4M' },
-  'HEROMOTOCO': { symbol: 'HEROMOTOCO', name: 'Hero MotoCorp Ltd.', price: 5308.50, change: 8.50, pChange: 0.16, high: 5315.00, low: 5271.00, open: 5315.00, prevClose: 5300.00, volume: '750K' },
+  'HEROMOTOCO': { symbol: 'HEROMOTOCO', name: 'Hero MotoCorp Ltd.', price: 5308.50, change: 8.50, pChange: 0.16, high: 5315.00, low: 5271.00, open: 5300.00, volume: '750K' },
   'BAJAJ-AUTO': { symbol: 'BAJAJ-AUTO', name: 'Bajaj Auto Ltd.', price: 11920.00, change: -210.00, pChange: -1.73, high: 12191.00, low: 11920.00, open: 12191.00, prevClose: 12130.00, volume: '620K' },
-  'EICHERMOT': { symbol: 'EICHERMOT', name: 'Eicher Motors Ltd.', price: 7690.00, change: -21.50, pChange: -0.28, high: 7738.50, low: 7597.00, open: 7715.00, prevClose: 7711.50, volume: '890K' }
+  'EICHERMOT': { symbol: 'EICHERMOT', name: 'Eicher Motors Ltd.', price: 7690.00, change: -21.50, pChange: -0.28, high: 7738.50, low: 7597.00, open: 7715.00, prevClose: 7711.50, volume: '890K' },
+
+  // Additional Option Chain / Underlyings
+  'BHARTIARTL': { symbol: 'BHARTIARTL', name: 'Bharti Airtel Ltd.', price: 1680.50, change: 12.30, pChange: 0.74, high: 1695.00, low: 1672.00, open: 1675.00, prevClose: 1668.20, volume: '5.8M' },
+  'LT': { symbol: 'LT', name: 'Larsen & Toubro Ltd.', price: 3580.00, change: -18.50, pChange: -0.51, high: 3612.00, low: 3565.00, open: 3600.00, prevClose: 3598.50, volume: '1.8M' },
+  'SUNPHARMA': { symbol: 'SUNPHARMA', name: 'Sun Pharmaceutical Industries', price: 1785.00, change: 14.20, pChange: 0.80, high: 1798.00, low: 1770.00, open: 1772.00, prevClose: 1770.80, volume: '2.4M' },
+  'TITAN': { symbol: 'TITAN', name: 'Titan Company Ltd.', price: 3420.00, change: -28.00, pChange: -0.81, high: 3465.00, low: 3410.00, open: 3455.00, prevClose: 3448.00, volume: '1.2M' },
+  'ADANIENT': { symbol: 'ADANIENT', name: 'Adani Enterprises Ltd.', price: 2950.00, change: 35.00, pChange: 1.20, high: 2980.00, low: 2910.00, open: 2920.00, prevClose: 2915.00, volume: '3.6M' },
+  'ADANIPORTS': { symbol: 'ADANIPORTS', name: 'Adani Ports & SEZ', price: 1340.00, change: 8.50, pChange: 0.64, high: 1355.00, low: 1330.00, open: 1335.00, prevClose: 1331.50, volume: '2.9M' },
+  'TATAMOTORS': { symbol: 'TATAMOTORS', name: 'Tata Motors Ltd.', price: 920.00, change: -6.50, pChange: -0.70, high: 932.00, low: 915.00, open: 928.00, prevClose: 926.50, volume: '7.1M' },
+  'NTPC': { symbol: 'NTPC', name: 'NTPC Limited', price: 385.00, change: 2.10, pChange: 0.55, high: 388.50, low: 382.00, open: 383.50, prevClose: 382.90, volume: '8.9M' },
+  'POWERGRID': { symbol: 'POWERGRID', name: 'Power Grid Corp of India', price: 325.00, change: 1.80, pChange: 0.56, high: 328.00, low: 322.50, open: 323.50, prevClose: 323.20, volume: '6.4M' }
 };
 
 /**
