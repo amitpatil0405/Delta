@@ -36,8 +36,8 @@ export default function App() {
         {/* Transparent Glass Navigation */}
         <Navbar activePage={activePage} onNavigate={handleNavigate} />
 
-        {/* Main Content Sections */}
-        <main className="flex-1">
+        {/* Main Content Sections with relative z-10 stacking */}
+        <main className="flex-1 relative z-10">
           {/* 1. Hero Viewport */}
           <HeroSection
             onExploreMarkets={() => handleNavigate('markets')}

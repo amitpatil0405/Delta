@@ -113,12 +113,12 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
     meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.06);
     meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.06);
 
-    // Dynamic positioning across the entire viewport height
-    // Oscillates between left and right margins, floating in the background
-    const targetPosX = Math.sin(scrollVal * Math.PI * 2.5) * 2.0 + mousePos.current.x * 0.4;
-    const targetPosY = Math.cos(scrollVal * Math.PI * 1.8) * 0.8 + mousePos.current.y * 0.4;
-    const targetPosZ = -1.2 + Math.sin(scrollVal * Math.PI * 3) * 0.8;
-    const targetScale = 0.95 + Math.sin(scrollVal * Math.PI * 2) * 0.2;
+    // Dynamic positioning across top viewport through Options Chain section
+    // Moves deeper into background (-Z) so it never clips or overlaps text/cards
+    const targetPosX = Math.sin(scrollVal * Math.PI * 2.5) * 1.8 + mousePos.current.x * 0.3;
+    const targetPosY = Math.cos(scrollVal * Math.PI * 1.8) * 0.6 + mousePos.current.y * 0.3;
+    const targetPosZ = -2.5 + Math.sin(scrollVal * Math.PI * 3) * 0.5;
+    const targetScale = 0.8 + Math.sin(scrollVal * Math.PI * 2) * 0.15;
 
     meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetPosX, 0.06);
     meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetPosY, 0.06);
@@ -161,10 +161,12 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   );
 }
 
-// Main 3D Canvas Scene Container - Fixed persistent background across whole site
+// Main 3D Canvas Scene Container - Background through Options Chain section only
 export default function DeltaFox3DScene() {
   const mousePos = useRef({ x: 0, y: 0 });
   const scrollYProgress = useRef(0);
+  const containerRef = useRef(null);
+  const [isVisible, setIsVisible] = React.useState(true);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -174,6 +176,17 @@ export default function DeltaFox3DScene() {
     };
 
     const handleScroll = () => {
+      const optionsElem = document.getElementById('options');
+      if (optionsElem) {
+        const optionsRect = optionsElem.getBoundingClientRect();
+        // Hide 3D scene when scrolling past the bottom of the Options Chain section
+        if (optionsRect.bottom < 0) {
+          setIsVisible(false);
+        } else {
+          setIsVisible(true);
+        }
+      }
+
       const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
       if (maxScroll > 0) {
         scrollYProgress.current = window.scrollY / maxScroll;
@@ -191,7 +204,12 @@ export default function DeltaFox3DScene() {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden opacity-90">
+    <div
+      ref={containerRef}
+      className={`fixed inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-700 ${
+        isVisible ? 'opacity-80' : 'opacity-0'
+      }`}
+    >
       <Canvas
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ width: '100%', height: '100%' }}
