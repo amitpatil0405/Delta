@@ -19,7 +19,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     };
     window.addEventListener('scroll', handleScroll);
 
-    const sectionIds = ['home', 'strategies', 'news', 'training', 'portfolio', 'about', 'contact'];
+    const sectionIds = ['home', 'market-section', 'charts-section', 'watchlist-section', 'options', 'portfolio', 'strategies', 'training', 'about', 'contact'];
     const observerOptions = {
       root: null,
       rootMargin: '-20% 0px -60% 0px',
@@ -29,7 +29,12 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     const handleIntersect = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          setCurrentSection(entry.target.id);
+          const id = entry.target.id;
+          if (id === 'market-section' || id === 'charts-section' || id === 'watchlist-section' || id === 'options') {
+            setCurrentSection('market-section');
+          } else {
+            setCurrentSection(id);
+          }
         }
       });
     };

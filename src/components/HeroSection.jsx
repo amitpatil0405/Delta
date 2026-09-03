@@ -50,11 +50,11 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
         </p>
 
         <p
-          className={`mt-4 text-xs sm:text-sm text-gray-500 max-w-2xl transition-all duration-700 delay-300 ${
+          className={`mt-6 text-sm sm:text-base text-gray-400/90 leading-relaxed max-w-3xl transition-all duration-700 delay-300 font-normal ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          DeltaFox is a premium options trading and market intelligence platform built around disciplined strategies, trade journaling, and mathematical risk management.
+          At DeltaFox, we bridge the gap between structural engineering precision and institutional-grade financial markets. Founded on the core principles of non-directional probability, mathematical risk management, and rigorous capital preservation, we transform complex options trading into a disciplined, systematic science.
         </p>
 
         {/* Interactive CTA Buttons */}
