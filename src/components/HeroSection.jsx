@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart3, ChevronRight, TrendingUp, TrendingDown } from 'lucide-react';
-import DeltaFox3DScene from './DeltaFox3DScene';
 import { getIndices } from '../services/marketData';
 
 export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
   const [indices, setIndices] = useState([]);
   const [loaded, setLoaded] = useState(false);
-  const [scrollYProgress, setScrollYProgress] = useState(0);
 
   useEffect(() => {
     async function loadTickerData() {
@@ -18,27 +16,15 @@ export default function HeroSection({ onExploreMarkets, onExploreStrategies }) {
     loadTickerData();
     const interval = setInterval(loadTickerData, 10000);
 
-    const handleScroll = () => {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      if (maxScroll > 0) {
-        setScrollYProgress(window.scrollY / maxScroll);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
     const timer = setTimeout(() => setLoaded(true), 100);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       clearInterval(interval);
       clearTimeout(timer);
     };
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen pt-28 pb-16 flex flex-col justify-between overflow-hidden bg-[#050505]">
-
-      {/* 3D Visual Scene Background with Scroll-Driven Animation Binding */}
-      <DeltaFox3DScene scrollYProgress={scrollYProgress} />
+    <section id="home" className="relative min-h-screen pt-28 pb-16 flex flex-col justify-between overflow-hidden bg-transparent">
 
       {/* Hero Lighting Gradients */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />

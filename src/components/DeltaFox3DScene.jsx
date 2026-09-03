@@ -97,34 +97,35 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
     return geom;
   }, []);
 
-  // Frame animation reacting to mouse cursor & scroll position
+  // Frame animation reacting to mouse cursor & full website scroll position
   useFrame((state) => {
     if (!meshRef.current) return;
 
-    // Mouse orientation mapping:
-    // mousePos.x: -1 (left) to +1 (right) -> look left (Y rot positive) / look right (Y rot negative)
-    // mousePos.y: -1 (bottom/down) to +1 (top/up) -> look down (X rot positive) / look up (X rot negative)
-    const targetRotY = mousePos.current.x * 0.7 + scrollYProgress * 1.8;
-    const targetRotX = -mousePos.current.y * 0.5 + scrollYProgress * 0.6;
-    const targetRotZ = mousePos.current.x * 0.15 + scrollYProgress * 0.3;
+    const scrollVal = scrollYProgress.current;
+
+    // Continuous 3D rotation driven by cursor and full site scroll
+    const targetRotY = mousePos.current.x * 0.8 + scrollVal * Math.PI * 3;
+    const targetRotX = -mousePos.current.y * 0.6 + Math.sin(scrollVal * Math.PI * 2) * 0.4;
+    const targetRotZ = mousePos.current.x * 0.2 + Math.cos(scrollVal * Math.PI * 2) * 0.2;
 
     // Smooth lerp rotation towards target direction
-    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
-    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
-    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
+    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.06);
+    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.06);
+    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.06);
 
-    // Scroll-driven transition: Rotate, shift to side (+X), move backward (-Z), scale down
-    const targetPosX = scrollYProgress * 2.2 + mousePos.current.x * 0.3;
-    const targetPosY = -scrollYProgress * 1.8 + mousePos.current.y * 0.3;
-    const targetPosZ = -scrollYProgress * 4.5;
-    const targetScale = Math.max(0.45, 1 - scrollYProgress * 0.55);
+    // Dynamic positioning across the entire viewport height
+    // Oscillates between left and right margins, floating in the background
+    const targetPosX = Math.sin(scrollVal * Math.PI * 2.5) * 2.0 + mousePos.current.x * 0.4;
+    const targetPosY = Math.cos(scrollVal * Math.PI * 1.8) * 0.8 + mousePos.current.y * 0.4;
+    const targetPosZ = -1.2 + Math.sin(scrollVal * Math.PI * 3) * 0.8;
+    const targetScale = 0.95 + Math.sin(scrollVal * Math.PI * 2) * 0.2;
 
-    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetPosX, 0.08);
-    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetPosY, 0.08);
-    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetPosZ, 0.08);
+    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetPosX, 0.06);
+    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetPosY, 0.06);
+    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetPosZ, 0.06);
 
     meshRef.current.scale.setScalar(
-      THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.08)
+      THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.06)
     );
 
     // Continuous subtle breathing motion
@@ -160,24 +161,37 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   );
 }
 
-// Main 3D Canvas Scene Container
-export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
+// Main 3D Canvas Scene Container - Fixed persistent background across whole site
+export default function DeltaFox3DScene() {
   const mousePos = useRef({ x: 0, y: 0 });
+  const scrollYProgress = useRef(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
-      // Normalize cursor position: x from -1 (left) to 1 (right), y from -1 (bottom) to 1 (top)
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = -(e.clientY / window.innerHeight) * 2 + 1;
       mousePos.current = { x, y };
     };
 
+    const handleScroll = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (maxScroll > 0) {
+        scrollYProgress.current = window.scrollY / maxScroll;
+      }
+    };
+
     window.addEventListener('pointermove', handleMouseMove);
-    return () => window.removeEventListener('pointermove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('pointermove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   return (
-    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden opacity-90">
       <Canvas
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ width: '100%', height: '100%' }}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { MarketProvider } from './context/MarketContext';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
+import DeltaFox3DScene from './components/DeltaFox3DScene';
 import LiveMarketCards from './components/LiveMarketCards';
 import StockWatchlistSection from './components/StockWatchlistSection';
 import OptionsChainSection from './components/OptionsChainSection';
@@ -27,7 +28,10 @@ export default function App() {
 
   return (
     <MarketProvider>
-      <div className="min-h-screen bg-[#050505] text-gray-100 flex flex-col selection:bg-amber-500/30 selection:text-amber-200">
+      <div className="min-h-screen bg-[#050505] text-gray-100 flex flex-col selection:bg-amber-500/30 selection:text-amber-200 relative">
+
+        {/* Persistent 3D Metallic DeltaFox Background across entire website */}
+        <DeltaFox3DScene />
 
         {/* Transparent Glass Navigation */}
         <Navbar activePage={activePage} onNavigate={handleNavigate} />
