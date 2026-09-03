@@ -160,88 +160,6 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   );
 }
 
-// 3D Vertically Moving Metallic Boxes / Pillars Component
-function VerticalMovingBoxes({ scrollYProgress }) {
-  const groupRef = useRef();
-  const boxesRef = useRef([]);
-
-  // Generate 24 sleek financial 3D box pillars with amber & neon green glowing borders
-  const boxesData = useMemo(() => {
-    const boxes = [];
-    const count = 24;
-    for (let i = 0; i < count; i++) {
-      const x = (i - count / 2) * 0.58;
-      const z = -2.5 - Math.random() * 1.5;
-      const initialY = (Math.random() - 0.5) * 3.5;
-      const speed = 0.6 + Math.random() * 1.1;
-      const width = 0.18 + Math.random() * 0.12;
-      const height = 0.6 + Math.random() * 1.2;
-      const depth = 0.18 + Math.random() * 0.12;
-      const isGreen = i % 2 === 0;
-      const color = isGreen ? '#22c55e' : '#f59e0b'; // Neon green or amber gold
-
-      boxes.push({
-        id: i,
-        x,
-        z,
-        initialY,
-        speed,
-        width,
-        height,
-        depth,
-        color
-      });
-    }
-    return boxes;
-  }, []);
-
-  useFrame((state) => {
-    const time = state.clock.elapsedTime;
-    boxesRef.current.forEach((mesh, idx) => {
-      if (mesh) {
-        const data = boxesData[idx];
-        // Smooth continuous vertical movement (up/down oscillation)
-        mesh.position.y = data.initialY + Math.sin(time * data.speed + idx) * 1.5 - scrollYProgress * 2.2;
-      }
-    });
-  });
-
-  return (
-    <group ref={groupRef}>
-      {boxesData.map((box, idx) => (
-        <group
-          key={box.id}
-          ref={(el) => (boxesRef.current[idx] = el)}
-          position={[box.x, box.initialY, box.z]}
-        >
-          {/* Solid Dark Metallic Box Body */}
-          <mesh>
-            <boxGeometry args={[box.width, box.height, box.depth]} />
-            <meshStandardMaterial
-              color="#0d0d12"
-              metalness={0.9}
-              roughness={0.2}
-              transparent={true}
-              opacity={0.85}
-            />
-          </mesh>
-
-          {/* Wireframe Glowing Border Lines for Tech Aesthetic */}
-          <mesh scale={1.02}>
-            <boxGeometry args={[box.width, box.height, box.depth]} />
-            <meshBasicMaterial
-              color={box.color}
-              wireframe={true}
-              transparent={true}
-              opacity={0.45}
-            />
-          </mesh>
-        </group>
-      ))}
-    </group>
-  );
-}
-
 // Main 3D Canvas Scene Container
 export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
   const mousePos = useRef({ x: 0, y: 0 });
@@ -276,9 +194,6 @@ export default function DeltaFox3DScene({ scrollYProgress = 0 }) {
         <Float speed={1.5} rotationIntensity={0.15} floatIntensity={0.25}>
           <MetallicFoxHead mousePos={mousePos} scrollYProgress={scrollYProgress} />
         </Float>
-
-        {/* Vertically Moving 3D Metallic Boxes / Pillars */}
-        <VerticalMovingBoxes scrollYProgress={scrollYProgress} />
       </Canvas>
     </div>
   );
