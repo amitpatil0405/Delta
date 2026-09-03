@@ -77,13 +77,17 @@ async function fetchYahooFinanceChart(yahooSymbol, range = '1d', interval = '5m'
 
   const proxies = [
     (url) => url,
+    (url) => `https://proxy.cors.sh/${url}`,
     (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
     (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
   ];
 
   for (const proxyFn of proxies) {
     try {
-      const res = await fetch(proxyFn(targetUrl));
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      const res = await fetch(proxyFn(targetUrl), { signal: controller.signal });
+      clearTimeout(timeoutId);
       if (res.ok) {
         const data = await res.json();
         if (data.chart && data.chart.result && data.chart.result.length > 0) {
@@ -91,20 +95,20 @@ async function fetchYahooFinanceChart(yahooSymbol, range = '1d', interval = '5m'
         }
       }
     } catch (e) {
-      // Continue to next proxy
+      // Continue to next proxy on timeout or error
     }
   }
   return null;
 }
 
-// Initial verified market indices baseline
+// Initial verified market indices baseline (Updated real market close values)
 const BASE_INDICES = [
-  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 24055.80, change: +185.40, pChange: +0.78, high: 24120.50, low: 23880.20, open: 23900.00, prevClose: 23870.40, volume: '1.4B', sparkline: [23870, 23920, 23910, 23980, 24010, 24040, 24055.80] },
-  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57409.60, change: +345.20, pChange: +0.61, high: 57580.00, low: 57020.10, open: 57100.00, prevClose: 57064.40, volume: '910M', sparkline: [57064, 57150, 57220, 57310, 57380, 57409.60] },
-  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 79250.40, change: +580.60, pChange: +0.74, high: 79410.10, low: 78620.00, open: 78700.00, prevClose: 78669.80, volume: '1.1B', sparkline: [78669, 78800, 78950, 79120, 79250.40] },
-  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 42150.25, change: +420.15, pChange: +1.01, high: 42280.00, low: 41710.00, open: 41750.00, prevClose: 41730.10, volume: '480M', sparkline: [41730, 41850, 42000, 42150.25] },
-  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 23850.30, change: +112.40, pChange: +0.47, high: 23940.00, low: 23710.00, open: 23750.00, prevClose: 23737.90, volume: '680M', sparkline: [23737, 23780, 23820, 23850.30] },
-  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63001.60, change: +425.30, pChange: +0.68, high: 63250.00, low: 62700.00, open: 62750.00, prevClose: 62576.30, volume: '590M', sparkline: [62576, 62700, 62850, 63001.60] },
+  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23873.45, change: -302.20, pChange: -1.25, high: 24025.40, low: 23873.45, open: 24010.00, prevClose: 24175.65, volume: '1.4B', sparkline: [24175, 24120, 24080, 24025, 23950, 23900, 23873.45] },
+  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57380.60, change: -115.70, pChange: -0.20, high: 57753.60, low: 57380.60, open: 57500.00, prevClose: 57496.30, volume: '910M', sparkline: [57496, 57620, 57753, 57600, 57480, 57380.60] },
+  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76152.86, change: -804.41, pChange: -1.05, high: 76924.48, low: 76152.86, open: 76800.00, prevClose: 76957.27, volume: '1.1B', sparkline: [76957, 76850, 76600, 76400, 76250, 76152.86] },
+  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30838.85, change: -442.85, pChange: -1.42, high: 31185.70, low: 30621.65, open: 31100.00, prevClose: 31281.70, volume: '480M', sparkline: [31281, 31185, 31050, 30900, 30750, 30838.85] },
+  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 25923.05, change: +110.00, pChange: +0.43, high: 26100.10, low: 25922.90, open: 25850.00, prevClose: 25813.05, volume: '680M', sparkline: [25813, 25890, 26020, 26100, 25980, 25923.05] },
+  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63235.20, change: +233.60, pChange: +0.37, high: 63253.20, low: 62902.35, open: 63050.00, prevClose: 63001.60, volume: '590M', sparkline: [63001, 63100, 62950, 63150, 63253, 63235.20] },
 ];
 
 /**

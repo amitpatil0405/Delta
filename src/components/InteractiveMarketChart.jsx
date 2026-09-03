@@ -14,6 +14,7 @@ export default function InteractiveMarketChart() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     async function loadChartAndQuote() {
       setLoading(true);
       const [histRes, quoteRes] = await Promise.all([
@@ -21,14 +22,19 @@ export default function InteractiveMarketChart() {
         getQuote(activeSymbol)
       ]);
 
-      if (histRes.success) setChartData(histRes.data);
-      if (quoteRes.success) setQuoteInfo(quoteRes.data);
-      setLoading(false);
+      if (isMounted) {
+        if (histRes.success && histRes.data) setChartData(histRes.data);
+        if (quoteRes.success && quoteRes.data) setQuoteInfo(quoteRes.data);
+        setLoading(false);
+      }
     }
 
     loadChartAndQuote();
     const interval = setInterval(loadChartAndQuote, 10000);
-    return () => clearInterval(interval);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [activeSymbol, timeframe]);
 
   const isPositive = quoteInfo ? quoteInfo.change >= 0 : true;
