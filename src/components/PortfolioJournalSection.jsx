@@ -709,14 +709,15 @@ export default function PortfolioJournalSection() {
                 <select
                   value={newTrade.status}
                   onChange={(e) => setNewTrade({ ...newTrade, status: e.target.value })}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none font-bold"
                 >
-                  <option value="OPEN">OPEN (0 P&L)</option>
-                  <option value="CLOSED">CLOSED</option>
+                  <option value="OPEN" className="text-amber-400">OPEN (0 P&L)</option>
+                  <option value="CLOSED PROFIT" className="text-emerald-400">CLOSED PROFIT (Green)</option>
+                  <option value="CLOSED LOSS" className="text-rose-400">CLOSED LOSS (Red)</option>
                 </select>
               </div>
 
-              {newTrade.status === 'CLOSED' && (
+              {newTrade.status !== 'OPEN' && (
                 <div className="md:col-span-2">
                   <label className="block text-gray-400 mb-1">MANUAL PROFIT / LOSS (₹)</label>
                   <input
@@ -724,7 +725,7 @@ export default function PortfolioJournalSection() {
                     placeholder="e.g. 15000 or -5000"
                     value={newTrade.manualPnl}
                     onChange={(e) => setNewTrade({ ...newTrade, manualPnl: e.target.value })}
-                    className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                    className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none font-bold"
                   />
                 </div>
               )}
