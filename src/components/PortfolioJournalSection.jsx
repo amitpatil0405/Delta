@@ -9,13 +9,13 @@ const ADMIN_SESSION_KEY = 'deltafox_admin_logged_in';
 
 // Initial default seed trades (saved to localStorage on first launch)
 const DEFAULT_INITIAL_TRADES = [
-  { id: 't1', date: '2024-10-15', symbol: 'NIFTY 50', strategy: 'Short Strangle', expiry: '2024-10-31', entryPrice: 145.00, exitPrice: 35.00, qty: 150, status: 'CLOSED', manualPnl: 16500 },
-  { id: 't2', date: '2024-11-04', symbol: 'BANK NIFTY', strategy: 'Iron Condor', expiry: '2024-11-28', entryPrice: 210.00, exitPrice: 80.00, qty: 60, status: 'CLOSED', manualPnl: 7800 },
-  { id: 't3', date: '2024-12-02', symbol: 'NIFTY 50', strategy: 'Bull Put Spread', expiry: '2024-12-26', entryPrice: 95.00, exitPrice: 20.00, qty: 200, status: 'CLOSED', manualPnl: 15000 },
-  { id: 't4', date: '2025-01-08', symbol: 'RELIANCE', strategy: 'Covered Call', expiry: '2025-01-30', entryPrice: 42.00, exitPrice: 115.00, qty: 250, status: 'CLOSED', manualPnl: -18250 },
-  { id: 't5', date: '2025-02-03', symbol: 'NIFTY 50', strategy: 'Short Strangle', expiry: '2025-02-27', entryPrice: 180.00, exitPrice: 45.00, qty: 150, status: 'CLOSED', manualPnl: 20250 },
-  { id: 't6', date: '2025-02-20', symbol: 'BANK NIFTY', strategy: 'Bear Call Spread', expiry: '2025-02-27', entryPrice: 130.00, exitPrice: 30.00, qty: 90, status: 'CLOSED', manualPnl: 9000 },
-  { id: 't7', date: '2025-03-01', symbol: 'NIFTY 50', strategy: 'Iron Condor', expiry: '2025-03-27', entryPrice: 160.00, exitPrice: null, qty: 150, status: 'OPEN', manualPnl: 0 }
+  { id: 't1', date: '2024-10-15', symbol: 'NIFTY 50', strategy: 'Short Strangle', expiry: '2024-10-31', entryPrice: 145.00, exitPrice: 35.00, qty: 150, pop: 72.5, status: 'CLOSED', manualPnl: 16500, holdTime: 12 },
+  { id: 't2', date: '2024-11-04', symbol: 'BANK NIFTY', strategy: 'Iron Condor', expiry: '2024-11-28', entryPrice: 210.00, exitPrice: 80.00, qty: 60, pop: 68.0, status: 'CLOSED', manualPnl: 7800, holdTime: 18 },
+  { id: 't3', date: '2024-12-02', symbol: 'NIFTY 50', strategy: 'Bull Put Spread', expiry: '2024-12-26', entryPrice: 95.00, exitPrice: 20.00, qty: 200, pop: 75.0, status: 'CLOSED', manualPnl: 15000, holdTime: 14 },
+  { id: 't4', date: '2025-01-08', symbol: 'RELIANCE', strategy: 'Covered Call', expiry: '2025-01-30', entryPrice: 42.00, exitPrice: 115.00, qty: 250, pop: 65.0, status: 'CLOSED', manualPnl: -18250, holdTime: 22 },
+  { id: 't5', date: '2025-02-03', symbol: 'NIFTY 50', strategy: 'Short Strangle', expiry: '2025-02-27', entryPrice: 180.00, exitPrice: 45.00, qty: 150, pop: 74.0, status: 'CLOSED', manualPnl: 20250, holdTime: 16 },
+  { id: 't6', date: '2025-02-20', symbol: 'BANK NIFTY', strategy: 'Bear Call Spread', expiry: '2025-02-27', entryPrice: 130.00, exitPrice: 30.00, qty: 90, pop: 70.0, status: 'CLOSED', manualPnl: 9000, holdTime: 7 },
+  { id: 't7', date: '2025-03-01', symbol: 'NIFTY 50', strategy: 'Iron Condor', expiry: '2025-03-27', entryPrice: 160.00, exitPrice: null, qty: 150, pop: 69.5, status: 'OPEN', manualPnl: 0, holdTime: 8 }
 ];
 
 export default function PortfolioJournalSection() {
@@ -130,15 +130,26 @@ export default function PortfolioJournalSection() {
     );
   };
 
+  // Helper to calculate days between dates
+  const calculateDaysDiff = (startDateStr, endDateStr) => {
+    if (!startDateStr || !endDateStr) return 7;
+    const start = new Date(startDateStr);
+    const end = new Date(endDateStr);
+    const diffTime = Math.abs(end - start);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 1;
+  };
+
   // New trade form state
   const [newTrade, setNewTrade] = useState({
     date: new Date().toISOString().split('T')[0],
     symbol: 'NIFTY 50',
     strategy: 'Short Strangle',
     expiry: '2025-03-27',
-    entryPrice: '',
+    entryPrice: '150.00',
     exitPrice: '',
     qty: 50,
+    pop: 70.0,
+    holdTime: 12,
     status: 'OPEN',
     manualPnl: 0
   });
@@ -158,7 +169,6 @@ export default function PortfolioJournalSection() {
 
     const entryP = parseFloat(newTrade.entryPrice) || 0;
     const exitP = (newTrade.exitPrice !== '' && newTrade.exitPrice !== null) ? parseFloat(newTrade.exitPrice) : null;
-    const isClosed = newTrade.status === 'CLOSED PROFIT' || newTrade.status === 'CLOSED LOSS' || (newTrade.status === 'CLOSED');
 
     let finalStatus = newTrade.status;
     if (finalStatus === 'CLOSED') {
@@ -173,6 +183,8 @@ export default function PortfolioJournalSection() {
       calculatedPnl = parseFloat(newTrade.manualPnl) || 0;
     }
 
+    const autoHold = calculateDaysDiff(newTrade.date, newTrade.expiry);
+
     const created = {
       id: `t_${Date.now()}`,
       date: newTrade.date,
@@ -181,7 +193,9 @@ export default function PortfolioJournalSection() {
       expiry: newTrade.expiry,
       entryPrice: entryP,
       exitPrice: finalStatus === 'OPEN' ? null : exitP,
-      qty: parseInt(newTrade.qty),
+      qty: parseInt(newTrade.qty) || 50,
+      pop: parseFloat(newTrade.pop) || 68.0,
+      holdTime: parseInt(newTrade.holdTime) || autoHold,
       status: finalStatus,
       manualPnl: calculatedPnl
     };
@@ -193,9 +207,11 @@ export default function PortfolioJournalSection() {
       symbol: 'NIFTY 50',
       strategy: 'Short Strangle',
       expiry: '2025-03-27',
-      entryPrice: '',
+      entryPrice: '150.00',
       exitPrice: '',
       qty: 50,
+      pop: 70.0,
+      holdTime: 12,
       status: 'OPEN',
       manualPnl: 0
     });
@@ -208,6 +224,8 @@ export default function PortfolioJournalSection() {
       return;
     }
 
+    const autoHold = calculateDaysDiff(trade.date, trade.expiry);
+
     setEditingTrade({
       id: trade.id,
       date: trade.date,
@@ -217,6 +235,8 @@ export default function PortfolioJournalSection() {
       entryPrice: trade.entryPrice,
       exitPrice: trade.exitPrice !== null && trade.exitPrice !== undefined ? trade.exitPrice : '',
       qty: trade.qty,
+      pop: trade.pop !== undefined && trade.pop !== null ? trade.pop : 68.0,
+      holdTime: trade.holdTime !== undefined && trade.holdTime !== null ? trade.holdTime : autoHold,
       status: trade.status === 'CLOSED' ? (trade.manualPnl >= 0 ? 'CLOSED PROFIT' : 'CLOSED LOSS') : trade.status,
       manualPnl: trade.manualPnl
     });
@@ -243,6 +263,8 @@ export default function PortfolioJournalSection() {
       }
     }
 
+    const autoHold = calculateDaysDiff(editingTrade.date, editingTrade.expiry);
+
     setTrades(prev => prev.map(t => {
       if (t.id === editingTrade.id) {
         return {
@@ -254,6 +276,8 @@ export default function PortfolioJournalSection() {
           entryPrice: parseFloat(editingTrade.entryPrice) || 0,
           exitPrice: isOpen ? null : exitP,
           qty: parseInt(editingTrade.qty) || 0,
+          pop: parseFloat(editingTrade.pop) || 68.0,
+          holdTime: parseInt(editingTrade.holdTime) || autoHold,
           status: finalStatus,
           manualPnl: finalPnl
         };
@@ -491,6 +515,31 @@ export default function PortfolioJournalSection() {
                   </div>
 
                   <div>
+                    <label className="block text-gray-400 mb-1">PROBABILITY OF PROFIT (%)</label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      required
+                      placeholder="e.g. 72.5"
+                      value={editingTrade.pop}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, pop: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none font-bold text-emerald-400"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-400 mb-1">HOLD TIME (DAYS)</label>
+                    <input
+                      type="number"
+                      required
+                      placeholder="e.g. 12"
+                      value={editingTrade.holdTime}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, holdTime: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
                     <label className="block text-gray-400 mb-1">STATUS</label>
                     <select
                       value={editingTrade.status}
@@ -705,6 +754,31 @@ export default function PortfolioJournalSection() {
               </div>
 
               <div>
+                <label className="block text-gray-400 mb-1">PROBABILITY OF PROFIT (%)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  required
+                  placeholder="70.0"
+                  value={newTrade.pop}
+                  onChange={(e) => setNewTrade({ ...newTrade, pop: e.target.value })}
+                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none font-bold text-emerald-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-400 mb-1">HOLD TIME (DAYS)</label>
+                <input
+                  type="number"
+                  required
+                  placeholder="12"
+                  value={newTrade.holdTime}
+                  onChange={(e) => setNewTrade({ ...newTrade, holdTime: e.target.value })}
+                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
                 <label className="block text-gray-400 mb-1">STATUS</label>
                 <select
                   value={newTrade.status}
@@ -816,12 +890,12 @@ export default function PortfolioJournalSection() {
                   <th className="py-3 px-3">Symbol</th>
                   <th className="py-3 px-3">Strategy</th>
                   <th className="py-3 px-3">Expiry</th>
-                  <th className="py-3 px-3 text-right">Entry (₹)</th>
-                  <th className="py-3 px-3 text-right">Exit (₹)</th>
-                  <th className="py-3 px-3 text-right">Qty</th>
-                  <th className="py-3 px-3 text-right">Status</th>
-                  <th className="py-3 px-3 text-right">P&L (₹)</th>
-                  {isAdminLoggedIn && <th className="py-3 px-3 text-center">Actions</th>}
+                  <th className="py-3 px-3 text-right">Quantity</th>
+                  <th className="py-3 px-3 text-right">Probability of Profit</th>
+                  <th className="py-3 px-3 text-center">Status</th>
+                  <th className="py-3 px-3 text-right">P&L</th>
+                  <th className="py-3 px-3 text-right">Hold Time in Days</th>
+                  <th className="py-3 px-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -854,6 +928,22 @@ export default function PortfolioJournalSection() {
                       statusText = 'CLOSED LOSS';
                     }
 
+                    // Auto-calculate hold time if missing
+                    let displayHoldDays = t.holdTime;
+                    if (displayHoldDays === undefined || displayHoldDays === null) {
+                      if (t.date && t.expiry) {
+                        const start = new Date(t.date);
+                        const end = new Date(t.expiry);
+                        const diffTime = Math.abs(end - start);
+                        displayHoldDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 0;
+                      } else {
+                        displayHoldDays = 0;
+                      }
+                    }
+
+                    // Default probability of profit if missing
+                    const displayPop = t.pop !== undefined && t.pop !== null ? t.pop : 68.0;
+
                     return (
                       <tr key={t.id} className={`hover:bg-white/5 transition-colors ${isSelected ? 'bg-amber-500/10' : ''}`}>
                         {isAdminLoggedIn && (
@@ -870,12 +960,9 @@ export default function PortfolioJournalSection() {
                         <td className="py-3 px-3 font-bold text-white">{t.symbol}</td>
                         <td className="py-3 px-3 text-amber-400">{t.strategy}</td>
                         <td className="py-3 px-3 text-gray-400">{t.expiry}</td>
-                        <td className="py-3 px-3 text-right text-gray-200">₹{t.entryPrice.toFixed(2)}</td>
-                        <td className="py-3 px-3 text-right text-gray-200">
-                          {t.exitPrice !== null && t.exitPrice !== undefined && t.exitPrice !== '' ? `₹${Number(t.exitPrice).toFixed(2)}` : '-'}
-                        </td>
-                        <td className="py-3 px-3 text-right text-gray-300">{t.qty}</td>
-                        <td className="py-3 px-3 text-right">
+                        <td className="py-3 px-3 text-right text-gray-300 font-bold">{t.qty}</td>
+                        <td className="py-3 px-3 text-right text-emerald-400 font-bold">{Number(displayPop).toFixed(1)}%</td>
+                        <td className="py-3 px-3 text-center">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${statusBadgeClass}`}>
                             {statusText}
                           </span>
@@ -885,27 +972,32 @@ export default function PortfolioJournalSection() {
                         }`}>
                           {isOpen ? '₹0.00' : `${isPos ? '+' : ''}₹${t.manualPnl.toLocaleString('en-IN')}`}
                         </td>
-                        {isAdminLoggedIn && (
-                          <td className="py-3 px-3 text-center">
-                            <div className="flex items-center justify-center space-x-2">
-                              <button
-                                onClick={() => handleOpenEditTrade(t)}
-                                title="Edit Trade Details"
-                                className="inline-flex items-center space-x-1 px-2 py-1 text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded hover:bg-amber-500/30 transition-all"
-                              >
-                                <Edit2 className="w-3 h-3" />
-                                <span>EDIT</span>
-                              </button>
-                              <button
-                                onClick={() => handleDeleteSingleTrade(t.id)}
-                                title="Delete Record"
-                                className="p-1 text-gray-500 hover:text-rose-400 transition-colors"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          </td>
-                        )}
+                        <td className="py-3 px-3 text-right text-gray-300 font-bold">{displayHoldDays} {displayHoldDays === 1 ? 'Day' : 'Days'}</td>
+                        <td className="py-3 px-3 text-center">
+                          <div className="flex items-center justify-center space-x-2">
+                            {isAdminLoggedIn ? (
+                              <>
+                                <button
+                                  onClick={() => handleOpenEditTrade(t)}
+                                  title="Edit Trade Details"
+                                  className="inline-flex items-center space-x-1 px-2 py-1 text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded hover:bg-amber-500/30 transition-all"
+                                >
+                                  <Edit2 className="w-3 h-3" />
+                                  <span>EDIT</span>
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteSingleTrade(t.id)}
+                                  title="Delete Record"
+                                  className="p-1 text-gray-500 hover:text-rose-400 transition-colors"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </>
+                            ) : (
+                              <span className="text-[10px] text-gray-500 italic">READ ONLY</span>
+                            )}
+                          </div>
+                        </td>
                       </tr>
                     );
                   })
