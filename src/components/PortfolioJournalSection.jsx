@@ -7,17 +7,6 @@ import { BookOpen, Plus, Lock, Unlock, Trash2, LogIn, LogOut, AlertCircle, Edit2
 const STORAGE_KEY = 'deltafox_portfolio_trades_v3';
 const ADMIN_SESSION_KEY = 'deltafox_admin_logged_in';
 
-// Initial default seed trades (saved to localStorage on first launch)
-const DEFAULT_INITIAL_TRADES = [
-  { id: 't1', date: '2024-10-15', symbol: 'NIFTY 50', strategy: 'Short Strangle', expiry: '2024-10-31', entryPrice: 145.00, exitPrice: 35.00, qty: 150, pop: 72.5, status: 'CLOSED', manualPnl: 16500, holdTime: 12 },
-  { id: 't2', date: '2024-11-04', symbol: 'BANK NIFTY', strategy: 'Iron Condor', expiry: '2024-11-28', entryPrice: 210.00, exitPrice: 80.00, qty: 60, pop: 68.0, status: 'CLOSED', manualPnl: 7800, holdTime: 18 },
-  { id: 't3', date: '2024-12-02', symbol: 'NIFTY 50', strategy: 'Bull Put Spread', expiry: '2024-12-26', entryPrice: 95.00, exitPrice: 20.00, qty: 200, pop: 75.0, status: 'CLOSED', manualPnl: 15000, holdTime: 14 },
-  { id: 't4', date: '2025-01-08', symbol: 'RELIANCE', strategy: 'Covered Call', expiry: '2025-01-30', entryPrice: 42.00, exitPrice: 115.00, qty: 250, pop: 65.0, status: 'CLOSED', manualPnl: -18250, holdTime: 22 },
-  { id: 't5', date: '2025-02-03', symbol: 'NIFTY 50', strategy: 'Short Strangle', expiry: '2025-02-27', entryPrice: 180.00, exitPrice: 45.00, qty: 150, pop: 74.0, status: 'CLOSED', manualPnl: 20250, holdTime: 16 },
-  { id: 't6', date: '2025-02-20', symbol: 'BANK NIFTY', strategy: 'Bear Call Spread', expiry: '2025-02-27', entryPrice: 130.00, exitPrice: 30.00, qty: 90, pop: 70.0, status: 'CLOSED', manualPnl: 9000, holdTime: 7 },
-  { id: 't7', date: '2025-03-01', symbol: 'NIFTY 50', strategy: 'Iron Condor', expiry: '2025-03-27', entryPrice: 160.00, exitPrice: null, qty: 150, pop: 69.5, status: 'OPEN', manualPnl: 0, holdTime: 8 }
-];
-
 export default function PortfolioJournalSection() {
   // Admin authentication state (Session Persisted)
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
@@ -28,7 +17,7 @@ export default function PortfolioJournalSection() {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  // Trades state initialized strictly from localStorage (No data loss on refresh)
+  // Trades state initialized strictly from localStorage (Default empty array so new devices start completely blank)
   const [trades, setTrades] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -39,13 +28,7 @@ export default function PortfolioJournalSection() {
     } catch (e) {
       console.warn('Error reading stored trades:', e);
     }
-    // Seed default trades into localStorage if no storage exists
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_INITIAL_TRADES));
-    } catch (e) {
-      console.warn('Error setting initial trades:', e);
-    }
-    return DEFAULT_INITIAL_TRADES;
+    return [];
   });
 
   // Selected trade IDs for bulk deletion
