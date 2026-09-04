@@ -277,7 +277,17 @@ export async function getQuote(symbol) {
       }
     }
 
-    const prevClosePrice = meta.chartPreviousClose ?? BASE_STOCKS[symbolUpper]?.prevClose ?? openPrice;
+    let prevClosePrice = meta.regularMarketPreviousClose ?? meta.chartPreviousClose;
+    if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
+      const closes = result.indicators.quote[0].close.filter(c => c !== null);
+      if (closes.length >= 2) {
+        prevClosePrice = closes[closes.length - 2];
+      }
+    }
+    if (!prevClosePrice) {
+      prevClosePrice = BASE_STOCKS[symbolUpper]?.prevClose ?? openPrice;
+    }
+
     const change = price - prevClosePrice;
     const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
 

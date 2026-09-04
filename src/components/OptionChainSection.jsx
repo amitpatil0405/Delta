@@ -142,7 +142,7 @@ export default function OptionChainSection() {
         {/* Options Chain Table */}
         <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-2xl p-4 md:p-6 shadow-2xl overflow-x-auto">
 
-          <div className="flex items-center justify-between border-b border-[#1f1f1f] pb-3 mb-4 font-mono text-xs font-bold">
+          <div className="flex items-center justify-between border-b border-[#1f1f1f] pb-3 mb-4 font-mono text-xs font-bold min-w-[950px]">
             <span className="text-emerald-400 flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span> CALL OPTIONS (CALLS) - RESISTANCE
             </span>
