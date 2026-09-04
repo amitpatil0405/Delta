@@ -426,17 +426,36 @@ export async function getHistoricalData(symbol = 'NIFTY 50', timeframe = '1M') {
   };
 }
 
+// Helper for deterministic seeded pseudo-random values to prevent jitter
+function seededRandom(symbol, strike, key) {
+  let hash = 0;
+  const str = `${symbol}_${strike}_${key}`;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  const x = Math.sin(hash) * 10000;
+  return x - Math.floor(x);
+}
+
 /**
  * Fetch Options Chain Data
+ * Accurate distribution: Call OI peaks at OTM strikes above ATM (Strong Resistance),
+ * Put OI peaks at OTM strikes below ATM (Strong Support).
  */
 export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '') {
   const quoteRes = await getQuote(symbol);
   const spotPrice = quoteRes.data ? quoteRes.data.price : 22123.65;
 
   let step = 50;
-  if (spotPrice > 30000) step = 100;
-  else if (spotPrice < 1000) step = 10;
-  else if (spotPrice < 3000) step = 20;
+  const sUpper = symbol.toUpperCase().trim();
+  if (sUpper.includes('SENSEX') || sUpper.includes('BANK')) step = 100;
+  else if (sUpper.includes('NIFTY')) step = 50;
+  else if (spotPrice > 10000) step = 100;
+  else if (spotPrice > 3000) step = 50;
+  else if (spotPrice > 1000) step = 20;
+  else if (spotPrice > 500) step = 10;
+  else step = 5;
 
   const atmStrike = Math.round(spotPrice / step) * step;
 
@@ -450,21 +469,35 @@ export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '') {
     const strike = atmStrike + i * step;
     const dist = (strike - spotPrice) / spotPrice;
 
-    const callIV = parseFloat((14.2 + Math.abs(dist) * 12).toFixed(2));
-    const callLTP = parseFloat(Math.max(1, (spotPrice - strike > 0 ? (spotPrice - strike) : 0) + Math.exp(-Math.abs(dist) * 10) * spotPrice * 0.018).toFixed(2));
-    const callOI = Math.floor(Math.exp(-Math.pow(i, 2) / 8) * 120000 + Math.random() * 15000 + 20000);
-    const callOIChange = Math.floor((Math.random() - 0.35) * 8000);
-    const callVolume = Math.floor(callOI * (0.3 + Math.random() * 0.4));
+    // Call OI peaks at OTM strike above ATM (i = +2) -> Strong Resistance
+    const callOffset = i - 2;
+    const callOI = Math.floor(Math.exp(-Math.pow(callOffset, 2) / 4.5) * 135000 + seededRandom(symbol, strike, 'cOI') * 15000 + 22000);
+    const callOIChange = Math.floor((seededRandom(symbol, strike, 'cChg') - 0.35) * 7500);
+    const callVolume = Math.floor(callOI * (0.35 + seededRandom(symbol, strike, 'cVol') * 0.35));
+
+    // Realistic Call LTP pricing (Intrinsic + Time Value)
+    const callIntrinsic = Math.max(0, spotPrice - strike);
+    const callTimeValue = Math.exp(-Math.abs(dist) * 8) * spotPrice * 0.018;
+    const callLTP = parseFloat(Math.max(1, callIntrinsic + callTimeValue).toFixed(2));
+    const callIV = parseFloat((14.10 + Math.abs(dist) * 9 + seededRandom(symbol, strike, 'cIV') * 0.5).toFixed(2));
     const callBid = parseFloat((callLTP * 0.995).toFixed(2));
     const callAsk = parseFloat((callLTP * 1.005).toFixed(2));
+    const callChg = parseFloat(((seededRandom(symbol, strike, 'cChgVal') - 0.42) * 8).toFixed(2));
 
-    const putIV = parseFloat((14.8 + Math.abs(dist) * 12).toFixed(2));
-    const putLTP = parseFloat(Math.max(1, (strike - spotPrice > 0 ? (strike - spotPrice) : 0) + Math.exp(-Math.abs(dist) * 10) * spotPrice * 0.018).toFixed(2));
-    const putOI = Math.floor(Math.exp(-Math.pow(i, 2) / 8) * 135000 + Math.random() * 18000 + 25000);
-    const putOIChange = Math.floor((Math.random() - 0.25) * 9000);
-    const putVolume = Math.floor(putOI * (0.35 + Math.random() * 0.4));
+    // Put OI peaks at OTM strike below ATM (i = -2) -> Strong Support
+    const putOffset = i - (-2);
+    const putOI = Math.floor(Math.exp(-Math.pow(putOffset, 2) / 4.5) * 148000 + seededRandom(symbol, strike, 'pOI') * 18000 + 25000);
+    const putOIChange = Math.floor((seededRandom(symbol, strike, 'pChg') - 0.3) * 8500);
+    const putVolume = Math.floor(putOI * (0.38 + seededRandom(symbol, strike, 'pVol') * 0.35));
+
+    // Realistic Put LTP pricing (Intrinsic + Time Value)
+    const putIntrinsic = Math.max(0, strike - spotPrice);
+    const putTimeValue = Math.exp(-Math.abs(dist) * 8) * spotPrice * 0.018;
+    const putLTP = parseFloat(Math.max(1, putIntrinsic + putTimeValue).toFixed(2));
+    const putIV = parseFloat((14.60 + Math.abs(dist) * 9.5 + seededRandom(symbol, strike, 'pIV') * 0.5).toFixed(2));
     const putBid = parseFloat((putLTP * 0.995).toFixed(2));
     const putAsk = parseFloat((putLTP * 1.005).toFixed(2));
+    const putChg = parseFloat(((seededRandom(symbol, strike, 'pChgVal') - 0.38) * 8).toFixed(2));
 
     totalCallOI += callOI;
     totalPutOI += putOI;
@@ -478,7 +511,7 @@ export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '') {
         volume: callVolume,
         iv: callIV,
         ltp: callLTP,
-        change: parseFloat(((Math.random() - 0.4) * 12).toFixed(2)),
+        change: callChg,
         bid: callBid,
         ask: callAsk
       },
@@ -488,7 +521,7 @@ export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '') {
         volume: putVolume,
         iv: putIV,
         ltp: putLTP,
-        change: parseFloat(((Math.random() - 0.4) * 12).toFixed(2)),
+        change: putChg,
         bid: putBid,
         ask: putAsk
       }
