@@ -48,7 +48,7 @@ export default function MarketOverviewSection() {
 
   return (
     <section id="market-section" className="relative bg-[#050505] text-white py-16 px-4 md:px-8 border-t border-[#1a1a1a]">
-      <div className="max-w-7xl mx-[#050505] mx-auto">
+      <div className="max-w-7xl mx-auto">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
@@ -90,7 +90,8 @@ export default function MarketOverviewSection() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {indices.map((idx) => {
-              const isPositive = idx.change >= 0;
+              // Strictly compare current price against open price
+              const isPositive = idx.price >= (idx.open ?? idx.price);
               const formattedPrice = idx.price.toLocaleString('en-IN', { minimumFractionDigits: 2 });
               const formattedChange = (isPositive ? '+' : '') + idx.change.toFixed(2);
               const formattedPChange = (isPositive ? '+' : '') + idx.pChange.toFixed(2) + '%';
