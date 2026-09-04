@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MarketProvider } from './context/MarketContext';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
@@ -17,6 +17,16 @@ import Footer from './components/Footer';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
+
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    if (window.location.hash) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleNavigate = (id) => {
     setActivePage(id);
