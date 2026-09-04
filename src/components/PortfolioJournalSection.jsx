@@ -145,8 +145,6 @@ export default function PortfolioJournalSection() {
     symbol: 'NIFTY 50',
     strategy: 'Short Strangle',
     expiry: '2025-03-27',
-    entryPrice: '150.00',
-    exitPrice: '',
     qty: 50,
     pop: 70.0,
     holdTime: 12,
@@ -166,9 +164,6 @@ export default function PortfolioJournalSection() {
       alert('Maximum capacity of 200 trade records reached.');
       return;
     }
-
-    const entryP = parseFloat(newTrade.entryPrice) || 0;
-    const exitP = (newTrade.exitPrice !== '' && newTrade.exitPrice !== null) ? parseFloat(newTrade.exitPrice) : null;
 
     let finalStatus = newTrade.status;
     if (finalStatus === 'CLOSED') {
@@ -191,8 +186,8 @@ export default function PortfolioJournalSection() {
       symbol: newTrade.symbol,
       strategy: newTrade.strategy,
       expiry: newTrade.expiry,
-      entryPrice: entryP,
-      exitPrice: finalStatus === 'OPEN' ? null : exitP,
+      entryPrice: 0,
+      exitPrice: null,
       qty: parseInt(newTrade.qty) || 50,
       pop: parseFloat(newTrade.pop) || 68.0,
       holdTime: parseInt(newTrade.holdTime) || autoHold,
@@ -207,8 +202,6 @@ export default function PortfolioJournalSection() {
       symbol: 'NIFTY 50',
       strategy: 'Short Strangle',
       expiry: '2025-03-27',
-      entryPrice: '150.00',
-      exitPrice: '',
       qty: 50,
       pop: 70.0,
       holdTime: 12,
@@ -232,8 +225,8 @@ export default function PortfolioJournalSection() {
       symbol: trade.symbol,
       strategy: trade.strategy,
       expiry: trade.expiry,
-      entryPrice: trade.entryPrice,
-      exitPrice: trade.exitPrice !== null && trade.exitPrice !== undefined ? trade.exitPrice : '',
+      entryPrice: trade.entryPrice || 0,
+      exitPrice: trade.exitPrice !== null && trade.exitPrice !== undefined ? trade.exitPrice : null,
       qty: trade.qty,
       pop: trade.pop !== undefined && trade.pop !== null ? trade.pop : 68.0,
       holdTime: trade.holdTime !== undefined && trade.holdTime !== null ? trade.holdTime : autoHold,
@@ -248,7 +241,6 @@ export default function PortfolioJournalSection() {
 
     if (!isAdminLoggedIn || !editingTrade) return;
 
-    const exitP = (editingTrade.exitPrice !== '' && editingTrade.exitPrice !== null) ? parseFloat(editingTrade.exitPrice) : null;
     const isOpen = editingTrade.status === 'OPEN';
 
     let finalStatus = editingTrade.status;
@@ -273,8 +265,6 @@ export default function PortfolioJournalSection() {
           symbol: editingTrade.symbol,
           strategy: editingTrade.strategy,
           expiry: editingTrade.expiry,
-          entryPrice: parseFloat(editingTrade.entryPrice) || 0,
-          exitPrice: isOpen ? null : exitP,
           qty: parseInt(editingTrade.qty) || 0,
           pop: parseFloat(editingTrade.pop) || 68.0,
           holdTime: parseInt(editingTrade.holdTime) || autoHold,
@@ -478,30 +468,6 @@ export default function PortfolioJournalSection() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-gray-400 mb-1">ENTRY PRICE (₹)</label>
-                    <input
-                      type="number"
-                      step="0.05"
-                      required
-                      value={editingTrade.entryPrice}
-                      onChange={(e) => setEditingTrade({ ...editingTrade, entryPrice: e.target.value })}
-                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-gray-400 mb-1">EXIT PRICE (₹)</label>
-                    <input
-                      type="number"
-                      step="0.05"
-                      placeholder={editingTrade.status === 'OPEN' ? 'N/A for Open' : 'Enter Exit Price'}
-                      disabled={editingTrade.status === 'OPEN'}
-                      value={editingTrade.exitPrice}
-                      onChange={(e) => setEditingTrade({ ...editingTrade, exitPrice: e.target.value })}
-                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white disabled:opacity-40 focus:border-amber-500 focus:outline-none"
-                    />
-                  </div>
 
                   <div>
                     <label className="block text-gray-400 mb-1">QUANTITY</label>
@@ -717,30 +683,6 @@ export default function PortfolioJournalSection() {
                 />
               </div>
 
-              <div>
-                <label className="block text-gray-400 mb-1">ENTRY PRICE (₹)</label>
-                <input
-                  type="number"
-                  step="0.05"
-                  required
-                  placeholder="150.00"
-                  value={newTrade.entryPrice}
-                  onChange={(e) => setNewTrade({ ...newTrade, entryPrice: e.target.value })}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-400 mb-1">EXIT PRICE (₹ - LEAVE BLANK IF OPEN)</label>
-                <input
-                  type="number"
-                  step="0.05"
-                  placeholder="Optional exit price"
-                  value={newTrade.exitPrice}
-                  onChange={(e) => setNewTrade({ ...newTrade, exitPrice: e.target.value })}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
-                />
-              </div>
 
               <div>
                 <label className="block text-gray-400 mb-1">QUANTITY</label>
