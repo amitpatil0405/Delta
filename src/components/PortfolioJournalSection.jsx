@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { BookOpen, Plus, Lock, Unlock, Trash2, CheckSquare, Square, LogIn, LogOut, AlertCircle } from 'lucide-react';
+import { BookOpen, Plus, Lock, Unlock, Trash2, LogIn, LogOut, AlertCircle, Edit2, Save, X } from 'lucide-react';
 
 const STORAGE_KEY = 'deltafox_portfolio_trades_v3';
 const ADMIN_SESSION_KEY = 'deltafox_admin_logged_in';
@@ -51,6 +51,9 @@ export default function PortfolioJournalSection() {
   // Selected trade IDs for bulk deletion
   const [selectedTradeIds, setSelectedTradeIds] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+
+  // Edit Trade Modal State
+  const [editingTrade, setEditingTrade] = useState(null);
 
   // Synchronize trades array to localStorage whenever trades change
   useEffect(() => {
@@ -154,17 +157,20 @@ export default function PortfolioJournalSection() {
     }
 
     const entryP = parseFloat(newTrade.entryPrice) || 0;
-    const exitP = newTrade.exitPrice !== '' ? parseFloat(newTrade.exitPrice) : null;
-    const isClosed = exitP !== null && newTrade.status === 'CLOSED';
+    const exitP = (newTrade.exitPrice !== '' && newTrade.exitPrice !== null) ? parseFloat(newTrade.exitPrice) : null;
+    const isClosed = newTrade.status === 'CLOSED PROFIT' || newTrade.status === 'CLOSED LOSS' || (newTrade.status === 'CLOSED');
 
-    // Open trades show 0 P&L until closed
+    let finalStatus = newTrade.status;
+    if (finalStatus === 'CLOSED') {
+      const pnlVal = parseFloat(newTrade.manualPnl) || 0;
+      finalStatus = pnlVal >= 0 ? 'CLOSED PROFIT' : 'CLOSED LOSS';
+    }
+
     let calculatedPnl = 0;
-    if (isClosed) {
-      if (newTrade.manualPnl !== undefined && newTrade.manualPnl !== 0) {
-        calculatedPnl = parseFloat(newTrade.manualPnl);
-      } else {
-        calculatedPnl = (entryP - exitP) * parseInt(newTrade.qty);
-      }
+    if (finalStatus === 'OPEN') {
+      calculatedPnl = 0;
+    } else {
+      calculatedPnl = parseFloat(newTrade.manualPnl) || 0;
     }
 
     const created = {
@@ -174,10 +180,10 @@ export default function PortfolioJournalSection() {
       strategy: newTrade.strategy,
       expiry: newTrade.expiry,
       entryPrice: entryP,
-      exitPrice: exitP,
+      exitPrice: finalStatus === 'OPEN' ? null : exitP,
       qty: parseInt(newTrade.qty),
-      status: isClosed ? 'CLOSED' : 'OPEN',
-      manualPnl: isClosed ? calculatedPnl : 0
+      status: finalStatus,
+      manualPnl: calculatedPnl
     };
 
     setTrades([created, ...trades]);
@@ -195,38 +201,74 @@ export default function PortfolioJournalSection() {
     });
   };
 
-  // Close an open trade manually
-  const handleCloseTrade = (tradeId) => {
+  // Open Edit Trade Modal for Admin
+  const handleOpenEditTrade = (trade) => {
     if (!isAdminLoggedIn) {
       setShowLoginModal(true);
       return;
     }
 
-    const exitVal = prompt('Enter Exit Price (₹):');
-    if (exitVal === null) return;
-    const exitPrice = parseFloat(exitVal);
+    setEditingTrade({
+      id: trade.id,
+      date: trade.date,
+      symbol: trade.symbol,
+      strategy: trade.strategy,
+      expiry: trade.expiry,
+      entryPrice: trade.entryPrice,
+      exitPrice: trade.exitPrice !== null && trade.exitPrice !== undefined ? trade.exitPrice : '',
+      qty: trade.qty,
+      status: trade.status === 'CLOSED' ? (trade.manualPnl >= 0 ? 'CLOSED PROFIT' : 'CLOSED LOSS') : trade.status,
+      manualPnl: trade.manualPnl
+    });
+  };
 
-    const pnlVal = prompt('Enter Total Profit/Loss amount (₹):');
-    if (pnlVal === null) return;
-    const manualPnl = parseFloat(pnlVal);
+  // Save Modified Trade Record
+  const handleSaveEditedTrade = (e) => {
+    e.preventDefault();
+
+    if (!isAdminLoggedIn || !editingTrade) return;
+
+    const exitP = (editingTrade.exitPrice !== '' && editingTrade.exitPrice !== null) ? parseFloat(editingTrade.exitPrice) : null;
+    const isOpen = editingTrade.status === 'OPEN';
+
+    let finalStatus = editingTrade.status;
+    let finalPnl = 0;
+
+    if (isOpen) {
+      finalPnl = 0;
+    } else {
+      finalPnl = parseFloat(editingTrade.manualPnl) || 0;
+      if (finalStatus === 'CLOSED') {
+        finalStatus = finalPnl >= 0 ? 'CLOSED PROFIT' : 'CLOSED LOSS';
+      }
+    }
 
     setTrades(prev => prev.map(t => {
-      if (t.id === tradeId) {
+      if (t.id === editingTrade.id) {
         return {
           ...t,
-          exitPrice,
-          status: 'CLOSED',
-          manualPnl
+          date: editingTrade.date,
+          symbol: editingTrade.symbol,
+          strategy: editingTrade.strategy,
+          expiry: editingTrade.expiry,
+          entryPrice: parseFloat(editingTrade.entryPrice) || 0,
+          exitPrice: isOpen ? null : exitP,
+          qty: parseInt(editingTrade.qty) || 0,
+          status: finalStatus,
+          manualPnl: finalPnl
         };
       }
       return t;
     }));
+
+    setEditingTrade(null);
   };
 
   // Key Portfolio Metrics
-  const closedTrades = trades.filter(t => t.status === 'CLOSED');
-  const winningTrades = closedTrades.filter(t => t.manualPnl > 0);
-  const losingTrades = closedTrades.filter(t => t.manualPnl < 0);
+  const isTradeClosed = (t) => t.status === 'CLOSED PROFIT' || t.status === 'CLOSED LOSS' || t.status === 'CLOSED';
+  const closedTrades = trades.filter(isTradeClosed);
+  const winningTrades = closedTrades.filter(t => t.manualPnl > 0 || t.status === 'CLOSED PROFIT');
+  const losingTrades = closedTrades.filter(t => t.manualPnl < 0 || t.status === 'CLOSED LOSS');
 
   const totalTradesCount = trades.length;
   const winRate = closedTrades.length > 0 ? ((winningTrades.length / closedTrades.length) * 100).toFixed(1) : '0.0';
@@ -342,6 +384,162 @@ export default function PortfolioJournalSection() {
           </div>
         </div>
 
+        {/* Admin Edit Trade Modal */}
+        {editingTrade && isAdminLoggedIn && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <div className="bg-[#0a0a0c] border border-amber-500/40 rounded-2xl p-6 max-w-2xl w-full space-y-4 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center space-x-2 text-amber-400 font-mono text-sm font-bold">
+                  <Edit2 className="w-4 h-4" />
+                  <span>MODIFY TRADE RECORD — ADMIN CONTROL</span>
+                </div>
+                <button
+                  onClick={() => setEditingTrade(null)}
+                  className="text-gray-400 hover:text-white font-mono text-xs p-1"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveEditedTrade} className="space-y-4 text-xs font-mono">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-gray-400 mb-1">TRADE DATE</label>
+                    <input
+                      type="date"
+                      required
+                      value={editingTrade.date}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, date: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-400 mb-1">SYMBOL</label>
+                    <input
+                      type="text"
+                      required
+                      value={editingTrade.symbol}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, symbol: e.target.value.toUpperCase() })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white uppercase focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-400 mb-1">STRATEGY</label>
+                    <select
+                      value={editingTrade.strategy}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, strategy: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                    >
+                      <option value="Short Strangle">Short Strangle</option>
+                      <option value="Iron Condor">Iron Condor</option>
+                      <option value="Bull Put Spread">Bull Put Spread</option>
+                      <option value="Bear Call Spread">Bear Call Spread</option>
+                      <option value="Covered Call">Covered Call</option>
+                      <option value="Cash Secured Put">Cash Secured Put</option>
+                      <option value="Long Straddle">Long Straddle</option>
+                      <option value="Long Strangle">Long Strangle</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-400 mb-1">EXPIRY DATE</label>
+                    <input
+                      type="date"
+                      required
+                      value={editingTrade.expiry}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, expiry: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-400 mb-1">ENTRY PRICE (₹)</label>
+                    <input
+                      type="number"
+                      step="0.05"
+                      required
+                      value={editingTrade.entryPrice}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, entryPrice: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-400 mb-1">EXIT PRICE (₹)</label>
+                    <input
+                      type="number"
+                      step="0.05"
+                      placeholder={editingTrade.status === 'OPEN' ? 'N/A for Open' : 'Enter Exit Price'}
+                      disabled={editingTrade.status === 'OPEN'}
+                      value={editingTrade.exitPrice}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, exitPrice: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white disabled:opacity-40 focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-400 mb-1">QUANTITY</label>
+                    <input
+                      type="number"
+                      required
+                      value={editingTrade.qty}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, qty: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-gray-400 mb-1">STATUS</label>
+                    <select
+                      value={editingTrade.status}
+                      onChange={(e) => setEditingTrade({ ...editingTrade, status: e.target.value })}
+                      className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none font-bold"
+                    >
+                      <option value="OPEN" className="text-amber-400">OPEN (0 P&L)</option>
+                      <option value="CLOSED PROFIT" className="text-emerald-400">CLOSED PROFIT (Green)</option>
+                      <option value="CLOSED LOSS" className="text-rose-400">CLOSED LOSS (Red)</option>
+                    </select>
+                  </div>
+
+                  {editingTrade.status !== 'OPEN' && (
+                    <div>
+                      <label className="block text-gray-400 mb-1">TOTAL PROFIT / LOSS (₹)</label>
+                      <input
+                        type="number"
+                        step="1"
+                        required
+                        placeholder="e.g. 2500 or -1500"
+                        value={editingTrade.manualPnl}
+                        onChange={(e) => setEditingTrade({ ...editingTrade, manualPnl: e.target.value })}
+                        className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none font-bold"
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-4 border-t border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setEditingTrade(null)}
+                    className="px-4 py-2 text-xs font-mono text-gray-400 hover:text-white"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    type="submit"
+                    className="inline-flex items-center space-x-1.5 px-5 py-2 bg-amber-500 text-black font-mono font-bold text-xs rounded-xl hover:bg-amber-400 transition-all"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>SAVE CHANGES</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* Admin Login Modal */}
         {showLoginModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
@@ -376,7 +574,7 @@ export default function PortfolioJournalSection() {
                   <input
                     type="password"
                     required
-                    placeholder="Enter Admin Password"
+                    placeholder="Enter Admin Password (Pass123#$)"
                     value={loginPassword}
                     onChange={(e) => {
                       setLoginPassword(e.target.value);
@@ -634,9 +832,25 @@ export default function PortfolioJournalSection() {
                 ) : (
                   trades.map((t) => {
                     const isOpen = t.status === 'OPEN';
+                    const isClosedProfit = t.status === 'CLOSED PROFIT' || (t.status === 'CLOSED' && t.manualPnl >= 0);
+                    const isClosedLoss = t.status === 'CLOSED LOSS' || (t.status === 'CLOSED' && t.manualPnl < 0);
                     const isPos = t.manualPnl > 0;
                     const isNeg = t.manualPnl < 0;
                     const isSelected = selectedTradeIds.includes(t.id);
+
+                    let statusBadgeClass = 'bg-neutral-800 text-gray-300';
+                    let statusText = t.status;
+
+                    if (isOpen) {
+                      statusBadgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
+                      statusText = 'OPEN';
+                    } else if (isClosedProfit) {
+                      statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                      statusText = 'CLOSED PROFIT';
+                    } else if (isClosedLoss) {
+                      statusBadgeClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
+                      statusText = 'CLOSED LOSS';
+                    }
 
                     return (
                       <tr key={t.id} className={`hover:bg-white/5 transition-colors ${isSelected ? 'bg-amber-500/10' : ''}`}>
@@ -656,14 +870,12 @@ export default function PortfolioJournalSection() {
                         <td className="py-3 px-3 text-gray-400">{t.expiry}</td>
                         <td className="py-3 px-3 text-right text-gray-200">₹{t.entryPrice.toFixed(2)}</td>
                         <td className="py-3 px-3 text-right text-gray-200">
-                          {t.exitPrice !== null ? `₹${t.exitPrice.toFixed(2)}` : '-'}
+                          {t.exitPrice !== null && t.exitPrice !== undefined && t.exitPrice !== '' ? `₹${Number(t.exitPrice).toFixed(2)}` : '-'}
                         </td>
                         <td className="py-3 px-3 text-right text-gray-300">{t.qty}</td>
                         <td className="py-3 px-3 text-right">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            isOpen ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-neutral-800 text-gray-300'
-                          }`}>
-                            {t.status}
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${statusBadgeClass}`}>
+                            {statusText}
                           </span>
                         </td>
                         <td className={`py-3 px-3 text-right font-bold text-sm ${
@@ -674,14 +886,14 @@ export default function PortfolioJournalSection() {
                         {isAdminLoggedIn && (
                           <td className="py-3 px-3 text-center">
                             <div className="flex items-center justify-center space-x-2">
-                              {isOpen && (
-                                <button
-                                  onClick={() => handleCloseTrade(t.id)}
-                                  className="px-2.5 py-1 text-[10px] font-bold bg-amber-500 text-black rounded hover:bg-amber-400 transition-all"
-                                >
-                                  CLOSE
-                                </button>
-                              )}
+                              <button
+                                onClick={() => handleOpenEditTrade(t)}
+                                title="Edit Trade Details"
+                                className="inline-flex items-center space-x-1 px-2 py-1 text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded hover:bg-amber-500/30 transition-all"
+                              >
+                                <Edit2 className="w-3 h-3" />
+                                <span>EDIT</span>
+                              </button>
                               <button
                                 onClick={() => handleDeleteSingleTrade(t.id)}
                                 title="Delete Record"
