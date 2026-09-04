@@ -546,9 +546,9 @@ export default function PortfolioJournalSection() {
                       onChange={(e) => setEditingTrade({ ...editingTrade, status: e.target.value })}
                       className="w-full bg-neutral-900 border border-white/10 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none font-bold"
                     >
-                      <option value="OPEN" className="text-amber-400">OPEN (0 P&L)</option>
-                      <option value="CLOSED PROFIT" className="text-emerald-400">CLOSED PROFIT (Green)</option>
-                      <option value="CLOSED LOSS" className="text-rose-400">CLOSED LOSS (Red)</option>
+                      <option value="OPEN" className="text-amber-400">TRADE RUNNING</option>
+                      <option value="CLOSED PROFIT" className="text-emerald-400">CLOSED PROFIT</option>
+                      <option value="CLOSED LOSS" className="text-rose-400">CLOSED LOSS</option>
                     </select>
                   </div>
 
