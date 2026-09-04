@@ -4,10 +4,20 @@ import {
 } from 'recharts';
 import { Shield, TrendingUp, TrendingDown, Layers, ChevronRight, AlertTriangle, CheckCircle } from 'lucide-react';
 
+const MARKET_CATEGORIES = [
+  { id: 'all', name: 'ALL STRATEGIES' },
+  { id: 'sideways', name: 'SIDEWAYS MARKET', icon: Layers },
+  { id: 'uptrend', name: 'UP TREND MARKET', icon: TrendingUp },
+  { id: 'downtrend', name: 'DOWN TREND MARKET', icon: TrendingDown },
+  { id: 'volatile', name: 'VOLATILE / BREAKOUT', icon: AlertTriangle }
+];
+
 const STRATEGIES_DATA = [
   {
     id: 'short-strangle',
     name: 'Short Strangle',
+    category: 'sideways',
+    categoryLabel: 'Sideways Market',
     marketView: 'Neutral / Low Volatility (Range Bound)',
     idealCondition: 'Expect the market or stock to trade within a specific price range until expiry.',
     entryLogic: 'Sell 1 OTM Call Option and Sell 1 OTM Put Option simultaneously.',
@@ -32,6 +42,8 @@ const STRATEGIES_DATA = [
   {
     id: 'iron-condor',
     name: 'Iron Condor',
+    category: 'sideways',
+    categoryLabel: 'Sideways Market',
     marketView: 'Strict Neutral (Defined Risk)',
     idealCondition: 'Low IV crush expected within defined upper and lower price boundaries.',
     entryLogic: 'Sell 1 OTM Put, Buy 1 Further OTM Put, Sell 1 OTM Call, Buy 1 Further OTM Call.',
@@ -56,6 +68,8 @@ const STRATEGIES_DATA = [
   {
     id: 'partial-iron-condor',
     name: 'Partial Iron Condor',
+    category: 'sideways',
+    categoryLabel: 'Sideways Market',
     marketView: 'Skewed Neutral / Asymmetric Risk',
     idealCondition: 'Expect rangebound market with directional bias on one wing (hedged on higher probability risk side).',
     entryLogic: 'Sell 1 OTM Put and Sell 1 OTM Call, while Buying 1 protective wing (Call or Put) on the biased side.',
@@ -80,6 +94,8 @@ const STRATEGIES_DATA = [
   {
     id: 'bull-put-spread',
     name: 'Bull Put Spread',
+    category: 'uptrend',
+    categoryLabel: 'Up Trend Market',
     marketView: 'Moderately Bullish',
     idealCondition: 'Expect underlying to stay above key support level.',
     entryLogic: 'Sell 1 OTM Put Option and Buy 1 Further OTM Put Option for protection.',
@@ -99,28 +115,10 @@ const STRATEGIES_DATA = [
     ]
   },
   {
-    id: 'bear-call-spread',
-    name: 'Bear Call Spread',
-    marketView: 'Moderately Bearish',
-    idealCondition: 'Expect market to stay below major resistance zone.',
-    entryLogic: 'Sell 1 OTM Call Option and Buy 1 Higher OTM Call Option.',
-    exitLogic: 'Hold to let theta decay or exit on resistance test.',
-    maxProfit: 'Net Credit Received',
-    maxRisk: 'Strike Difference - Net Credit',
-    stopLossConcept: 'Close position if short call is breached.',
-    profitTarget: '65% - 75% max profit.',
-    breakeven: 'Short Call Strike + Net Credit',
-    payoffData: [
-      { spot: 21500, pnl: 250 },
-      { spot: 21900, pnl: 250 },
-      { spot: 22200, pnl: 0 }, // Breakeven
-      { spot: 22500, pnl: -400 },
-      { spot: 22900, pnl: -400 }
-    ]
-  },
-  {
     id: 'covered-call',
     name: 'Covered Call',
+    category: 'uptrend',
+    categoryLabel: 'Up Trend Market',
     marketView: 'Mildly Bullish to Neutral',
     idealCondition: 'Own underlying stock and generate income via call writing.',
     entryLogic: 'Hold 100 shares (or 1 futures contract) and Sell 1 OTM Call Option.',
@@ -140,9 +138,33 @@ const STRATEGIES_DATA = [
     ]
   },
   {
+    id: 'bear-call-spread',
+    name: 'Bear Call Spread',
+    category: 'downtrend',
+    categoryLabel: 'Down Trend Market',
+    marketView: 'Moderately Bearish',
+    idealCondition: 'Expect market to stay below major resistance zone.',
+    entryLogic: 'Sell 1 OTM Call Option and Buy 1 Higher OTM Call Option.',
+    exitLogic: 'Hold to let theta decay or exit on resistance test.',
+    maxProfit: 'Net Credit Received',
+    maxRisk: 'Strike Difference - Net Credit',
+    stopLossConcept: 'Close position if short call is breached.',
+    profitTarget: '65% - 75% max profit.',
+    breakeven: 'Short Call Strike + Net Credit',
+    payoffData: [
+      { spot: 21500, pnl: 250 },
+      { spot: 21900, pnl: 250 },
+      { spot: 22200, pnl: 0 }, // Breakeven
+      { spot: 22500, pnl: -400 },
+      { spot: 22900, pnl: -400 }
+    ]
+  },
+  {
     id: 'cash-secured-put',
     name: 'Cash Secured Put',
-    marketView: 'Neutral to Bullish',
+    category: 'downtrend',
+    categoryLabel: 'Down Trend Market',
+    marketView: 'Neutral to Bullish / Accumulation',
     idealCondition: 'Willing to buy underlying stock at lower strike or collect income.',
     entryLogic: 'Sell 1 OTM Put Option while holding 100% cash to buy shares if assigned.',
     exitLogic: 'Take assignment to own quality stock at discount or close at 50% profit.',
@@ -162,6 +184,8 @@ const STRATEGIES_DATA = [
   {
     id: 'long-straddle',
     name: 'Long Straddle',
+    category: 'volatile',
+    categoryLabel: 'Volatile / Breakout',
     marketView: 'High Volatility Explosion Expected',
     idealCondition: 'Major earnings announcement, election, or RBI policy event.',
     entryLogic: 'Buy 1 ATM Call and Buy 1 ATM Put simultaneously.',
@@ -184,6 +208,8 @@ const STRATEGIES_DATA = [
   {
     id: 'long-strangle',
     name: 'Long Strangle',
+    category: 'volatile',
+    categoryLabel: 'Volatile / Breakout',
     marketView: 'Extreme Volatility Breakout (Lower Cost)',
     idealCondition: 'Expect huge sharp directional move at cheaper entry cost than straddle.',
     entryLogic: 'Buy 1 OTM Call Option and Buy 1 OTM Put Option.',
@@ -206,9 +232,22 @@ const STRATEGIES_DATA = [
 ];
 
 export default function OptionsStrategiesSection() {
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [activeStrategyId, setActiveStrategyId] = useState('short-strangle');
 
-  const activeStrategy = STRATEGIES_DATA.find(s => s.id === activeStrategyId) || STRATEGIES_DATA[0];
+  const filteredStrategies = selectedCategory === 'all'
+    ? STRATEGIES_DATA
+    : STRATEGIES_DATA.filter(s => s.category === selectedCategory);
+
+  const activeStrategy = STRATEGIES_DATA.find(s => s.id === activeStrategyId) || filteredStrategies[0] || STRATEGIES_DATA[0];
+
+  const handleCategorySelect = (catId) => {
+    setSelectedCategory(catId);
+    if (catId !== 'all') {
+      const firstInCat = STRATEGIES_DATA.find(s => s.category === catId);
+      if (firstInCat) setActiveStrategyId(firstInCat.id);
+    }
+  };
 
   return (
     <section id="strategies" className="py-24 bg-[#050507] border-t border-white/5 relative overflow-hidden">
@@ -216,7 +255,7 @@ export default function OptionsStrategiesSection() {
       {/* Glow Effects */}
       <div className="absolute top-1/3 right-10 w-96 h-96 bg-amber-500/5 rounded-full blur-[150px] pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
 
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto">
@@ -228,25 +267,52 @@ export default function OptionsStrategiesSection() {
             STRATEGIES BUILT FOR DIFFERENT MARKET CONDITIONS.
           </h2>
           <p className="mt-4 text-base text-gray-400">
-            Select a systematic options strategy to inspect entry logic, exit parameters, risk parameters, and animated payoff curves.
+            Select a market type or options framework to inspect entry logic, risk profile, and payoff curves.
           </p>
         </div>
 
-        {/* 3D Horizontal Strategy Selector Gallery */}
-        <div className="flex items-center space-x-3 overflow-x-auto pb-4 scrollbar-none justify-start md:justify-center">
-          {STRATEGIES_DATA.map((st) => (
+        {/* Market Outlook Category Tabs */}
+        <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl mx-auto">
+          {MARKET_CATEGORIES.map((cat) => (
             <button
-              key={st.id}
-              onClick={() => setActiveStrategyId(st.id)}
-              className={`px-5 py-3 rounded-2xl text-xs font-mono font-bold whitespace-nowrap transition-all duration-300 transform border ${
-                activeStrategyId === st.id
-                  ? 'bg-amber-500 text-black border-amber-400 scale-105 shadow-[0_0_25px_rgba(217,119,6,0.35)]'
-                  : 'bg-neutral-900/80 text-gray-400 hover:text-white border-white/10 hover:border-amber-500/30'
+              key={cat.id}
+              onClick={() => handleCategorySelect(cat.id)}
+              className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all duration-200 border ${
+                selectedCategory === cat.id
+                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/60 shadow-[0_0_15px_rgba(217,119,6,0.2)]'
+                  : 'bg-neutral-900/60 text-gray-400 hover:text-white border-white/10 hover:border-white/20'
               }`}
             >
-              {st.name}
+              {cat.name}
             </button>
           ))}
+        </div>
+
+        {/* Responsive Grid/Flex Strategy Pill Selector - Fits Screen Completely without Overflow */}
+        <div className="bg-neutral-900/40 p-4 rounded-2xl border border-white/5 max-w-5xl mx-auto">
+          <div className="text-[10px] font-mono text-gray-500 uppercase tracking-widest text-center mb-3">
+            {selectedCategory === 'all' ? 'All Market Strategies' : `${MARKET_CATEGORIES.find(c => c.id === selectedCategory)?.name} Strategies`}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            {filteredStrategies.map((st) => (
+              <button
+                key={st.id}
+                onClick={() => setActiveStrategyId(st.id)}
+                className={`px-4 py-2.5 rounded-xl text-xs font-mono font-bold transition-all duration-300 transform border ${
+                  activeStrategyId === st.id
+                    ? 'bg-amber-500 text-black border-amber-400 scale-105 shadow-[0_0_20px_rgba(217,119,6,0.35)]'
+                    : 'bg-neutral-900/90 text-gray-300 hover:text-white border-white/10 hover:border-amber-500/40'
+                }`}
+              >
+                <span>{st.name}</span>
+                <span className={`ml-2 text-[9px] px-1.5 py-0.5 rounded font-normal uppercase ${
+                  activeStrategyId === st.id ? 'bg-black/20 text-black' : 'bg-white/5 text-amber-400/80'
+                }`}>
+                  {st.categoryLabel}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Strategy Detail & Interactive Animated Payoff Diagram */}
