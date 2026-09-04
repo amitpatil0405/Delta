@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
-import { Mail, Send, CheckCircle2, AlertCircle, Inbox } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Mail, Send, CheckCircle2, AlertCircle, Inbox, Trash2, RefreshCw } from 'lucide-react';
+
+const ADMIN_SESSION_KEY = 'deltafox_admin_logged_in';
+const INQUIRIES_DB_URL = 'https://api.restful-api.dev/objects/ff808181a067127101a06ca4d7d11100';
 
 export default function ContactSection() {
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
+    return sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+  });
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -9,10 +16,76 @@ export default function ContactSection() {
     message: ''
   });
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  // Admin view inquiries state
+  const [inquiries, setInquiries] = useState([]);
+  const [showInquiriesPanel, setShowInquiriesPanel] = useState(false);
+
+  // Fetch inquiries from Cloud DB on mount or when panel opens
+  const fetchInquiries = async () => {
+    try {
+      const res = await fetch(INQUIRIES_DB_URL);
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.data && Array.isArray(json.data.inquiries)) {
+          setInquiries(json.data.inquiries);
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to fetch inquiries:', e);
+    }
+  };
+
+  useEffect(() => {
+    const checkAdmin = () => {
+      setIsAdminLoggedIn(sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true');
+    };
+    window.addEventListener('storage', checkAdmin);
+    checkAdmin();
+    fetchInquiries();
+    return () => window.removeEventListener('storage', checkAdmin);
+  }, []);
+
+  const saveInquiryToCloud = async (newInquiry) => {
+    try {
+      const updatedList = [newInquiry, ...inquiries].slice(0, 100);
+      setInquiries(updatedList);
+      await fetch(INQUIRIES_DB_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'deltafox_inquiries',
+          data: { inquiries: updatedList }
+        })
+      });
+    } catch (err) {
+      console.warn('Could not save inquiry to cloud:', err);
+    }
+  };
+
+  const handleDeleteInquiry = async (inquiryId) => {
+    if (window.confirm('Delete this inquiry record?')) {
+      const updated = inquiries.filter(i => i.id !== inquiryId);
+      setInquiries(updated);
+      try {
+        await fetch(INQUIRIES_DB_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: 'deltafox_inquiries',
+            data: { inquiries: updated }
+          })
+        });
+      } catch (err) {
+        console.warn('Could not update cloud inquiries:', err);
+      }
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
       setError('Please fill in all required fields.');
@@ -24,9 +97,44 @@ export default function ContactSection() {
     }
 
     setError('');
+    setIsSubmitting(true);
+
+    const inquiryRecord = {
+      id: `inq_${Date.now()}`,
+      date: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+      name: formData.name,
+      email: formData.email,
+      subject: formData.subject || 'DeltaFox Inquiry',
+      message: formData.message
+    };
+
+    // 1. Save to cloud database for Admin visibility
+    await saveInquiryToCloud(inquiryRecord);
+
+    // 2. Submit via FormSubmit API to send email directly to amitpatil0405@gmail.com
+    try {
+      await fetch('https://formsubmit.co/ajax/amitpatil0405@gmail.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          _subject: formData.subject ? `[DELTAFOX] ${formData.subject}` : `[DELTAFOX] Inquiry from ${formData.name}`,
+          message: formData.message,
+          _captcha: 'false'
+        })
+      });
+    } catch (err) {
+      console.warn('FormSubmit endpoint dispatch attempt completed:', err);
+    }
+
+    setIsSubmitting(false);
     setSubmitted(true);
 
-    // Trigger mailto client as fallback backup
+    // Backup mailto fallback
     const mailtoSubject = encodeURIComponent(formData.subject || `DeltaFox Inquiry from ${formData.name}`);
     const mailtoBody = encodeURIComponent(
       `Name: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`
@@ -38,7 +146,7 @@ export default function ContactSection() {
     <section id="contact" className="py-24 bg-[#060608] border-t border-white/5 relative">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* Header */}
+        {/* Header & Admin Controls */}
         <div className="text-center space-y-4 mb-12">
           <div className="inline-flex items-center space-x-2 text-amber-400 font-mono text-xs uppercase tracking-widest">
             <Mail className="w-4 h-4" />
@@ -51,7 +159,67 @@ export default function ContactSection() {
             Connect with us regarding training programs, options trading strategies, or platform inquiries.
           </p>
 
+          {isAdminLoggedIn && (
+            <div className="pt-2">
+              <button
+                onClick={() => {
+                  setShowInquiriesPanel(!showInquiriesPanel);
+                  fetchInquiries();
+                }}
+                className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400 text-xs font-mono font-bold hover:bg-amber-500/20 transition-all"
+              >
+                <Inbox className="w-4 h-4" />
+                <span>{showInquiriesPanel ? 'HIDE INQUIRIES' : `VIEW RECEIVED INQUIRIES (${inquiries.length})`}</span>
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* Central Admin Received Inquiries Panel */}
+        {isAdminLoggedIn && showInquiriesPanel && (
+          <div className="glass-card rounded-3xl p-6 mb-10 border border-amber-500/40 space-y-4 font-mono text-xs">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+              <div className="flex items-center space-x-2 text-amber-400 font-bold">
+                <Inbox className="w-4 h-4" />
+                <span>RECEIVED USER INQUIRIES — CENTRAL ADMIN PANEL</span>
+              </div>
+              <button
+                onClick={fetchInquiries}
+                className="inline-flex items-center space-x-1 text-gray-400 hover:text-white text-[11px]"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>REFRESH</span>
+              </button>
+            </div>
+
+            {inquiries.length === 0 ? (
+              <p className="py-8 text-center text-gray-500">NO INQUIRIES RECORDED YET.</p>
+            ) : (
+              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+                {inquiries.map((inq) => (
+                  <div key={inq.id} className="p-4 rounded-xl bg-neutral-900/90 border border-white/10 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-amber-400 font-bold">{inq.name} ({inq.email})</span>
+                      <div className="flex items-center space-x-3">
+                        <span className="text-[10px] text-gray-500">{inq.date}</span>
+                        <button
+                          onClick={() => handleDeleteInquiry(inq.id)}
+                          className="text-gray-500 hover:text-rose-400 transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-gray-300 font-bold text-[11px]">SUBJECT: {inq.subject}</div>
+                    <p className="text-gray-400 font-sans text-xs bg-black/40 p-3 rounded-lg border border-white/5 whitespace-pre-wrap">
+                      {inq.message}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Form Container */}
         <div className="glass-card rounded-3xl p-8 sm:p-10 border border-white/10 relative">
@@ -134,10 +302,11 @@ export default function ContactSection() {
 
               <button
                 type="submit"
-                className="w-full py-4 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-black font-extrabold text-sm rounded-xl hover:brightness-110 transition-all shadow-[0_0_25px_rgba(217,119,6,0.3)] flex items-center justify-center space-x-2 uppercase tracking-wider"
+                disabled={isSubmitting}
+                className="w-full py-4 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-black font-extrabold text-sm rounded-xl hover:brightness-110 transition-all shadow-[0_0_25px_rgba(217,119,6,0.3)] flex items-center justify-center space-x-2 uppercase tracking-wider disabled:opacity-50"
               >
                 <Send className="w-4 h-4" />
-                <span>Submit enquiry</span>
+                <span>{isSubmitting ? 'SENDING INQUIRY...' : 'Submit enquiry'}</span>
               </button>
 
             </form>
