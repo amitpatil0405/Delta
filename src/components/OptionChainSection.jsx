@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { getOptionsChain } from '../services/marketData';
+import { getOptionsChain, getExpiryOptions } from '../services/marketData';
 import { useMarket } from '../context/MarketContext';
 
 export default function OptionChainSection() {
   const { activeSymbol, setActiveSymbol, allAvailableSymbols } = useMarket();
-  const [expiry, setExpiry] = useState('26-MAR-2026 (Monthly)');
+
+  // Calculate dynamic expiry options based on selected underlying symbol
+  const availableExpiries = getExpiryOptions(activeSymbol);
+  const [expiry, setExpiry] = useState(availableExpiries[0] || '');
   const [chain, setChain] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Automatically adjust expiry if activeSymbol changes and current expiry is invalid
+  useEffect(() => {
+    const list = getExpiryOptions(activeSymbol);
+    if (!list.includes(expiry)) {
+      setExpiry(list[0] || '');
+    }
+  }, [activeSymbol]);
 
   useEffect(() => {
     let isMounted = true;
@@ -72,15 +83,17 @@ export default function OptionChainSection() {
                 onChange={(e) => setExpiry(e.target.value)}
                 className="bg-transparent text-white font-bold focus:outline-none cursor-pointer"
               >
-                <option value="26-MAR-2026 (Monthly)" className="bg-[#111111]">26-MAR-2026 (Monthly)</option>
-                <option value="02-APR-2026 (Weekly)" className="bg-[#111111]">02-APR-2026 (Weekly)</option>
-                <option value="09-APR-2026 (Weekly)" className="bg-[#111111]">09-APR-2026 (Weekly)</option>
+                {availableExpiries.map((expOption) => (
+                  <option key={expOption} value={expOption} className="bg-[#111111] text-white">
+                    {expOption}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
         </div>
 
-        {/* Top Summary Cards (Spot Price, ATM, PCR, Max Pain) matching 8.png */}
+        {/* Top Summary Cards (Spot Price, ATM, PCR, Max Pain) */}
         {chain && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-xl p-4 font-mono">

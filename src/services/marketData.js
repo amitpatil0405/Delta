@@ -53,6 +53,84 @@ function formatISTTime(hours, mins) {
   return `${hStr}:${mStr} IST`;
 }
 
+/**
+ * Dynamic Expiry Dates Generator
+ * Rules:
+ * - NIFTY 50: 4 Weekly Expiries (Tuesdays), with the last Tuesday of the month marked as (Monthly)
+ * - SENSEX: 4 Weekly Expiries (Thursdays), with the last Thursday of the month marked as (Monthly)
+ * - BANK NIFTY & Equity Stocks: 3 Monthly Expiries on the last Tuesday of each month
+ */
+export function getExpiryOptions(symbol = 'NIFTY 50', baseDate = new Date()) {
+  const s = symbol.toUpperCase().trim();
+  const today = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
+
+  const results = [];
+
+  const isNifty = (s === 'NIFTY 50' || s === 'NIFTY50' || s === 'NIFTY');
+  const isSensex = (s === 'SENSEX' || s === 'BSESN' || s === 'BSE SENSEX');
+
+  const formatDateStr = (d) => {
+    const day = String(d.getDate()).padStart(2, '0');
+    const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const month = monthNames[d.getMonth()];
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const getLastWeekdayOfMonth = (year, monthIndex, targetWeekday) => {
+    const lastDay = new Date(year, monthIndex + 1, 0);
+    while (lastDay.getDay() !== targetWeekday) {
+      lastDay.setDate(lastDay.getDate() - 1);
+    }
+    return lastDay;
+  };
+
+  if (isNifty || isSensex) {
+    // 4 Weekly Expiries
+    // Nifty: Tuesday (2), Sensex: Thursday (4)
+    const targetDay = isNifty ? 2 : 4;
+    let current = new Date(today);
+
+    while (current.getDay() !== targetDay) {
+      current.setDate(current.getDate() + 1);
+    }
+
+    for (let i = 0; i < 4; i++) {
+      const expiryDate = new Date(current);
+      const year = expiryDate.getFullYear();
+      const month = expiryDate.getMonth();
+      const lastWkday = getLastWeekdayOfMonth(year, month, targetDay);
+
+      const isMonthly = (expiryDate.getDate() === lastWkday.getDate() && expiryDate.getMonth() === lastWkday.getMonth());
+      const label = `${formatDateStr(expiryDate)} (${isMonthly ? 'Monthly' : 'Weekly'})`;
+      results.push(label);
+
+      current.setDate(current.getDate() + 7);
+    }
+  } else {
+    // Bank Nifty and all Stocks -> 3 Monthly Expiries on Last Tuesday of each month
+    const targetDay = 2; // Tuesday
+    let currYear = today.getFullYear();
+    let currMonth = today.getMonth();
+
+    let count = 0;
+    while (count < 3) {
+      const lastTue = getLastWeekdayOfMonth(currYear, currMonth, targetDay);
+      if (lastTue >= today) {
+        results.push(`${formatDateStr(lastTue)} (Monthly)`);
+        count++;
+      }
+      currMonth++;
+      if (currMonth > 11) {
+        currMonth = 0;
+        currYear++;
+      }
+    }
+  }
+
+  return results;
+}
+
 // Symbol mapping helper for Yahoo Finance
 export function getYahooSymbol(symbol) {
   const s = symbol.toUpperCase().trim();
@@ -380,7 +458,7 @@ export async function getHistoricalData(symbol = 'NIFTY 50', timeframe = '1M') {
 /**
  * Fetch Options Chain Data
  */
-export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '26-MAR-2026') {
+export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '') {
   const quoteRes = await getQuote(symbol);
   const spotPrice = quoteRes.data ? quoteRes.data.price : 22123.65;
 
