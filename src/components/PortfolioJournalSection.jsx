@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { BookOpen, Plus, TrendingUp, TrendingDown, DollarSign, Award, Percent, ShieldAlert, Calendar, Lock, Unlock, Trash2 } from 'lucide-react';
+import { BookOpen, Plus, Lock, Unlock, Trash2, CheckSquare, Square, LogIn, LogOut, AlertCircle } from 'lucide-react';
 
-// Benchmark trade history records (Supports up to 200 records per financial year)
-const INITIAL_TRADES_FY24_25 = [
+const STORAGE_KEY = 'deltafox_portfolio_trades_v3';
+const ADMIN_SESSION_KEY = 'deltafox_admin_logged_in';
+
+// Initial default seed trades (saved to localStorage on first launch)
+const DEFAULT_INITIAL_TRADES = [
   { id: 't1', date: '2024-10-15', symbol: 'NIFTY 50', strategy: 'Short Strangle', expiry: '2024-10-31', entryPrice: 145.00, exitPrice: 35.00, qty: 150, status: 'CLOSED', manualPnl: 16500 },
   { id: 't2', date: '2024-11-04', symbol: 'BANK NIFTY', strategy: 'Iron Condor', expiry: '2024-11-28', entryPrice: 210.00, exitPrice: 80.00, qty: 60, status: 'CLOSED', manualPnl: 7800 },
   { id: 't3', date: '2024-12-02', symbol: 'NIFTY 50', strategy: 'Bull Put Spread', expiry: '2024-12-26', entryPrice: 95.00, exitPrice: 20.00, qty: 200, status: 'CLOSED', manualPnl: 15000 },
@@ -16,61 +19,112 @@ const INITIAL_TRADES_FY24_25 = [
 ];
 
 export default function PortfolioJournalSection() {
-  const [trades, setTrades] = useState(() => {
-    try {
-      const saved = localStorage.getItem('deltafox_portfolio_trades_v2');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch (e) {
-      console.warn('Could not load stored trades:', e);
-    }
-    return INITIAL_TRADES_FY24_25;
+  // Admin authentication state (Session Persisted)
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
+    return sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
   });
 
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  // Trades state initialized strictly from localStorage (No data loss on refresh)
+  const [trades, setTrades] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved !== null) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.warn('Error reading stored trades:', e);
+    }
+    // Seed default trades into localStorage if no storage exists
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_INITIAL_TRADES));
+    } catch (e) {
+      console.warn('Error setting initial trades:', e);
+    }
+    return DEFAULT_INITIAL_TRADES;
+  });
+
+  // Selected trade IDs for bulk deletion
+  const [selectedTradeIds, setSelectedTradeIds] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
 
-  // Synchronize trades array to localStorage (Persistent Storage for 200+ records)
-  React.useEffect(() => {
+  // Synchronize trades array to localStorage whenever trades change
+  useEffect(() => {
     try {
-      localStorage.setItem('deltafox_portfolio_trades_v2', JSON.stringify(trades.slice(0, 200)));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(trades.slice(0, 200)));
     } catch (e) {
       console.warn('Could not save trades to localStorage:', e);
     }
   }, [trades]);
-  const [isAdminUnlocked, setIsAdminUnlocked] = useState(false);
-  const [adminPassword, setAdminPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
 
-  const handleUnlockAdmin = () => {
-    if (adminPassword === 'Pass123#$') {
-      setIsAdminUnlocked(true);
-      setPasswordError('');
-      setAdminPassword('');
+  // Admin Login Handler
+  const handleAdminLogin = (e) => {
+    e.preventDefault();
+    if (loginPassword === 'Pass123#$') {
+      setIsAdminLoggedIn(true);
+      sessionStorage.setItem(ADMIN_SESSION_KEY, 'true');
+      setShowLoginModal(false);
+      setLoginPassword('');
+      setLoginError('');
     } else {
-      setPasswordError('Invalid Admin Password. Access Denied.');
+      setLoginError('Invalid Admin Password. Access Denied.');
     }
   };
 
-  const handleLockAdmin = () => {
-    setIsAdminUnlocked(false);
+  // Admin Logout Handler
+  const handleAdminLogout = () => {
+    setIsAdminLoggedIn(false);
+    sessionStorage.removeItem(ADMIN_SESSION_KEY);
     setShowAddForm(false);
-    setPasswordError('');
+    setSelectedTradeIds([]);
   };
 
-  const handleDeleteTrade = (tradeId) => {
-    if (!isAdminUnlocked) {
-      const pass = prompt('Enter Admin Password to Delete Record:');
-      if (pass !== 'Pass123#$') {
-        alert('Invalid Admin Password. Record deletion denied.');
-        return;
-      }
+  // Single Trade Deletion
+  const handleDeleteSingleTrade = (tradeId) => {
+    if (!isAdminLoggedIn) {
+      setShowLoginModal(true);
+      return;
     }
-
-    if (confirm('Are you sure you want to delete this trade record from the journal?')) {
+    if (window.confirm('Are you sure you want to delete this trade record?')) {
       setTrades(prev => prev.filter(t => t.id !== tradeId));
+      setSelectedTradeIds(prev => prev.filter(id => id !== tradeId));
     }
+  };
+
+  // Bulk Trade Deletion
+  const handleDeleteSelectedTrades = () => {
+    if (!isAdminLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
+    if (selectedTradeIds.length === 0) return;
+
+    if (window.confirm(`Are you sure you want to delete ${selectedTradeIds.length} selected trade record(s)?`)) {
+      setTrades(prev => prev.filter(t => !selectedTradeIds.includes(t.id)));
+      setSelectedTradeIds([]);
+    }
+  };
+
+  // Select All Checkbox Handler
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedTradeIds(trades.map(t => t.id));
+    } else {
+      setSelectedTradeIds([]);
+    }
+  };
+
+  // Row Checkbox Toggle
+  const handleSelectTrade = (tradeId) => {
+    setSelectedTradeIds(prev =>
+      prev.includes(tradeId)
+        ? prev.filter(id => id !== tradeId)
+        : [...prev, tradeId]
+    );
   };
 
   // New trade form state
@@ -89,17 +143,21 @@ export default function PortfolioJournalSection() {
   const handleCreateTrade = (e) => {
     e.preventDefault();
 
-    if (!isAdminUnlocked && adminPassword !== 'Pass123#$') {
-      setPasswordError('Invalid Admin Password. Access Denied.');
+    if (!isAdminLoggedIn) {
+      setShowLoginModal(true);
       return;
     }
 
-    setPasswordError('');
+    if (trades.length >= 200) {
+      alert('Maximum capacity of 200 trade records reached.');
+      return;
+    }
+
     const entryP = parseFloat(newTrade.entryPrice) || 0;
     const exitP = newTrade.exitPrice !== '' ? parseFloat(newTrade.exitPrice) : null;
     const isClosed = exitP !== null && newTrade.status === 'CLOSED';
 
-    // Strictly enforce rule: open trades show 0 P&L until closed
+    // Open trades show 0 P&L until closed
     let calculatedPnl = 0;
     if (isClosed) {
       if (newTrade.manualPnl !== undefined && newTrade.manualPnl !== 0) {
@@ -124,7 +182,6 @@ export default function PortfolioJournalSection() {
 
     setTrades([created, ...trades]);
     setShowAddForm(false);
-    setAdminPassword('');
     setNewTrade({
       date: new Date().toISOString().split('T')[0],
       symbol: 'NIFTY 50',
@@ -138,8 +195,13 @@ export default function PortfolioJournalSection() {
     });
   };
 
-  // Close an open trade manually by entering exit price & final profit
+  // Close an open trade manually
   const handleCloseTrade = (tradeId) => {
+    if (!isAdminLoggedIn) {
+      setShowLoginModal(true);
+      return;
+    }
+
     const exitVal = prompt('Enter Exit Price (₹):');
     if (exitVal === null) return;
     const exitPrice = parseFloat(exitVal);
@@ -161,14 +223,13 @@ export default function PortfolioJournalSection() {
     }));
   };
 
-  // Calculate Key Portfolio Metrics
+  // Key Portfolio Metrics
   const closedTrades = trades.filter(t => t.status === 'CLOSED');
   const winningTrades = closedTrades.filter(t => t.manualPnl > 0);
   const losingTrades = closedTrades.filter(t => t.manualPnl < 0);
 
   const totalTradesCount = trades.length;
   const winRate = closedTrades.length > 0 ? ((winningTrades.length / closedTrades.length) * 100).toFixed(1) : '0.0';
-
   const totalPnl = closedTrades.reduce((acc, t) => acc + t.manualPnl, 0);
 
   const avgProfit = winningTrades.length > 0
@@ -194,14 +255,14 @@ export default function PortfolioJournalSection() {
     <section id="portfolio" className="py-20 bg-[#050505] border-t border-white/5 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 
-        {/* Section Header & FY Switcher */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between">
+        {/* Section Header & Central Admin Control Panel */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="inline-flex items-center space-x-2 text-amber-400 font-mono text-xs uppercase tracking-widest mb-2">
               <BookOpen className="w-4 h-4" />
               <span>Institutional Trading Journal</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">
               PORTFOLIO & TRADING JOURNAL
             </h2>
             <p className="mt-2 text-sm text-gray-400 max-w-xl">
@@ -209,47 +270,52 @@ export default function PortfolioJournalSection() {
             </p>
           </div>
 
-          {/* Add Trade & Admin Status CTA */}
-          <div className="mt-4 md:mt-0 flex items-center space-x-3">
-            {isAdminUnlocked ? (
+          {/* Central Admin Status & Action Buttons */}
+          <div className="flex items-center flex-wrap gap-3">
+            {isAdminLoggedIn ? (
               <div className="flex items-center space-x-2">
-                <span className="flex items-center space-x-1 px-3 py-1.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+                <span className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
                   <Unlock className="w-3.5 h-3.5" />
-                  <span>ADMIN MODE</span>
+                  <span>ADMIN LOGGED IN</span>
                 </span>
                 <button
-                  onClick={handleLockAdmin}
-                  className="px-3 py-1.5 rounded-lg bg-neutral-900 border border-white/10 text-xs font-mono text-gray-400 hover:text-white"
+                  onClick={handleAdminLogout}
+                  className="inline-flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-neutral-900 border border-white/10 text-xs font-mono text-gray-300 hover:text-white hover:bg-neutral-800 transition-all"
                 >
-                  LOCK
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>LOGOUT</span>
                 </button>
               </div>
             ) : (
-              <div className="flex items-center space-x-2 bg-neutral-900/80 px-3 py-1.5 rounded-lg border border-white/10 text-xs font-mono">
-                <Lock className="w-3.5 h-3.5 text-amber-400" />
-                <span className="text-gray-400">VIEW-ONLY MODE</span>
-              </div>
+              <button
+                onClick={() => {
+                  setShowLoginModal(true);
+                  setLoginError('');
+                }}
+                className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-neutral-900 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold hover:bg-neutral-800 transition-all"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>CENTRAL ADMIN LOGIN</span>
+              </button>
             )}
 
-            <button
-              onClick={() => {
-                setShowAddForm(!showAddForm);
-                setPasswordError('');
-              }}
-              className="inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold font-mono uppercase bg-amber-500 text-black rounded-xl hover:bg-amber-400 transition-all shadow-lg"
-            >
-              <Plus className="w-4 h-4" />
-              <span>RECORD NEW TRADE</span>
-            </button>
+            {isAdminLoggedIn && (
+              <button
+                onClick={() => setShowAddForm(!showAddForm)}
+                className="inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold font-mono uppercase bg-amber-500 text-black rounded-xl hover:bg-amber-400 transition-all shadow-lg"
+              >
+                <Plus className="w-4 h-4" />
+                <span>RECORD NEW TRADE</span>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Portfolio Executive Performance Dashboard */}
+        {/* Portfolio Performance Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
           <div className="glass-card rounded-2xl p-5 border border-white/10">
             <span className="text-[11px] font-mono text-gray-400 uppercase">TOTAL TRADES</span>
-            <div className="text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount}</div>
+            <div className="text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount} / 200</div>
             <span className="text-[10px] font-mono text-amber-400">{closedTrades.length} Closed / {trades.length - closedTrades.length} Open</span>
           </div>
 
@@ -274,24 +340,81 @@ export default function PortfolioJournalSection() {
             </div>
             <span className="text-[10px] font-mono text-gray-400">Risk-Reward Ratio</span>
           </div>
-
         </div>
 
+        {/* Admin Login Modal */}
+        {showLoginModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+            <div className="bg-[#0a0a0c] border border-amber-500/40 rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <div className="flex items-center space-x-2 text-amber-400 font-mono text-sm font-bold">
+                  <Lock className="w-4 h-4" />
+                  <span>CENTRAL ADMIN LOGIN</span>
+                </div>
+                <button
+                  onClick={() => setShowLoginModal(false)}
+                  className="text-gray-400 hover:text-white font-mono text-xs"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <p className="text-xs text-gray-400">
+                Log in as Central Admin to manage, record, or delete portfolio trades without needing repeated authentication.
+              </p>
+
+              {loginError && (
+                <div className="flex items-center space-x-2 p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{loginError}</span>
+                </div>
+              )}
+
+              <form onSubmit={handleAdminLogin} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-mono text-gray-300 mb-1">ADMIN PASSWORD</label>
+                  <input
+                    type="password"
+                    required
+                    placeholder="Enter Admin Password (Pass123#$)"
+                    value={loginPassword}
+                    onChange={(e) => {
+                      setLoginPassword(e.target.value);
+                      setLoginError('');
+                    }}
+                    className="w-full bg-neutral-900 border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-amber-500 focus:outline-none font-mono"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginModal(false)}
+                    className="px-4 py-2 text-xs font-mono text-gray-400 hover:text-white"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-amber-500 text-black font-mono font-bold text-xs rounded-xl hover:bg-amber-400 transition-all"
+                  >
+                    LOGIN AS ADMIN
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
         {/* New Trade Entry Form Modal / Drawer */}
-        {showAddForm && (
+        {showAddForm && isAdminLoggedIn && (
           <form onSubmit={handleCreateTrade} className="glass-card rounded-2xl p-6 border border-amber-500/40 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-extrabold font-mono text-amber-400 uppercase tracking-wider">
-                NEW TRADE ENTRY — CURRENT FINANCIAL YEAR
+                RECORD NEW TRADE — ADMIN ENTRY
               </h3>
-              <span className="text-[10px] font-mono text-gray-400">ADMIN AUTH REQUIRED</span>
+              <span className="text-[10px] font-mono text-emerald-400 font-bold">ADMIN AUTHORIZED</span>
             </div>
-
-            {passwordError && (
-              <div className="p-2.5 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-mono">
-                {passwordError}
-              </div>
-            )}
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-mono">
               <div>
@@ -406,32 +529,6 @@ export default function PortfolioJournalSection() {
                   />
                 </div>
               )}
-
-              {!isAdminUnlocked && (
-                <div className="md:col-span-2">
-                  <label className="block text-amber-400 mb-1 font-bold">ADMIN PASSWORD</label>
-                  <div className="flex space-x-2">
-                    <input
-                      type="password"
-                      required
-                      placeholder="Enter Admin Password (Pass123#$)"
-                      value={adminPassword}
-                      onChange={(e) => {
-                        setAdminPassword(e.target.value);
-                        setPasswordError('');
-                      }}
-                      className="flex-1 bg-neutral-900 border border-amber-500/30 rounded-lg px-3 py-2 text-white focus:border-amber-500 focus:outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleUnlockAdmin}
-                      className="px-4 py-2 bg-neutral-800 text-amber-400 font-mono font-bold text-xs rounded-lg border border-amber-500/30 hover:bg-neutral-700"
-                    >
-                      UNLOCK
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="flex justify-end space-x-3 pt-3">
@@ -481,12 +578,40 @@ export default function PortfolioJournalSection() {
           </div>
         )}
 
-        {/* Trade Journal Table */}
-        <div className="glass-card rounded-2xl p-6 border border-white/10 overflow-hidden">
+        {/* Trade Journal Table with Bulk Selection & Actions */}
+        <div className="glass-card rounded-2xl p-6 border border-white/10 overflow-hidden space-y-4">
+
+          {/* Table Action Bar */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div className="flex items-center space-x-2 text-xs font-mono font-bold text-white">
+              <span>JOURNAL RECORDS ({trades.length} / 200)</span>
+            </div>
+
+            {isAdminLoggedIn && selectedTradeIds.length > 0 && (
+              <button
+                onClick={handleDeleteSelectedTrades}
+                className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-rose-500/20 border border-rose-500/40 text-rose-400 hover:bg-rose-500/30 text-xs font-mono font-bold transition-all"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>DELETE SELECTED ({selectedTradeIds.length})</span>
+              </button>
+            )}
+          </div>
+
           <div className="overflow-x-auto">
             <table className="w-full text-left font-mono text-xs">
               <thead>
                 <tr className="text-gray-400 border-b border-white/10 text-[10px] uppercase">
+                  {isAdminLoggedIn && (
+                    <th className="py-3 px-3 w-8">
+                      <input
+                        type="checkbox"
+                        checked={trades.length > 0 && selectedTradeIds.length === trades.length}
+                        onChange={handleSelectAll}
+                        className="rounded border-gray-700 bg-neutral-900 text-amber-500 focus:ring-amber-500 cursor-pointer"
+                      />
+                    </th>
+                  )}
                   <th className="py-3 px-3">Date</th>
                   <th className="py-3 px-3">Symbol</th>
                   <th className="py-3 px-3">Strategy</th>
@@ -496,14 +621,14 @@ export default function PortfolioJournalSection() {
                   <th className="py-3 px-3 text-right">Qty</th>
                   <th className="py-3 px-3 text-right">Status</th>
                   <th className="py-3 px-3 text-right">P&L (₹)</th>
-                  <th className="py-3 px-3 text-center">Actions</th>
+                  {isAdminLoggedIn && <th className="py-3 px-3 text-center">Actions</th>}
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {trades.length === 0 ? (
                   <tr>
-                    <td colSpan="10" className="py-12 text-center text-gray-500 font-mono text-sm">
-                      NO TRADES RECORDED FOR CURRENT FINANCIAL YEAR. RECORD A NEW TRADE TO BEGIN.
+                    <td colSpan={isAdminLoggedIn ? 11 : 10} className="py-12 text-center text-gray-500 font-mono text-sm">
+                      NO TRADES RECORDED IN JOURNAL.
                     </td>
                   </tr>
                 ) : (
@@ -511,9 +636,20 @@ export default function PortfolioJournalSection() {
                     const isOpen = t.status === 'OPEN';
                     const isPos = t.manualPnl > 0;
                     const isNeg = t.manualPnl < 0;
+                    const isSelected = selectedTradeIds.includes(t.id);
 
                     return (
-                      <tr key={t.id} className="hover:bg-white/5 transition-colors">
+                      <tr key={t.id} className={`hover:bg-white/5 transition-colors ${isSelected ? 'bg-amber-500/10' : ''}`}>
+                        {isAdminLoggedIn && (
+                          <td className="py-3 px-3">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleSelectTrade(t.id)}
+                              className="rounded border-gray-700 bg-neutral-900 text-amber-500 focus:ring-amber-500 cursor-pointer"
+                            />
+                          </td>
+                        )}
                         <td className="py-3 px-3 text-gray-400">{t.date}</td>
                         <td className="py-3 px-3 font-bold text-white">{t.symbol}</td>
                         <td className="py-3 px-3 text-amber-400">{t.strategy}</td>
@@ -535,25 +671,27 @@ export default function PortfolioJournalSection() {
                         }`}>
                           {isOpen ? '₹0.00' : `${isPos ? '+' : ''}₹${t.manualPnl.toLocaleString('en-IN')}`}
                         </td>
-                        <td className="py-3 px-3 text-center">
-                          <div className="flex items-center justify-center space-x-2">
-                            {isOpen && (
+                        {isAdminLoggedIn && (
+                          <td className="py-3 px-3 text-center">
+                            <div className="flex items-center justify-center space-x-2">
+                              {isOpen && (
+                                <button
+                                  onClick={() => handleCloseTrade(t.id)}
+                                  className="px-2.5 py-1 text-[10px] font-bold bg-amber-500 text-black rounded hover:bg-amber-400 transition-all"
+                                >
+                                  CLOSE
+                                </button>
+                              )}
                               <button
-                                onClick={() => handleCloseTrade(t.id)}
-                                className="px-2.5 py-1 text-[10px] font-bold bg-amber-500 text-black rounded hover:bg-amber-400 transition-all"
+                                onClick={() => handleDeleteSingleTrade(t.id)}
+                                title="Delete Record"
+                                className="p-1 text-gray-500 hover:text-rose-400 transition-colors"
                               >
-                                CLOSE
+                                <Trash2 className="w-3.5 h-3.5" />
                               </button>
-                            )}
-                            <button
-                              onClick={() => handleDeleteTrade(t.id)}
-                              title="Delete Record (Admin)"
-                              className="p-1 text-gray-500 hover:text-rose-400 transition-colors"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     );
                   })
