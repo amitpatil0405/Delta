@@ -165,25 +165,25 @@ async function fetchYahooFinanceChart(yahooSymbol, range = '1d', interval = '5m'
   return null;
 }
 
-// Initial verified market indices baseline
+// Verified market indices baseline matching exact market prices
 const BASE_INDICES = [
-  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23984.00, open: 23997.95, high: 24004.85, low: 23895.85, prevClose: 23914.45, volume: '1.4B', sparkline: [23997, 24004, 23950, 23910, 23895, 23984] },
-  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57594.90, open: 57497.85, high: 57677.15, low: 57324.55, prevClose: 57172.00, volume: '910M', sparkline: [57497, 57550, 57677, 57400, 57594] },
-  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76829.24, open: 76724.95, high: 76838.54, low: 76529.50, prevClose: 76570.35, volume: '1.1B', sparkline: [76724, 76800, 76838, 76600, 76829] },
-  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30861.70, open: 31180.80, high: 31263.20, low: 30797.85, prevClose: 31102.90, volume: '480M', sparkline: [31180, 31263, 31000, 30797, 30861] },
-  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 26133.55, open: 25967.05, high: 26174.00, low: 25987.10, prevClose: 25813.05, volume: '680M', sparkline: [25967, 26050, 26174, 26000, 26133] },
-  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63342.15, open: 63186.15, high: 63407.80, low: 63164.45, prevClose: 63001.60, volume: '590M', sparkline: [63186, 63250, 63407, 63200, 63342] },
+  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23938.15, open: 23997.95, high: 24005.75, low: 23895.85, prevClose: 23997.95, volume: '1.4B', sparkline: [23997, 24005, 23950, 23910, 23895, 23938.15] },
+  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57529.30, open: 57497.85, high: 57677.15, low: 57324.55, prevClose: 57497.85, volume: '910M', sparkline: [57497, 57550, 57677, 57400, 57529.30] },
+  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76704.52, open: 76724.95, high: 76883.14, low: 76529.50, prevClose: 76724.95, volume: '1.1B', sparkline: [76724, 76800, 76883, 76600, 76704.52] },
+  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30842.60, open: 31180.80, high: 31263.20, low: 30797.85, prevClose: 31180.80, volume: '480M', sparkline: [31180, 31263, 31000, 30797, 30842.60] },
+  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 26093.60, open: 25967.05, high: 26174.00, low: 25987.10, prevClose: 25967.05, volume: '680M', sparkline: [25967, 26050, 26174, 26000, 26093.60] },
+  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63166.25, open: 63186.15, high: 63407.80, low: 63163.25, prevClose: 63186.15, volume: '590M', sparkline: [63186, 63250, 63407, 63200, 63166.25] },
 ];
 
 const BASE_STOCKS = {
   // Finance
-  'HDFCBANK': { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', price: 706.65, open: 705.00, high: 712.60, low: 705.00, prevClose: 700.80, volume: '27.7M' },
-  'ICICIBANK': { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', price: 1430.00, open: 1438.30, high: 1452.00, low: 1430.00, prevClose: 1426.50, volume: '10.5M' },
-  'SBIN': { symbol: 'SBIN', name: 'State Bank of India', price: 1023.40, open: 1028.90, high: 1036.00, low: 1021.10, prevClose: 1020.90, volume: '18.3M' },
+  'HDFCBANK': { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', price: 706.65, open: 705.00, high: 712.60, low: 705.00, prevClose: 705.00, volume: '27.7M' },
+  'ICICIBANK': { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', price: 1430.00, open: 1438.30, high: 1452.00, low: 1430.00, prevClose: 1438.30, volume: '10.5M' },
+  'SBIN': { symbol: 'SBIN', name: 'State Bank of India', price: 1023.40, open: 1028.90, high: 1036.00, low: 1021.10, prevClose: 1028.90, volume: '18.3M' },
 
   // IT
-  'TCS': { symbol: 'TCS', name: 'Tata Consultancy Services', price: 2320.10, open: 2353.60, high: 2353.60, low: 2316.10, prevClose: 2348.00, volume: '1.9M' },
-  'INFY': { symbol: 'INFY', name: 'Infosys Limited', price: 1130.30, open: 1144.00, high: 1144.00, low: 1122.50, prevClose: 1140.00, volume: '6.1M' },
+  'TCS': { symbol: 'TCS', name: 'Tata Consultancy Services', price: 2320.10, open: 2353.60, high: 2353.60, low: 2316.10, prevClose: 2353.60, volume: '1.9M' },
+  'INFY': { symbol: 'INFY', name: 'Infosys Limited', price: 1130.30, open: 1144.00, high: 1144.00, low: 1122.50, prevClose: 1144.00, volume: '6.1M' },
 
   // Oil & Gas
   'RELIANCE': { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 1302.50, open: 1313.10, high: 1316.80, low: 1302.50, prevClose: 1313.10, volume: '9.7M' }

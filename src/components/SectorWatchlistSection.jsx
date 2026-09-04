@@ -29,7 +29,7 @@ export default function SectorWatchlistSection() {
     <section id="watchlist-section" className="bg-[#050505] text-white py-12 px-4 md:px-8 border-t border-[#1a1a1a]">
       <div className="max-w-7xl mx-auto">
 
-        {/* Sector Tabs & Search Bar Container matching 3.png */}
+        {/* Sector Tabs & Search Bar Container */}
         <div className="bg-[#0a0a0a] border border-[#1f1f1f] rounded-2xl p-6 md:p-8 shadow-xl">
 
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 mb-6">
@@ -77,6 +77,7 @@ export default function SectorWatchlistSection() {
                   <th className="py-3 px-4 font-bold">SYMBOL / COMPANY</th>
                   <th className="py-3 px-4 text-right font-bold">LTP (₹)</th>
                   <th className="py-3 px-4 text-right font-bold">CHANGE (%)</th>
+                  <th className="py-3 px-4 text-right font-bold">OPEN</th>
                   <th className="py-3 px-4 text-right font-bold">DAY HIGH</th>
                   <th className="py-3 px-4 text-right font-bold">DAY LOW</th>
                   <th className="py-3 px-4 text-right font-bold">VOLUME</th>
@@ -86,9 +87,13 @@ export default function SectorWatchlistSection() {
               <tbody className="divide-y divide-[#141414] font-mono text-xs">
                 {filteredStocks.length > 0 ? (
                   filteredStocks.map((stock) => {
-                    const isPos = stock.change >= 0;
+                    const openPrice = stock.open ?? stock.price;
+                    const changeVal = stock.price - openPrice;
+                    const pChangeVal = openPrice ? (changeVal / openPrice) * 100 : 0;
+                    const isPos = stock.price >= openPrice;
+
                     const formattedLtp = stock.price.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                    const formattedChg = `${isPos ? '+' : ''}${stock.change.toFixed(2)} (${isPos ? '+' : ''}${stock.pChange.toFixed(2)}%)`;
+                    const formattedChg = `${isPos ? '+' : ''}${changeVal.toFixed(2)} (${isPos ? '+' : ''}${pChangeVal.toFixed(2)}%)`;
 
                     return (
                       <tr key={stock.symbol} className="hover:bg-[#111111] transition-colors group">
@@ -105,6 +110,9 @@ export default function SectorWatchlistSection() {
                         </td>
                         <td className={`py-4 px-4 text-right font-bold ${isPos ? 'text-emerald-400' : 'text-red-400'}`}>
                           {formattedChg}
+                        </td>
+                        <td className="py-4 px-4 text-right text-gray-300">
+                          {stock.open ? stock.open.toLocaleString('en-IN') : '—'}
                         </td>
                         <td className="py-4 px-4 text-right text-gray-300">
                           {stock.high ? stock.high.toLocaleString('en-IN') : '—'}
@@ -128,7 +136,7 @@ export default function SectorWatchlistSection() {
                   })
                 ) : (
                   <tr>
-                    <td colSpan="7" className="py-8 text-center text-gray-500 font-mono text-xs">
+                    <td colSpan="8" className="py-8 text-center text-gray-500 font-mono text-xs">
                       No stocks found matching "{searchTerm}" in {activeTab}
                     </td>
                   </tr>
