@@ -7,6 +7,9 @@ import { BookOpen, Plus, Lock, Unlock, Trash2, LogIn, LogOut, AlertCircle, Edit2
 const STORAGE_KEY = 'deltafox_portfolio_trades_v3';
 const ADMIN_SESSION_KEY = 'deltafox_admin_logged_in';
 
+// Shared Global Database Endpoint for Portfolio Journal Sync
+const GLOBAL_DB_URL = 'https://api.restful-api.dev/objects/ff808181a067127101a06c9fbbfb10f9';
+
 export default function PortfolioJournalSection() {
   // Admin authentication state (Session Persisted)
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
@@ -17,7 +20,7 @@ export default function PortfolioJournalSection() {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
 
-  // Trades state initialized strictly from localStorage (Default empty array so new devices start completely blank)
+  // Trades state initialized from local cache (Fallback)
   const [trades, setTrades] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -38,14 +41,44 @@ export default function PortfolioJournalSection() {
   // Edit Trade Modal State
   const [editingTrade, setEditingTrade] = useState(null);
 
-  // Synchronize trades array to localStorage whenever trades change
-  useEffect(() => {
+  // Helper to sync trades array to Cloud DB & Local Storage
+  const syncTradesToCloud = async (updatedTrades) => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(trades.slice(0, 200)));
-    } catch (e) {
-      console.warn('Could not save trades to localStorage:', e);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTrades.slice(0, 200)));
+      await fetch(GLOBAL_DB_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: 'deltafox_portfolio_trades',
+          data: { trades: updatedTrades.slice(0, 200) }
+        })
+      });
+    } catch (err) {
+      console.warn('Cloud sync error:', err);
     }
-  }, [trades]);
+  };
+
+  // Fetch Global Trades on mount & Periodic Sync (every 15s)
+  useEffect(() => {
+    const fetchGlobalTrades = async () => {
+      try {
+        const res = await fetch(GLOBAL_DB_URL);
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.data && Array.isArray(json.data.trades)) {
+            setTrades(json.data.trades);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(json.data.trades));
+          }
+        }
+      } catch (e) {
+        console.warn('Failed to fetch global trades:', e);
+      }
+    };
+
+    fetchGlobalTrades();
+    const interval = setInterval(fetchGlobalTrades, 15000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Admin Login Handler
   const handleAdminLogin = (e) => {
@@ -76,8 +109,10 @@ export default function PortfolioJournalSection() {
       return;
     }
     if (window.confirm('Are you sure you want to delete this trade record?')) {
-      setTrades(prev => prev.filter(t => t.id !== tradeId));
+      const updated = trades.filter(t => t.id !== tradeId);
+      setTrades(updated);
       setSelectedTradeIds(prev => prev.filter(id => id !== tradeId));
+      syncTradesToCloud(updated);
     }
   };
 
@@ -90,8 +125,10 @@ export default function PortfolioJournalSection() {
     if (selectedTradeIds.length === 0) return;
 
     if (window.confirm(`Are you sure you want to delete ${selectedTradeIds.length} selected trade record(s)?`)) {
-      setTrades(prev => prev.filter(t => !selectedTradeIds.includes(t.id)));
+      const updated = trades.filter(t => !selectedTradeIds.includes(t.id));
+      setTrades(updated);
       setSelectedTradeIds([]);
+      syncTradesToCloud(updated);
     }
   };
 
@@ -178,7 +215,9 @@ export default function PortfolioJournalSection() {
       manualPnl: calculatedPnl
     };
 
-    setTrades([created, ...trades]);
+    const updated = [created, ...trades];
+    setTrades(updated);
+    syncTradesToCloud(updated);
     setShowAddForm(false);
     setNewTrade({
       date: new Date().toISOString().split('T')[0],
@@ -240,7 +279,7 @@ export default function PortfolioJournalSection() {
 
     const autoHold = calculateDaysDiff(editingTrade.date, editingTrade.expiry);
 
-    setTrades(prev => prev.map(t => {
+    const updated = trades.map(t => {
       if (t.id === editingTrade.id) {
         return {
           ...t,
@@ -256,8 +295,10 @@ export default function PortfolioJournalSection() {
         };
       }
       return t;
-    }));
+    });
 
+    setTrades(updated);
+    syncTradesToCloud(updated);
     setEditingTrade(null);
   };
 
@@ -572,7 +613,7 @@ export default function PortfolioJournalSection() {
                   <input
                     type="password"
                     required
-                    placeholder="Enter Admin Password (Pass123#$)"
+                    placeholder="Enter Admin Password"
                     value={loginPassword}
                     onChange={(e) => {
                       setLoginPassword(e.target.value);
