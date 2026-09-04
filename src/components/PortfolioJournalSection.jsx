@@ -44,13 +44,18 @@ export default function PortfolioJournalSection() {
   // Helper to sync trades array to Cloud DB & Local Storage
   const syncTradesToCloud = async (updatedTrades) => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTrades.slice(0, 200)));
-      await fetch(GLOBAL_DB_URL, {
+      const sanitized = updatedTrades.slice(0, 200);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
+      const urlWithTimestamp = `${GLOBAL_DB_URL}?_t=${Date.now()}`;
+      await fetch(urlWithTimestamp, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        },
         body: JSON.stringify({
           name: 'deltafox_portfolio_trades',
-          data: { trades: updatedTrades.slice(0, 200) }
+          data: { trades: sanitized }
         })
       });
     } catch (err) {
@@ -58,11 +63,17 @@ export default function PortfolioJournalSection() {
     }
   };
 
-  // Fetch Global Trades on mount & Periodic Sync (every 15s)
+  // Fetch Global Trades on mount & Periodic Sync (every 10s)
   useEffect(() => {
     const fetchGlobalTrades = async () => {
       try {
-        const res = await fetch(GLOBAL_DB_URL);
+        const urlWithTimestamp = `${GLOBAL_DB_URL}?_t=${Date.now()}`;
+        const res = await fetch(urlWithTimestamp, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        });
         if (res.ok) {
           const json = await res.json();
           if (json && json.data && Array.isArray(json.data.trades)) {
@@ -76,7 +87,7 @@ export default function PortfolioJournalSection() {
     };
 
     fetchGlobalTrades();
-    const interval = setInterval(fetchGlobalTrades, 15000);
+    const interval = setInterval(fetchGlobalTrades, 10000);
     return () => clearInterval(interval);
   }, []);
 
