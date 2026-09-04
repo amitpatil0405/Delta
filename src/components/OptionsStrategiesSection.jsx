@@ -54,6 +54,30 @@ const STRATEGIES_DATA = [
     ]
   },
   {
+    id: 'partial-iron-condor',
+    name: 'Partial Iron Condor',
+    marketView: 'Skewed Neutral / Asymmetric Risk',
+    idealCondition: 'Expect rangebound market with directional bias on one wing (hedged on higher probability risk side).',
+    entryLogic: 'Sell 1 OTM Put and Sell 1 OTM Call, while Buying 1 protective wing (Call or Put) on the biased side.',
+    exitLogic: 'Exit at 50% max profit or if unprotected short strike is tested.',
+    maxProfit: 'Net Premium Received',
+    maxRisk: 'Defined on protected side, Managed via Stop Loss on open side.',
+    stopLossConcept: 'Close unhedged short leg if spot approaches short strike.',
+    profitTarget: '50% - 60% max credit.',
+    breakeven: 'Lower: Short Put - Net Credit | Upper: Short Call + Net Credit',
+    payoffData: [
+      { spot: 21000, pnl: -500 },
+      { spot: 21400, pnl: -200 },
+      { spot: 21700, pnl: 250 },
+      { spot: 22000, pnl: 380 },
+      { spot: 22123, pnl: 380 },
+      { spot: 22300, pnl: 380 },
+      { spot: 22600, pnl: 250 },
+      { spot: 22900, pnl: -300 }, // Protected wing floor
+      { spot: 23200, pnl: -300 }
+    ]
+  },
+  {
     id: 'bull-put-spread',
     name: 'Bull Put Spread',
     marketView: 'Moderately Bullish',

@@ -574,7 +574,7 @@ export default function PortfolioJournalSection() {
                   <input
                     type="password"
                     required
-                    placeholder="Enter Admin Password"
+                    placeholder="Enter Admin Password (Pass123#$)"
                     value={loginPassword}
                     onChange={(e) => {
                       setLoginPassword(e.target.value);
@@ -647,6 +647,7 @@ export default function PortfolioJournalSection() {
                 >
                   <option value="Short Strangle">Short Strangle</option>
                   <option value="Iron Condor">Iron Condor</option>
+                  <option value="Partial Iron Condor">Partial Iron Condor</option>
                   <option value="Bull Put Spread">Bull Put Spread</option>
                   <option value="Bear Call Spread">Bear Call Spread</option>
                   <option value="Covered Call">Covered Call</option>
