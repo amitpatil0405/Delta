@@ -125,7 +125,7 @@ export default function MarketOverviewSection() {
 
                   {/* Main Price & Absolute Change */}
                   <div className="flex items-baseline justify-between mb-6">
-                    <div className="text-2xl md:text-3xl font-black text-white font-mono tracking-tight">
+                    <div className={`text-2xl md:text-3xl font-black font-mono tracking-tight ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
                       {formattedPrice}
                     </div>
                     <div className={`text-sm font-mono font-semibold ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>

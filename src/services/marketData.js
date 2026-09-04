@@ -440,27 +440,61 @@ function seededRandom(symbol, strike, key) {
 
 /**
  * Fetch Options Chain Data
- * Accurate distribution: Call OI peaks at OTM strikes above ATM (Strong Resistance),
- * Put OI peaks at OTM strikes below ATM (Strong Support).
+ * Institutional Roundness Weighting & Distance Decay Algorithm:
+ * Put OI peaks at key psychological round support strikes <= spot (e.g. 1300 for RELIANCE, 24000 for NIFTY, 57000 for BANKNIFTY)
+ * Call OI peaks at key psychological round resistance strikes > spot (e.g. 1350 for RELIANCE, 24500 for NIFTY, 58000 for BANKNIFTY)
  */
 export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '') {
   const quoteRes = await getQuote(symbol);
-  const spotPrice = quoteRes.data ? quoteRes.data.price : 22123.65;
+  const spotPrice = quoteRes.data ? quoteRes.data.price : 24000.00;
 
   let step = 50;
+  let majorRoundStep = 500;
   const sUpper = symbol.toUpperCase().trim();
-  if (sUpper.includes('SENSEX') || sUpper.includes('BANK')) step = 100;
-  else if (sUpper.includes('NIFTY')) step = 50;
-  else if (spotPrice > 10000) step = 100;
-  else if (spotPrice > 3000) step = 50;
-  else if (spotPrice > 1000) step = 20;
-  else if (spotPrice > 500) step = 10;
-  else step = 5;
+
+  const isBankIndex = (sUpper.includes('BANK NIFTY') || sUpper.includes('BANKNIFTY') || sUpper.includes('NIFTY BANK') || sUpper.includes('SENSEX'));
+  const isNiftyIndex = (sUpper === 'NIFTY 50' || sUpper === 'NIFTY' || sUpper === 'NIFTY50' || sUpper.includes('NIFTY IT') || sUpper.includes('NIFTY FIN'));
+
+  if (isBankIndex) {
+    step = 100;
+    majorRoundStep = 1000;
+  } else if (isNiftyIndex) {
+    step = 50;
+    majorRoundStep = 500;
+  } else if (spotPrice > 3000) {
+    step = 50;
+    majorRoundStep = 200;
+  } else if (spotPrice > 1000) {
+    step = 10;
+    majorRoundStep = 50;
+  } else if (spotPrice > 500) {
+    step = 10;
+    majorRoundStep = 50;
+  } else {
+    step = 5;
+    majorRoundStep = 25;
+  }
 
   const atmStrike = Math.round(spotPrice / step) * step;
 
+  // Determine target Put support strike (nearest major round strike <= spotPrice)
+  let targetPutSupport = Math.floor(spotPrice / majorRoundStep) * majorRoundStep;
+  if (spotPrice - targetPutSupport < step && targetPutSupport > 0) {
+    // If spot is extremely close to major round step, support can also be at atmStrike or 1 step below
+  }
+  if (targetPutSupport > spotPrice || targetPutSupport === 0) {
+    targetPutSupport = atmStrike - step;
+  }
+
+  // Determine target Call resistance strike (nearest major round strike > spotPrice)
+  let targetCallResistance = Math.ceil(spotPrice / majorRoundStep) * majorRoundStep;
+  if (targetCallResistance <= spotPrice) {
+    targetCallResistance = atmStrike + (majorRoundStep / step >= 2 ? majorRoundStep : 2 * step);
+  }
+
+  // Count around ATM to display comprehensive option chain range (8 above, 8 below -> 17 strikes)
+  const countAround = 8;
   const strikes = [];
-  const countAround = 5;
 
   let totalCallOI = 0;
   let totalPutOI = 0;
@@ -469,13 +503,22 @@ export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '') {
     const strike = atmStrike + i * step;
     const dist = (strike - spotPrice) / spotPrice;
 
-    // Call OI peaks at OTM strike above ATM (i = +2) -> Strong Resistance
-    const callOffset = i - 2;
-    const callOI = Math.floor(Math.exp(-Math.pow(callOffset, 2) / 4.5) * 135000 + seededRandom(symbol, strike, 'cOI') * 15000 + 22000);
-    const callOIChange = Math.floor((seededRandom(symbol, strike, 'cChg') - 0.35) * 7500);
-    const callVolume = Math.floor(callOI * (0.35 + seededRandom(symbol, strike, 'cVol') * 0.35));
+    // Roundness Multiplier based on institutional strike levels
+    let roundnessMultiplier = 1.0;
+    if (majorRoundStep >= 500 && strike % 1000 === 0) roundnessMultiplier = 2.6;
+    else if (strike % majorRoundStep === 0) roundnessMultiplier = 2.2;
+    else if (strike % (majorRoundStep / 2) === 0) roundnessMultiplier = 1.6;
+    else if (strike % (step * 2) === 0) roundnessMultiplier = 1.3;
+    else roundnessMultiplier = 0.85;
 
-    // Realistic Call LTP pricing (Intrinsic + Time Value)
+    // Call OI calculation (peaks at targetCallResistance)
+    const callDistFromTarget = (strike - targetCallResistance) / step;
+    const callGauss = Math.exp(-Math.pow(callDistFromTarget, 2) / 6.0);
+    const callOI = Math.floor((120000 * callGauss * roundnessMultiplier) + (seededRandom(symbol, strike, 'cOI') * 12000) + 15000);
+    const callOIChange = Math.floor((seededRandom(symbol, strike, 'cChg') - 0.35) * (callOI * 0.15));
+    const callVolume = Math.floor(callOI * (0.35 + seededRandom(symbol, strike, 'cVol') * 0.3));
+
+    // Call Pricing
     const callIntrinsic = Math.max(0, spotPrice - strike);
     const callTimeValue = Math.exp(-Math.abs(dist) * 8) * spotPrice * 0.018;
     const callLTP = parseFloat(Math.max(1, callIntrinsic + callTimeValue).toFixed(2));
@@ -484,13 +527,14 @@ export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '') {
     const callAsk = parseFloat((callLTP * 1.005).toFixed(2));
     const callChg = parseFloat(((seededRandom(symbol, strike, 'cChgVal') - 0.42) * 8).toFixed(2));
 
-    // Put OI peaks at OTM strike below ATM (i = -2) -> Strong Support
-    const putOffset = i - (-2);
-    const putOI = Math.floor(Math.exp(-Math.pow(putOffset, 2) / 4.5) * 148000 + seededRandom(symbol, strike, 'pOI') * 18000 + 25000);
-    const putOIChange = Math.floor((seededRandom(symbol, strike, 'pChg') - 0.3) * 8500);
-    const putVolume = Math.floor(putOI * (0.38 + seededRandom(symbol, strike, 'pVol') * 0.35));
+    // Put OI calculation (peaks at targetPutSupport)
+    const putDistFromTarget = (strike - targetPutSupport) / step;
+    const putGauss = Math.exp(-Math.pow(putDistFromTarget, 2) / 6.0);
+    const putOI = Math.floor((125000 * putGauss * roundnessMultiplier) + (seededRandom(symbol, strike, 'pOI') * 12000) + 15000);
+    const putOIChange = Math.floor((seededRandom(symbol, strike, 'pChg') - 0.3) * (putOI * 0.15));
+    const putVolume = Math.floor(putOI * (0.38 + seededRandom(symbol, strike, 'pVol') * 0.3));
 
-    // Realistic Put LTP pricing (Intrinsic + Time Value)
+    // Put Pricing
     const putIntrinsic = Math.max(0, strike - spotPrice);
     const putTimeValue = Math.exp(-Math.abs(dist) * 8) * spotPrice * 0.018;
     const putLTP = parseFloat(Math.max(1, putIntrinsic + putTimeValue).toFixed(2));
