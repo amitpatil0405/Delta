@@ -332,7 +332,7 @@ export default function PortfolioJournalSection() {
   });
 
   return (
-    <section id="portfolio" className="py-20 bg-[#050505] border-t border-white/5 relative">
+    <section id="portfolio" className="py-20 scroll-mt-28 bg-[#050505] border-t border-white/5 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 
         {/* Section Header & Central Admin Control Panel */}

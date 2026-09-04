@@ -46,7 +46,7 @@ export default function OptionChainSection() {
   const maxPutOIStrike = chain?.maxPutOIStrike ?? chain?.strikes?.find(s => s.puts.oi === maxPutOI)?.strike;
 
   return (
-    <section id="options" className="bg-[#050505] text-white py-16 px-4 md:px-8 border-t border-[#1a1a1a]">
+    <section id="options" className="bg-[#050505] text-white scroll-mt-28 py-16 px-4 md:px-8 border-t border-[#1a1a1a]">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
