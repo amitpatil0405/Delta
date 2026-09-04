@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, TrendingUp, Shield, Activity, ChevronRight } from 'lucide-react';
+import { Menu, X, Activity } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { useMarket } from '../context/MarketContext';
 
@@ -73,6 +73,32 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     }
   };
 
+  // Dynamic market status indicator (Orange for Pre-open, Green for Open, Red for Closed)
+  const getStatusBadge = () => {
+    const status = marketStatus?.status || 'MARKET CLOSED';
+    if (status.includes('PRE-MARKET')) {
+      return {
+        dotBg: 'bg-amber-500',
+        text: 'PRE-OPEN',
+        textColor: 'text-amber-400'
+      };
+    } else if (status.includes('OPEN') || marketStatus?.isOpen) {
+      return {
+        dotBg: 'bg-emerald-500',
+        text: 'MARKET OPEN',
+        textColor: 'text-emerald-400'
+      };
+    } else {
+      return {
+        dotBg: 'bg-rose-500',
+        text: 'MARKET CLOSED',
+        textColor: 'text-rose-400'
+      };
+    }
+  };
+
+  const statusBadge = getStatusBadge();
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -84,7 +110,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
 
-          {/* Direct Clean Brand Logo (No Box / No Text Overlay) */}
+          {/* Direct Clean Brand Logo */}
           <div
             className="flex items-center cursor-pointer group"
             onClick={() => handleNavClick('home')}
@@ -113,19 +139,29 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             ))}
           </div>
 
-          {/* Right Action Button */}
-          <div className="hidden sm:flex items-center space-x-4">
+          {/* Right Top Corner: Market Status Indicator & Option Chain Button */}
+          <div className="hidden sm:flex items-center space-x-3">
+            {/* Dynamic Market Status Indicator with Blinking Circle */}
+            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
+              <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
+              <span className={`font-bold uppercase ${statusBadge.textColor}`}>{statusBadge.text}</span>
+            </div>
+
             <button
-              onClick={() => handleNavClick('portfolio')}
+              onClick={() => handleNavClick('options')}
               className="relative inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 to-amber-600 rounded-lg hover:from-amber-300 hover:to-amber-500 transition-all duration-300 shadow-[0_0_20px_rgba(217,119,6,0.4)] group active:scale-95"
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>TRADING PORTFOLIO</span>
+              <span>INSTITUTIONAL OPTION CHAIN</span>
             </button>
           </div>
 
           {/* Mobile Hamburger Toggle */}
           <div className="lg:hidden flex items-center space-x-3">
+            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-neutral-900 border border-white/10 text-[10px] font-mono">
+              <span className={`w-2 h-2 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
+              <span className={`font-bold ${statusBadge.textColor}`}>{statusBadge.text}</span>
+            </div>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg bg-neutral-900 text-gray-300 hover:text-white border border-white/10 focus:outline-none"
@@ -140,11 +176,14 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#0a0a0c] border-b border-white/10 px-4 pt-4 pb-6 space-y-3 animate-fadeIn">
-          <div className="flex items-center justify-between px-2 py-1 mb-2 bg-neutral-900/80 rounded-lg border border-white/5 text-xs font-mono">
+          <div className="flex items-center justify-between px-3 py-2 mb-2 bg-neutral-900/80 rounded-lg border border-white/5 text-xs font-mono">
             <span className="text-gray-400">STATUS:</span>
-            <span className={`font-bold ${marketStatus.isOpen ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {marketStatus.status} ({marketStatus.istTime})
-            </span>
+            <div className="flex items-center space-x-2">
+              <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
+              <span className={`font-bold ${statusBadge.textColor}`}>
+                {statusBadge.text} ({marketStatus.istTime})
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-2">
@@ -164,11 +203,11 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
           </div>
 
           <button
-            onClick={() => handleNavClick('strategies')}
+            onClick={() => handleNavClick('options')}
             className="w-full mt-3 flex items-center justify-center space-x-2 py-3 text-sm font-bold uppercase text-black bg-amber-500 rounded-lg shadow-lg"
           >
             <Activity className="w-4 h-4" />
-            <span>EXPLORE STRATEGIES</span>
+            <span>INSTITUTIONAL OPTION CHAIN</span>
           </button>
         </div>
       )}
