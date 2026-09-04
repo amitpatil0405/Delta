@@ -90,8 +90,8 @@ export default function MarketOverviewSection() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {indices.map((idx) => {
-              // Strictly compare current price against open price
-              const isPositive = idx.price >= (idx.open ?? idx.price);
+              // Change & color based on change (non-negative is positive)
+              const isPositive = idx.change >= 0;
               const formattedPrice = idx.price.toLocaleString('en-IN', { minimumFractionDigits: 2 });
               const formattedChange = (isPositive ? '+' : '') + idx.change.toFixed(2);
               const formattedPChange = (isPositive ? '+' : '') + idx.pChange.toFixed(2) + '%';

@@ -167,12 +167,12 @@ async function fetchYahooFinanceChart(yahooSymbol, range = '1d', interval = '5m'
 
 // Verified market indices baseline matching exact market prices
 const BASE_INDICES = [
-  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23938.15, open: 23997.95, high: 24005.75, low: 23895.85, prevClose: 23997.95, volume: '1.4B', sparkline: [23997, 24005, 23950, 23910, 23895, 23938.15] },
-  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57529.30, open: 57497.85, high: 57677.15, low: 57324.55, prevClose: 57497.85, volume: '910M', sparkline: [57497, 57550, 57677, 57400, 57529.30] },
-  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76704.52, open: 76724.95, high: 76883.14, low: 76529.50, prevClose: 76724.95, volume: '1.1B', sparkline: [76724, 76800, 76883, 76600, 76704.52] },
-  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30842.60, open: 31180.80, high: 31263.20, low: 30797.85, prevClose: 31180.80, volume: '480M', sparkline: [31180, 31263, 31000, 30797, 30842.60] },
-  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 26093.60, open: 25967.05, high: 26174.00, low: 25987.10, prevClose: 25967.05, volume: '680M', sparkline: [25967, 26050, 26174, 26000, 26093.60] },
-  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63166.25, open: 63186.15, high: 63407.80, low: 63163.25, prevClose: 63186.15, volume: '590M', sparkline: [63186, 63250, 63407, 63200, 63166.25] },
+  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23956.30, open: 23997.95, high: 24005.75, low: 23895.85, prevClose: 23873.45, volume: '1.4B', sparkline: [23873, 23900, 23997, 24005, 23895, 23956.30] },
+  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57546.05, open: 57497.85, high: 57677.15, low: 57324.55, prevClose: 57380.60, volume: '910M', sparkline: [57380, 57497, 57550, 57677, 57400, 57546.05] },
+  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76720.11, open: 76724.95, high: 76883.14, low: 76529.50, prevClose: 76152.86, volume: '1.1B', sparkline: [76152, 76724, 76800, 76883, 76600, 76720.11] },
+  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30728.00, open: 31180.80, high: 31263.20, low: 30703.65, prevClose: 30838.85, volume: '480M', sparkline: [30838, 31180, 31263, 31000, 30703, 30728.00] },
+  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 26104.85, open: 25967.05, high: 26174.00, low: 25987.10, prevClose: 25967.05, volume: '680M', sparkline: [25967, 26050, 26174, 26000, 26104.85] },
+  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63125.95, open: 63186.15, high: 63407.80, low: 63063.10, prevClose: 63235.20, volume: '590M', sparkline: [63235, 63186, 63250, 63407, 63063, 63125.95] },
 ];
 
 const BASE_STOCKS = {
@@ -211,9 +211,10 @@ export async function getIndices() {
           }
         }
 
-        // Change calculated relative to OPEN price
-        const change = currentPrice - openPrice;
-        const pChange = openPrice ? (change / openPrice) * 100 : 0;
+        // Change calculated relative to Previous Close price (prefer verified baseline prevClose if available)
+        const prevClosePrice = item.prevClose ?? meta.chartPreviousClose ?? openPrice;
+        const change = currentPrice - prevClosePrice;
+        const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
 
         let sparkline = item.sparkline;
         if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
@@ -234,9 +235,10 @@ export async function getIndices() {
         };
       }
 
-      // Default baseline fallback: calculate relative to open price
-      const change = item.price - item.open;
-      const pChange = item.open ? (change / item.open) * 100 : 0;
+      // Default baseline fallback: calculate relative to prevClose price
+      const prevClosePrice = item.prevClose || item.open;
+      const change = item.price - prevClosePrice;
+      const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
 
       return {
         ...item,
@@ -275,8 +277,9 @@ export async function getQuote(symbol) {
       }
     }
 
-    const change = price - openPrice;
-    const pChange = openPrice ? (change / openPrice) * 100 : 0;
+    const prevClosePrice = meta.chartPreviousClose ?? BASE_STOCKS[symbolUpper]?.prevClose ?? openPrice;
+    const change = price - prevClosePrice;
+    const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
 
     return {
       success: true,
@@ -299,8 +302,9 @@ export async function getQuote(symbol) {
   // Fallback baseline search
   const foundIndex = BASE_INDICES.find(i => i.symbol === symbolUpper);
   if (foundIndex) {
-    const change = foundIndex.price - foundIndex.open;
-    const pChange = (change / foundIndex.open) * 100;
+    const prevClosePrice = foundIndex.prevClose || foundIndex.open;
+    const change = foundIndex.price - prevClosePrice;
+    const pChange = (change / prevClosePrice) * 100;
     return {
       success: true,
       data: {
@@ -313,8 +317,9 @@ export async function getQuote(symbol) {
 
   const foundStock = BASE_STOCKS[symbolUpper];
   if (foundStock) {
-    const change = foundStock.price - foundStock.open;
-    const pChange = (change / foundStock.open) * 100;
+    const prevClosePrice = foundStock.prevClose || foundStock.open;
+    const change = foundStock.price - prevClosePrice;
+    const pChange = (change / prevClosePrice) * 100;
     return {
       success: true,
       data: {
