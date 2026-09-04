@@ -133,13 +133,6 @@ export default function ContactSection() {
 
     setIsSubmitting(false);
     setSubmitted(true);
-
-    // Backup mailto fallback
-    const mailtoSubject = encodeURIComponent(formData.subject || `DeltaFox Inquiry from ${formData.name}`);
-    const mailtoBody = encodeURIComponent(
-      `Name: ${formData.name}\nEmail: ${formData.email}\nSubject: ${formData.subject}\n\nMessage:\n${formData.message}`
-    );
-    window.location.href = `mailto:amitpatil0405@gmail.com?subject=${mailtoSubject}&body=${mailtoBody}`;
   };
 
   return (
