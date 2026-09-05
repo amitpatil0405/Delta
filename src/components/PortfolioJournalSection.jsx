@@ -164,7 +164,7 @@ export default function PortfolioJournalSection() {
   const displayTrades = [...trades].reverse();
 
   return (
-    <section id="portfolio" className="pt-24 pb-16 scroll-mt-24 bg-[#050505] border-t border-white/5 relative">
+    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] border-t border-white/5 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
         {/* Section Header */}
