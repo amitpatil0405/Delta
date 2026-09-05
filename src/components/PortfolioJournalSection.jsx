@@ -5,10 +5,10 @@ import {
 import { BookOpen } from 'lucide-react';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
-const STORAGE_KEY = 'deltafox_portfolio_trades_v4';
+const STORAGE_KEY = 'deltafox_portfolio_trades_v5';
 
 // Helper function to parse CSV lines safely matching Google Sheet headers:
-// "DATE","DAY","SYMBOL","STRATEGY","EXPIRY","QUANTITY","PROBABILITY OF PROFIT","STATUS","P&L","TRADE CLOSE DATE","HOLD TIME ( DAYS )"
+// "DATE","DAY","SYMBOL","STRATEGY","EXPIRY","QUANTITY","PROBABILITY OF PROFIT","TRADE CLOSE DATE","HOLD TIME ( DAYS )","STATUS","P&L"
 function parseCSVRows(csvText) {
   if (!csvText || typeof csvText !== 'string') return [];
   const lines = csvText.trim().split('\n');
@@ -37,7 +37,7 @@ function parseCSVRows(csvText) {
     }
     cols.push(cur.trim());
 
-    if (cols.length >= 8) {
+    if (cols.length >= 7) {
       const date = cols[0] || '';
       const day = cols[1] || '';
       const symbol = (cols[2] || '').toUpperCase();
@@ -49,17 +49,17 @@ function parseCSVRows(csvText) {
       let popRaw = (cols[6] || '70.0').replace(/%/g, '').trim();
       const pop = parseFloat(popRaw) || 70.0;
 
-      const status = (cols[7] || 'OPEN').toUpperCase();
-
-      // Clean P&L string e.g. "₹-2,100" / "+₹3,358.75" -> -2100 / 3358.75
-      let pnlRaw = (cols[8] || '0').replace(/[^\d.-]/g, '');
-      const manualPnl = parseFloat(pnlRaw) || 0;
-
-      const tradeCloseDate = cols[9] || '-';
+      const tradeCloseDate = cols[7] || '-';
 
       // Clean Hold time in days string e.g. "7 Days" or "7"
-      let holdRaw = (cols[10] || '-').replace(/\D/g, '');
+      let holdRaw = (cols[8] || '-').replace(/\D/g, '');
       const holdTime = holdRaw ? parseInt(holdRaw, 10) : '-';
+
+      const status = (cols[9] || 'OPEN').toUpperCase();
+
+      // Clean P&L string e.g. "₹-2,100" / "+₹3,358.75" -> -2100 / 3358.75
+      let pnlRaw = (cols[10] || '0').replace(/[^\d.-]/g, '');
+      const manualPnl = parseFloat(pnlRaw) || 0;
 
       if (symbol) {
         parsedTrades.push({
@@ -71,10 +71,10 @@ function parseCSVRows(csvText) {
           expiry,
           qty,
           pop,
-          status,
-          manualPnl,
           tradeCloseDate,
-          holdTime
+          holdTime,
+          status,
+          manualPnl
         });
       }
     }
@@ -277,13 +277,13 @@ export default function PortfolioJournalSection() {
                     <div>PROBABILITY OF</div>
                     <div>PROFIT</div>
                   </th>
-                  <th className="py-3 px-3 text-center">STATUS</th>
-                  <th className="py-3 px-3 text-right">P&L</th>
                   <th className="py-3 px-3 text-center">TRADE CLOSE DATE</th>
                   <th className="py-3 px-3 text-center">
                     <div>HOLD TIME</div>
                     <div>( DAYS )</div>
                   </th>
+                  <th className="py-3 px-3 text-center">STATUS</th>
+                  <th className="py-3 px-3 text-right">P&L</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -325,6 +325,10 @@ export default function PortfolioJournalSection() {
                         <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.expiry || '-'}</td>
                         <td className="py-3 px-3 text-right text-gray-300 font-bold">{t.qty || 0}</td>
                         <td className="py-3 px-3 text-center text-emerald-400 font-bold">{Number(t.pop || 70).toFixed(1)}%</td>
+                        <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.tradeCloseDate || '-'}</td>
+                        <td className="py-3 px-3 text-center text-gray-300 font-bold whitespace-nowrap">
+                          {t.holdTime !== '-' ? `${t.holdTime} Days` : '-'}
+                        </td>
                         <td className="py-3 px-3 text-center whitespace-nowrap">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${statusBadgeClass}`}>
                             {statusText}
@@ -334,10 +338,6 @@ export default function PortfolioJournalSection() {
                           isOpen ? 'text-gray-500' : isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'
                         }`}>
                           {isOpen ? '₹0.00' : `${isPos ? '+' : ''}₹${t.manualPnl.toLocaleString('en-IN')}`}
-                        </td>
-                        <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.tradeCloseDate || '-'}</td>
-                        <td className="py-3 px-3 text-center text-gray-300 font-bold whitespace-nowrap">
-                          {t.holdTime !== '-' ? `${t.holdTime} Days` : '-'}
                         </td>
                       </tr>
                     );
