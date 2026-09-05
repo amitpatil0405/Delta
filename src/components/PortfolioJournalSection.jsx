@@ -198,7 +198,7 @@ export default function PortfolioJournalSection() {
 
           <div className="glass-card rounded-2xl p-5 border border-white/10">
             <span className="text-[11px] font-mono text-gray-400 uppercase">WIN RATE</span>
-            <div className="text-2xl font-extrabold font-mono text-emerald-400 mt-1">{winRate}%</div>
+            <div className="text-2xl font-extrabold font-mono text-white mt-1">{winRate}%</div>
             <span className="text-[10px] font-mono">
               <span className="text-emerald-400 font-bold">{winningTrades.length} Wins</span>
               <span className="text-gray-400"> / </span>
