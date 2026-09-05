@@ -413,12 +413,12 @@ export default function PortfolioJournalSection() {
           </div>
 
           {/* Month Columns Grid */}
-          <div className="overflow-x-auto pt-2 pb-1 touch-pan-x scrollbar-thin scrollbar-thumb-white/10">
-            <div className="flex space-x-3.5 min-w-max pb-1">
+          <div className="overflow-x-auto md:overflow-x-visible pt-2 pb-1 touch-pan-x scrollbar-thin scrollbar-thumb-white/10">
+            <div className="flex max-md:min-w-max max-md:space-x-3.5 md:justify-between md:space-x-1 lg:space-x-2 pb-1">
               {heatmapMonths.map((m) => (
-                <div key={`${m.year}_${m.monthIdx}`} className="flex flex-col items-center space-y-2 flex-shrink-0">
+                <div key={`${m.year}_${m.monthIdx}`} className="flex flex-col items-center space-y-1.5 flex-shrink-0 md:flex-1 md:min-w-0">
                   {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
-                  <div className="grid grid-cols-5 gap-1.5 p-2 bg-white/[0.02] border border-white/5 rounded-xl">
+                  <div className="grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
                     {m.days.map((d) => {
                       const isTraded = d.count > 0;
                       const isProfit = isTraded && d.pnl > 0;
@@ -436,14 +436,14 @@ export default function PortfolioJournalSection() {
                           key={d.key}
                           onMouseEnter={() => setHoveredDay(d)}
                           onMouseLeave={() => setHoveredDay(null)}
-                          className={`w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 aspect-square rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
+                          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
                         />
                       );
                     })}
                   </div>
 
                   {/* Month Label */}
-                  <span className="text-[10px] font-mono font-bold text-gray-400 uppercase tracking-tight">
+                  <span className="text-[9px] sm:text-[10px] font-mono font-bold text-gray-400 uppercase tracking-tight text-center truncate w-full">
                     {m.label}
                   </span>
                 </div>
@@ -451,7 +451,7 @@ export default function PortfolioJournalSection() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end text-[10px] font-mono text-gray-500 sm:hidden">
+          <div className="flex items-center justify-end text-[10px] font-mono text-gray-500 md:hidden">
             <span>Scroll horizontally for full financial year →</span>
           </div>
 
