@@ -444,9 +444,9 @@ export default function PortfolioJournalSection() {
 
                       let boxClass = 'bg-white/5 border-white/5 text-transparent hover:border-white/30';
                       if (isProfit) {
-                        boxClass = 'bg-emerald-500 border-emerald-400 shadow-sm shadow-emerald-500/50 hover:bg-emerald-400';
+                        boxClass = 'bg-emerald-500 border border-black/90 hover:bg-emerald-400 hover:z-10';
                       } else if (isLoss) {
-                        boxClass = 'bg-rose-500 border-rose-400 shadow-sm shadow-rose-500/50 hover:bg-rose-400';
+                        boxClass = 'bg-rose-500 border border-black/90 hover:bg-rose-400 hover:z-10';
                       }
 
                       return (
