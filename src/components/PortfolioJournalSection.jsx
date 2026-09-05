@@ -189,14 +189,18 @@ export default function PortfolioJournalSection() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="glass-card rounded-2xl p-5 border border-white/10">
             <span className="text-[11px] font-mono text-gray-400 uppercase">TOTAL TRADES</span>
-            <div className="text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount} / 200</div>
+            <div className="text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount}</div>
             <span className="text-[10px] font-mono text-amber-400">{closedTrades.length} Closed / {trades.length - closedTrades.length} Open</span>
           </div>
 
           <div className="glass-card rounded-2xl p-5 border border-white/10">
             <span className="text-[11px] font-mono text-gray-400 uppercase">WIN RATE</span>
             <div className="text-2xl font-extrabold font-mono text-emerald-400 mt-1">{winRate}%</div>
-            <span className="text-[10px] font-mono text-gray-400">{winningTrades.length} Wins / {losingTrades.length} Losses</span>
+            <span className="text-[10px] font-mono">
+              <span className="text-emerald-400 font-bold">{winningTrades.length} Wins</span>
+              <span className="text-gray-400"> / </span>
+              <span className="text-rose-400 font-bold">{losingTrades.length} Losses</span>
+            </span>
           </div>
 
           <div className="glass-card rounded-2xl p-5 border border-white/10">
@@ -249,7 +253,7 @@ export default function PortfolioJournalSection() {
         <div className="glass-card rounded-2xl p-6 border border-white/10 overflow-hidden space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <div className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              JOURNAL RECORDS ({trades.length} / 200)
+              JOURNAL RECORDS ({trades.length})
             </div>
             <span className="text-[11px] font-mono text-gray-400">READ ONLY MODE</span>
           </div>
@@ -264,11 +268,17 @@ export default function PortfolioJournalSection() {
                   <th className="py-3 px-3">STRATEGY</th>
                   <th className="py-3 px-3">EXPIRY</th>
                   <th className="py-3 px-3 text-right">QUANTITY</th>
-                  <th className="py-3 px-3 text-right">PROBABILITY OF PROFIT</th>
+                  <th className="py-3 px-3 text-center">
+                    <div>PROBABILITY OF</div>
+                    <div>PROFIT</div>
+                  </th>
                   <th className="py-3 px-3 text-center">STATUS</th>
                   <th className="py-3 px-3 text-right">P&L</th>
                   <th className="py-3 px-3 text-center">TRADE CLOSE DATE</th>
-                  <th className="py-3 px-3 text-right">HOLD TIME ( DAYS )</th>
+                  <th className="py-3 px-3 text-center">
+                    <div>HOLD TIME</div>
+                    <div>( DAYS )</div>
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -308,7 +318,7 @@ export default function PortfolioJournalSection() {
                         <td className="py-3 px-3 text-amber-400 whitespace-nowrap">{t.strategy || '-'}</td>
                         <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.expiry || '-'}</td>
                         <td className="py-3 px-3 text-right text-gray-300 font-bold">{t.qty || 0}</td>
-                        <td className="py-3 px-3 text-right text-emerald-400 font-bold">{Number(t.pop || 70).toFixed(1)}%</td>
+                        <td className="py-3 px-3 text-center text-emerald-400 font-bold">{Number(t.pop || 70).toFixed(1)}%</td>
                         <td className="py-3 px-3 text-center whitespace-nowrap">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${statusBadgeClass}`}>
                             {statusText}
@@ -320,7 +330,7 @@ export default function PortfolioJournalSection() {
                           {isOpen ? '₹0.00' : `${isPos ? '+' : ''}₹${t.manualPnl.toLocaleString('en-IN')}`}
                         </td>
                         <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.tradeCloseDate || '-'}</td>
-                        <td className="py-3 px-3 text-right text-gray-300 font-bold whitespace-nowrap">
+                        <td className="py-3 px-3 text-center text-gray-300 font-bold whitespace-nowrap">
                           {t.holdTime !== '-' ? `${t.holdTime} Days` : '-'}
                         </td>
                       </tr>
