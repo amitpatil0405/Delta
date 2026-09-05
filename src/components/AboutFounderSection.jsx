@@ -63,20 +63,23 @@ export default function AboutFounderSection() {
 
               <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono">
                 <Cpu className="w-3.5 h-3.5" />
-                <span>Computer Science Degree & Quantitative Intelligence</span>
+                <span>Bachlors Of Engineering ( Computer-Science ) & Quantitative Intelligence</span>
               </div>
 
-              <p className="text-sm sm:text-base text-gray-200 leading-relaxed font-sans">
-                Holding a Computer Science degree, Mr. Amit Patil combines technological expertise with deep derivatives market intelligence. As Founder, Derivatives Trader & Private Fund Manager at DeltaFox, he leads with complete operational transparency, utilizing real-time live data and systematic non-directional options strategies.
-              </p>
-
-              <p className="text-sm text-gray-300 leading-relaxed font-sans">
-                Specializing in institutional risk management, credit spreads, and volatility-driven execution, his focus remains steadfast on capital preservation, disciplined rule execution, and mathematical probabilities.
-              </p>
-
-              <p className="text-xs text-amber-400/90 font-mono italic bg-neutral-900/80 p-3 rounded-xl border border-amber-500/20">
-                Note: DeltaFox is an educational and market intelligence platform. Enrollment in training programs and strategy participation are strictly governed by terms and risk disclosure agreements.
-              </p>
+              <div className="space-y-4 text-sm sm:text-base text-gray-200 leading-relaxed font-sans">
+                <p>
+                  Backed by a Bachelor's degree in Computer Science engineering and deep-rooted expertise in financial markets, Amit leads DeltaFox with an engineering-driven, systematic approach.
+                </p>
+                <p>
+                  By blending technical precision with quantitative trading, the platform brings complete transparency—showcasing live market data and real-time portfolio details directly on the website.
+                </p>
+                <p>
+                  Specializing in advanced options trading strategies—particularly non-directional frameworks, credit spreads, and volatility-based execution—the focus remains on building resilient portfolios where data and math take absolute precedence over emotion.
+                </p>
+                <p>
+                  In addition to systematic trading, DeltaFox offers specialized training programs designed to educate aspiring traders. <span className="text-amber-400 font-mono text-xs block sm:inline mt-1 sm:mt-0">[Enrollment is subject to strict terms and conditions, risk disclosures, and eligibility criteria.]</span> The core philosophy revolves around uncompromised capital preservation, strict rule execution, and navigating changing market regimes with complete discipline.
+                </p>
+              </div>
 
               {/* Core Values */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
