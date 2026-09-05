@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { BookOpen, Shield, Settings, CheckCircle, X, Calendar } from 'lucide-react';
+import { BookOpen, Shield, Settings, CheckCircle, X, Calendar, LogOut } from 'lucide-react';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
 const TRADES_STORAGE_KEY = 'deltafox_portfolio_trades_v5';
@@ -302,11 +302,26 @@ export default function PortfolioJournalSection() {
     }
   };
 
+  // Handle Admin Logout
+  const handleAdminLogout = () => {
+    setIsAuthenticated(false);
+    setAdminPasskey('');
+    setPassError('');
+  };
+
+  // Handle Close Admin Modal
+  const handleCloseAdminModal = () => {
+    setIsAdminOpen(false);
+    setIsAuthenticated(false);
+    setAdminPasskey('');
+    setPassError('');
+  };
+
   // Handle FY Save
   const handleSaveFyConfig = () => {
     setFyConfig(tempFyConfig);
     localStorage.setItem(FY_CONFIG_STORAGE_KEY, JSON.stringify(tempFyConfig));
-    setIsAdminOpen(false);
+    handleCloseAdminModal();
   };
 
   const startMonthName = `${MONTH_NAMES[fyConfig.startMonth]} ${fyConfig.startYear}`;
@@ -335,6 +350,9 @@ export default function PortfolioJournalSection() {
             <button
               onClick={() => {
                 setTempFyConfig({ ...fyConfig });
+                setIsAuthenticated(false);
+                setAdminPasskey('');
+                setPassError('');
                 setIsAdminOpen(true);
               }}
               className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-all cursor-pointer"
@@ -607,7 +625,7 @@ export default function PortfolioJournalSection() {
           <div className="bg-[#0c0c0e] border border-white/15 rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl relative">
 
             <button
-              onClick={() => setIsAdminOpen(false)}
+              onClick={handleCloseAdminModal}
               className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
             >
               <X className="w-5 h-5" />
@@ -647,9 +665,19 @@ export default function PortfolioJournalSection() {
               </form>
             ) : (
               <div className="space-y-5">
-                <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20">
-                  <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                  <span>Authenticated as Admin</span>
+                <div className="flex items-center justify-between text-xs font-mono text-emerald-400 bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20">
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>Authenticated as Admin</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAdminLogout}
+                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-rose-500/20 border border-rose-500/40 text-rose-400 font-bold hover:bg-rose-500/30 transition-colors cursor-pointer text-[10px]"
+                  >
+                    <LogOut className="w-3 h-3" />
+                    <span>LOGOUT</span>
+                  </button>
                 </div>
 
                 {/* Financial Year Start Selector */}
@@ -706,7 +734,7 @@ export default function PortfolioJournalSection() {
                     SAVE FINANCIAL YEAR RANGE
                   </button>
                   <button
-                    onClick={() => setIsAdminOpen(false)}
+                    onClick={handleCloseAdminModal}
                     className="px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-gray-300 font-mono text-xs uppercase rounded-lg transition-colors cursor-pointer"
                   >
                     CANCEL
