@@ -7,8 +7,81 @@ import { BookOpen, Plus, Lock, Unlock, Trash2, LogIn, LogOut, AlertCircle, Edit2
 const STORAGE_KEY = 'deltafox_portfolio_trades_v3';
 const ADMIN_SESSION_KEY = 'deltafox_admin_logged_in';
 
-// Shared Global Database Endpoint for Portfolio Journal Sync
+// Shared Global Database Endpoint & Google Sheet CSV Integration
 const GLOBAL_DB_URL = 'https://api.restful-api.dev/objects/ff808181a067127101a06c9fbbfb10f9';
+const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
+
+// Helper function to parse CSV lines safely
+function parseCSVRows(csvText) {
+  if (!csvText || typeof csvText !== 'string') return [];
+  const lines = csvText.trim().split('\n');
+  if (lines.length <= 1) return [];
+
+  const parsedTrades = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    const cols = [];
+    let cur = '';
+    let inQuotes = false;
+
+    for (let c = 0; c < line.length; c++) {
+      const char = line[c];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        cols.push(cur.trim());
+        cur = '';
+      } else {
+        cur += char;
+      }
+    }
+    cols.push(cur.trim());
+
+    if (cols.length >= 8) {
+      const date = cols[0] || new Date().toISOString().split('T')[0];
+      const symbol = (cols[1] || '').toUpperCase();
+      const strategy = cols[2] || 'Short Strangle';
+      const expiry = cols[3] || date;
+      const qty = parseInt(cols[4], 10) || 50;
+
+      // Clean Probability of Profit string e.g. "86.0%" -> 86.0
+      let popRaw = (cols[5] || '70.0').replace(/%/g, '').trim();
+      const pop = parseFloat(popRaw) || 70.0;
+
+      const status = (cols[6] || 'OPEN').toUpperCase();
+
+      // Clean P&L string e.g. "₹-2,100" / "+₹3,358.75" -> -2100 / 3358.75
+      let pnlRaw = (cols[7] || '0').replace(/[^\d.-]/g, '');
+      const manualPnl = parseFloat(pnlRaw) || 0;
+
+      // Clean Hold time in days string e.g. "13 Days" -> 13
+      let holdRaw = (cols[8] || '7').replace(/\D/g, '');
+      const holdTime = parseInt(holdRaw, 10) || 7;
+
+      if (symbol) {
+        parsedTrades.push({
+          id: `sheet_${i}_${symbol}`,
+          date,
+          symbol,
+          strategy,
+          expiry,
+          entryPrice: 0,
+          exitPrice: null,
+          qty,
+          pop,
+          holdTime,
+          status,
+          manualPnl
+        });
+      }
+    }
+  }
+
+  return parsedTrades;
+}
 
 export default function PortfolioJournalSection() {
   // Admin authentication state (Session Persisted)
@@ -63,9 +136,32 @@ export default function PortfolioJournalSection() {
     }
   };
 
-  // Fetch Global Trades on mount & Periodic Sync (every 10s)
+  // Fetch Global Trades on mount & Periodic Sync (every 10s) from Google Sheet & Cloud API
   useEffect(() => {
     const fetchGlobalTrades = async () => {
+      // First attempt reading from user Google Sheet CSV
+      try {
+        const sheetUrlWithTimestamp = `${GOOGLE_SHEET_CSV_URL}&_t=${Date.now()}`;
+        const sheetRes = await fetch(sheetUrlWithTimestamp, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        });
+        if (sheetRes.ok) {
+          const csvText = await sheetRes.text();
+          const parsedSheetTrades = parseCSVRows(csvText);
+          if (parsedSheetTrades.length > 0) {
+            setTrades(parsedSheetTrades);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(parsedSheetTrades));
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Google Sheet CSV fetch notice:', e);
+      }
+
+      // Fallback to shared cloud endpoint
       try {
         const urlWithTimestamp = `${GLOBAL_DB_URL}?_t=${Date.now()}`;
         const res = await fetch(urlWithTimestamp, {
