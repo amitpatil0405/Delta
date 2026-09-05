@@ -136,7 +136,7 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="pt-16 pb-16 scroll-mt-20 bg-[#060608] border-t border-white/5 relative">
+    <section id="contact" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#060608] border-t border-white/5 relative">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header & Admin Controls */}

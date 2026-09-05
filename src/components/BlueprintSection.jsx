@@ -64,7 +64,7 @@ export default function BlueprintSection() {
   ];
 
   return (
-    <section id="blueprint" className="py-24 bg-[#050505] border-t border-white/5 relative overflow-hidden">
+    <section id="blueprint" className="pt-8 sm:pt-10 pb-24 scroll-mt-20 bg-[#050505] border-t border-white/5 relative overflow-hidden">
 
       {/* Background Subtle Glows */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-amber-500/5 rounded-full blur-[160px] pointer-events-none" />

@@ -250,7 +250,7 @@ export default function OptionsStrategiesSection() {
   };
 
   return (
-    <section id="strategies" className="pt-16 pb-16 scroll-mt-20 bg-[#050507] border-t border-white/5 relative overflow-hidden">
+    <section id="strategies" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050507] border-t border-white/5 relative overflow-hidden">
 
       {/* Glow Effects */}
       <div className="absolute top-1/3 right-10 w-96 h-96 bg-amber-500/5 rounded-full blur-[150px] pointer-events-none" />

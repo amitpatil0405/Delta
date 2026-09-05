@@ -26,7 +26,7 @@ export default function SectorWatchlistSection() {
   };
 
   return (
-    <section id="watchlist-section" className="bg-[#050505] text-white py-12 px-4 md:px-8 border-t border-[#1a1a1a]">
+    <section id="watchlist-section" className="bg-[#050505] text-white scroll-mt-20 pt-8 sm:pt-10 pb-12 px-4 md:px-8 border-t border-[#1a1a1a]">
       <div className="max-w-7xl mx-auto">
 
         {/* Sector Tabs & Search Bar Container */}

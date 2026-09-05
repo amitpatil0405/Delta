@@ -119,7 +119,7 @@ export default function ChartSection() {
   const calc = getChartCalculations();
 
   return (
-    <section id="charts-section" className="bg-[#050505] text-white py-16 px-4 md:px-8 border-t border-[#1a1a1a]">
+    <section id="charts-section" className="bg-[#050505] text-white scroll-mt-20 pt-8 sm:pt-10 pb-16 px-4 md:px-8 border-t border-[#1a1a1a]">
       <div className="max-w-7xl mx-auto">
 
         {/* Main Section Header */}

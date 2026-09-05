@@ -77,7 +77,7 @@ export default function TrainingSection() {
   };
 
   return (
-    <section id="training" className="relative pt-16 pb-16 scroll-mt-20 bg-[#050505] border-t border-white/5 overflow-hidden">
+    <section id="training" className="relative pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] border-t border-white/5 overflow-hidden">
 
       {/* Background Lighting */}
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/5 rounded-full blur-[140px] pointer-events-none" />
