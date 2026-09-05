@@ -178,13 +178,13 @@ export default function PortfolioJournalSection() {
               PORTFOLIO & TRADING JOURNAL
             </h2>
             <p className="mt-1.5 text-sm text-gray-400 max-w-xl">
-              Track trade execution, entry/exit prices, financial year performance, and disciplined P&L analytics directly synced from Google Sheets.
+              Track trade execution, entry/exit, financial year performance, and disciplined P&L analytics directly synced from trade database.
             </p>
           </div>
 
           <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg self-start md:self-auto">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>LIVE SYNCED WITH GOOGLE SHEET</span>
+            <span>LIVE SYNCED WITH TRADE DATABASE</span>
           </div>
         </div>
 
