@@ -413,12 +413,12 @@ export default function PortfolioJournalSection() {
           </div>
 
           {/* Month Columns Grid */}
-          <div className="overflow-x-auto pt-2 pb-1">
-            <div className="flex space-x-4 min-w-[850px] justify-between">
+          <div className="overflow-x-auto pt-2 pb-1 touch-pan-x scrollbar-thin scrollbar-thumb-white/10">
+            <div className="flex space-x-3.5 min-w-max pb-1">
               {heatmapMonths.map((m) => (
-                <div key={`${m.year}_${m.monthIdx}`} className="flex flex-col items-center space-y-2">
+                <div key={`${m.year}_${m.monthIdx}`} className="flex flex-col items-center space-y-2 flex-shrink-0">
                   {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
-                  <div className="grid grid-cols-5 gap-1 p-1 bg-white/[0.02] border border-white/5 rounded-lg">
+                  <div className="grid grid-cols-5 gap-1.5 p-2 bg-white/[0.02] border border-white/5 rounded-xl">
                     {m.days.map((d) => {
                       const isTraded = d.count > 0;
                       const isProfit = isTraded && d.pnl > 0;
@@ -436,7 +436,7 @@ export default function PortfolioJournalSection() {
                           key={d.key}
                           onMouseEnter={() => setHoveredDay(d)}
                           onMouseLeave={() => setHoveredDay(null)}
-                          className={`w-3.5 h-3.5 rounded-[2px] border transition-all cursor-pointer relative ${boxClass}`}
+                          className={`w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0 aspect-square rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
                         />
                       );
                     })}
@@ -449,6 +449,10 @@ export default function PortfolioJournalSection() {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="flex items-center justify-end text-[10px] font-mono text-gray-500 sm:hidden">
+            <span>Scroll horizontally for full financial year →</span>
           </div>
 
           {/* Tooltip Hover Banner / Popup */}
