@@ -7,7 +7,8 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState(activePage);
-  const [currentTimeStr, setCurrentTimeStr] = useState('');
+  const [clockDateStr, setClockDateStr] = useState('');
+  const [clockTimeStr, setClockTimeStr] = useState('');
   const { marketStatus } = useMarket();
 
   // Ticking 1-second live Day, Date & 12-Hour Time formatted clock
@@ -16,9 +17,11 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       const now = new Date();
       // Format options for IST date and 12-hour time with seconds
       const dayStr = now.toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata', weekday: 'short' }).toUpperCase();
-      const dateStr = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
-      const timeStr = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
-      setCurrentTimeStr(`${dayStr}, ${dateStr} • ${timeStr} IST`);
+      const dateVal = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Kolkata', day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+      const timeVal = now.toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
+      setClockDateStr(`${dayStr}, ${dateVal}`);
+      setClockTimeStr(`${timeVal} IST`);
     };
 
     updateTime();
@@ -158,11 +161,14 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
           {/* Right Top Corner: Live Clock, Market Status Indicator & Option Chain Button */}
           <div className="hidden xl:flex items-center space-x-3">
-            {/* Live Day, Date & 12-Hour Clock */}
-            {currentTimeStr && (
-              <div className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono text-gray-300 shadow-inner">
-                <Clock className="w-3.5 h-3.5 text-amber-400" />
-                <span className="font-semibold text-[11px] tracking-tight">{currentTimeStr}</span>
+            {/* Live Day, Date & 12-Hour Clock (Stacked Layout: Day & Date on top, Time below) */}
+            {clockDateStr && clockTimeStr && (
+              <div className="flex items-center space-x-2 px-3 py-1 rounded-lg bg-neutral-900/90 border border-white/10 font-mono shadow-inner">
+                <Clock className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                <div className="flex flex-col text-left leading-tight">
+                  <span className="text-[10px] text-gray-300 font-semibold tracking-wide uppercase">{clockDateStr}</span>
+                  <span className="text-[11px] text-amber-400 font-bold tracking-tight">{clockTimeStr}</span>
+                </div>
               </div>
             )}
 
@@ -217,10 +223,10 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#0a0a0c] border-b border-white/10 px-4 pt-4 pb-6 space-y-3 animate-fadeIn">
           <div className="flex flex-col space-y-2 px-3 py-2.5 mb-2 bg-neutral-900/80 rounded-lg border border-white/5 text-xs font-mono">
-            {currentTimeStr && (
+            {clockDateStr && clockTimeStr && (
               <div className="flex items-center justify-between text-gray-300 border-b border-white/5 pb-1.5">
-                <span className="text-gray-500 text-[10px]">TIME:</span>
-                <span className="font-semibold text-amber-400 text-[11px]">{currentTimeStr}</span>
+                <span className="text-gray-500 text-[10px] uppercase">{clockDateStr}</span>
+                <span className="font-semibold text-amber-400 text-[11px]">{clockTimeStr}</span>
               </div>
             )}
             <div className="flex items-center justify-between">
