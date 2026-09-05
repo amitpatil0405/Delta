@@ -213,8 +213,10 @@ export default function PortfolioJournalSection() {
 
           <div className="glass-card rounded-2xl p-5 border border-white/10">
             <span className="text-[11px] font-mono text-gray-400 uppercase">AVG PROFIT / LOSS</span>
-            <div className="text-xl font-extrabold font-mono text-amber-400 mt-1">
-              +₹{avgProfit} / -₹{avgLoss}
+            <div className="text-xl font-extrabold font-mono mt-1 flex items-center space-x-1">
+              <span className="text-emerald-400">+₹{avgProfit}</span>
+              <span className="text-gray-400">/</span>
+              <span className="text-rose-400">-₹{avgLoss}</span>
             </div>
             <span className="text-[10px] font-mono text-gray-400">Risk-Reward Ratio</span>
           </div>
@@ -290,9 +292,10 @@ export default function PortfolioJournalSection() {
                   </tr>
                 ) : (
                   trades.map((t) => {
-                    const isOpen = t.status === 'OPEN';
-                    const isClosedProfit = t.status === 'CLOSED PROFIT' || (t.status === 'CLOSED' && t.manualPnl >= 0);
-                    const isClosedLoss = t.status === 'CLOSED LOSS' || (t.status === 'CLOSED' && t.manualPnl < 0);
+                    const statusUpper = (t.status || '').toUpperCase();
+                    const isOpen = statusUpper.includes('OPEN') || statusUpper.includes('RUNNING');
+                    const isClosedProfit = statusUpper === 'CLOSED PROFIT' || (statusUpper === 'CLOSED' && t.manualPnl >= 0);
+                    const isClosedLoss = statusUpper === 'CLOSED LOSS' || (statusUpper === 'CLOSED' && t.manualPnl < 0);
                     const isPos = t.manualPnl > 0;
                     const isNeg = t.manualPnl < 0;
 
@@ -300,8 +303,8 @@ export default function PortfolioJournalSection() {
                     let statusText = t.status;
 
                     if (isOpen) {
-                      statusBadgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
-                      statusText = 'OPEN';
+                      statusBadgeClass = 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40';
+                      statusText = t.status;
                     } else if (isClosedProfit) {
                       statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
                       statusText = 'CLOSED PROFIT';
