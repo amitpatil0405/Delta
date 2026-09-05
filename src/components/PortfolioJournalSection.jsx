@@ -149,9 +149,9 @@ export default function PortfolioJournalSection() {
     ? Math.abs(losingTrades.reduce((acc, t) => acc + t.manualPnl, 0) / losingTrades.length).toFixed(0)
     : 0;
 
-  // Cumulative P&L curve dataset
+  // Cumulative P&L curve dataset (chronological: oldest to newest trade)
   let runningPnl = 0;
-  const pnlCurveData = closedTrades.slice().reverse().map((t, idx) => {
+  const pnlCurveData = closedTrades.map((t, idx) => {
     runningPnl += t.manualPnl;
     return {
       trade: `Trade ${idx + 1}`,
@@ -160,8 +160,11 @@ export default function PortfolioJournalSection() {
     };
   });
 
+  // Display trades in reverse order so latest trades from bottom of Google Sheet appear at top of website table
+  const displayTrades = [...trades].reverse();
+
   return (
-    <section id="portfolio" className="pt-16 pb-16 scroll-mt-20 bg-[#050505] border-t border-white/5 relative">
+    <section id="portfolio" className="pt-24 pb-16 scroll-mt-24 bg-[#050505] border-t border-white/5 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
         {/* Section Header */}
@@ -181,7 +184,7 @@ export default function PortfolioJournalSection() {
 
           <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg self-start md:self-auto">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>LIVE SYNCED WITH TRADE DATABASE</span>
+            <span>LIVE SYNCED WITH GOOGLE SHEET</span>
           </div>
         </div>
 
@@ -284,14 +287,14 @@ export default function PortfolioJournalSection() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
-                {trades.length === 0 ? (
+                {displayTrades.length === 0 ? (
                   <tr>
                     <td colSpan={11} className="py-12 text-center text-gray-500 font-mono text-sm">
                       {isLoading ? 'SYNCING GOOGLE SHEET RECORDS...' : 'NO TRADES RECORDED IN JOURNAL.'}
                     </td>
                   </tr>
                 ) : (
-                  trades.map((t) => {
+                  displayTrades.map((t) => {
                     const statusUpper = (t.status || '').toUpperCase();
                     const isOpen = statusUpper.includes('OPEN') || statusUpper.includes('RUNNING');
                     const isClosedProfit = statusUpper === 'CLOSED PROFIT' || (statusUpper === 'CLOSED' && t.manualPnl >= 0);
