@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logoImg from '../assets/logo.png';
-import { ShieldAlert, ArrowUpRight } from 'lucide-react';
+import { ShieldAlert, X } from 'lucide-react';
 
 export default function Footer({ onNavigate }) {
+  const [activeLegalTab, setActiveLegalTab] = useState(null);
+
   const handleLinkClick = (id) => {
     if (onNavigate) {
       onNavigate(id);
@@ -86,7 +88,7 @@ export default function Footer({ onNavigate }) {
               <span className="text-white font-bold block uppercase tracking-wider text-[11px]">FOUNDER</span>
               <div className="text-gray-300 font-sans text-xs space-y-1">
                 <span className="block font-bold text-white font-mono">AMIT PATIL</span>
-                <span className="block text-[11px] text-gray-400">Options trader & Private fund manager</span>
+                <span className="block text-[11px] text-gray-400">Derivatives trader & Private fund manager</span>
                 <a
                   href="https://www.deltafox.in"
                   target="_blank"
@@ -111,16 +113,130 @@ export default function Footer({ onNavigate }) {
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-gray-500 pt-4 border-t border-white/5">
+          <div className="flex flex-col items-center justify-center text-[11px] font-mono text-gray-500 pt-6 border-t border-white/5 text-center space-y-2.5">
             <div>
-              © {new Date().getFullYear()} DELTAFOX. All rights reserved.
+              © 2026 DELTAFOX. All rights reserved.
             </div>
-            <div className="mt-2 sm:mt-0 space-x-4">
-              <span>Privacy Policy</span>
-              <span>Terms of Service</span>
-              <span>Risk Disclosure</span>
+            <div className="flex items-center justify-center space-x-6 text-gray-400">
+              <button
+                onClick={() => setActiveLegalTab(activeLegalTab === 'privacy' ? null : 'privacy')}
+                className={`hover:text-amber-400 transition-colors cursor-pointer ${activeLegalTab === 'privacy' ? 'text-amber-400 font-bold underline' : ''}`}
+              >
+                Privacy Policy
+              </button>
+              <button
+                onClick={() => setActiveLegalTab(activeLegalTab === 'terms' ? null : 'terms')}
+                className={`hover:text-amber-400 transition-colors cursor-pointer ${activeLegalTab === 'terms' ? 'text-amber-400 font-bold underline' : ''}`}
+              >
+                Terms of Service
+              </button>
+              <button
+                onClick={() => setActiveLegalTab(activeLegalTab === 'risk' ? null : 'risk')}
+                className={`hover:text-amber-400 transition-colors cursor-pointer ${activeLegalTab === 'risk' ? 'text-amber-400 font-bold underline' : ''}`}
+              >
+                Risk Disclosure
+              </button>
             </div>
           </div>
+
+          {/* Interactive Legal Policy Content Viewport */}
+          {activeLegalTab && (
+            <div className="mt-6 bg-neutral-950/90 border border-amber-500/20 rounded-2xl p-6 sm:p-8 text-xs font-sans text-gray-300 leading-relaxed relative shadow-2xl animate-fadeIn">
+              <button
+                onClick={() => setActiveLegalTab(null)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors p-1 rounded-lg bg-white/5 hover:bg-white/10"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              {activeLegalTab === 'privacy' && (
+                <div className="space-y-4 max-w-4xl mx-auto text-left">
+                  <div className="flex items-center space-x-2 text-amber-400 font-mono text-xs font-bold uppercase tracking-wider border-b border-white/10 pb-2">
+                    <span>DELTAFOX PRIVACY POLICY</span>
+                  </div>
+                  <p className="text-gray-300">
+                    At DeltaFox (www.deltafox.in), we prioritize visitor privacy and the security of user communication. This Privacy Policy details the types of information collected and recorded when accessing our platform.
+                  </p>
+                  <div className="space-y-2">
+                    <h4 className="text-white font-mono font-bold">1. Information Collection & Use</h4>
+                    <p className="text-gray-400">
+                      We collect minimal information provided voluntarily through contact or inquiry forms (e.g., Name, Email Address, Subject, and Message). This information is exclusively used to respond to user inquiries, verify training program eligibility, and provide service support.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-white font-mono font-bold">2. Log Files & Analytics</h4>
+                    <p className="text-gray-400">
+                      DeltaFox uses standard log files and non-personally identifiable analytical tools to analyze trends, administer the site, track user interaction, and gather demographic insights for platform optimization.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-white font-mono font-bold">3. Data Protection & Sharing</h4>
+                    <p className="text-gray-400">
+                      DeltaFox does not sell, trade, or rent personal identification information to third parties. All communication channels are protected using encrypted protocols.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeLegalTab === 'terms' && (
+                <div className="space-y-4 max-w-4xl mx-auto text-left">
+                  <div className="flex items-center space-x-2 text-amber-400 font-mono text-xs font-bold uppercase tracking-wider border-b border-white/10 pb-2">
+                    <span>DELTAFOX TERMS OF SERVICE</span>
+                  </div>
+                  <p className="text-gray-300">
+                    By accessing or using DeltaFox (www.deltafox.in), you agree to comply with and be bound by the following Terms of Service. If you do not agree with any part of these terms, please do not use the website.
+                  </p>
+                  <div className="space-y-2">
+                    <h4 className="text-white font-mono font-bold">1. Informational & Educational Purpose</h4>
+                    <p className="text-gray-400">
+                      All content, market data, options chain analyses, strategy payoff curves, and training resources presented on DeltaFox are strictly for educational and informational purposes only. Nothing on this website constitutes financial, investment, legal, or tax advice.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-white font-mono font-bold">2. Training Enrollment & Eligibility</h4>
+                    <p className="text-gray-400">
+                      Enrollment in DeltaFox training programs is subject to strict eligibility criteria, risk disclosures, and agreement to platform terms. We reserve the right to accept or decline applicants based on program requirements.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-white font-mono font-bold">3. Intellectual Property</h4>
+                    <p className="text-gray-400">
+                      All trademarks, visual designs, 3D assets, custom charting interfaces, and logos are the intellectual property of DeltaFox and Mr. Amit Patil. Unauthorized duplication or redistribution is strictly prohibited.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeLegalTab === 'risk' && (
+                <div className="space-y-4 max-w-4xl mx-auto text-left">
+                  <div className="flex items-center space-x-2 text-amber-400 font-mono text-xs font-bold uppercase tracking-wider border-b border-white/10 pb-2">
+                    <span>DELTAFOX RISK DISCLOSURE & REGULATORY STATEMENT</span>
+                  </div>
+                  <p className="text-gray-300">
+                    Trading in financial derivatives, options, and stock market securities involves substantial risk of capital loss and is not suitable for every investor.
+                  </p>
+                  <div className="space-y-2">
+                    <h4 className="text-white font-mono font-bold">1. Risk of Derivatives & Options Trading</h4>
+                    <p className="text-gray-400">
+                      Options and futures trading carry high leverage risk. The loss incurred in options selling or speculative strategies can equal or exceed the total capital deployed. Past performance records shown on trading journals do not guarantee future results.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-white font-mono font-bold">2. No Guaranteed Returns or SEBI Advisory Claims</h4>
+                    <p className="text-gray-400">
+                      DeltaFox makes no claims of guaranteed returns, assured profits, or SEBI-registered investment advisory services. Users must consult a licensed independent financial advisor before executing any market transactions.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <h4 className="text-white font-mono font-bold">3. Market Data Delay Disclaimer</h4>
+                    <p className="text-gray-400">
+                      Market quotes, indices, and options chain metrics displayed on DeltaFox are sourced from third-party data providers and may be delayed or subject to feed interruptions. DeltaFox assumes no liability for trading decisions made based on website data.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
       </div>
