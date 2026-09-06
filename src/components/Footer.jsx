@@ -25,11 +25,11 @@ export default function Footer({ onNavigate }) {
         <div className="max-w-4xl mx-auto px-4 space-y-8 relative z-10">
 
           {/* Enlarged DeltaFox Emblem */}
-          <div className="w-36 h-36 sm:w-44 sm:h-44 mx-auto relative group cursor-pointer" onClick={() => handleLinkClick('home')}>
+          <div className="w-60 h-60 sm:w-80 sm:h-80 md:w-[380px] md:h-[380px] mx-auto relative group cursor-pointer" onClick={() => handleLinkClick('home')}>
             <img
               src={logoImg}
               alt="DELTAFOX Emblem"
-              className="w-full h-full object-contain filter drop-shadow-[0_0_30px_rgba(217,119,6,0.5)] group-hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-contain filter drop-shadow-[0_0_40px_rgba(217,119,6,0.6)] group-hover:scale-105 transition-transform duration-500"
             />
           </div>
 
