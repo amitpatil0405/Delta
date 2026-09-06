@@ -504,57 +504,48 @@ export default function PortfolioJournalSection() {
                           onMouseLeave={() => setHoveredDay(null)}
                           className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
                         >
-                          {/* Hover Popup positioned directly next to the golden-bordered box (hidden on mobile, visible on laptop/PC md:and above) */}
+                          {/* Hover Popup positioned directly next to the golden-bordered box (compact, clean stock + profit list) */}
                           {isHovered && (
-                            <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-amber-400/40 rounded-xl p-3.5 text-xs font-mono shadow-2xl z-50 w-[270px] sm:w-[310px] backdrop-blur-md animate-fadeIn space-y-2.5 text-left pointer-events-none`}>
+                            <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-amber-400/40 rounded-lg p-2.5 text-[11px] font-mono shadow-2xl z-50 w-[210px] backdrop-blur-md animate-fadeIn space-y-2 text-left pointer-events-none`}>
                               {/* Header */}
-                              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                              <div className="flex items-center justify-between border-b border-white/10 pb-1.5">
                                 <div>
-                                  <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">TRADE DATE</div>
-                                  <div className="text-white font-extrabold text-sm">
+                                  <div className="text-[9px] text-gray-400 uppercase tracking-widest font-bold">DATE</div>
+                                  <div className="text-white font-bold text-xs">
                                     {d.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">TOTAL P&L</div>
+                                  <div className="text-[9px] text-gray-400 uppercase tracking-widest font-bold">TOTAL</div>
                                   {d.count === 0 ? (
-                                    <span className="text-gray-400 font-bold">₹0.00</span>
+                                    <span className="text-gray-400 font-bold">₹0</span>
                                   ) : (
-                                    <span className={`text-sm font-extrabold ${d.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                    <span className={`text-xs font-extrabold ${d.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                                       {d.pnl < 0 ? '-' : '+'}₹{Math.abs(d.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                   )}
                                 </div>
                               </div>
 
-                              {/* Trade Count & List */}
+                              {/* Simple List of Stocks and Profits */}
                               {d.count === 0 ? (
-                                <div className="text-[11px] text-gray-500 py-1 italic">
-                                  No trades closed on this date.
+                                <div className="text-[10px] text-gray-500 py-0.5 italic">
+                                  No closed trades.
                                 </div>
                               ) : (
-                                <div className="space-y-1.5 pt-0.5">
-                                  <div className="flex items-center justify-between text-[10px] text-gray-400 font-bold uppercase tracking-wider">
-                                    <span>INSTRUMENTS ({d.count})</span>
-                                    <span>P&L</span>
-                                  </div>
-                                  <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10">
-                                    {d.trades.map((item, idx) => {
-                                      const isPos = item.pnl > 0;
-                                      const isNeg = item.pnl < 0;
-                                      return (
-                                        <div key={idx} className="flex items-center justify-between bg-white/[0.03] border border-white/5 rounded-lg px-2.5 py-1.5">
-                                          <div>
-                                            <div className="font-extrabold text-white text-xs">{item.symbol}</div>
-                                            <div className="text-[10px] text-amber-400 truncate max-w-[150px]">{item.strategy}</div>
-                                          </div>
-                                          <div className={`font-extrabold text-xs text-right ${isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'}`}>
-                                            {isNeg ? '-' : isPos ? '+' : ''}₹{Math.abs(item.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
+                                <div className="space-y-1 max-h-[140px] overflow-y-auto pr-0.5 scrollbar-thin scrollbar-thumb-white/10">
+                                  {d.trades.map((item, idx) => {
+                                    const isPos = item.pnl > 0;
+                                    const isNeg = item.pnl < 0;
+                                    return (
+                                      <div key={idx} className="flex items-center justify-between py-0.5 border-b border-white/5 last:border-0">
+                                        <span className="font-extrabold text-white text-[11px] truncate max-w-[120px]">{item.symbol}</span>
+                                        <span className={`font-bold text-[11px] text-right ${isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'}`}>
+                                          {isNeg ? '-' : isPos ? '+' : ''}₹{Math.abs(item.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
                                 </div>
                               )}
                             </div>
