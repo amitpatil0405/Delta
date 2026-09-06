@@ -296,12 +296,18 @@ export default function PortfolioJournalSection() {
       if (dateObj) {
         const key = formatDateKey(dateObj);
         if (!map[key]) {
-          map[key] = { pnl: 0, count: 0, wins: 0, losses: 0 };
+          map[key] = { pnl: 0, count: 0, wins: 0, losses: 0, trades: [] };
         }
         map[key].pnl += t.manualPnl;
         map[key].count += 1;
         if (t.manualPnl > 0) map[key].wins += 1;
         if (t.manualPnl < 0) map[key].losses += 1;
+        map[key].trades.push({
+          symbol: t.symbol,
+          strategy: t.strategy,
+          pnl: t.manualPnl,
+          status: t.status
+        });
       }
     });
     return map;
@@ -324,7 +330,7 @@ export default function PortfolioJournalSection() {
       for (let d = 1; d <= daysInMonth; d++) {
         const dateObj = new Date(year, monthIdx, d);
         const key = formatDateKey(dateObj);
-        const dayPnlInfo = dailyPnlMap[key] || { pnl: 0, count: 0, wins: 0, losses: 0 };
+        const dayPnlInfo = dailyPnlMap[key] || { pnl: 0, count: 0, wins: 0, losses: 0, trades: [] };
         daysList.push({
           date: dateObj,
           dayNum: d,
@@ -333,6 +339,7 @@ export default function PortfolioJournalSection() {
           count: dayPnlInfo.count,
           wins: dayPnlInfo.wins,
           losses: dayPnlInfo.losses,
+          trades: dayPnlInfo.trades || [],
           isPadding: false
         });
       }
@@ -501,21 +508,57 @@ export default function PortfolioJournalSection() {
             <span>Scroll horizontally for full financial year →</span>
           </div>
 
-          {/* Tooltip Hover Banner / Popup */}
+          {/* Enhanced Tooltip Hover Card Popup */}
           {hoveredDay && !hoveredDay.isPadding && (
-            <div className="absolute top-3 right-6 bg-neutral-900 border border-white/20 rounded-lg px-3 py-1.5 text-xs font-mono shadow-xl z-20 flex items-center space-x-3 animate-fadeIn">
-              <span className="text-gray-400">
-                {hoveredDay.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-              </span>
-              <span className="text-gray-600">|</span>
+            <div className="absolute top-3 right-4 sm:right-6 bg-[#0c0c0e] border border-white/20 rounded-xl p-3.5 text-xs font-mono shadow-2xl z-30 min-w-[260px] sm:min-w-[300px] backdrop-blur-md animate-fadeIn space-y-2.5">
+              {/* Header */}
+              <div className="flex items-center justify-between border-b border-white/10 pb-2">
+                <div>
+                  <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">TRADE DATE</div>
+                  <div className="text-white font-extrabold text-sm">
+                    {hoveredDay.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">TOTAL P&L</div>
+                  {hoveredDay.count === 0 ? (
+                    <span className="text-gray-400 font-bold">₹0.00</span>
+                  ) : (
+                    <span className={`text-sm font-extrabold ${hoveredDay.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {hoveredDay.pnl < 0 ? '-' : '+'}₹{Math.abs(hoveredDay.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Trade Count & List */}
               {hoveredDay.count === 0 ? (
-                <span className="text-gray-400">No Closed Trades</span>
+                <div className="text-[11px] text-gray-500 py-1 italic">
+                  No trades closed on this date.
+                </div>
               ) : (
-                <div className="flex items-center space-x-2">
-                  <span className={`font-bold ${hoveredDay.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    {hoveredDay.pnl < 0 ? '-' : '+' }₹{Math.abs(hoveredDay.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
-                  <span className="text-gray-400">({hoveredDay.count} Trade{hoveredDay.count > 1 ? 's' : ''})</span>
+                <div className="space-y-1.5 pt-0.5">
+                  <div className="flex items-center justify-between text-[10px] text-gray-400 font-bold uppercase tracking-wider">
+                    <span>INSTRUMENTS ({hoveredDay.count})</span>
+                    <span>P&L</span>
+                  </div>
+                  <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10">
+                    {hoveredDay.trades.map((item, idx) => {
+                      const isPos = item.pnl > 0;
+                      const isNeg = item.pnl < 0;
+                      return (
+                        <div key={idx} className="flex items-center justify-between bg-white/[0.03] border border-white/5 rounded-lg px-2.5 py-1.5">
+                          <div>
+                            <div className="font-extrabold text-white text-xs">{item.symbol}</div>
+                            <div className="text-[10px] text-amber-400 truncate max-w-[150px]">{item.strategy}</div>
+                          </div>
+                          <div className={`font-extrabold text-xs text-right ${isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'}`}>
+                            {isNeg ? '-' : isPos ? '+' : ''}₹{Math.abs(item.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
