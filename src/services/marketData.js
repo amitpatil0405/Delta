@@ -190,7 +190,7 @@ async function fetchYahooFinanceChart(yahooSymbol, range = '1d', interval = '5m'
   for (const proxyFn of proxies) {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
       const res = await fetch(proxyFn(targetUrl), { signal: controller.signal });
       clearTimeout(timeoutId);
       if (res.ok) {
@@ -454,23 +454,40 @@ export async function getHistoricalData(symbol = 'NIFTY 50', timeframe = '1M') {
     }
   }
 
-  // Fallback data generator if API blocked
+  // Fallback data generator with realistic random walk market price fluctuations
   const quoteRes = await getQuote(symbol);
   const basePrice = quoteRes.data ? quoteRes.data.price : 24000.00;
-  const count = 30;
+  const count = timeframe === '1D' ? 30 : timeframe === '1W' ? 25 : 30;
   const fallbackCandles = [];
   const now = new Date();
 
+  let currentPrice = basePrice * 0.985;
   for (let i = count; i >= 0; i--) {
-    const time = new Date(now.getTime() - i * 86400000);
-    const close = parseFloat((basePrice * (1 + (Math.sin(i * 0.3) * 0.02))).toFixed(2));
+    let dateStr = '';
+    if (timeframe === '1D') {
+      const minutesAgo = i * 12; // 12-minute intervals over trading hours
+      const t = new Date(now.getTime() - minutesAgo * 60000);
+      dateStr = t.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    } else {
+      const time = new Date(now.getTime() - i * 86400000);
+      dateStr = time.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+    }
+
+    // Pseudo-random walk with realistic high/low spread
+    const changeFactor = (seededRandom(symbol, i, timeframe) - 0.48) * 0.006;
+    const open = currentPrice;
+    const close = parseFloat((open * (1 + changeFactor)).toFixed(2));
+    const high = parseFloat((Math.max(open, close) * (1 + seededRandom(symbol, i, 'h') * 0.003)).toFixed(2));
+    const low = parseFloat((Math.min(open, close) * (1 - seededRandom(symbol, i, 'l') * 0.003)).toFixed(2));
+    currentPrice = close;
+
     fallbackCandles.push({
-      date: time.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }),
-      open: close,
-      high: parseFloat((close * 1.005).toFixed(2)),
-      low: parseFloat((close * 0.995).toFixed(2)),
-      close: close,
-      volume: 100000
+      date: dateStr,
+      open,
+      high,
+      low,
+      close,
+      volume: Math.floor(50000 + seededRandom(symbol, i, 'vol') * 100000)
     });
   }
 

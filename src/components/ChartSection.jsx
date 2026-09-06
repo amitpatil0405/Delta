@@ -6,7 +6,7 @@ export default function ChartSection() {
   const { activeSymbol, setActiveSymbol, allAvailableSymbols } = useMarket();
   const [chartData, setChartData] = useState([]);
   const [quote, setQuote] = useState(null);
-  const [timeframe, setTimeframe] = useState('1M');
+  const [timeframe, setTimeframe] = useState('1D');
   const [chartType, setChartType] = useState('AREA'); // 'AREA', 'LINE', 'CANDLE', 'BAR'
   const [loading, setLoading] = useState(true);
 
