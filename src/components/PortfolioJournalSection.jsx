@@ -490,7 +490,7 @@ export default function PortfolioJournalSection() {
                       }
 
                       if (isHovered) {
-                        boxClass += ' !border-amber-400 ring-2 ring-amber-400/80 shadow-[0_0_10px_rgba(251,191,36,0.6)] scale-125 z-20';
+                        boxClass += ' !border-white ring-2 ring-white/60 scale-125 z-20 brightness-125';
                       }
 
                       const totalM = heatmapMonths.length || 12;
@@ -504,9 +504,9 @@ export default function PortfolioJournalSection() {
                           onMouseLeave={() => setHoveredDay(null)}
                           className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
                         >
-                          {/* Hover Popup positioned directly next to the golden-bordered box (ultra-compact with small typography) */}
+                          {/* Hover Popup positioned directly next to the highlighted box (ultra-compact with small typography) */}
                           {isHovered && (
-                            <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-amber-400/40 rounded-md p-1.5 text-[9px] font-mono shadow-2xl z-50 w-[170px] backdrop-blur-md animate-fadeIn space-y-1 text-left pointer-events-none`}>
+                            <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-white/20 rounded-md p-1.5 text-[9px] font-mono shadow-2xl z-50 w-[170px] backdrop-blur-md animate-fadeIn space-y-1 text-left pointer-events-none`}>
                               {/* Header */}
                               <div className="flex items-center justify-between border-b border-white/10 pb-1">
                                 <div>
