@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { BookOpen, Shield, Settings, CheckCircle, X, Calendar, LogOut } from 'lucide-react';
+import { BookOpen, Calendar } from 'lucide-react';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
 const TRADES_STORAGE_KEY = 'deltafox_portfolio_trades_v5';
@@ -87,7 +87,7 @@ function parseCSVRows(csvText) {
     }
     cols.push(cur.trim());
 
-    // Check for "Financial year" metadata columns in sheet
+    // Check for "Financial year" metadata columns in sheet (including adjacent cells)
     for (let c = 0; c < cols.length; c++) {
       if (cols[c] && cols[c].toLowerCase().includes('financial year')) {
         const startStr = cols[c + 1] || '';
@@ -102,6 +102,20 @@ function parseCSVRows(csvText) {
             endYear: endObj.year
           };
         }
+      }
+    }
+
+    // Direct check for N & O columns (index 13 & 14, e.g. N1 & O1 in Google Sheet)
+    if (!sheetFyConfig && cols.length >= 15) {
+      const startObj = parseMonthYearStr(cols[13]);
+      const endObj = parseMonthYearStr(cols[14]);
+      if (startObj && endObj) {
+        sheetFyConfig = {
+          startMonth: startObj.month,
+          startYear: startObj.year,
+          endMonth: endObj.month,
+          endYear: endObj.year
+        };
       }
     }
 
@@ -185,11 +199,6 @@ export default function PortfolioJournalSection() {
   });
 
   const [isLoading, setIsLoading] = useState(true);
-  const [isAdminOpen, setIsAdminOpen] = useState(false);
-  const [adminPasskey, setAdminPasskey] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passError, setPassError] = useState('');
-  const [tempFyConfig, setTempFyConfig] = useState({ ...fyConfig });
   const [hoveredDay, setHoveredDay] = useState(null);
 
   // Fetch Global Trades on mount & Periodic Sync (every 10s) from Google Sheet CSV
@@ -348,39 +357,6 @@ export default function PortfolioJournalSection() {
     return months;
   }, [fyConfig, dailyPnlMap]);
 
-  // Handle Admin Passkey Submit
-  const handleAdminLogin = (e) => {
-    e.preventDefault();
-    if (adminPasskey === 'deltafox2026') {
-      setIsAuthenticated(true);
-      setPassError('');
-    } else {
-      setPassError('Invalid admin passkey. Please try again.');
-    }
-  };
-
-  // Handle Admin Logout
-  const handleAdminLogout = () => {
-    setIsAuthenticated(false);
-    setAdminPasskey('');
-    setPassError('');
-  };
-
-  // Handle Close Admin Modal
-  const handleCloseAdminModal = () => {
-    setIsAdminOpen(false);
-    setIsAuthenticated(false);
-    setAdminPasskey('');
-    setPassError('');
-  };
-
-  // Handle FY Save
-  const handleSaveFyConfig = () => {
-    setFyConfig(tempFyConfig);
-    localStorage.setItem(FY_CONFIG_STORAGE_KEY, JSON.stringify(tempFyConfig));
-    handleCloseAdminModal();
-  };
-
   const startMonthName = `${MONTH_NAMES[fyConfig.startMonth]} ${fyConfig.startYear}`;
   const endMonthName = `${MONTH_NAMES[fyConfig.endMonth]} ${fyConfig.endYear}`;
 
@@ -404,20 +380,6 @@ export default function PortfolioJournalSection() {
           </div>
 
           <div className="flex items-center space-x-3 self-start md:self-auto">
-            <button
-              onClick={() => {
-                setTempFyConfig({ ...fyConfig });
-                setIsAuthenticated(false);
-                setAdminPasskey('');
-                setPassError('');
-                setIsAdminOpen(true);
-              }}
-              className="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition-all cursor-pointer"
-            >
-              <Settings className="w-3.5 h-3.5 animate-spin-slow" />
-              <span>ADMIN FY SETTINGS</span>
-            </button>
-
             <div className="flex items-center space-x-2 text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-lg">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               <span>LIVE SYNCED WITH TRADE DATABASE</span>
@@ -693,133 +655,6 @@ export default function PortfolioJournalSection() {
 
       </div>
 
-      {/* Admin Financial Year Settings Modal */}
-      {isAdminOpen && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#0c0c0e] border border-white/15 rounded-2xl max-w-md w-full p-6 space-y-6 shadow-2xl relative">
-
-            <button
-              onClick={handleCloseAdminModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center space-x-3">
-              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
-                <Shield className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-white font-mono uppercase">ADMIN FY CONFIGURATION</h3>
-                <p className="text-xs text-gray-400 font-mono">Set active Financial Year range for trade analytics</p>
-              </div>
-            </div>
-
-            {!isAuthenticated ? (
-              <form onSubmit={handleAdminLogin} className="space-y-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-mono text-gray-300 uppercase">Admin Passkey</label>
-                  <input
-                    type="password"
-                    placeholder="Enter passkey..."
-                    value={adminPasskey}
-                    onChange={(e) => setAdminPasskey(e.target.value)}
-                    className="w-full bg-neutral-900 border border-white/15 rounded-lg px-3.5 py-2.5 text-sm font-mono text-white placeholder-gray-600 focus:outline-none focus:border-amber-400"
-                    autoFocus
-                  />
-                  {passError && <p className="text-xs text-rose-400 font-mono mt-1">{passError}</p>}
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-mono font-bold text-xs uppercase rounded-lg transition-colors cursor-pointer"
-                >
-                  AUTHENTICATE ADMIN
-                </button>
-              </form>
-            ) : (
-              <div className="space-y-5">
-                <div className="flex items-center justify-between text-xs font-mono text-emerald-400 bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/20">
-                  <div className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                    <span>Authenticated as Admin</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleAdminLogout}
-                    className="inline-flex items-center space-x-1 px-2.5 py-1 rounded bg-rose-500/20 border border-rose-500/40 text-rose-400 font-bold hover:bg-rose-500/30 transition-colors cursor-pointer text-[10px]"
-                  >
-                    <LogOut className="w-3 h-3" />
-                    <span>LOGOUT</span>
-                  </button>
-                </div>
-
-                {/* Financial Year Start Selector */}
-                <div className="space-y-2">
-                  <label className="text-xs font-mono text-amber-400 font-bold uppercase">START FINANCIAL MONTH & YEAR</label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <select
-                      value={tempFyConfig.startMonth}
-                      onChange={(e) => setTempFyConfig({ ...tempFyConfig, startMonth: parseInt(e.target.value, 10) })}
-                      className="bg-neutral-900 border border-white/15 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-amber-400"
-                    >
-                      {MONTH_NAMES.map((m, idx) => (
-                        <option key={m} value={idx}>{m}</option>
-                      ))}
-                    </select>
-
-                    <input
-                      type="number"
-                      value={tempFyConfig.startYear}
-                      onChange={(e) => setTempFyConfig({ ...tempFyConfig, startYear: parseInt(e.target.value, 10) || 2026 })}
-                      className="bg-neutral-900 border border-white/15 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-amber-400"
-                    />
-                  </div>
-                </div>
-
-                {/* Financial Year End Selector */}
-                <div className="space-y-2">
-                  <label className="text-xs font-mono text-amber-400 font-bold uppercase">END FINANCIAL MONTH & YEAR</label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <select
-                      value={tempFyConfig.endMonth}
-                      onChange={(e) => setTempFyConfig({ ...tempFyConfig, endMonth: parseInt(e.target.value, 10) })}
-                      className="bg-neutral-900 border border-white/15 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-amber-400"
-                    >
-                      {MONTH_NAMES.map((m, idx) => (
-                        <option key={m} value={idx}>{m}</option>
-                      ))}
-                    </select>
-
-                    <input
-                      type="number"
-                      value={tempFyConfig.endYear}
-                      onChange={(e) => setTempFyConfig({ ...tempFyConfig, endYear: parseInt(e.target.value, 10) || 2027 })}
-                      className="bg-neutral-900 border border-white/15 rounded-lg px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-amber-400"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-2 flex items-center space-x-3">
-                  <button
-                    onClick={handleSaveFyConfig}
-                    className="flex-1 py-2.5 bg-amber-500 hover:bg-amber-400 text-black font-mono font-bold text-xs uppercase rounded-lg transition-colors cursor-pointer"
-                  >
-                    SAVE FINANCIAL YEAR RANGE
-                  </button>
-                  <button
-                    onClick={handleCloseAdminModal}
-                    className="px-4 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-gray-300 font-mono text-xs uppercase rounded-lg transition-colors cursor-pointer"
-                  >
-                    CANCEL
-                  </button>
-                </div>
-              </div>
-            )}
-
-          </div>
-        </div>
-      )}
 
     </section>
   );
