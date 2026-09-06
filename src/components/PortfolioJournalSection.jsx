@@ -504,23 +504,23 @@ export default function PortfolioJournalSection() {
                           onMouseLeave={() => setHoveredDay(null)}
                           className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
                         >
-                          {/* Hover Popup positioned directly next to the golden-bordered box (compact, clean stock + profit list) */}
+                          {/* Hover Popup positioned directly next to the golden-bordered box (ultra-compact with small typography) */}
                           {isHovered && (
-                            <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-amber-400/40 rounded-lg p-2.5 text-[11px] font-mono shadow-2xl z-50 w-[210px] backdrop-blur-md animate-fadeIn space-y-2 text-left pointer-events-none`}>
+                            <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-amber-400/40 rounded-md p-1.5 text-[9px] font-mono shadow-2xl z-50 w-[170px] backdrop-blur-md animate-fadeIn space-y-1 text-left pointer-events-none`}>
                               {/* Header */}
-                              <div className="flex items-center justify-between border-b border-white/10 pb-1.5">
+                              <div className="flex items-center justify-between border-b border-white/10 pb-1">
                                 <div>
-                                  <div className="text-[9px] text-gray-400 uppercase tracking-widest font-bold">DATE</div>
-                                  <div className="text-white font-bold text-xs">
+                                  <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">DATE</div>
+                                  <div className="text-white font-bold text-[9.5px]">
                                     {d.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <div className="text-[9px] text-gray-400 uppercase tracking-widest font-bold">TOTAL</div>
+                                  <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">TOTAL</div>
                                   {d.count === 0 ? (
-                                    <span className="text-gray-400 font-bold">₹0</span>
+                                    <span className="text-gray-400 font-bold text-[9.5px]">₹0</span>
                                   ) : (
-                                    <span className={`text-xs font-extrabold ${d.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                    <span className={`text-[9.5px] font-extrabold ${d.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                                       {d.pnl < 0 ? '-' : '+'}₹{Math.abs(d.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                   )}
@@ -529,18 +529,18 @@ export default function PortfolioJournalSection() {
 
                               {/* Simple List of Stocks and Profits */}
                               {d.count === 0 ? (
-                                <div className="text-[10px] text-gray-500 py-0.5 italic">
+                                <div className="text-[8.5px] text-gray-500 py-0.5 italic">
                                   No closed trades.
                                 </div>
                               ) : (
-                                <div className="space-y-1 max-h-[140px] overflow-y-auto pr-0.5 scrollbar-thin scrollbar-thumb-white/10">
+                                <div className="space-y-0.5 max-h-[120px] overflow-y-auto pr-0.5 scrollbar-thin scrollbar-thumb-white/10">
                                   {d.trades.map((item, idx) => {
                                     const isPos = item.pnl > 0;
                                     const isNeg = item.pnl < 0;
                                     return (
-                                      <div key={idx} className="flex items-center justify-between py-0.5 border-b border-white/5 last:border-0">
-                                        <span className="font-extrabold text-white text-[11px] truncate max-w-[120px]">{item.symbol}</span>
-                                        <span className={`font-bold text-[11px] text-right ${isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'}`}>
+                                      <div key={idx} className="flex items-center justify-between py-0.5 border-b border-white/5 last:border-0 leading-tight">
+                                        <span className="font-extrabold text-white text-[9px] truncate max-w-[95px]">{item.symbol}</span>
+                                        <span className={`font-bold text-[9px] text-right ${isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'}`}>
                                           {isNeg ? '-' : isPos ? '+' : ''}₹{Math.abs(item.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                         </span>
                                       </div>
