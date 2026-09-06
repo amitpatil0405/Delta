@@ -63,7 +63,7 @@ export default function AboutFounderSection() {
 
               <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono">
                 <Cpu className="w-3.5 h-3.5" />
-                <span>Bachlors Of Engineering ( Computer-Science ) & Quantitative Intelligence</span>
+                <span>Bachelor Of Engineering ( Computer-Science ) & Quantitative Intelligence</span>
               </div>
 
               <div className="space-y-4 text-sm sm:text-base text-gray-200 leading-relaxed font-sans">

@@ -48,16 +48,39 @@ function formatISTTime(hours, mins) {
 }
 
 /**
- * Dynamic Expiry Dates Generator
+ * Single Coming Expiry Date Generator
+ * Rules:
+ * - Nifty indices: weekly coming expiry on Tuesday
+ * - Sensex: weekly coming expiry on Thursday
+ * - Bank Nifty & Equity Stocks: monthly expiry on Last Tuesday of the month
+ * - Automatically adjusts for exchange holidays (shifts to preceding trading day)
  */
+const NSE_BSE_HOLIDAYS = [
+  '2025-01-26', '2025-02-26', '2025-03-14', '2025-03-31', '2025-04-10', '2025-04-14', '2025-04-18', '2025-05-01', '2025-08-15', '2025-10-02', '2025-10-21', '2025-10-22', '2025-11-05', '2025-12-25',
+  '2026-01-26', '2026-03-03', '2026-03-20', '2026-04-03', '2026-04-14', '2026-05-01', '2026-05-27', '2026-08-15', '2026-10-02', '2026-10-20', '2026-11-08', '2026-11-24', '2026-12-25'
+];
+
+function isHolidayOrWeekend(d) {
+  const dayOfWeek = d.getDay();
+  if (dayOfWeek === 0 || dayOfWeek === 6) return true; // Weekend
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const dateStr = `${y}-${m}-${day}`;
+  return NSE_BSE_HOLIDAYS.includes(dateStr);
+}
+
+function adjustForHolidays(targetDate) {
+  const d = new Date(targetDate);
+  while (isHolidayOrWeekend(d)) {
+    d.setDate(d.getDate() - 1);
+  }
+  return d;
+}
+
 export function getExpiryOptions(symbol = 'NIFTY 50', baseDate = new Date()) {
   const s = symbol.toUpperCase().trim();
   const today = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
-
-  const results = [];
-
-  const isNifty = (s === 'NIFTY 50' || s === 'NIFTY50' || s === 'NIFTY');
-  const isSensex = (s === 'SENSEX' || s === 'BSESN' || s === 'BSE SENSEX');
 
   const formatDateStr = (d) => {
     const day = String(d.getDate()).padStart(2, '0');
@@ -75,47 +98,65 @@ export function getExpiryOptions(symbol = 'NIFTY 50', baseDate = new Date()) {
     return lastDay;
   };
 
-  if (isNifty || isSensex) {
-    const targetDay = isNifty ? 2 : 4;
-    let current = new Date(today);
+  const isSensex = (s === 'SENSEX' || s === 'BSESN' || s === 'BSE SENSEX');
+  const isNiftyIndex = (s === 'NIFTY 50' || s === 'NIFTY50' || s === 'NIFTY' || s === 'NIFTY IT' || s === 'NIFTY FIN SERVICE' || s === 'NIFTY MIDCAP 100');
 
+  let rawExpiryDate;
+  let isMonthly = false;
+
+  if (isNiftyIndex) {
+    // Nifty Weekly: Tuesday (targetDay = 2)
+    const targetDay = 2;
+    let current = new Date(today);
     while (current.getDay() !== targetDay) {
       current.setDate(current.getDate() + 1);
     }
+    rawExpiryDate = current;
 
-    for (let i = 0; i < 4; i++) {
-      const expiryDate = new Date(current);
-      const year = expiryDate.getFullYear();
-      const month = expiryDate.getMonth();
-      const lastWkday = getLastWeekdayOfMonth(year, month, targetDay);
+    const year = rawExpiryDate.getFullYear();
+    const month = rawExpiryDate.getMonth();
+    const lastTuesday = getLastWeekdayOfMonth(year, month, 2);
+    if (rawExpiryDate.getDate() === lastTuesday.getDate() && rawExpiryDate.getMonth() === lastTuesday.getMonth()) {
+      isMonthly = true;
+    }
+  } else if (isSensex) {
+    // Sensex Weekly: Thursday (targetDay = 4)
+    const targetDay = 4;
+    let current = new Date(today);
+    while (current.getDay() !== targetDay) {
+      current.setDate(current.getDate() + 1);
+    }
+    rawExpiryDate = current;
 
-      const isMonthly = (expiryDate.getDate() === lastWkday.getDate() && expiryDate.getMonth() === lastWkday.getMonth());
-      const label = `${formatDateStr(expiryDate)} (${isMonthly ? 'Monthly' : 'Weekly'})`;
-      results.push(label);
-
-      current.setDate(current.getDate() + 7);
+    const year = rawExpiryDate.getFullYear();
+    const month = rawExpiryDate.getMonth();
+    const lastThursday = getLastWeekdayOfMonth(year, month, 4);
+    if (rawExpiryDate.getDate() === lastThursday.getDate() && rawExpiryDate.getMonth() === lastThursday.getMonth()) {
+      isMonthly = true;
     }
   } else {
-    const targetDay = 2; // Tuesday
+    // Bank Nifty & Stocks: Last Tuesday of the month
     let currYear = today.getFullYear();
     let currMonth = today.getMonth();
+    let lastTue = getLastWeekdayOfMonth(currYear, currMonth, 2);
 
-    let count = 0;
-    while (count < 3) {
-      const lastTue = getLastWeekdayOfMonth(currYear, currMonth, targetDay);
-      if (lastTue >= today) {
-        results.push(`${formatDateStr(lastTue)} (Monthly)`);
-        count++;
-      }
+    if (today > lastTue) {
       currMonth++;
       if (currMonth > 11) {
         currMonth = 0;
         currYear++;
       }
+      lastTue = getLastWeekdayOfMonth(currYear, currMonth, 2);
     }
+    rawExpiryDate = lastTue;
+    isMonthly = true;
   }
 
-  return results;
+  // Adjust for exchange holidays
+  const finalExpiryDate = adjustForHolidays(rawExpiryDate);
+  const label = `${formatDateStr(finalExpiryDate)} (${isMonthly ? 'Monthly Expiry' : 'Weekly Expiry'})`;
+
+  return [label];
 }
 
 // Symbol mapping helper for Yahoo Finance

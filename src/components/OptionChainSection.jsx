@@ -85,17 +85,9 @@ export default function OptionChainSection() {
 
             <div className="flex items-center gap-2 bg-[#111111] border border-[#222222] px-3 py-1.5 rounded-xl text-xs font-mono">
               <span className="text-gray-400 font-bold uppercase">EXPIRY:</span>
-              <select
-                value={expiry}
-                onChange={(e) => setExpiry(e.target.value)}
-                className="bg-transparent text-white font-bold focus:outline-none cursor-pointer"
-              >
-                {availableExpiries.map((expOption) => (
-                  <option key={expOption} value={expOption} className="bg-[#111111] text-white">
-                    {expOption}
-                  </option>
-                ))}
-              </select>
+              <span className="text-amber-400 font-extrabold uppercase tracking-wide">
+                {expiry || availableExpiries[0]}
+              </span>
             </div>
           </div>
         </div>

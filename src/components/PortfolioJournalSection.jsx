@@ -87,7 +87,12 @@ function parseCSVRows(csvText) {
       const status = (cols[9] || 'OPEN').toUpperCase();
 
       let pnlRaw = (cols[10] || '0').replace(/[^\d.-]/g, '');
-      const manualPnl = parseFloat(pnlRaw) || 0;
+      let manualPnl = parseFloat(pnlRaw) || 0;
+
+      // Ensure trades with LOSS status always have a negative manualPnl
+      if ((status.includes('LOSS') || status === 'CLOSED LOSS') && manualPnl > 0) {
+        manualPnl = -manualPnl;
+      }
 
       if (symbol) {
         parsedTrades.push({
@@ -210,11 +215,11 @@ export default function PortfolioJournalSection() {
   const totalPnl = closedTrades.reduce((acc, t) => acc + t.manualPnl, 0);
 
   const avgProfit = winningTrades.length > 0
-    ? (winningTrades.reduce((acc, t) => acc + t.manualPnl, 0) / winningTrades.length).toFixed(0)
+    ? (winningTrades.reduce((acc, t) => acc + t.manualPnl, 0) / winningTrades.length)
     : 0;
 
   const avgLoss = losingTrades.length > 0
-    ? Math.abs(losingTrades.reduce((acc, t) => acc + t.manualPnl, 0) / losingTrades.length).toFixed(0)
+    ? Math.abs(losingTrades.reduce((acc, t) => acc + t.manualPnl, 0) / losingTrades.length)
     : 0;
 
   // Cumulative P&L curve dataset
@@ -275,7 +280,16 @@ export default function PortfolioJournalSection() {
           pnl: dayPnlInfo.pnl,
           count: dayPnlInfo.count,
           wins: dayPnlInfo.wins,
-          losses: dayPnlInfo.losses
+          losses: dayPnlInfo.losses,
+          isPadding: false
+        });
+      }
+
+      // Pad up to 35 slots (5 cols x 7 rows) so every month box has identical dimensions & alignment
+      for (let p = daysInMonth + 1; p <= 35; p++) {
+        daysList.push({
+          key: `pad_${year}_${monthIdx}_${p}`,
+          isPadding: true
         });
       }
 
@@ -389,7 +403,7 @@ export default function PortfolioJournalSection() {
           <div className="glass-card rounded-2xl p-5 border border-white/10">
             <span className="text-[11px] font-mono text-gray-400 uppercase">NET CUMULATIVE P&L</span>
             <div className={`text-2xl font-extrabold font-mono mt-1 ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {totalPnl >= 0 ? '+' : ''}₹{totalPnl.toLocaleString('en-IN')}
+              {totalPnl < 0 ? '-' : totalPnl > 0 ? '+' : ''}₹{Math.abs(totalPnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <span className="text-[10px] font-mono text-gray-400">{startMonthName} – {endMonthName}</span>
           </div>
@@ -397,9 +411,9 @@ export default function PortfolioJournalSection() {
           <div className="glass-card rounded-2xl p-5 border border-white/10">
             <span className="text-[11px] font-mono text-gray-400 uppercase">AVG PROFIT / LOSS</span>
             <div className="text-xl font-extrabold font-mono mt-1 flex items-center space-x-1">
-              <span className="text-emerald-400">+₹{avgProfit}</span>
+              <span className="text-emerald-400">+₹{avgProfit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               <span className="text-gray-400">/</span>
-              <span className="text-rose-400">-₹{avgLoss}</span>
+              <span className="text-rose-400">-₹{avgLoss.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
             <span className="text-[10px] font-mono text-gray-400">Risk-Reward Ratio</span>
           </div>
@@ -438,6 +452,15 @@ export default function PortfolioJournalSection() {
                   {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
                   <div className="grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
                     {m.days.map((d) => {
+                      if (d.isPadding) {
+                        return (
+                          <div
+                            key={d.key}
+                            className="w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border border-transparent opacity-0 pointer-events-none"
+                          />
+                        );
+                      }
+
                       const isTraded = d.count > 0;
                       const isProfit = isTraded && d.pnl > 0;
                       const isLoss = isTraded && d.pnl < 0;
@@ -474,7 +497,7 @@ export default function PortfolioJournalSection() {
           </div>
 
           {/* Tooltip Hover Banner / Popup */}
-          {hoveredDay && (
+          {hoveredDay && !hoveredDay.isPadding && (
             <div className="absolute top-3 right-6 bg-neutral-900 border border-white/20 rounded-lg px-3 py-1.5 text-xs font-mono shadow-xl z-20 flex items-center space-x-3 animate-fadeIn">
               <span className="text-gray-400">
                 {hoveredDay.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
@@ -485,7 +508,7 @@ export default function PortfolioJournalSection() {
               ) : (
                 <div className="flex items-center space-x-2">
                   <span className={`font-bold ${hoveredDay.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    {hoveredDay.pnl >= 0 ? '+' : ''}₹{hoveredDay.pnl.toLocaleString('en-IN')}
+                    {hoveredDay.pnl < 0 ? '-' : '+' }₹{Math.abs(hoveredDay.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </span>
                   <span className="text-gray-400">({hoveredDay.count} Trade{hoveredDay.count > 1 ? 's' : ''})</span>
                 </div>
@@ -514,7 +537,7 @@ export default function PortfolioJournalSection() {
                   <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
                   <RechartsTooltip
                     contentStyle={{ backgroundColor: '#0a0a0c', borderColor: '#333', borderRadius: '8px', color: '#fff' }}
-                    formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Cumulative P&L']}
+                    formatter={(value) => [`₹${Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Cumulative P&L']}
                   />
                   <Area type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={3} fillOpacity={1} fill="url(#pnlCurve)" />
                 </AreaChart>
@@ -567,9 +590,15 @@ export default function PortfolioJournalSection() {
                     const statusUpper = (t.status || '').toUpperCase();
                     const isOpen = statusUpper.includes('OPEN') || statusUpper.includes('RUNNING');
                     const isClosedProfit = statusUpper === 'CLOSED PROFIT' || (statusUpper === 'CLOSED' && t.manualPnl >= 0);
-                    const isClosedLoss = statusUpper === 'CLOSED LOSS' || (statusUpper === 'CLOSED' && t.manualPnl < 0);
-                    const isPos = t.manualPnl > 0;
-                    const isNeg = t.manualPnl < 0;
+                    const isClosedLoss = statusUpper === 'CLOSED LOSS' || statusUpper.includes('LOSS') || (statusUpper === 'CLOSED' && t.manualPnl < 0);
+
+                    let pnlVal = t.manualPnl;
+                    if (isClosedLoss && pnlVal > 0) {
+                      pnlVal = -pnlVal;
+                    }
+
+                    const isPos = pnlVal > 0;
+                    const isNeg = pnlVal < 0;
 
                     let statusBadgeClass = 'bg-neutral-800 text-gray-300';
                     let statusText = t.status;
@@ -584,6 +613,8 @@ export default function PortfolioJournalSection() {
                       statusBadgeClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
                       statusText = 'CLOSED LOSS';
                     }
+
+                    const formattedPnlStr = Math.abs(pnlVal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
                     return (
                       <tr key={t.id} className="hover:bg-white/5 transition-colors">
@@ -606,7 +637,7 @@ export default function PortfolioJournalSection() {
                         <td className={`py-3 px-3 text-right font-bold text-sm whitespace-nowrap ${
                           isOpen ? 'text-gray-500' : isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'
                         }`}>
-                          {isOpen ? '₹0.00' : `${isPos ? '+' : ''}₹${t.manualPnl.toLocaleString('en-IN')}`}
+                          {isOpen ? '₹0.00' : `${isNeg ? '-' : isPos ? '+' : ''}₹${formattedPnlStr}`}
                         </td>
                       </tr>
                     );
