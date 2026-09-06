@@ -85,7 +85,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
       <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Main Viewport Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
 
         {/* Animated Brand Badge */}
         <div
@@ -151,21 +151,21 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
 
         {/* Borderless Live Option Chain Rotating Ticker */}
         <div
-          className={`mt-10 w-full max-w-6xl transition-all duration-1000 delay-500 ${
+          className={`mt-10 w-full max-w-6xl transition-all duration-1000 delay-500 min-h-[56px] flex items-center justify-center ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <div className="relative w-full overflow-hidden group py-2">
+          <div className="relative w-full max-w-full overflow-hidden group py-1 min-h-[52px] flex items-center">
             {/* Fade Edges for Seamless Edge Erasing */}
             <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-[#050505] to-transparent z-10 pointer-events-none" />
             <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-[#050505] to-transparent z-10 pointer-events-none" />
 
             {tickerLoading ? (
-              <div className="py-2 text-center text-xs font-mono text-gray-500 tracking-widest animate-pulse">
+              <div className="w-full py-2 text-center text-xs font-mono text-gray-500 tracking-widest animate-pulse flex items-center justify-center min-h-[44px]">
                 LOADING LIVE MARKET PRICES...
               </div>
             ) : (
-              <div className="flex w-max animate-slow-marquee hover:[animation-play-state:paused] space-x-6 sm:space-x-8 py-1.5">
+              <div className="flex w-max animate-slow-marquee hover:[animation-play-state:paused] space-x-6 sm:space-x-8 py-1.5 items-center">
                 {/* Render ticker items twice for seamless infinite smooth scrolling */}
                 {[...tickerItems, ...tickerItems].map((item, idx) => {
                   const isPositive = item.change >= 0;
