@@ -383,39 +383,39 @@ export default function PortfolioJournalSection() {
         </div>
 
         {/* Portfolio Performance Dashboard */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="glass-card rounded-2xl p-5 border border-white/10">
-            <span className="text-[11px] font-mono text-gray-400 uppercase">TOTAL TRADES ({startMonthName} – {endMonthName})</span>
-            <div className="text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount}</div>
-            <span className="text-[10px] font-mono text-amber-400">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-white/10 min-w-0">
+            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">TOTAL TRADES ({startMonthName} – {endMonthName})</span>
+            <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount}</div>
+            <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 block truncate">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
           </div>
 
-          <div className="glass-card rounded-2xl p-5 border border-white/10">
-            <span className="text-[11px] font-mono text-gray-400 uppercase">WIN RATE</span>
-            <div className="text-2xl font-extrabold font-mono text-white mt-1">{winRate}%</div>
-            <span className="text-[10px] font-mono">
+          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-white/10 min-w-0">
+            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">WIN RATE</span>
+            <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{winRate}%</div>
+            <span className="text-[9px] sm:text-[10px] font-mono block truncate">
               <span className="text-emerald-400 font-bold">{winningTrades.length} Wins</span>
               <span className="text-gray-400"> / </span>
               <span className="text-rose-400 font-bold">{losingTrades.length} Losses</span>
             </span>
           </div>
 
-          <div className="glass-card rounded-2xl p-5 border border-white/10">
-            <span className="text-[11px] font-mono text-gray-400 uppercase">NET CUMULATIVE P&L</span>
-            <div className={`text-2xl font-extrabold font-mono mt-1 ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-white/10 min-w-0">
+            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">NET CUMULATIVE P&L</span>
+            <div className={`text-base sm:text-xl md:text-2xl font-extrabold font-mono mt-1 tracking-tight truncate ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {totalPnl < 0 ? '-' : totalPnl > 0 ? '+' : ''}₹{Math.abs(totalPnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <span className="text-[10px] font-mono text-gray-400">{startMonthName} – {endMonthName}</span>
+            <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate">{startMonthName} – {endMonthName}</span>
           </div>
 
-          <div className="glass-card rounded-2xl p-5 border border-white/10">
-            <span className="text-[11px] font-mono text-gray-400 uppercase">AVG PROFIT / LOSS</span>
-            <div className="text-xl font-extrabold font-mono mt-1 flex items-center space-x-1">
-              <span className="text-emerald-400">+₹{avgProfit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              <span className="text-gray-400">/</span>
-              <span className="text-rose-400">-₹{avgLoss.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-white/10 min-w-0">
+            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">AVG PROFIT / LOSS</span>
+            <div className="text-xs sm:text-sm md:text-base xl:text-lg font-extrabold font-mono mt-1 flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1 tracking-tight min-w-0">
+              <span className="text-emerald-400 truncate">+₹{avgProfit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="text-gray-400 hidden sm:inline">/</span>
+              <span className="text-rose-400 truncate">-₹{avgLoss.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
-            <span className="text-[10px] font-mono text-gray-400">Risk-Reward Ratio</span>
+            <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate mt-0.5">Risk-Reward Ratio</span>
           </div>
         </div>
 
