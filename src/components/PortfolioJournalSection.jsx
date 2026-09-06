@@ -39,15 +39,34 @@ function formatDateKey(dateObj) {
   return `${y}-${m}-${d}`;
 }
 
-// Helper function to parse CSV lines safely matching Google Sheet headers
+// Helper to parse month & year string (e.g. "April 2026", "March 2027")
+function parseMonthYearStr(str) {
+  if (!str) return null;
+  const parts = str.trim().split(/\s+/);
+  if (parts.length >= 2) {
+    const monthStr = parts[0].toUpperCase();
+    const yearNum = parseInt(parts[1], 10);
+    const monthIdx = MONTH_NAMES.findIndex(m => {
+      const mNorm = m.toUpperCase();
+      return monthStr.startsWith(mNorm) || mNorm.startsWith(monthStr) || monthStr.slice(0, 3) === mNorm.slice(0, 3);
+    });
+    if (monthIdx !== -1 && !isNaN(yearNum) && yearNum > 2000) {
+      return { month: monthIdx, year: yearNum };
+    }
+  }
+  return null;
+}
+
+// Helper function to parse CSV lines safely matching Google Sheet headers & metadata
 function parseCSVRows(csvText) {
-  if (!csvText || typeof csvText !== 'string') return [];
+  if (!csvText || typeof csvText !== 'string') return { trades: [], fyConfig: null };
   const lines = csvText.trim().split('\n');
-  if (lines.length <= 1) return [];
+  if (lines.length <= 1) return { trades: [], fyConfig: null };
 
   const parsedTrades = [];
+  let sheetFyConfig = null;
 
-  for (let i = 1; i < lines.length; i++) {
+  for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     if (!line) continue;
 
@@ -68,7 +87,25 @@ function parseCSVRows(csvText) {
     }
     cols.push(cur.trim());
 
-    if (cols.length >= 7) {
+    // Check for "Financial year" metadata columns in sheet
+    for (let c = 0; c < cols.length; c++) {
+      if (cols[c] && cols[c].toLowerCase().includes('financial year')) {
+        const startStr = cols[c + 1] || '';
+        const endStr = cols[c + 2] || '';
+        const startObj = parseMonthYearStr(startStr);
+        const endObj = parseMonthYearStr(endStr);
+        if (startObj && endObj) {
+          sheetFyConfig = {
+            startMonth: startObj.month,
+            startYear: startObj.year,
+            endMonth: endObj.month,
+            endYear: endObj.year
+          };
+        }
+      }
+    }
+
+    if (i >= 1 && cols.length >= 7) {
       const date = cols[0] || '';
       const day = cols[1] || '';
       const symbol = (cols[2] || '').toUpperCase();
@@ -94,7 +131,7 @@ function parseCSVRows(csvText) {
         manualPnl = -manualPnl;
       }
 
-      if (symbol) {
+      if (symbol && symbol !== 'SYMBOL') {
         parsedTrades.push({
           id: `sheet_${i}_${symbol}`,
           date,
@@ -113,7 +150,7 @@ function parseCSVRows(csvText) {
     }
   }
 
-  return parsedTrades;
+  return { trades: parsedTrades, fyConfig: sheetFyConfig };
 }
 
 export default function PortfolioJournalSection() {
@@ -168,10 +205,16 @@ export default function PortfolioJournalSection() {
         });
         if (sheetRes.ok) {
           const csvText = await sheetRes.text();
-          const parsedSheetTrades = parseCSVRows(csvText);
+          const { trades: parsedSheetTrades, fyConfig: sheetFyConfig } = parseCSVRows(csvText);
+
           if (parsedSheetTrades.length > 0) {
             setTrades(parsedSheetTrades);
             localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(parsedSheetTrades));
+          }
+
+          if (sheetFyConfig) {
+            setFyConfig(sheetFyConfig);
+            localStorage.setItem(FY_CONFIG_STORAGE_KEY, JSON.stringify(sheetFyConfig));
           }
         }
       } catch (e) {
