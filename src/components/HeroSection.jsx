@@ -1,12 +1,80 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, ChevronRight, BookOpen } from 'lucide-react';
+import { BarChart3, ChevronRight, BookOpen, Activity, TrendingUp, TrendingDown } from 'lucide-react';
+import { getIndices, getQuote } from '../services/marketData';
+import { useMarket } from '../context/MarketContext';
+
+const OPTION_CHAIN_TICKER_SYMBOLS = [
+  'NIFTY 50', 'BANK NIFTY', 'SENSEX', 'NIFTY IT', 'NIFTY FIN SERVICE', 'NIFTY MIDCAP 100',
+  'RELIANCE', 'HDFCBANK', 'ICICIBANK', 'SBIN', 'SBICARD', 'TCS', 'INFY', 'BHARTIARTL',
+  'BAJFINANCE', 'LT', 'HINDUNILVR', 'SUNPHARMA', 'TITAN', 'KOTAKBANK', 'MARUTI',
+  'M&M', 'ADANIENT', 'ADANIPORTS', 'AXISBANK', 'TATAMOTORS', 'ITC', 'WIPRO',
+  'HCLTECH', 'BAJAJ-AUTO', 'NTPC', 'POWERGRID'
+];
 
 export default function HeroSection({ onExplorePortfolio, onExploreStrategies }) {
   const [loaded, setLoaded] = useState(false);
+  const [tickerItems, setTickerItems] = useState([]);
+  const [tickerLoading, setTickerLoading] = useState(true);
+  const { setActiveSymbol } = useMarket();
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 100);
     return () => clearTimeout(timer);
+  }, []);
+
+  // Fetch prices for all option chain symbols
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchTickerData = async () => {
+      try {
+        // Fetch baseline indices
+        const indicesRes = await getIndices();
+        const indicesData = indicesRes.success ? indicesRes.data : [];
+
+        // Fetch quotes for remaining equity stocks
+        const items = await Promise.all(
+          OPTION_CHAIN_TICKER_SYMBOLS.map(async (sym) => {
+            const foundIndex = indicesData.find(idx => idx.symbol === sym);
+            if (foundIndex) {
+              return {
+                symbol: foundIndex.symbol,
+                price: foundIndex.price,
+                change: foundIndex.change,
+                pChange: foundIndex.pChange,
+                isIndex: true
+              };
+            }
+            const q = await getQuote(sym);
+            if (q.success && q.data) {
+              return {
+                symbol: q.data.symbol,
+                price: q.data.price,
+                change: q.data.change,
+                pChange: q.data.pChange,
+                isIndex: false
+              };
+            }
+            return null;
+          })
+        );
+
+        if (isMounted) {
+          const validItems = items.filter(Boolean);
+          setTickerItems(validItems);
+          setTickerLoading(false);
+        }
+      } catch (err) {
+        console.error('Error loading hero ticker data:', err);
+      }
+    };
+
+    fetchTickerData();
+    const interval = setInterval(fetchTickerData, 15000); // refresh every 15s
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -79,6 +147,84 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
             <BarChart3 className="w-4 h-4 text-amber-400" />
             <span>OUR STRATEGIES</span>
           </button>
+        </div>
+
+        {/* Live Option Chain Underlyings Rotating Ticker */}
+        <div
+          className={`mt-12 w-full max-w-6xl transition-all duration-1000 delay-500 ${
+            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <div className="bg-[#0a0a0a]/90 border border-amber-500/20 backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl shadow-amber-950/20 overflow-hidden">
+            <div className="flex items-center justify-between px-2 mb-2 border-b border-white/10 pb-2">
+              <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 tracking-wider uppercase">
+                <Activity className="w-3.5 h-3.5 animate-pulse text-amber-400" />
+                <span className="font-bold">OPTION CHAIN LIVE MARKET TICKER</span>
+                <span className="hidden sm:inline-block text-[10px] text-gray-500 font-normal">
+                  • Real-Time Spot & Equity Quotes
+                </span>
+              </div>
+              <div className="flex items-center space-x-1 text-[10px] font-mono text-gray-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <span className="text-emerald-400 font-semibold uppercase">LIVE IST AGGREGATOR</span>
+              </div>
+            </div>
+
+            {/* Slow Rotating Marquee Container */}
+            <div className="relative w-full overflow-hidden group">
+              {/* Fade Edges for Premium Look */}
+              <div className="absolute top-0 left-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+              <div className="absolute top-0 right-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+
+              {tickerLoading ? (
+                <div className="py-2 text-center text-xs font-mono text-gray-500 tracking-widest animate-pulse">
+                  LOADING OPTION CHAIN LIVE PRICES...
+                </div>
+              ) : (
+                <div className="flex w-max animate-slow-marquee hover:[animation-play-state:paused] space-x-6 sm:space-x-8 py-1.5">
+                  {/* Render ticker items twice for seamless infinite smooth scrolling */}
+                  {[...tickerItems, ...tickerItems].map((item, idx) => {
+                    const isPositive = item.change >= 0;
+                    return (
+                      <div
+                        key={`${item.symbol}-${idx}`}
+                        onClick={() => {
+                          setActiveSymbol(item.symbol);
+                          const optionsElem = document.getElementById('options');
+                          if (optionsElem) optionsElem.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        className="flex items-center space-x-2.5 bg-[#141414]/80 border border-white/5 hover:border-amber-500/50 hover:bg-[#1f1f1f] px-3.5 py-1.5 rounded-xl transition-all duration-300 cursor-pointer shrink-0 group/item shadow-sm"
+                      >
+                        <span className="text-xs font-mono font-bold text-gray-200 group-hover/item:text-amber-400 transition-colors">
+                          {item.symbol}
+                        </span>
+
+                        <span className="text-xs font-mono font-extrabold text-white">
+                          ₹{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        </span>
+
+                        <span
+                          className={`flex items-center text-[11px] font-mono font-extrabold px-1.5 py-0.5 rounded ${
+                            isPositive
+                              ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
+                              : 'text-red-400 bg-red-500/10 border border-red-500/20'
+                          }`}
+                        >
+                          {isPositive ? (
+                            <TrendingUp className="w-3 h-3 mr-1 inline-block" />
+                          ) : (
+                            <TrendingDown className="w-3 h-3 mr-1 inline-block" />
+                          )}
+                          {isPositive ? '+' : ''}
+                          {item.pChange.toFixed(2)}%
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
       </div>
