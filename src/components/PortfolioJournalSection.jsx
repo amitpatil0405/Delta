@@ -318,6 +318,7 @@ export default function PortfolioJournalSection() {
     const months = [];
     let cur = new Date(fyConfig.startYear, fyConfig.startMonth, 1);
     const end = new Date(fyConfig.endYear, fyConfig.endMonth, 1);
+    let mOrder = 0;
 
     while (cur <= end) {
       const year = cur.getFullYear();
@@ -340,6 +341,7 @@ export default function PortfolioJournalSection() {
           wins: dayPnlInfo.wins,
           losses: dayPnlInfo.losses,
           trades: dayPnlInfo.trades || [],
+          monthOrder: mOrder,
           isPadding: false
         });
       }
@@ -356,10 +358,12 @@ export default function PortfolioJournalSection() {
         label: monthLabel,
         year,
         monthIdx,
+        monthOrder: mOrder,
         days: daysList
       });
 
       cur = new Date(year, monthIdx + 1, 1);
+      mOrder++;
     }
     return months;
   }, [fyConfig, dailyPnlMap]);
@@ -509,8 +513,13 @@ export default function PortfolioJournalSection() {
           </div>
 
           {/* Enhanced Tooltip Hover Card Popup */}
-          {hoveredDay && !hoveredDay.isPadding && (
-            <div className="absolute top-3 right-4 sm:right-6 bg-[#0c0c0e] border border-white/20 rounded-xl p-3.5 text-xs font-mono shadow-2xl z-30 min-w-[260px] sm:min-w-[300px] backdrop-blur-md animate-fadeIn space-y-2.5">
+          {hoveredDay && !hoveredDay.isPadding && (() => {
+            const totalM = heatmapMonths.length || 12;
+            const isRightSideMonth = (hoveredDay.monthOrder ?? 0) >= Math.floor(totalM / 2);
+            const positionClass = isRightSideMonth ? "left-4 sm:left-6" : "right-4 sm:right-6";
+
+            return (
+            <div className={`absolute top-3 ${positionClass} bg-[#0c0c0e] border border-white/20 rounded-xl p-3.5 text-xs font-mono shadow-2xl z-30 min-w-[260px] sm:min-w-[300px] backdrop-blur-md animate-fadeIn space-y-2.5`}>
               {/* Header */}
               <div className="flex items-center justify-between border-b border-white/10 pb-2">
                 <div>
@@ -562,7 +571,8 @@ export default function PortfolioJournalSection() {
                 </div>
               )}
             </div>
-          )}
+            );
+          })()}
         </div>
 
         {/* P&L Cumulative Performance Graph */}
