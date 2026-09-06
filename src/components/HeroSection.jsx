@@ -149,81 +149,64 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
           </button>
         </div>
 
-        {/* Live Option Chain Underlyings Rotating Ticker */}
+        {/* Borderless Live Option Chain Rotating Ticker */}
         <div
-          className={`mt-12 w-full max-w-6xl transition-all duration-1000 delay-500 ${
+          className={`mt-10 w-full max-w-6xl transition-all duration-1000 delay-500 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <div className="bg-[#0a0a0a]/90 border border-amber-500/20 backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl shadow-amber-950/20 overflow-hidden">
-            <div className="flex items-center justify-between px-2 mb-2 border-b border-white/10 pb-2">
-              <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 tracking-wider uppercase">
-                <Activity className="w-3.5 h-3.5 animate-pulse text-amber-400" />
-                <span className="font-bold">OPTION CHAIN LIVE MARKET TICKER</span>
-                <span className="hidden sm:inline-block text-[10px] text-gray-500 font-normal">
-                  • Real-Time Spot & Equity Quotes
-                </span>
-              </div>
-              <div className="flex items-center space-x-1 text-[10px] font-mono text-gray-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
-                <span className="text-emerald-400 font-semibold uppercase">LIVE IST AGGREGATOR</span>
-              </div>
-            </div>
+          <div className="relative w-full overflow-hidden group py-2">
+            {/* Fade Edges for Seamless Edge Erasing */}
+            <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-[#050505] to-transparent z-10 pointer-events-none" />
+            <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-[#050505] to-transparent z-10 pointer-events-none" />
 
-            {/* Slow Rotating Marquee Container */}
-            <div className="relative w-full overflow-hidden group">
-              {/* Fade Edges for Premium Look */}
-              <div className="absolute top-0 left-0 bottom-0 w-8 sm:w-16 bg-gradient-to-r from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
-              <div className="absolute top-0 right-0 bottom-0 w-8 sm:w-16 bg-gradient-to-l from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
+            {tickerLoading ? (
+              <div className="py-2 text-center text-xs font-mono text-gray-500 tracking-widest animate-pulse">
+                LOADING LIVE MARKET PRICES...
+              </div>
+            ) : (
+              <div className="flex w-max animate-slow-marquee hover:[animation-play-state:paused] space-x-6 sm:space-x-8 py-1.5">
+                {/* Render ticker items twice for seamless infinite smooth scrolling */}
+                {[...tickerItems, ...tickerItems].map((item, idx) => {
+                  const isPositive = item.change >= 0;
+                  return (
+                    <div
+                      key={`${item.symbol}-${idx}`}
+                      onClick={() => {
+                        setActiveSymbol(item.symbol);
+                        const optionsElem = document.getElementById('options');
+                        if (optionsElem) optionsElem.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="flex items-center space-x-2.5 bg-[#121212]/90 border border-white/10 hover:border-amber-500/50 hover:bg-[#1a1a1a] px-4 py-2 rounded-xl transition-all duration-300 cursor-pointer shrink-0 group/item shadow-lg"
+                    >
+                      <span className="text-xs font-mono font-bold text-gray-200 group-hover/item:text-amber-400 transition-colors">
+                        {item.symbol}
+                      </span>
 
-              {tickerLoading ? (
-                <div className="py-2 text-center text-xs font-mono text-gray-500 tracking-widest animate-pulse">
-                  LOADING OPTION CHAIN LIVE PRICES...
-                </div>
-              ) : (
-                <div className="flex w-max animate-slow-marquee hover:[animation-play-state:paused] space-x-6 sm:space-x-8 py-1.5">
-                  {/* Render ticker items twice for seamless infinite smooth scrolling */}
-                  {[...tickerItems, ...tickerItems].map((item, idx) => {
-                    const isPositive = item.change >= 0;
-                    return (
-                      <div
-                        key={`${item.symbol}-${idx}`}
-                        onClick={() => {
-                          setActiveSymbol(item.symbol);
-                          const optionsElem = document.getElementById('options');
-                          if (optionsElem) optionsElem.scrollIntoView({ behavior: 'smooth' });
-                        }}
-                        className="flex items-center space-x-2.5 bg-[#141414]/80 border border-white/5 hover:border-amber-500/50 hover:bg-[#1f1f1f] px-3.5 py-1.5 rounded-xl transition-all duration-300 cursor-pointer shrink-0 group/item shadow-sm"
+                      <span className="text-xs font-mono font-extrabold text-white">
+                        ₹{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                      </span>
+
+                      <span
+                        className={`flex items-center text-[11px] font-mono font-extrabold px-1.5 py-0.5 rounded ${
+                          isPositive
+                            ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
+                            : 'text-red-400 bg-red-500/10 border border-red-500/20'
+                        }`}
                       >
-                        <span className="text-xs font-mono font-bold text-gray-200 group-hover/item:text-amber-400 transition-colors">
-                          {item.symbol}
-                        </span>
-
-                        <span className="text-xs font-mono font-extrabold text-white">
-                          ₹{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                        </span>
-
-                        <span
-                          className={`flex items-center text-[11px] font-mono font-extrabold px-1.5 py-0.5 rounded ${
-                            isPositive
-                              ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
-                              : 'text-red-400 bg-red-500/10 border border-red-500/20'
-                          }`}
-                        >
-                          {isPositive ? (
-                            <TrendingUp className="w-3 h-3 mr-1 inline-block" />
-                          ) : (
-                            <TrendingDown className="w-3 h-3 mr-1 inline-block" />
-                          )}
-                          {isPositive ? '+' : ''}
-                          {item.pChange.toFixed(2)}%
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+                        {isPositive ? (
+                          <TrendingUp className="w-3 h-3 mr-1 inline-block" />
+                        ) : (
+                          <TrendingDown className="w-3 h-3 mr-1 inline-block" />
+                        )}
+                        {isPositive ? '+' : ''}
+                        {item.pChange.toFixed(2)}%
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
