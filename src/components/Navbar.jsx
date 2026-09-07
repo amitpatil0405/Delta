@@ -19,7 +19,19 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     };
     window.addEventListener('scroll', handleScroll);
 
-    const sectionIds = ['home', 'market-section', 'charts-section', 'watchlist-section', 'news', 'portfolio', 'strategies', 'training', 'about', 'contact'];
+    const sectionIds = [
+      'home',
+      'intelligence',
+      'technical-analysis',
+      'charts-section',
+      'watchlist-section',
+      'portfolio',
+      'strategies',
+      'training',
+      'about',
+      'contact'
+    ];
+
     const observerOptions = {
       root: null,
       rootMargin: '-20% 0px -60% 0px',
@@ -30,8 +42,8 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const id = entry.target.id;
-          if (id === 'market-section' || id === 'charts-section' || id === 'watchlist-section' || id === 'news') {
-            setCurrentSection('market-section');
+          if (id === 'charts-section' || id === 'watchlist-section') {
+            setCurrentSection('intelligence');
           } else {
             setCurrentSection(id);
           }
@@ -53,8 +65,8 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'market-section', label: 'Market' },
-    { id: 'news', label: 'News' },
+    { id: 'intelligence', label: 'Intelligence' },
+    { id: 'technical-analysis', label: 'Technical analysis' },
     { id: 'portfolio', label: 'Portfolio' },
     { id: 'strategies', label: 'Strategies' },
     { id: 'training', label: 'Training' },
@@ -129,9 +141,9 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`px-4 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 ${
                   currentSection === item.id
-                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-[0_0_10px_rgba(217,119,6,0.3)]'
+                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-[0_0_10px_rgba(217,119,6,0.3)] font-bold'
                     : 'text-gray-300 hover:text-white hover:bg-white/5'
                 }`}
               >
@@ -140,20 +152,19 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             ))}
           </div>
 
-          {/* Right Top Corner: Market Status Indicator & Market News Button */}
+          {/* Right Top Corner: Market Status Indicator & Intelligence Terminal Button */}
           <div className="hidden xl:flex items-center space-x-3">
-            {/* Dynamic Market Status Indicator with Blinking Circle */}
             <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
               <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
               <span className={`font-bold uppercase ${statusBadge.textColor}`}>{statusBadge.text}</span>
             </div>
 
             <button
-              onClick={() => handleNavClick('news')}
+              onClick={() => handleNavClick('intelligence')}
               className="relative inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 to-amber-600 rounded-lg hover:from-amber-300 hover:to-amber-500 transition-all duration-300 shadow-[0_0_20px_rgba(217,119,6,0.4)] group active:scale-95"
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>LIVE MARKET NEWS</span>
+              <span>TERMINAL</span>
             </button>
           </div>
 
@@ -162,14 +173,6 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
               <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
               <span className={`font-bold uppercase ${statusBadge.textColor}`}>{statusBadge.text}</span>
             </div>
-
-            <button
-              onClick={() => handleNavClick('news')}
-              className="relative inline-flex items-center space-x-2 px-3.5 py-2 text-xs font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 to-amber-600 rounded-lg shadow-[0_0_20px_rgba(217,119,6,0.4)]"
-            >
-              <Activity className="w-3.5 h-3.5" />
-              <span>MARKET NEWS</span>
-            </button>
           </div>
 
           {/* Mobile Hamburger Toggle */}
@@ -211,7 +214,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
                 onClick={() => handleNavClick(item.id)}
                 className={`px-4 py-2.5 rounded-lg text-left text-sm font-medium transition-all ${
                   currentSection === item.id
-                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 font-bold'
                     : 'text-gray-300 hover:bg-white/5'
                 }`}
               >
@@ -219,14 +222,6 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
               </button>
             ))}
           </div>
-
-          <button
-            onClick={() => handleNavClick('news')}
-            className="w-full mt-3 flex items-center justify-center space-x-2 py-3 text-sm font-bold uppercase text-black bg-amber-500 rounded-lg shadow-lg"
-          >
-            <Activity className="w-4 h-4" />
-            <span>LIVE MARKET NEWS</span>
-          </button>
         </div>
       )}
     </nav>

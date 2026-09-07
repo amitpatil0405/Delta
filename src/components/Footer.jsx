@@ -70,15 +70,17 @@ export default function Footer({ onNavigate }) {
               <span className="text-white font-bold block uppercase tracking-wider text-[11px]">PLATFORM</span>
               <ul className="space-y-2">
                 <li><button onClick={() => handleLinkClick('home')} className="hover:text-amber-400 transition-colors">Home</button></li>
+                <li><button onClick={() => handleLinkClick('intelligence')} className="hover:text-amber-400 transition-colors">Intelligence</button></li>
+                <li><button onClick={() => handleLinkClick('technical-analysis')} className="hover:text-amber-400 transition-colors">Technical Analysis</button></li>
                 <li><button onClick={() => handleLinkClick('portfolio')} className="hover:text-amber-400 transition-colors">Trading Portfolio</button></li>
-                <li><button onClick={() => handleLinkClick('strategies')} className="hover:text-amber-400 transition-colors">Strategies</button></li>
-                <li><button onClick={() => handleLinkClick('training')} className="hover:text-amber-400 transition-colors">Training</button></li>
               </ul>
             </div>
 
             <div className="space-y-3">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px]">RESOURCES</span>
               <ul className="space-y-2">
+                <li><button onClick={() => handleLinkClick('strategies')} className="hover:text-amber-400 transition-colors">Strategies</button></li>
+                <li><button onClick={() => handleLinkClick('training')} className="hover:text-amber-400 transition-colors">Training</button></li>
                 <li><button onClick={() => handleLinkClick('about')} className="hover:text-amber-400 transition-colors">About DeltaFox</button></li>
                 <li><button onClick={() => handleLinkClick('contact')} className="hover:text-amber-400 transition-colors">Contact</button></li>
               </ul>

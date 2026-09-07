@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, ChevronRight, BookOpen, Activity, TrendingUp, TrendingDown } from 'lucide-react';
+import { BarChart3, ChevronRight, BookOpen, TrendingUp, TrendingDown } from 'lucide-react';
 import { getIndices, getQuote } from '../services/marketData';
 import { useMarket } from '../context/MarketContext';
 
-const OPTION_CHAIN_TICKER_SYMBOLS = [
-  'NIFTY 50', 'BANK NIFTY', 'SENSEX', 'NIFTY IT', 'NIFTY FIN SERVICE', 'NIFTY MIDCAP 100',
-  'RELIANCE', 'HDFCBANK', 'ICICIBANK', 'SBIN', 'SBICARD', 'TCS', 'INFY', 'BHARTIARTL',
-  'BAJFINANCE', 'LT', 'HINDUNILVR', 'SUNPHARMA', 'TITAN', 'KOTAKBANK', 'MARUTI',
-  'M&M', 'ADANIENT', 'ADANIPORTS', 'AXISBANK', 'TATAMOTORS', 'ITC', 'WIPRO',
-  'HCLTECH', 'BAJAJ-AUTO', 'NTPC', 'POWERGRID'
+const INDEX_TICKER_ITEMS = [
+  { symbol: 'NIFTY 50', name: 'Nifty 50' },
+  { symbol: 'BANK NIFTY', name: 'Bank Nifty' },
+  { symbol: 'SENSEX', name: 'Sensex' },
+  { symbol: 'DOW JONES', name: 'Dow Jones Industrial Average' },
+  { symbol: 'NASDAQ 100', name: 'Nasdaq 100' },
+  { symbol: 'S&P 100', name: 'S&P 100' },
+  { symbol: 'FTSE', name: 'FTSE' },
+  { symbol: 'INDIA VIX', name: 'India VIX' }
 ];
 
 export default function HeroSection({ onExplorePortfolio, onExploreStrategies }) {
@@ -22,37 +25,37 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
     return () => clearTimeout(timer);
   }, []);
 
-  // Fetch prices for all option chain symbols
+  // Fetch prices for index ticker symbols
   useEffect(() => {
     let isMounted = true;
 
     const fetchTickerData = async () => {
       try {
-        // Fetch baseline indices
         const indicesRes = await getIndices();
         const indicesData = indicesRes.success ? indicesRes.data : [];
 
-        // Fetch quotes for remaining equity stocks
         const items = await Promise.all(
-          OPTION_CHAIN_TICKER_SYMBOLS.map(async (sym) => {
-            const foundIndex = indicesData.find(idx => idx.symbol === sym);
+          INDEX_TICKER_ITEMS.map(async (item) => {
+            const foundIndex = indicesData.find(idx => idx.symbol === item.symbol);
             if (foundIndex) {
               return {
-                symbol: foundIndex.symbol,
+                symbol: item.symbol,
+                name: item.name,
                 price: foundIndex.price,
                 change: foundIndex.change,
                 pChange: foundIndex.pChange,
-                isIndex: true
+                isVix: item.symbol === 'INDIA VIX'
               };
             }
-            const q = await getQuote(sym);
+            const q = await getQuote(item.symbol);
             if (q.success && q.data) {
               return {
-                symbol: q.data.symbol,
+                symbol: item.symbol,
+                name: item.name,
                 price: q.data.price,
                 change: q.data.change,
                 pChange: q.data.pChange,
-                isIndex: false
+                isVix: item.symbol === 'INDIA VIX'
               };
             }
             return null;
@@ -65,7 +68,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
           setTickerLoading(false);
         }
       } catch (err) {
-        console.error('Error loading hero ticker data:', err);
+        console.error('Error loading index ticker data:', err);
       }
     };
 
@@ -85,7 +88,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
       <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Main Viewport Content */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
 
         {/* Animated Brand Badge */}
         <div
@@ -149,7 +152,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
           </button>
         </div>
 
-        {/* Borderless Live Option Chain Rotating Ticker */}
+        {/* Borderless Live Index Rotating Ticker */}
         <div
           className={`mt-10 w-full max-w-6xl transition-all duration-1000 delay-500 min-h-[56px] flex items-center justify-center ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
@@ -162,7 +165,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
 
             {tickerLoading ? (
               <div className="w-full py-2 text-center text-xs font-mono text-gray-500 tracking-widest animate-pulse flex items-center justify-center min-h-[44px]">
-                LOADING LIVE MARKET PRICES...
+                LOADING GLOBAL INDEX TICKER...
               </div>
             ) : (
               <div className="flex w-max animate-slow-marquee hover:[animation-play-state:paused] space-x-6 sm:space-x-8 py-1.5 items-center">
@@ -173,9 +176,11 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
                     <div
                       key={`${item.symbol}-${idx}`}
                       onClick={() => {
-                        setActiveSymbol(item.symbol);
-                        const chartElem = document.getElementById('charts-section');
-                        if (chartElem) chartElem.scrollIntoView({ behavior: 'smooth' });
+                        if (['NIFTY 50', 'BANK NIFTY', 'SENSEX'].includes(item.symbol)) {
+                          setActiveSymbol(item.symbol);
+                          const chartElem = document.getElementById('charts-section');
+                          if (chartElem) chartElem.scrollIntoView({ behavior: 'smooth' });
+                        }
                       }}
                       className="flex items-center space-x-2.5 bg-[#121212]/90 border border-white/10 hover:border-amber-500/50 hover:bg-[#1a1a1a] px-4 py-2 rounded-xl transition-all duration-300 cursor-pointer shrink-0 group/item shadow-lg"
                     >
@@ -184,7 +189,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
                       </span>
 
                       <span className="text-xs font-mono font-extrabold text-white">
-                        ₹{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                        {item.isVix ? '' : '₹'}{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                       </span>
 
                       <span

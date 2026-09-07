@@ -4,9 +4,9 @@ import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import DeltaFox3DScene from './components/DeltaFox3DScene';
 import MarketOverviewSection from './components/MarketOverviewSection';
+import TechnicalAnalysisSection from './components/TechnicalAnalysisSection';
 import ChartSection from './components/ChartSection';
 import SectorWatchlistSection from './components/SectorWatchlistSection';
-import MarketNewsSection from './components/MarketNewsSection';
 import PortfolioJournalSection from './components/PortfolioJournalSection';
 import OptionsStrategiesSection from './components/OptionsStrategiesSection';
 import TrainingSection from './components/TrainingSection';
@@ -54,17 +54,17 @@ export default function App() {
             onExploreStrategies={() => handleNavigate('strategies')}
           />
 
-          {/* 2. Market Overview Section (Real Time Indices) */}
+          {/* 2. Intelligence Section (Market Overview, Volatility & Risk Calculator) */}
           <MarketOverviewSection />
 
-          {/* 3. Institutional Line Chart */}
+          {/* 3. Technical Analysis Page (Synced from Google Sheet) */}
+          <TechnicalAnalysisSection />
+
+          {/* 4. Institutional Line Chart */}
           <ChartSection />
 
-          {/* 4. Sector Watchlist */}
+          {/* 5. Sector Watchlist */}
           <SectorWatchlistSection />
-
-          {/* 5. Live Market News Section */}
-          <MarketNewsSection />
 
           {/* 6. Portfolio & Trading Journal */}
           <PortfolioJournalSection />
