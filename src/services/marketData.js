@@ -209,8 +209,8 @@ async function fetchYahooFinanceChart(yahooSymbol, range = '1d', interval = '5m'
 // Verified market indices baseline matching exact market prices
 const BASE_INDICES = [
   { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23897.70, open: 23997.95, high: 24005.75, low: 23895.85, prevClose: 23873.45, volume: '1.4B', sparkline: [23873, 23900, 23997, 24005, 23895, 23897.70] },
-  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57369.65, open: 57497.85, high: 57677.15, low: 57324.55, prevClose: 57380.60, volume: '910M', sparkline: [57380, 57497, 57550, 57677, 57324, 57369.65] },
-  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76515.43, open: 76724.95, high: 76883.14, low: 76515.43, prevClose: 76152.86, volume: '1.1B', sparkline: [76152, 76724, 76800, 76883, 76515, 76515.43] },
+  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57089.85, open: 57497.85, high: 57426.85, low: 57050.30, prevClose: 57380.60, volume: '910M', sparkline: [57380, 57497, 57426, 57200, 57050, 57089.85] },
+  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76201.39, open: 76724.95, high: 76477.19, low: 76161.43, prevClose: 76152.86, volume: '1.1B', sparkline: [76152, 76724, 76477, 76300, 76161, 76201.39] },
   { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30728.00, open: 31180.80, high: 31263.20, low: 30656.70, prevClose: 30838.85, volume: '480M', sparkline: [30838, 31180, 31263, 31000, 30656, 30728.00] },
   { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 26051.00, open: 25967.05, high: 26174.00, low: 25987.10, prevClose: 25967.05, volume: '680M', sparkline: [25967, 26050, 26174, 25987, 26051.00] },
   { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63079.05, open: 63186.15, high: 63407.80, low: 63063.10, prevClose: 63235.20, volume: '590M', sparkline: [63235, 63186, 63250, 63407, 63063, 63079.05] },
