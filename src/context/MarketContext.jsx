@@ -7,11 +7,11 @@ const INITIAL_SECTOR_WATCHLIST = [
   {
     sectorName: 'Finance',
     stocks: [
-      { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', price: 706.65, open: 705.00, change: 1.65, pChange: 0.23, high: 712.60, low: 705.00, volume: '27.7M' },
-      { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', price: 1430.00, open: 1438.30, change: -8.30, pChange: -0.58, high: 1452.00, low: 1430.00, volume: '10.5M' },
-      { symbol: 'SBIN', name: 'State Bank of India', price: 1023.40, open: 1028.90, change: -5.50, pChange: -0.53, high: 1036.00, low: 1021.10, volume: '18.3M' },
-      { symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank', price: 421.15, open: 426.90, change: -5.75, pChange: -1.35, high: 426.90, low: 421.15, volume: '4.2M' },
-      { symbol: 'AXISBANK', name: 'Axis Bank Ltd.', price: 1267.00, open: 1260.20, change: 6.80, pChange: 0.54, high: 1278.90, low: 1260.20, volume: '6.7M' },
+      { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', price: 709.40, open: 713.00, change: -2.50, pChange: -0.35, high: 713.00, low: 708.75, volume: '27.7M' },
+      { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', price: 1427.30, open: 1434.40, change: -10.70, pChange: -0.74, high: 1434.40, low: 1423.40, volume: '10.5M' },
+      { symbol: 'SBIN', name: 'State Bank of India', price: 1003.60, open: 1021.70, change: -30.90, pChange: -2.99, high: 1021.70, low: 1003.20, volume: '18.3M' },
+      { symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank', price: 1780.50, open: 1795.00, change: -14.50, pChange: -0.81, high: 1795.00, low: 1775.00, volume: '4.2M' },
+      { symbol: 'AXISBANK', name: 'Axis Bank Ltd.', price: 1145.00, open: 1152.00, change: -7.00, pChange: -0.61, high: 1158.00, low: 1140.00, volume: '6.7M' },
       { symbol: 'BAJFINANCE', name: 'Bajaj Finance Ltd.', price: 6845.00, open: 6802.00, change: 43.00, pChange: 0.63, high: 6890.00, low: 6802.00, volume: '2.1M' },
       { symbol: 'SBICARD', name: 'SBI Cards & Payment Services', price: 661.00, open: 641.00, change: 20.00, pChange: 3.12, high: 667.40, low: 641.00, volume: '2.8M' }
     ]
@@ -19,17 +19,17 @@ const INITIAL_SECTOR_WATCHLIST = [
   {
     sectorName: 'IT',
     stocks: [
-      { symbol: 'TCS', name: 'Tata Consultancy Services', price: 2320.10, open: 2353.60, change: -33.50, pChange: -1.42, high: 2353.60, low: 2316.10, volume: '1.9M' },
-      { symbol: 'INFY', name: 'Infosys Limited', price: 1130.30, open: 1144.00, change: -13.70, pChange: -1.20, high: 1144.00, low: 1122.50, volume: '6.1M' },
-      { symbol: 'WIPRO', name: 'Wipro Limited', price: 175.72, open: 178.04, change: -2.32, pChange: -1.30, high: 178.04, low: 175.72, volume: '8.4M' },
+      { symbol: 'TCS', name: 'Tata Consultancy Services', price: 2275.30, open: 2299.90, change: -93.70, pChange: -3.96, high: 2299.90, low: 2272.20, volume: '1.9M' },
+      { symbol: 'INFY', name: 'Infosys Limited', price: 1093.40, open: 1109.90, change: -62.60, pChange: -5.42, high: 1109.90, low: 1093.20, volume: '6.1M' },
+      { symbol: 'WIPRO', name: 'Wipro Limited', price: 242.50, open: 246.00, change: -3.50, pChange: -1.42, high: 246.00, low: 241.00, volume: '8.4M' },
       { symbol: 'HCLTECH', name: 'HCL Technologies', price: 1319.00, open: 1345.00, change: -26.00, pChange: -1.93, high: 1345.00, low: 1308.00, volume: '3.2M' },
-      { symbol: 'TECHM', name: 'Tech Mahindra Ltd.', price: 1598.00, open: 1625.60, change: -27.60, pChange: -1.70, high: 1625.60, low: 1592.00, volume: '2.5M' }
+      { symbol: 'TECHM', name: 'Tech Mahindra Ltd.', price: 1280.00, open: 1295.00, change: -15.00, pChange: -1.16, high: 1295.00, low: 1275.00, volume: '2.5M' }
     ]
   },
   {
     sectorName: 'Oil & Gas',
     stocks: [
-      { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 1302.50, open: 1313.10, change: -10.60, pChange: -0.81, high: 1316.80, low: 1302.50, volume: '9.7M' },
+      { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 1312.70, open: 1324.20, change: 3.70, pChange: 0.28, high: 1324.20, low: 1312.00, volume: '9.7M' },
       { symbol: 'ONGC', name: 'Oil & Natural Gas Corp', price: 236.00, open: 237.80, change: -1.80, pChange: -0.76, high: 237.80, low: 235.00, volume: '14.1M' },
       { symbol: 'BPCL', name: 'Bharat Petroleum Corp', price: 320.05, open: 317.20, change: 2.85, pChange: 0.90, high: 321.95, low: 317.20, volume: '9.3M' },
       { symbol: 'IOC', name: 'Indian Oil Corporation', price: 137.80, open: 136.25, change: 1.55, pChange: 1.14, high: 137.80, low: 136.25, volume: '11.2M' },
@@ -40,22 +40,22 @@ const INITIAL_SECTOR_WATCHLIST = [
   {
     sectorName: 'FMCG',
     stocks: [
-      { symbol: 'ITC', name: 'ITC Limited', price: 263.00, open: 267.60, change: -4.60, pChange: -1.72, high: 267.60, low: 262.35, volume: '11.8M' },
-      { symbol: 'HINDUNILVR', name: 'Hindustan Unilever Ltd.', price: 1962.00, open: 1978.90, change: -16.90, pChange: -0.85, high: 1978.90, low: 1959.90, volume: '2.1M' },
+      { symbol: 'ITC', name: 'ITC Limited', price: 468.20, open: 472.00, change: -2.80, pChange: -0.59, high: 474.50, low: 466.00, volume: '12.1M' },
+      { symbol: 'HINDUNILVR', name: 'Hindustan Unilever Ltd.', price: 2350.00, open: 2365.00, change: -15.00, pChange: -0.63, high: 2370.00, low: 2340.00, volume: '2.1M' },
       { symbol: 'BRITANNIA', name: 'Britannia Industries', price: 5130.00, open: 5146.00, change: -16.00, pChange: -0.31, high: 5146.00, low: 5079.00, volume: '620K' },
-      { symbol: 'MARICO', name: 'Marico Limited', price: 827.40, open: 832.85, change: -5.45, pChange: -0.65, high: 832.85, low: 817.80, volume: '3.4M' },
-      { symbol: 'GODREJCP', name: 'Godrej Consumer Products', price: 880.00, open: 893.00, change: -13.00, pChange: -1.46, high: 893.00, low: 859.55, volume: '2.2M' },
+      { symbol: 'MARICO', name: 'Marico Limited', price: 620.00, open: 625.00, change: -5.00, pChange: -0.80, high: 628.00, low: 618.00, volume: '3.4M' },
+      { symbol: 'GODREJCP', name: 'Godrej Consumer Products', price: 1180.00, open: 1190.00, change: -10.00, pChange: -0.84, high: 1195.00, low: 1175.00, volume: '2.2M' },
       { symbol: 'TATACONSUM', name: 'Tata Consumer Products', price: 1019.20, open: 1008.00, change: 11.20, pChange: 1.11, high: 1023.00, low: 1008.00, volume: '1.9M' }
     ]
   },
   {
     sectorName: 'Automobile',
     stocks: [
-      { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', price: 12857.00, open: 12780.00, change: 77.00, pChange: 0.60, high: 12927.00, low: 12780.00, volume: '880K' },
-      { symbol: 'M&M', name: 'Mahindra & Mahindra Ltd.', price: 3150.00, open: 3210.00, change: -60.00, pChange: -1.87, high: 3210.00, low: 3150.00, volume: '3.4M' },
-      { symbol: 'HEROMOTOCO', name: 'Hero MotoCorp Ltd.', price: 5308.50, open: 5271.00, change: 37.50, pChange: 0.71, high: 5315.00, low: 5271.00, volume: '750K' },
-      { symbol: 'BAJAJ-AUTO', name: 'Bajaj Auto Ltd.', price: 11920.00, open: 12191.00, change: -271.00, pChange: -2.22, high: 12191.00, low: 11920.00, volume: '620K' },
-      { symbol: 'EICHERMOT', name: 'Eicher Motors Ltd.', price: 7690.00, open: 7738.50, change: -48.50, pChange: -0.63, high: 7738.50, low: 7597.00, volume: '890K' }
+      { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', price: 11450.00, open: 11520.00, change: -50.00, pChange: -0.43, high: 11600.00, low: 11400.00, volume: '850K' },
+      { symbol: 'M&M', name: 'Mahindra & Mahindra Ltd.', price: 2850.00, open: 2880.00, change: -30.00, pChange: -1.04, high: 2890.00, low: 2840.00, volume: '3.4M' },
+      { symbol: 'HEROMOTOCO', name: 'Hero MotoCorp Ltd.', price: 4680.00, open: 4720.00, change: -40.00, pChange: -0.85, high: 4730.00, low: 4660.00, volume: '750K' },
+      { symbol: 'BAJAJ-AUTO', name: 'Bajaj Auto Ltd.', price: 8850.00, open: 8920.00, change: -70.00, pChange: -0.78, high: 8950.00, low: 8800.00, volume: '620K' },
+      { symbol: 'EICHERMOT', name: 'Eicher Motors Ltd.', price: 4780.00, open: 4810.00, change: -30.00, pChange: -0.62, high: 4820.00, low: 4750.00, volume: '890K' }
     ]
   }
 ];
@@ -66,20 +66,51 @@ export function MarketProvider({ children }) {
   const [marketStatus, setMarketStatus] = useState(getISTMarketStatus());
   const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString('en-IN'));
 
-  // Update IST market status and refresh live market data for sectors
+  // Continuously refresh quotes for all watchlist stocks
   useEffect(() => {
-    const refreshData = async () => {
+    let isMounted = true;
+
+    const refreshWatchlistQuotes = async () => {
       setMarketStatus(getISTMarketStatus());
       setLastUpdated(new Date().toLocaleTimeString('en-IN'));
 
-      setWatchlistSectors(prevSectors => {
-        return prevSectors;
-      });
+      try {
+        const updatedSectors = await Promise.all(
+          watchlistSectors.map(async (sector) => {
+            const updatedStocks = await Promise.all(
+              sector.stocks.map(async (stock) => {
+                const quoteRes = await getQuote(stock.symbol);
+                if (quoteRes.success && quoteRes.data) {
+                  return {
+                    ...stock,
+                    ...quoteRes.data
+                  };
+                }
+                return stock;
+              })
+            );
+            return {
+              ...sector,
+              stocks: updatedStocks
+            };
+          })
+        );
+
+        if (isMounted) {
+          setWatchlistSectors(updatedSectors);
+        }
+      } catch (err) {
+        console.error('Error refreshing watchlist quotes:', err);
+      }
     };
 
-    refreshData();
-    const timer = setInterval(refreshData, 3000);
-    return () => clearInterval(timer);
+    refreshWatchlistQuotes();
+    const timer = setInterval(refreshWatchlistQuotes, 3000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(timer);
+    };
   }, []);
 
   // Add stock to sector
@@ -87,7 +118,6 @@ export function MarketProvider({ children }) {
     const symbolUpper = symbolInput.trim().toUpperCase();
     if (!symbolUpper) return false;
 
-    // Fetch quote for symbol
     const quoteRes = await getQuote(symbolUpper);
     const stockData = quoteRes.data;
 
@@ -96,7 +126,6 @@ export function MarketProvider({ children }) {
       const newSectors = prevSectors.map(sec => {
         if (sec.sectorName.toLowerCase() === sectorName.toLowerCase()) {
           targetSectorExists = true;
-          // Avoid duplicate symbol in same sector
           const exists = sec.stocks.some(s => s.symbol === symbolUpper);
           if (exists) return sec;
           return {
