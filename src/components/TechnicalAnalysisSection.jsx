@@ -81,77 +81,101 @@ export default function TechnicalAnalysisSection() {
     return () => clearInterval(interval);
   }, []);
 
+  function parseFullCSV(csvText) {
+    const rows = [];
+    let currentRow = [];
+    let currentCell = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < csvText.length; i++) {
+      const char = csvText[i];
+      const nextChar = csvText[i + 1];
+
+      if (char === '"' && inQuotes && nextChar === '"') {
+        currentCell += '"';
+        i++;
+      } else if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        currentRow.push(currentCell);
+        currentCell = '';
+      } else if ((char === '\r' || char === '\n') && !inQuotes) {
+        if (char === '\r' && nextChar === '\n') {
+          i++;
+        }
+        currentRow.push(currentCell);
+        if (currentRow.some(c => c.trim().length > 0)) {
+          rows.push(currentRow);
+        }
+        currentRow = [];
+        currentCell = '';
+      } else {
+        currentCell += char;
+      }
+    }
+
+    if (currentCell || currentRow.length > 0) {
+      currentRow.push(currentCell);
+      if (currentRow.some(c => c.trim().length > 0)) {
+        rows.push(currentRow);
+      }
+    }
+
+    return rows;
+  }
+
+  function cleanCellVal(cell) {
+    if (!cell) return '';
+    let text = cell.trim();
+    while (text.startsWith('"') && text.endsWith('"') && text.length >= 2) {
+      text = text.slice(1, -1).trim();
+    }
+    return text;
+  }
+
   function parseStockCSV(csvText) {
-    const lines = csvText.split(/\r?\n/).filter(line => line.trim().length > 0);
-    if (lines.length <= 1) return null;
+    const rows = parseFullCSV(csvText);
+    if (rows.length <= 1) return null;
 
     const result = [];
-    for (let i = 1; i < lines.length; i++) {
-      const cells = parseCSVLine(lines[i]);
-      if (cells.length >= 3) {
-        const dateVal = cells[1]?.trim() || '';
-        const stockName = cells[2]?.trim() || '';
-        const description = cells[3]?.trim() || cells[2]?.trim() || '';
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const dateVal = cleanCellVal(row[1]);
+      const stockName = cleanCellVal(row[2]);
+      const description = cleanCellVal(row[3]);
 
-        if (stockName || description) {
-          result.push({
-            id: `stock-${i}`,
-            date: dateVal || 'LIVE',
-            stockName: stockName || 'EQUITY ASSET',
-            description: description || 'No detailed technical justification recorded.'
-          });
-        }
+      if (stockName && stockName.toLowerCase() !== 'stock name') {
+        result.push({
+          id: `stock-${i}`,
+          date: dateVal || 'LIVE',
+          stockName: stockName,
+          description: description || 'No detailed technical justification recorded.'
+        });
       }
     }
     return result;
   }
 
   function parseIndexCSV(csvText) {
-    const lines = csvText.split(/\r?\n/).filter(line => line.trim().length > 0);
-    if (lines.length <= 1) return null;
+    const rows = parseFullCSV(csvText);
+    if (rows.length <= 1) return null;
 
     const result = [];
-    for (let i = 1; i < lines.length; i++) {
-      const cells = parseCSVLine(lines[i]);
-      // Google sheet line format: Column C (cells[2]) = Date, Column D (cells[3]) = Index Name, Column E/I (cells[4]) = Analysis
-      if (cells.length >= 3) {
-        const dateVal = cells[2]?.trim() || cells[1]?.trim() || '';
-        const indexName = cells[3]?.trim() || cells[2]?.trim() || '';
-        const analysis = cells[4]?.trim() || cells[8]?.trim() || cells[3]?.trim() || '';
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const dateVal = cleanCellVal(row[2]);
+      const indexName = cleanCellVal(row[3]);
+      const analysis = cleanCellVal(row[4]);
 
-        if (indexName) {
-          result.push({
-            id: `index-${i}`,
-            date: dateVal || 'WEEKLY UPDATE',
-            indexName: indexName || 'BENCHMARK INDEX',
-            analysis: analysis || 'Market analysis in progress. Structure holding key support and resistance zones.'
-          });
-        }
+      if (indexName && indexName.toLowerCase() !== 'index') {
+        result.push({
+          id: `index-${i}`,
+          date: dateVal || 'WEEKLY UPDATE',
+          indexName: indexName,
+          analysis: analysis || 'Market analysis in progress. Structure holding key support and resistance zones.'
+        });
       }
     }
-    return result;
-  }
-
-  function parseCSVLine(line) {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i];
-      if (char === '"' && line[i + 1] === '"') {
-        current += '"';
-        i++;
-      } else if (char === '"') {
-        inQuotes = !inQuotes;
-      } else if (char === ',' && !inQuotes) {
-        result.push(current);
-        current = '';
-      } else {
-        current += char;
-      }
-    }
-    result.push(current);
     return result;
   }
 
@@ -293,7 +317,7 @@ export default function TechnicalAnalysisSection() {
                         <span className="text-amber-400 font-bold block text-[11px] uppercase tracking-wider">
                           WEEKLY TECHNICAL ANALYSIS:
                         </span>
-                        <p className="text-gray-200 text-sm font-sans font-medium leading-normal">
+                        <p className="text-gray-200 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
                           {item.analysis || 'Technical structure holding key support and resistance boundaries.'}
                         </p>
                       </div>
@@ -359,7 +383,7 @@ export default function TechnicalAnalysisSection() {
                       <span className="text-amber-400 font-bold block text-[11px] uppercase tracking-wider">
                         DESCRIPTION OF TECHNICAL ANALYSIS BEFORE TAKING POSITION:
                       </span>
-                      <p className="text-gray-200 text-sm font-sans font-medium leading-normal">
+                      <p className="text-gray-200 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
                         {item.description}
                       </p>
                     </div>
