@@ -28,9 +28,9 @@ export default function MarketOverviewSection() {
 
   // Global Triggers State
   const [globalTriggers, setGlobalTriggers] = useState({
-    vix: { price: 18.53, change: 0.25, pChange: 1.37 },
-    crude: { price: 96.28, change: -0.45, pChange: -0.47 },
-    usdinr: { price: 94.48, change: 0.12, pChange: 0.13 }
+    vix: { price: 11.60, change: -0.15, pChange: -1.28 },
+    crude: { price: 72.85, change: -0.42, pChange: -0.57 },
+    usdinr: { price: 83.98, change: 0.04, pChange: 0.05 }
   });
 
   // Position Sizing Calculator Inputs
@@ -108,13 +108,6 @@ export default function MarketOverviewSection() {
     };
   }, [marketStatus.isOpen]);
 
-  const handleCardClick = (symbol) => {
-    setActiveSymbol(symbol);
-    const chartSection = document.getElementById('charts-section');
-    if (chartSection) {
-      chartSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   // VIX Zone calculation
   const vixVal = globalTriggers.vix.price;
@@ -155,39 +148,55 @@ export default function MarketOverviewSection() {
   const estimatedMargin = recommendedLots * currentInst.marginPerLot;
   const riskRewardRatio = riskPerPoint > 0 ? (targetPerPoint / riskPerPoint).toFixed(2) : 0;
 
-  // Economic Calendar Playbook
+  // Economic Calendar & Macro Event Playbook Data
   const ECONOMIC_EVENTS = [
     {
-      event: 'RBI Interest Rate Policy Decision',
-      frequency: 'Bi-Monthly',
-      impact: 'CRITICAL',
-      impactBadge: 'bg-rose-500/20 text-rose-400 border-rose-500/40',
-      description: 'Repo rate announcement drives Bank NIFTY & Fin NIFTY rate-sensitive volatility.',
-      strategy: 'Deploy Delta-Neutral Non-Directional Strangle prior to decision; harvest IV crush post-release.'
-    },
-    {
-      event: 'India CPI Inflation Data',
-      frequency: 'Monthly',
+      date: '12 MAR 2025',
+      time: '17:30 IST',
+      event: 'India Consumer Price Index (CPI Inflation)',
+      country: '🇮🇳 INDIA',
       impact: 'HIGH',
       impactBadge: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
-      description: 'Macro Consumer Price Index reading determines bond yield trajectory and currency moves.',
-      strategy: 'Hedge direction with Bull Put or Bear Call Spreads near structural support levels.'
+      forecast: '5.10%',
+      previous: '5.22%',
+      description: 'Retail inflation metrics guiding RBI monetary stance & sovereign bond yield trajectory.',
+      strategy: 'Deploy Bull Put / Bear Call Spreads around structural NIFTY support levels.'
     },
     {
-      event: 'India Quarterly GDP Growth Rate',
-      frequency: 'Quarterly',
-      impact: 'HIGH',
-      impactBadge: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
-      description: 'Economic expansion metric driving broad market NIFTY 50 institutional fund flows.',
-      strategy: 'Monitor 1D ATR expansion; trade breakout iron condors with wide wings.'
-    },
-    {
-      event: 'US Federal Reserve FOMC Policy Rate',
-      frequency: '8 Times / Year',
+      date: '19 MAR 2025',
+      time: '23:30 IST',
+      event: 'US Fed FOMC Rate Decision & Policy Statement',
+      country: '🇺🇸 UNITED STATES',
       impact: 'CRITICAL',
       impactBadge: 'bg-rose-500/20 text-rose-400 border-rose-500/40',
-      description: 'Global liquidity anchor influencing IT sector (TCS, INFY) and FII capital flows.',
-      strategy: 'Hedge overnight gap risk using OTM protective puts or defined-risk spreads.'
+      forecast: '4.50%',
+      previous: '4.75%',
+      description: 'Global benchmark liquidity anchor driving FII equity flows into NIFTY IT & Banking.',
+      strategy: 'Hedge overnight gap risk via defined-risk OTM Iron Condors; harvest IV crush post-announcement.'
+    },
+    {
+      date: '04 APR 2025',
+      time: '10:00 IST',
+      event: 'RBI Monetary Policy Committee (MPC) Rate Decision',
+      country: '🇮🇳 INDIA',
+      impact: 'CRITICAL',
+      impactBadge: 'bg-rose-500/20 text-rose-400 border-rose-500/40',
+      forecast: '6.25%',
+      previous: '6.50%',
+      description: 'Direct rate trigger for BANK NIFTY, FIN NIFTY, and rate-sensitive automobile / housing sector.',
+      strategy: 'Execute delta-neutral Short Strangles prior to policy speech; capitalize on post-event IV collapse.'
+    },
+    {
+      date: '12 APR 2025',
+      time: '17:30 IST',
+      event: 'India Index of Industrial Production (IIP)',
+      country: '🇮🇳 INDIA',
+      impact: 'MEDIUM',
+      impactBadge: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
+      forecast: '4.20%',
+      previous: '3.80%',
+      description: 'Core industrial manufacturing output indicator signaling GDP growth momentum.',
+      strategy: 'Trade direction-neutral calendars or ratio spreads with controlled position sizing.'
     }
   ];
 
@@ -324,82 +333,6 @@ export default function MarketOverviewSection() {
           </div>
         </div>
 
-        {/* 3. Real-Time Index Cards */}
-        <div>
-          <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest mb-4">
-            <Layers className="w-4 h-4" />
-            <span>REAL-TIME BENCHMARK INDICES</span>
-          </div>
-
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-[#0a0a0a] border border-[#1a1a1a] rounded-xl p-6 animate-pulse h-48" />
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {indices.map((idx) => {
-                const isPositive = idx.change >= 0;
-                const formattedPrice = idx.price.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                const formattedChange = (isPositive ? '+' : '') + idx.change.toFixed(2);
-                const formattedPChange = (isPositive ? '+' : '') + idx.pChange.toFixed(2) + '%';
-
-                return (
-                  <div
-                    key={idx.symbol}
-                    onClick={() => handleCardClick(idx.symbol)}
-                    className="group relative bg-[#0a0a0a] border border-[#1f1f1f] hover:border-amber-500/50 rounded-xl p-6 transition-all duration-300 hover:shadow-[0_0_25px_rgba(229,169,60,0.1)] cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-xl font-bold text-white tracking-wide font-mono group-hover:text-amber-400 transition-colors">
-                          {idx.symbol}
-                        </h3>
-                        <p className="text-xs text-gray-400 font-sans mt-0.5">{idx.name}</p>
-                      </div>
-
-                      <div
-                        className={`flex items-center gap-1 text-xs font-mono font-bold px-2.5 py-1 rounded-full border ${
-                          isPositive
-                            ? 'bg-emerald-950/40 text-emerald-400 border-emerald-800/50'
-                            : 'bg-red-950/40 text-red-400 border-red-800/50'
-                        }`}
-                      >
-                        <span>{isPositive ? '↗' : '↘'}</span>
-                        <span>{formattedPChange}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-baseline justify-between mb-6">
-                      <div className={`text-2xl md:text-3xl font-black font-mono tracking-tight ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-                        {formattedPrice}
-                      </div>
-                      <div className={`text-sm font-mono font-semibold ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
-                        {formattedChange}
-                      </div>
-                    </div>
-
-                    <div className="border-t border-[#181818] pt-4 grid grid-cols-3 gap-2 text-center text-xs font-mono">
-                      <div>
-                        <span className="block text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">HIGH</span>
-                        <span className="text-gray-200 font-medium">{idx.high?.toLocaleString('en-IN') || '—'}</span>
-                      </div>
-                      <div>
-                        <span className="block text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">LOW</span>
-                        <span className="text-gray-200 font-medium">{idx.low?.toLocaleString('en-IN') || '—'}</span>
-                      </div>
-                      <div>
-                        <span className="block text-[10px] text-gray-500 uppercase tracking-wider mb-0.5">OPEN</span>
-                        <span className="text-gray-200 font-medium">{idx.open?.toLocaleString('en-IN') || '—'}</span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
 
         {/* 4. Advanced Risk & Position Sizing Calculator & Quick Cheat Sheet */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -622,17 +555,36 @@ export default function MarketOverviewSection() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {ECONOMIC_EVENTS.map((item, idx) => (
-              <div key={idx} className="bg-neutral-900/90 border border-white/5 rounded-xl p-5 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono text-amber-400 font-bold uppercase">{item.frequency}</span>
+              <div key={idx} className="bg-neutral-900/90 border border-white/10 hover:border-amber-500/40 rounded-xl p-5 space-y-4 transition-all">
+                <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-mono font-black text-amber-400 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded">
+                      {item.date}
+                    </span>
+                    <span className="text-xs font-mono text-gray-400">{item.time}</span>
+                  </div>
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold border ${item.impactBadge}`}>
                     {item.impact} IMPACT
                   </span>
                 </div>
 
-                <h4 className="text-base font-bold font-mono text-white">{item.event}</h4>
+                <div>
+                  <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest block mb-0.5">{item.country}</span>
+                  <h4 className="text-base font-bold font-mono text-white">{item.event}</h4>
+                </div>
 
-                <p className="text-xs text-gray-400 leading-relaxed font-sans">{item.description}</p>
+                <p className="text-xs text-gray-300 leading-relaxed font-sans">{item.description}</p>
+
+                <div className="grid grid-cols-2 gap-2 bg-black/40 p-2.5 rounded-lg text-xs font-mono border border-white/5">
+                  <div>
+                    <span className="text-[10px] text-gray-500 block uppercase">FORECAST</span>
+                    <span className="text-amber-400 font-bold">{item.forecast}</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-gray-500 block uppercase">PREVIOUS</span>
+                    <span className="text-gray-300 font-bold">{item.previous}</span>
+                  </div>
+                </div>
 
                 <div className="pt-2 border-t border-white/5 text-xs font-mono text-gray-300">
                   <strong className="text-amber-400 font-bold">PLAYBOOK STRATEGY: </strong>

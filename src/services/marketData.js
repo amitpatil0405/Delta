@@ -58,9 +58,9 @@ export function getYahooSymbol(symbol) {
   if (s === 'NASDAQ 100' || s === 'NASDAQ' || s === 'NDX') return '^NDX';
   if (s === 'S&P 100' || s === 'OEX') return '^OEX';
   if (s === 'FTSE' || s === 'FTSE 100') return '^FTSE';
-  if (s === 'INDIA VIX' || s === 'VIX') return 'INDIAVIX.NS';
+  if (s === 'INDIA VIX' || s === 'VIX') return '^INDIAVIX';
   if (s === 'CRUDE OIL' || s === 'CRUDE OIL (BRENT)' || s === 'BRENT') return 'BZ=F';
-  if (s === 'USD-INR' || s === 'USDINR') return 'INR=X';
+  if (s === 'USD-INR' || s === 'USDINR' || s === 'USD/INR') return 'INR=X';
 
   if (s === 'TMPV' || s === 'TATAMOTORS') return 'TATAMOTORS.NS';
   if (s === 'NESTLEIND' || s === 'NETSTLE INDIA' || s === 'NESTLE INDIA') return 'NESTLEIND.NS';

@@ -5,8 +5,6 @@ import HeroSection from './components/HeroSection';
 import DeltaFox3DScene from './components/DeltaFox3DScene';
 import MarketOverviewSection from './components/MarketOverviewSection';
 import TechnicalAnalysisSection from './components/TechnicalAnalysisSection';
-import ChartSection from './components/ChartSection';
-import SectorWatchlistSection from './components/SectorWatchlistSection';
 import PortfolioJournalSection from './components/PortfolioJournalSection';
 import OptionsStrategiesSection from './components/OptionsStrategiesSection';
 import TrainingSection from './components/TrainingSection';
@@ -60,13 +58,7 @@ export default function App() {
           {/* 3. Technical Analysis Page (Synced from Google Sheet) */}
           <TechnicalAnalysisSection />
 
-          {/* 4. Institutional Line Chart */}
-          <ChartSection />
-
-          {/* 5. Sector Watchlist */}
-          <SectorWatchlistSection />
-
-          {/* 6. Portfolio & Trading Journal */}
+          {/* 4. Portfolio & Trading Journal */}
           <PortfolioJournalSection />
 
           {/* 7. 3D Scroll-Driven Options Strategies & Payoff Diagrams */}

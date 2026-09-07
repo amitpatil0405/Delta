@@ -23,8 +23,6 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       'home',
       'intelligence',
       'technical-analysis',
-      'charts-section',
-      'watchlist-section',
       'portfolio',
       'strategies',
       'training',
@@ -41,12 +39,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     const handleIntersect = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
-          const id = entry.target.id;
-          if (id === 'charts-section' || id === 'watchlist-section') {
-            setCurrentSection('intelligence');
-          } else {
-            setCurrentSection(id);
-          }
+          setCurrentSection(entry.target.id);
         }
       });
     };

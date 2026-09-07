@@ -176,11 +176,8 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
                     <div
                       key={`${item.symbol}-${idx}`}
                       onClick={() => {
-                        if (['NIFTY 50', 'BANK NIFTY', 'SENSEX'].includes(item.symbol)) {
-                          setActiveSymbol(item.symbol);
-                          const chartElem = document.getElementById('charts-section');
-                          if (chartElem) chartElem.scrollIntoView({ behavior: 'smooth' });
-                        }
+                        const intelSection = document.getElementById('intelligence');
+                        if (intelSection) intelSection.scrollIntoView({ behavior: 'smooth' });
                       }}
                       className="flex items-center space-x-2.5 bg-[#121212]/90 border border-white/10 hover:border-amber-500/50 hover:bg-[#1a1a1a] px-4 py-2 rounded-xl transition-all duration-300 cursor-pointer shrink-0 group/item shadow-lg"
                     >
