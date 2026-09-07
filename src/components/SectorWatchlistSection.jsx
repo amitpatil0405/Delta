@@ -13,7 +13,7 @@ export default function SectorWatchlistSection() {
   const filteredStocks = currentSector
     ? currentSector.stocks.filter(s =>
         s.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        s.name.toLowerCase().includes(searchTerm.toLowerCase())
+        (s.name && s.name.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     : [];
 
@@ -87,13 +87,14 @@ export default function SectorWatchlistSection() {
               <tbody className="divide-y divide-[#141414] font-mono text-xs">
                 {filteredStocks.length > 0 ? (
                   filteredStocks.map((stock) => {
-                    const prevClosePrice = stock.prevClose || stock.open || stock.price;
-                    const changeVal = stock.change ?? (stock.price - prevClosePrice);
-                    const pChangeVal = stock.pChange ?? (prevClosePrice ? (changeVal / prevClosePrice) * 100 : 0);
+                    const price = typeof stock.price === 'number' ? stock.price : 0;
+                    const prevClosePrice = stock.prevClose || stock.open || price;
+                    const changeVal = typeof stock.change === 'number' ? stock.change : (price - prevClosePrice);
+                    const pChangeVal = typeof stock.pChange === 'number' ? stock.pChange : (prevClosePrice ? (changeVal / prevClosePrice) * 100 : 0);
                     const isPos = changeVal >= 0;
 
-                    const formattedLtp = stock.price.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-                    const formattedChg = `${isPos ? '+' : ''}${changeVal.toFixed(2)} (${isPos ? '+' : ''}${pChangeVal.toFixed(2)}%)`;
+                    const formattedLtp = price ? price.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '—';
+                    const formattedChg = price ? `${isPos ? '+' : ''}${changeVal.toFixed(2)} (${isPos ? '+' : ''}${pChangeVal.toFixed(2)}%)` : '—';
 
                     return (
                       <tr key={stock.symbol} className="hover:bg-[#111111] transition-colors group">
@@ -102,7 +103,7 @@ export default function SectorWatchlistSection() {
                             {stock.symbol}
                           </div>
                           <div className="text-[10px] text-gray-500 font-sans mt-0.5">
-                            {stock.name}
+                            {stock.name || stock.symbol}
                           </div>
                         </td>
                         <td className="py-4 px-4 text-right font-bold text-white">
@@ -112,13 +113,13 @@ export default function SectorWatchlistSection() {
                           {formattedChg}
                         </td>
                         <td className="py-4 px-4 text-right text-gray-300">
-                          {stock.open ? stock.open.toLocaleString('en-IN') : '—'}
+                          {typeof stock.open === 'number' ? stock.open.toLocaleString('en-IN') : '—'}
                         </td>
                         <td className="py-4 px-4 text-right text-gray-300">
-                          {stock.high ? stock.high.toLocaleString('en-IN') : '—'}
+                          {typeof stock.high === 'number' ? stock.high.toLocaleString('en-IN') : '—'}
                         </td>
                         <td className="py-4 px-4 text-right text-gray-300">
-                          {stock.low ? stock.low.toLocaleString('en-IN') : '—'}
+                          {typeof stock.low === 'number' ? stock.low.toLocaleString('en-IN') : '—'}
                         </td>
                         <td className="py-4 px-4 text-right text-gray-400">
                           {stock.volume || '—'}
