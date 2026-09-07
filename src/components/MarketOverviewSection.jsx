@@ -151,50 +151,50 @@ export default function MarketOverviewSection() {
   // Economic Calendar & Macro Event Playbook Data
   const ECONOMIC_EVENTS = [
     {
-      date: '12 MAR 2026',
-      time: '17:30 IST',
-      event: 'India Consumer Price Index (CPI Inflation)',
-      country: '🇮🇳 INDIA',
-      impact: 'HIGH',
-      impactBadge: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
-      forecast: '5.10%',
-      previous: '5.22%',
-      description: 'Retail inflation metrics guiding RBI monetary stance & sovereign bond yield trajectory.',
-      strategy: 'Deploy Bull Put / Bear Call Spreads around structural NIFTY support levels.'
-    },
-    {
-      date: '18 MAR 2026',
+      date: '16 SEP 2026',
       time: '23:30 IST',
       event: 'US Fed FOMC Rate Decision & Policy Statement',
       country: '🇺🇸 UNITED STATES',
       impact: 'CRITICAL',
       impactBadge: 'bg-rose-500/20 text-rose-400 border-rose-500/40',
-      forecast: '4.25%',
-      previous: '4.50%',
+      forecast: '4.00%',
+      previous: '4.25%',
       description: 'Global benchmark liquidity anchor driving FII equity flows into NIFTY IT & Banking.',
       strategy: 'Hedge overnight gap risk via defined-risk OTM Iron Condors; harvest IV crush post-announcement.'
     },
     {
-      date: '03 APR 2026',
+      date: '02 OCT 2026',
       time: '10:00 IST',
       event: 'RBI Monetary Policy Committee (MPC) Rate Decision',
       country: '🇮🇳 INDIA',
       impact: 'CRITICAL',
       impactBadge: 'bg-rose-500/20 text-rose-400 border-rose-500/40',
-      forecast: '6.25%',
-      previous: '6.50%',
+      forecast: '6.00%',
+      previous: '6.25%',
       description: 'Direct rate trigger for BANK NIFTY, FIN NIFTY, and rate-sensitive automobile / housing sector.',
       strategy: 'Execute delta-neutral Short Strangles prior to policy speech; capitalize on post-event IV collapse.'
     },
     {
-      date: '10 APR 2026',
+      date: '14 OCT 2026',
+      time: '17:30 IST',
+      event: 'India Consumer Price Index (CPI Inflation)',
+      country: '🇮🇳 INDIA',
+      impact: 'HIGH',
+      impactBadge: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
+      forecast: '4.80%',
+      previous: '5.10%',
+      description: 'Retail inflation metrics guiding RBI monetary stance & sovereign bond yield trajectory.',
+      strategy: 'Deploy Bull Put / Bear Call Spreads around structural NIFTY support levels.'
+    },
+    {
+      date: '12 NOV 2026',
       time: '17:30 IST',
       event: 'India Index of Industrial Production (IIP)',
       country: '🇮🇳 INDIA',
       impact: 'MEDIUM',
       impactBadge: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
-      forecast: '4.20%',
-      previous: '3.80%',
+      forecast: '4.50%',
+      previous: '4.20%',
       description: 'Core industrial manufacturing output indicator signaling GDP growth momentum.',
       strategy: 'Trade direction-neutral calendars or ratio spreads with controlled position sizing.'
     }
