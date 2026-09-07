@@ -71,13 +71,13 @@ export default function AboutFounderSection() {
                   Backed by a Bachelor's degree in Computer Science engineering and deep-rooted expertise in financial markets, Amit leads DeltaFox with an engineering-driven, systematic approach.
                 </p>
                 <p>
-                  By blending technical precision with quantitative trading, the platform brings complete transparency—showcasing live market data and real-time portfolio details directly on the website.
+                  By blending technical precision with quantitative trading, the platform brings complete transparency by showcasing live market data and real-time portfolio details directly on the website.
                 </p>
                 <p>
-                  Specializing in advanced options trading strategies—particularly non-directional frameworks, credit spreads, and volatility-based execution—the focus remains on building resilient portfolios where data and math take absolute precedence over emotion.
+                  Specializing in advanced options trading strategies particularly non-directional frameworks, credit spreads, and volatility based execution. The focus remains on building resilient portfolios where data and math take absolute precedence over emotion.
                 </p>
                 <p>
-                  In addition to systematic trading, DeltaFox offers specialized training programs designed to educate aspiring traders. <span className="text-amber-400 font-mono text-xs block sm:inline mt-1 sm:mt-0">[Enrollment is subject to strict terms and conditions, risk disclosures, and eligibility criteria.]</span> The core philosophy revolves around uncompromised capital preservation, strict rule execution, and navigating changing market regimes with complete discipline.
+                  In addition to systematic trading, DeltaFox offers specialized training programs designed to educate aspiring traders. <span className="text-amber-400 font-mono text-xs font-semibold">[Enrollment is subject to strict terms and conditions, risk disclosures, and eligibility criteria.]</span> The core philosophy revolves around uncompromised capital preservation, strict rule execution, and navigating changing market regimes with complete discipline.
                 </p>
               </div>
 
