@@ -87,10 +87,10 @@ export default function SectorWatchlistSection() {
               <tbody className="divide-y divide-[#141414] font-mono text-xs">
                 {filteredStocks.length > 0 ? (
                   filteredStocks.map((stock) => {
-                    const openPrice = stock.open ?? stock.price;
-                    const changeVal = stock.price - openPrice;
-                    const pChangeVal = openPrice ? (changeVal / openPrice) * 100 : 0;
-                    const isPos = stock.price >= openPrice;
+                    const prevClosePrice = stock.prevClose || stock.open || stock.price;
+                    const changeVal = stock.change ?? (stock.price - prevClosePrice);
+                    const pChangeVal = stock.pChange ?? (prevClosePrice ? (changeVal / prevClosePrice) * 100 : 0);
+                    const isPos = changeVal >= 0;
 
                     const formattedLtp = stock.price.toLocaleString('en-IN', { minimumFractionDigits: 2 });
                     const formattedChg = `${isPos ? '+' : ''}${changeVal.toFixed(2)} (${isPos ? '+' : ''}${pChangeVal.toFixed(2)}%)`;

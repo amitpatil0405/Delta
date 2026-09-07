@@ -35,8 +35,8 @@ export default function ChartSection() {
     fetchChartAndQuote();
   }, [activeSymbol, timeframe]);
 
-  // Compare price against opening price
-  const isPositive = quote ? (quote.price >= (quote.open ?? quote.price)) : true;
+  // Compare price against Previous Close
+  const isPositive = quote ? (quote.change >= 0) : true;
   const formattedPrice = quote ? quote.price.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '—';
   const formattedChange = quote ? `${quote.change >= 0 ? '+' : ''}${quote.change.toFixed(2)} (${quote.change >= 0 ? '+' : ''}${quote.pChange.toFixed(2)}%)` : '—';
 
