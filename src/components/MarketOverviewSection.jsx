@@ -92,6 +92,9 @@ export default function MarketOverviewSection() {
 
   useEffect(() => {
     fetchHolidays();
+    // Synchronize background updates with 1-day interval (86400000 ms)
+    const interval = setInterval(fetchHolidays, 86400000);
+    return () => clearInterval(interval);
   }, []);
 
   // Determine current date & find next upcoming holiday
@@ -135,20 +138,6 @@ export default function MarketOverviewSection() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 self-start md:self-auto">
-            <button
-              onClick={fetchHolidays}
-              disabled={loading}
-              className="flex items-center space-x-2 bg-[#111111] hover:bg-[#1a1a1a] border border-[#222222] px-3.5 py-2 rounded-lg text-xs font-mono text-gray-300 transition-all cursor-pointer"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 text-amber-400 ${loading ? 'animate-spin' : ''}`} />
-              <span>SYNC CALENDAR</span>
-            </button>
-            <div className="flex items-center gap-2 bg-[#111111] border border-[#222222] px-3.5 py-2 rounded-lg text-xs font-mono text-gray-300">
-              <Clock className="w-3.5 h-3.5 text-emerald-400" />
-              <span>SYNCED: {lastSyncTime || 'LIVE'}</span>
-            </div>
-          </div>
         </div>
 
         {/* Highlighted Upcoming Holiday Hero Banner */}

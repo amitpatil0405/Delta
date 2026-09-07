@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Activity } from 'lucide-react';
+import { Menu, X, Clock } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { useMarket } from '../context/MarketContext';
 
@@ -7,11 +7,38 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState(activePage);
+  const [liveTime, setLiveTime] = useState({ dateLine: '', timeLine: '' });
   const { marketStatus } = useMarket();
 
   useEffect(() => {
     setCurrentSection(activePage);
   }, [activePage]);
+
+  useEffect(() => {
+    const updateTime = () => {
+      const d = new Date();
+      const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'sept', 'Oct', 'Nov', 'Dec'];
+
+      const dayName = days[d.getDay()];
+      const dayNum = String(d.getDate()).padStart(2, '0');
+      const monthName = months[d.getMonth()];
+      const yearTwoDigit = String(d.getFullYear()).slice(-2);
+
+      const dateLine = `${dayName},${dayNum} ${monthName} ${yearTwoDigit}`;
+      const timeLine = d.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+
+      setLiveTime({ dateLine, timeLine });
+    };
+
+    updateTime();
+    const timer = setInterval(updateTime, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -145,26 +172,35 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             ))}
           </div>
 
-          {/* Right Top Corner: Market Status Indicator & Intelligence Terminal Button */}
+          {/* Right Top Corner: Market Status Indicator & Live Date/Time Display */}
           <div className="hidden xl:flex items-center space-x-3">
-            <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
+            <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
               <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
               <span className={`font-bold uppercase ${statusBadge.textColor}`}>{statusBadge.text}</span>
             </div>
 
-            <button
-              onClick={() => handleNavClick('intelligence')}
-              className="relative inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 to-amber-600 rounded-lg hover:from-amber-300 hover:to-amber-500 transition-all duration-300 shadow-[0_0_20px_rgba(217,119,6,0.4)] group active:scale-95"
-            >
-              <Activity className="w-3.5 h-3.5" />
-              <span>TERMINAL</span>
-            </button>
+            <div className="flex flex-col items-end px-3.5 py-1 rounded-lg bg-neutral-900/90 border border-amber-500/30 font-mono shadow-[0_0_15px_rgba(217,119,6,0.15)]">
+              <span className="text-[11px] font-bold text-amber-400 leading-tight tracking-tight">
+                {liveTime.dateLine || 'Sun,09 sept 26'}
+              </span>
+              <span className="text-[11px] font-bold text-gray-200 leading-tight tracking-tight">
+                {liveTime.timeLine || '08:12 PM'}
+              </span>
+            </div>
           </div>
 
           <div className="hidden sm:flex xl:hidden items-center space-x-2">
             <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
               <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
               <span className={`font-bold uppercase ${statusBadge.textColor}`}>{statusBadge.text}</span>
+            </div>
+            <div className="flex flex-col items-end px-2.5 py-1 rounded-lg bg-neutral-900/90 border border-amber-500/30 font-mono text-right">
+              <span className="text-[10px] font-bold text-amber-400 leading-tight">
+                {liveTime.dateLine}
+              </span>
+              <span className="text-[10px] font-bold text-gray-200 leading-tight">
+                {liveTime.timeLine}
+              </span>
             </div>
           </div>
 
