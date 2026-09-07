@@ -334,207 +334,63 @@ export default function MarketOverviewSection() {
         </div>
 
 
-        {/* 4. Advanced Risk & Position Sizing Calculator & Quick Cheat Sheet */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-          {/* Risk Calculator */}
-          <div className="lg:col-span-7 bg-[#0d0d10] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <div className="flex items-center space-x-3">
-                <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                  <Calculator className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold font-mono text-white uppercase">
-                    POSITION SIZING & RISK CALCULATOR
-                  </h3>
-                  <p className="text-xs text-gray-400">
-                    Calculate lot allocation and risk exposure before executing trades.
-                  </p>
-                </div>
+        {/* 4. Risk Management Cheat Sheet */}
+        <div className="bg-[#0d0d10] border border-white/10 rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl">
+          <div
+            className="flex items-center justify-between cursor-pointer border-b border-white/10 pb-4"
+            onClick={() => setShowCheatSheet(!showCheatSheet)}
+          >
+            <div className="flex items-center space-x-3">
+              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                <ShieldAlert className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold font-mono text-white uppercase">
+                  RISK MANAGEMENT CHEAT SHEET
+                </h3>
+                <p className="text-xs text-gray-400">Core DeltaFox execution & capital preservation rules</p>
               </div>
             </div>
-
-            {/* Inputs Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-              {/* Instrument Selection */}
-              <div>
-                <label className="block text-xs font-mono text-gray-400 uppercase mb-1">
-                  Instrument / Index
-                </label>
-                <select
-                  value={selectedInstrument}
-                  onChange={(e) => setSelectedInstrument(e.target.value)}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm font-mono text-amber-400 focus:outline-none focus:border-amber-500"
-                >
-                  <option value="NIFTY">NIFTY 50 (Lot: 25)</option>
-                  <option value="BANKNIFTY">BANK NIFTY (Lot: 15)</option>
-                  <option value="FINNIFTY">FIN NIFTY (Lot: 40)</option>
-                  <option value="SENSEX">SENSEX (Lot: 10)</option>
-                </select>
-              </div>
-
-              {/* Total Capital */}
-              <div>
-                <label className="block text-xs font-mono text-gray-400 uppercase mb-1">
-                  Total Trading Capital (₹)
-                </label>
-                <input
-                  type="number"
-                  value={capital}
-                  onChange={(e) => setCapital(Number(e.target.value))}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm font-mono text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              {/* Risk Percent */}
-              <div>
-                <label className="block text-xs font-mono text-gray-400 uppercase mb-1">
-                  Risk Per Trade (%)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={riskPercent}
-                  onChange={(e) => setRiskPercent(Number(e.target.value))}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm font-mono text-amber-400 focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              {/* Entry Price */}
-              <div>
-                <label className="block text-xs font-mono text-gray-400 uppercase mb-1">
-                  Entry Price (₹)
-                </label>
-                <input
-                  type="number"
-                  value={entryPrice}
-                  onChange={(e) => setEntryPrice(Number(e.target.value))}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm font-mono text-white focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              {/* Stop Loss Price */}
-              <div>
-                <label className="block text-xs font-mono text-gray-400 uppercase mb-1">
-                  Stop Loss Price (₹)
-                </label>
-                <input
-                  type="number"
-                  value={stopLossPrice}
-                  onChange={(e) => setStopLossPrice(Number(e.target.value))}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm font-mono text-rose-400 focus:outline-none focus:border-rose-500"
-                />
-              </div>
-
-              {/* Target Price */}
-              <div>
-                <label className="block text-xs font-mono text-gray-400 uppercase mb-1">
-                  Target Price (₹)
-                </label>
-                <input
-                  type="number"
-                  value={targetPrice}
-                  onChange={(e) => setTargetPrice(Number(e.target.value))}
-                  className="w-full bg-neutral-900 border border-white/10 rounded-xl px-4 py-2.5 text-sm font-mono text-emerald-400 focus:outline-none focus:border-emerald-500"
-                />
-              </div>
-
-            </div>
-
-            {/* Results Grid */}
-            <div className="bg-neutral-900/90 border border-white/10 rounded-xl p-5 space-y-4 font-mono">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
-                <div className="bg-black/50 p-3 rounded-lg border border-white/5">
-                  <span className="block text-[10px] text-gray-400 uppercase">Max Allowed Risk</span>
-                  <span className="text-lg font-bold text-amber-400">
-                    ₹{maxRiskAmount.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-                  </span>
-                </div>
-
-                <div className="bg-black/50 p-3 rounded-lg border border-white/5">
-                  <span className="block text-[10px] text-gray-400 uppercase">Recommended Lots</span>
-                  <span className="text-lg font-bold text-white">
-                    {recommendedLots} {recommendedLots === 1 ? 'Lot' : 'Lots'} ({actualQuantity} qty)
-                  </span>
-                </div>
-
-                <div className="bg-black/50 p-3 rounded-lg border border-white/5 col-span-2 sm:col-span-1">
-                  <span className="block text-[10px] text-gray-400 uppercase">Risk / Reward Ratio</span>
-                  <span className={`text-lg font-bold ${Number(riskRewardRatio) >= 1.5 ? 'text-emerald-400' : 'text-amber-400'}`}>
-                    1 : {riskRewardRatio}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 pt-2 border-t border-white/5 gap-2">
-                <span>Actual Risk Amount: <strong className="text-rose-400">₹{actualRiskAmount.toLocaleString('en-IN')}</strong></span>
-                <span>Est. Margin Required: <strong className="text-amber-400">₹{estimatedMargin.toLocaleString('en-IN')}</strong></span>
-              </div>
-            </div>
-
+            <button className="text-gray-400 hover:text-white">
+              {showCheatSheet ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+            </button>
           </div>
 
-          {/* Quick Strategy Cheat Sheet */}
-          <div className="lg:col-span-5 bg-[#0d0d10] border border-white/10 rounded-2xl p-6 space-y-4 shadow-2xl">
-            <div
-              className="flex items-center justify-between cursor-pointer border-b border-white/10 pb-3"
-              onClick={() => setShowCheatSheet(!showCheatSheet)}
-            >
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                  <ShieldAlert className="w-5 h-5" />
-                </div>
+          {showCheatSheet && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono text-gray-300">
+              <div className="p-4 rounded-xl bg-neutral-900/80 border border-white/5 flex items-start space-x-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-base font-bold font-mono text-white uppercase">
-                    RISK MANAGEMENT CHEAT SHEET
-                  </h3>
-                  <p className="text-[11px] text-gray-400">Core DeltaFox execution rules</p>
+                  <strong className="text-white block font-bold mb-1 text-sm">1.5% Capital Preservation Rule</strong>
+                  Never allocate or risk more than 1.5% of total portfolio equity on a single non-directional options leg.
                 </div>
               </div>
-              <button className="text-gray-400 hover:text-white">
-                {showCheatSheet ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-              </button>
+
+              <div className="p-4 rounded-xl bg-neutral-900/80 border border-white/5 flex items-start space-x-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-white block font-bold mb-1 text-sm">30% Unutilized Cash Buffer</strong>
+                  Maintain a minimum 30% liquid cash buffer to absorb sharp India VIX expansion without margin calls.
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-neutral-900/80 border border-white/5 flex items-start space-x-3">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-white block font-bold mb-1 text-sm">Delta Boundary Adjustment</strong>
+                  Rebalance or roll untested option wings once tested strike Delta breaches 0.35.
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-neutral-900/80 border border-white/5 flex items-start space-x-3">
+                <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-amber-400 block font-bold mb-1 text-sm">Final 3-Day Gamma Spike Alert</strong>
+                  Close or convert short ITM/ATM option positions into defined-risk spreads inside 72 hours to expiry.
+                </div>
+              </div>
             </div>
-
-            {showCheatSheet && (
-              <div className="space-y-3 text-xs font-mono text-gray-300">
-                <div className="p-3 rounded-xl bg-neutral-900/80 border border-white/5 flex items-start space-x-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white block font-bold mb-0.5">1% Capital Preservation Rule</strong>
-                    Never allocate or risk more than 1.5% of total portfolio equity on a single non-directional options leg.
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-neutral-900/80 border border-white/5 flex items-start space-x-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white block font-bold mb-0.5">30% Unutilized Cash Buffer</strong>
-                    Maintain a minimum 30% liquid cash buffer to absorb sharp India VIX expansion without margin calls.
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-neutral-900/80 border border-white/5 flex items-start space-x-3">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-white block font-bold mb-0.5">Delta Boundary Adjustment</strong>
-                    Rebalance or roll untested option wings once tested strike Delta breaches 0.35.
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-neutral-900/80 border border-white/5 flex items-start space-x-3">
-                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="text-amber-400 block font-bold mb-0.5">Final 3-Day Gamma Spike Alert</strong>
-                    Close or convert short ITM/ATM option positions into defined-risk spreads inside 72 hours to expiry.
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
+          )}
         </div>
 
         {/* 5. Economic Calendar Playbook */}

@@ -8,9 +8,9 @@ const INDEX_TICKER_ITEMS = [
   { symbol: 'BANK NIFTY', name: 'Bank Nifty' },
   { symbol: 'SENSEX', name: 'Sensex' },
   { symbol: 'DOW JONES', name: 'Dow Jones Industrial Average' },
-  { symbol: 'NASDAQ 100', name: 'Nasdaq 100' },
-  { symbol: 'S&P 100', name: 'S&P 100' },
-  { symbol: 'FTSE', name: 'FTSE' },
+  { symbol: 'S&P 500', name: 'S&P 500' },
+  { symbol: 'NASDAQ', name: 'Nasdaq Composite' },
+  { symbol: 'FTSE', name: 'FTSE 100' },
   { symbol: 'INDIA VIX', name: 'India VIX' }
 ];
 

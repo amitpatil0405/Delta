@@ -54,12 +54,15 @@ export function getYahooSymbol(symbol) {
   if (s === 'NIFTY IT' || s === 'CNXIT') return '^CNXIT';
   if (s === 'NIFTY FIN SERVICE' || s === 'NIFTY FINANCIAL SERVICES') return 'NIFTY_FIN_SERVICE.NS';
   if (s === 'NIFTY MIDCAP 100' || s === 'NIFTY MIDCAP') return 'NIFTY_MIDCAP_100.NS';
-  if (s === 'DOW JONES' || s === 'DOW JONES INDUSTRIAL AVERAGE' || s === 'DJI') return '^DJI';
-  if (s === 'NASDAQ 100' || s === 'NASDAQ' || s === 'NDX') return '^NDX';
+  if (s === 'DOW JONES' || s === 'DOW JONES INDUSTRIAL AVERAGE' || s === 'DJI' || s === 'DOW 30') return '^DJI';
+  if (s === 'S&P 500' || s === 'S&P' || s === 'S&P500' || s === 'GSPC') return '^GSPC';
+  if (s === 'NASDAQ' || s === 'NASDAQ COMPOSITE' || s === 'IXIC') return '^IXIC';
+  if (s === 'NASDAQ 100' || s === 'NDX') return '^NDX';
   if (s === 'S&P 100' || s === 'OEX') return '^OEX';
   if (s === 'FTSE' || s === 'FTSE 100') return '^FTSE';
   if (s === 'INDIA VIX' || s === 'VIX') return '^INDIAVIX';
-  if (s === 'CRUDE OIL' || s === 'CRUDE OIL (BRENT)' || s === 'BRENT') return 'BZ=F';
+  if (s === 'CRUDE OIL' || s === 'CRUDE OIL (WTI)' || s === 'WTI') return 'CL=F';
+  if (s === 'BRENT' || s === 'CRUDE OIL (BRENT)') return 'BZ=F';
   if (s === 'USD-INR' || s === 'USDINR' || s === 'USD/INR') return 'INR=X';
 
   if (s === 'TMPV' || s === 'TATAMOTORS') return 'TATAMOTORS.NS';
@@ -115,12 +118,14 @@ const BASE_INDICES = [
   { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23774.65, open: 23890.00, high: 23890.00, low: 23771.95, prevClose: 24055.80, volume: '1.4B', sparkline: [24055.80, 23980.00, 23890.00, 23810.00, 23771.95, 23774.65] },
   { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57054.85, open: 57426.85, high: 57426.85, low: 57045.95, prevClose: 57409.60, volume: '910M', sparkline: [57409.60, 57350.00, 57220.00, 57110.00, 57045.95, 57054.85] },
   { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76192.62, open: 76477.19, high: 76477.19, low: 76161.43, prevClose: 76944.28, volume: '1.1B', sparkline: [76944.28, 76700.00, 76477.19, 76310.00, 76161.43, 76192.62] },
-  { symbol: 'DOW JONES', name: 'Dow Jones Industrial Average', yahooSymbol: '^DJI', price: 53414.25, open: 53680.00, high: 53750.00, low: 53350.00, prevClose: 53686.11, volume: '320M', sparkline: [53686.11, 53600.00, 53414.25] },
+  { symbol: 'DOW JONES', name: 'Dow Jones Industrial Average', yahooSymbol: '^DJI', price: 53414.25, open: 53680.00, high: 53750.00, low: 53350.00, prevClose: 53686.10, volume: '320M', sparkline: [53686.10, 53600.00, 53414.25] },
+  { symbol: 'S&P 500', name: 'S&P 500 Index', yahooSymbol: '^GSPC', price: 7718.60, open: 7740.00, high: 7750.00, low: 7700.00, prevClose: 7747.71, volume: '2.1B', sparkline: [7747.71, 7730.00, 7718.60] },
+  { symbol: 'NASDAQ', name: 'NASDAQ Composite', yahooSymbol: '^IXIC', price: 26506.99, open: 26580.00, high: 26620.00, low: 26450.00, prevClose: 26584.10, volume: '4.2B', sparkline: [26584.10, 26550.00, 26506.99] },
   { symbol: 'NASDAQ 100', name: 'NASDAQ 100', yahooSymbol: '^NDX', price: 29544.15, open: 29480.00, high: 29620.00, low: 29420.00, prevClose: 29482.32, volume: '850M', sparkline: [29482.32, 29500.00, 29544.15] },
   { symbol: 'S&P 100', name: 'S&P 100 Index', yahooSymbol: '^OEX', price: 3824.13, open: 3840.00, high: 3855.00, low: 3815.00, prevClose: 3844.99, volume: '410M', sparkline: [3844.99, 3830.00, 3824.13] },
-  { symbol: 'FTSE', name: 'FTSE 100 Index', yahooSymbol: '^FTSE', price: 10846.18, open: 10830.00, high: 10870.00, low: 10810.00, prevClose: 10831.10, volume: '290M', sparkline: [10831.10, 10840.00, 10846.18] },
+  { symbol: 'FTSE', name: 'FTSE 100 Index', yahooSymbol: '^FTSE', price: 10847.30, open: 10830.00, high: 10870.00, low: 10810.00, prevClose: 10831.10, volume: '290M', sparkline: [10831.10, 10840.00, 10847.30] },
   { symbol: 'INDIA VIX', name: 'India Volatility Index', yahooSymbol: '^INDIAVIX', price: 11.16, open: 10.68, high: 11.45, low: 10.50, prevClose: 10.68, volume: 'N/A', sparkline: [10.68, 11.00, 11.16] },
-  { symbol: 'CRUDE OIL', name: 'Brent Crude Oil', yahooSymbol: 'BZ=F', price: 96.28, open: 95.80, high: 96.60, low: 95.20, prevClose: 96.28, volume: '240K', sparkline: [95.80, 96.00, 96.28] },
+  { symbol: 'CRUDE OIL', name: 'WTI Crude Oil', yahooSymbol: 'CL=F', price: 91.48, open: 90.50, high: 92.10, low: 89.80, prevClose: 90.22, volume: '310K', sparkline: [90.22, 90.80, 91.48] },
   { symbol: 'USD-INR', name: 'USD / INR Exchange Rate', yahooSymbol: 'INR=X', price: 94.49, open: 94.50, high: 94.62, low: 94.42, prevClose: 94.50, volume: 'N/A', sparkline: [94.50, 94.48, 94.49] },
   { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 29999.15, open: 30377.10, high: 30377.10, low: 29997.40, prevClose: 31496.70, volume: '480M', sparkline: [31496.70, 30800.00, 30377.10, 30150.00, 29997.40, 29999.15] },
   { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 25936.35, open: 26080.60, high: 26080.60, low: 25931.55, prevClose: 26051.00, volume: '680M', sparkline: [26051.00, 26080.60, 26010.00, 25970.00, 25931.55, 25936.35] },
