@@ -151,7 +151,7 @@ export default function MarketOverviewSection() {
   // Economic Calendar & Macro Event Playbook Data
   const ECONOMIC_EVENTS = [
     {
-      date: '12 MAR 2025',
+      date: '12 MAR 2026',
       time: '17:30 IST',
       event: 'India Consumer Price Index (CPI Inflation)',
       country: '🇮🇳 INDIA',
@@ -163,19 +163,19 @@ export default function MarketOverviewSection() {
       strategy: 'Deploy Bull Put / Bear Call Spreads around structural NIFTY support levels.'
     },
     {
-      date: '19 MAR 2025',
+      date: '18 MAR 2026',
       time: '23:30 IST',
       event: 'US Fed FOMC Rate Decision & Policy Statement',
       country: '🇺🇸 UNITED STATES',
       impact: 'CRITICAL',
       impactBadge: 'bg-rose-500/20 text-rose-400 border-rose-500/40',
-      forecast: '4.50%',
-      previous: '4.75%',
+      forecast: '4.25%',
+      previous: '4.50%',
       description: 'Global benchmark liquidity anchor driving FII equity flows into NIFTY IT & Banking.',
       strategy: 'Hedge overnight gap risk via defined-risk OTM Iron Condors; harvest IV crush post-announcement.'
     },
     {
-      date: '04 APR 2025',
+      date: '03 APR 2026',
       time: '10:00 IST',
       event: 'RBI Monetary Policy Committee (MPC) Rate Decision',
       country: '🇮🇳 INDIA',
@@ -187,7 +187,7 @@ export default function MarketOverviewSection() {
       strategy: 'Execute delta-neutral Short Strangles prior to policy speech; capitalize on post-event IV collapse.'
     },
     {
-      date: '12 APR 2025',
+      date: '10 APR 2026',
       time: '17:30 IST',
       event: 'India Index of Industrial Production (IIP)',
       country: '🇮🇳 INDIA',
