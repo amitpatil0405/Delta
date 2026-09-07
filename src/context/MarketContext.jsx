@@ -78,7 +78,7 @@ export function MarketProvider({ children }) {
     };
 
     refreshData();
-    const timer = setInterval(refreshData, 10000);
+    const timer = setInterval(refreshData, 3000);
     return () => clearInterval(timer);
   }, []);
 

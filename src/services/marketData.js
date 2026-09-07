@@ -232,15 +232,21 @@ const BASE_STOCKS = {
 
 let cachedIndices = null;
 let cachedQuotes = {};
+let lastIndicesFetchTime = 0;
+let lastQuoteFetchTimes = {};
+
+const CACHE_TTL_MS = 3000; // 3-second rapid cache refresh TTL for instant automated updates
 
 /**
  * Fetch Live Indices Data from Yahoo Finance
- * During off-market hours (!status.isOpen), returns verified closing price data without fluctuations.
+ * During off-market hours (!status.isOpen), returns verified static closing price data without fluctuations.
+ * During live hours (status.isOpen), refreshes live market data instantly with 3s TTL.
  */
 export async function getIndices() {
   const status = getISTMarketStatus();
+  const now = Date.now();
 
-  // Strictly lock prices when market is offline (CLOSED, PRE-MARKET, POST-MARKET, WEEKEND)
+  // Strictly lock prices when market is offline (CLOSED, POST-MARKET, WEEKEND)
   if (!status.isOpen) {
     if (cachedIndices) {
       return {
@@ -271,7 +277,17 @@ export async function getIndices() {
     };
   }
 
-  // Live session active (09:15 - 15:30 IST): fetch live market data
+  // Check 3-second TTL cache during live market session
+  if (cachedIndices && (now - lastIndicesFetchTime < CACHE_TTL_MS)) {
+    return {
+      success: true,
+      data: cachedIndices,
+      timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      isLive: true
+    };
+  }
+
+  // Live session active: fetch fresh live market data from Yahoo Finance
   const updatedIndices = await Promise.all(
     BASE_INDICES.map(async (item) => {
       const result = await fetchYahooFinanceChart(item.yahooSymbol, '5d', '1d');
@@ -323,6 +339,8 @@ export async function getIndices() {
   );
 
   cachedIndices = updatedIndices;
+  lastIndicesFetchTime = now;
+
   return {
     success: true,
     data: updatedIndices,
@@ -338,6 +356,7 @@ export async function getQuote(symbol) {
   const symbolUpper = symbol.toUpperCase().trim();
   const yahooSymbol = getYahooSymbol(symbolUpper);
   const status = getISTMarketStatus();
+  const now = Date.now();
 
   // Strictly lock quotes when market is offline
   if (!status.isOpen) {
@@ -393,7 +412,15 @@ export async function getQuote(symbol) {
     return { success: true, data: fallbackData };
   }
 
-  // Live session active: fetch live quote
+  // Check 3-second cache during live hours
+  if (cachedQuotes[symbolUpper] && (now - (lastQuoteFetchTimes[symbolUpper] || 0) < CACHE_TTL_MS)) {
+    return {
+      success: true,
+      data: cachedQuotes[symbolUpper]
+    };
+  }
+
+  // Live session active: fetch live quote from Yahoo Finance
   const result = await fetchYahooFinanceChart(yahooSymbol, '5d', '1d');
   if (result && result.meta) {
     const meta = result.meta;
@@ -436,6 +463,7 @@ export async function getQuote(symbol) {
     };
 
     cachedQuotes[symbolUpper] = data;
+    lastQuoteFetchTimes[symbolUpper] = now;
     return { success: true, data };
   }
 

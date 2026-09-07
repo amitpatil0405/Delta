@@ -21,8 +21,8 @@ export default function OptionChainSection() {
 
   useEffect(() => {
     let isMounted = true;
-    const fetchChain = async () => {
-      setLoading(true);
+    const fetchChain = async (showLoading = false) => {
+      if (showLoading) setLoading(true);
       try {
         const res = await getOptionsChain(activeSymbol, expiry);
         if (isMounted && res.success) {
@@ -31,11 +31,20 @@ export default function OptionChainSection() {
       } catch (err) {
         console.error('Error fetching options chain:', err);
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted && showLoading) setLoading(false);
       }
     };
 
-    fetchChain();
+    fetchChain(true);
+    // Auto-refresh option chain every 3 seconds for instant updates without page reload
+    const interval = setInterval(() => {
+      fetchChain(false);
+    }, 3000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, [activeSymbol, expiry]);
 
   // Determine Max Call OI and Max Put OI for strength bar calculation & S/R labels
@@ -140,10 +149,10 @@ export default function OptionChainSection() {
             </span>
             <div className="flex items-center gap-4 text-[10px]">
               <span className="flex items-center gap-1.5 text-red-400">
-                <span className="w-3 h-1.5 rounded bg-red-500/80"></span> CALL OI STRENGTH
+                <span className="w-3 h-1.5 rounded bg-red-500/80"></span> CALL OI (IN QUANTITY)
               </span>
               <span className="flex items-center gap-1.5 text-emerald-400">
-                <span className="w-3 h-1.5 rounded bg-emerald-500/80"></span> PUT OI STRENGTH
+                <span className="w-3 h-1.5 rounded bg-emerald-500/80"></span> PUT OI (IN QUANTITY)
               </span>
             </div>
             <span className="text-red-400 flex items-center gap-1.5">
@@ -159,7 +168,7 @@ export default function OptionChainSection() {
             <table className="w-full border-collapse text-xs font-mono min-w-[950px]">
               <thead>
                 <tr className="text-gray-400 text-[11px] border-b border-[#181818] pb-2">
-                  <th className="py-2 text-left font-semibold w-28">CALL OI (STRENGTH)</th>
+                  <th className="py-2 text-left font-semibold w-28">CALL OI (IN QUANTITY)</th>
                   <th className="py-2 text-right font-semibold">CHG OI</th>
                   <th className="py-2 text-right font-semibold">VOL</th>
                   <th className="py-2 text-right font-semibold">IV</th>
@@ -171,7 +180,7 @@ export default function OptionChainSection() {
                   <th className="py-2 text-left font-semibold">IV</th>
                   <th className="py-2 text-left font-semibold">VOL</th>
                   <th className="py-2 text-left font-semibold">CHG OI</th>
-                  <th className="py-2 text-right font-semibold w-28">PUT OI (STRENGTH)</th>
+                  <th className="py-2 text-right font-semibold w-28">PUT OI (IN QUANTITY)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#141414]">
