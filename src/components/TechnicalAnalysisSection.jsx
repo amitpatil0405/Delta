@@ -77,7 +77,7 @@ export default function TechnicalAnalysisSection() {
 
   useEffect(() => {
     fetchAllSheetData();
-    const interval = setInterval(fetchAllSheetData, 20000); // 20s auto sync
+    const interval = setInterval(fetchAllSheetData, 10000); // 10s auto sync matching portfolio
     return () => clearInterval(interval);
   }, []);
 
@@ -192,17 +192,9 @@ export default function TechnicalAnalysisSection() {
             </p>
           </div>
 
-          <div className="flex items-center space-x-3 self-start md:self-auto">
-            <button
-              onClick={fetchAllSheetData}
-              className="flex items-center space-x-2 px-3.5 py-2 rounded-lg bg-neutral-900 border border-white/10 text-xs font-mono text-amber-400 hover:bg-neutral-800 transition-colors"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-              <span>SYNC GOOGLE SHEET</span>
-            </button>
-
-            <div className="flex items-center gap-2 bg-[#111111] border border-[#222222] px-3.5 py-2 rounded-lg text-xs font-mono text-gray-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <div className="flex items-center self-start md:self-auto">
+            <div className="flex items-center gap-2 bg-[#111111] border border-[#222222] px-3.5 py-2 rounded-lg text-xs font-mono text-gray-300 whitespace-nowrap">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
               <span>LIVE SYNCED: {lastSyncTime || 'LIVE'}</span>
             </div>
           </div>
@@ -307,8 +299,7 @@ export default function TechnicalAnalysisSection() {
                       </div>
                     </div>
 
-                    <div className="pt-3 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-gray-400">
-                      <span>SYNCED FROM GOOGLE SHEET</span>
+                    <div className="pt-3 border-t border-white/5 flex items-center justify-end text-[10px] font-mono text-gray-400">
                       <span className="text-amber-400">www.deltafox.in</span>
                     </div>
                   </div>
