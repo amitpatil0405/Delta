@@ -174,8 +174,8 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
                       key={`${item.symbol}-${idx}`}
                       onClick={() => {
                         setActiveSymbol(item.symbol);
-                        const optionsElem = document.getElementById('options');
-                        if (optionsElem) optionsElem.scrollIntoView({ behavior: 'smooth' });
+                        const chartElem = document.getElementById('charts-section');
+                        if (chartElem) chartElem.scrollIntoView({ behavior: 'smooth' });
                       }}
                       className="flex items-center space-x-2.5 bg-[#121212]/90 border border-white/10 hover:border-amber-500/50 hover:bg-[#1a1a1a] px-4 py-2 rounded-xl transition-all duration-300 cursor-pointer shrink-0 group/item shadow-lg"
                     >

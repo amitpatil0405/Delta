@@ -19,7 +19,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     };
     window.addEventListener('scroll', handleScroll);
 
-    const sectionIds = ['home', 'market-section', 'charts-section', 'watchlist-section', 'options', 'portfolio', 'strategies', 'training', 'about', 'contact'];
+    const sectionIds = ['home', 'market-section', 'charts-section', 'watchlist-section', 'news', 'portfolio', 'strategies', 'training', 'about', 'contact'];
     const observerOptions = {
       root: null,
       rootMargin: '-20% 0px -60% 0px',
@@ -30,7 +30,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const id = entry.target.id;
-          if (id === 'market-section' || id === 'charts-section' || id === 'watchlist-section' || id === 'options') {
+          if (id === 'market-section' || id === 'charts-section' || id === 'watchlist-section' || id === 'news') {
             setCurrentSection('market-section');
           } else {
             setCurrentSection(id);
@@ -54,6 +54,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'market-section', label: 'Market' },
+    { id: 'news', label: 'News' },
     { id: 'portfolio', label: 'Portfolio' },
     { id: 'strategies', label: 'Strategies' },
     { id: 'training', label: 'Training' },
@@ -139,7 +140,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             ))}
           </div>
 
-          {/* Right Top Corner: Market Status Indicator & Option Chain Button */}
+          {/* Right Top Corner: Market Status Indicator & Market News Button */}
           <div className="hidden xl:flex items-center space-x-3">
             {/* Dynamic Market Status Indicator with Blinking Circle */}
             <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
@@ -148,11 +149,11 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             </div>
 
             <button
-              onClick={() => handleNavClick('options')}
+              onClick={() => handleNavClick('news')}
               className="relative inline-flex items-center space-x-2 px-4 py-2 text-xs font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 to-amber-600 rounded-lg hover:from-amber-300 hover:to-amber-500 transition-all duration-300 shadow-[0_0_20px_rgba(217,119,6,0.4)] group active:scale-95"
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>INSTITUTIONAL OPTION CHAIN</span>
+              <span>LIVE MARKET NEWS</span>
             </button>
           </div>
 
@@ -163,11 +164,11 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             </div>
 
             <button
-              onClick={() => handleNavClick('options')}
+              onClick={() => handleNavClick('news')}
               className="relative inline-flex items-center space-x-2 px-3.5 py-2 text-xs font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 to-amber-600 rounded-lg shadow-[0_0_20px_rgba(217,119,6,0.4)]"
             >
               <Activity className="w-3.5 h-3.5" />
-              <span>OPTION CHAIN</span>
+              <span>MARKET NEWS</span>
             </button>
           </div>
 
@@ -220,11 +221,11 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
           </div>
 
           <button
-            onClick={() => handleNavClick('options')}
+            onClick={() => handleNavClick('news')}
             className="w-full mt-3 flex items-center justify-center space-x-2 py-3 text-sm font-bold uppercase text-black bg-amber-500 rounded-lg shadow-lg"
           >
             <Activity className="w-4 h-4" />
-            <span>INSTITUTIONAL OPTION CHAIN</span>
+            <span>LIVE MARKET NEWS</span>
           </button>
         </div>
       )}

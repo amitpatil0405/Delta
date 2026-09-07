@@ -1,6 +1,6 @@
 /**
  * DeltaFox Market Data Service
- * Provides indices, individual stock quotes, historical candle data, options chain data,
+ * Provides indices, individual stock quotes, historical candle data,
  * and market status in Indian Standard Time (IST).
  *
  * Uses Yahoo Finance primary API endpoints query1 & query2 with CORS proxies fallback.
@@ -10,7 +10,6 @@
 export function getISTMarketStatus() {
   const now = new Date();
 
-  // Convert current UTC time to IST (UTC + 5:30)
   const utcHours = now.getUTCHours();
   const utcMinutes = now.getUTCMinutes();
   const totalUtcMinutes = utcHours * 60 + utcMinutes;
@@ -22,7 +21,6 @@ export function getISTMarketStatus() {
   const istMins = istMinutes % 60;
   const timeInMinutes = istHours * 60 + istMins;
 
-  // Determine day of week in IST
   const istDate = new Date(now.getTime() + 5.5 * 3600 * 1000);
   const day = istDate.getUTCDay(); // 0: Sun, 6: Sat
 
@@ -47,110 +45,7 @@ function formatISTTime(hours, mins) {
   return `${hStr}:${mStr} IST`;
 }
 
-/**
- * Single Coming Expiry Date Generator
- */
-const NSE_BSE_HOLIDAYS = [
-  '2025-01-26', '2025-02-26', '2025-03-14', '2025-03-31', '2025-04-10', '2025-04-14', '2025-04-18', '2025-05-01', '2025-08-15', '2025-10-02', '2025-10-21', '2025-10-22', '2025-11-05', '2025-12-25',
-  '2026-01-26', '2026-03-03', '2026-03-20', '2026-04-03', '2026-04-14', '2026-05-01', '2026-05-27', '2026-08-15', '2026-10-02', '2026-10-20', '2026-11-08', '2026-11-24', '2026-12-25'
-];
-
-function isHolidayOrWeekend(d) {
-  const dayOfWeek = d.getDay();
-  if (dayOfWeek === 0 || dayOfWeek === 6) return true;
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  const dateStr = `${y}-${m}-${day}`;
-  return NSE_BSE_HOLIDAYS.includes(dateStr);
-}
-
-function adjustForHolidays(targetDate) {
-  const d = new Date(targetDate);
-  while (isHolidayOrWeekend(d)) {
-    d.setDate(d.getDate() - 1);
-  }
-  return d;
-}
-
-export function getExpiryOptions(symbol = 'NIFTY 50', baseDate = new Date()) {
-  const s = symbol.toUpperCase().trim();
-  const today = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
-
-  const formatDateStr = (d) => {
-    const day = String(d.getDate()).padStart(2, '0');
-    const monthNames = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-    const month = monthNames[d.getMonth()];
-    const year = d.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
-  const getLastWeekdayOfMonth = (year, monthIndex, targetWeekday) => {
-    const lastDay = new Date(year, monthIndex + 1, 0);
-    while (lastDay.getDay() !== targetWeekday) {
-      lastDay.setDate(lastDay.getDate() - 1);
-    }
-    return lastDay;
-  };
-
-  const isSensex = (s === 'SENSEX' || s === 'BSESN' || s === 'BSE SENSEX');
-  const isNiftyIndex = (s === 'NIFTY 50' || s === 'NIFTY50' || s === 'NIFTY' || s === 'NIFTY IT' || s === 'NIFTY FIN SERVICE' || s === 'NIFTY MIDCAP 100');
-
-  let rawExpiryDate;
-  let isMonthly = false;
-
-  if (isNiftyIndex) {
-    const targetDay = 2; // Tuesday
-    let current = new Date(today);
-    while (current.getDay() !== targetDay) {
-      current.setDate(current.getDate() + 1);
-    }
-    rawExpiryDate = current;
-
-    const year = rawExpiryDate.getFullYear();
-    const month = rawExpiryDate.getMonth();
-    const lastTuesday = getLastWeekdayOfMonth(year, month, 2);
-    if (rawExpiryDate.getDate() === lastTuesday.getDate() && rawExpiryDate.getMonth() === lastTuesday.getMonth()) {
-      isMonthly = true;
-    }
-  } else if (isSensex) {
-    const targetDay = 4; // Thursday
-    let current = new Date(today);
-    while (current.getDay() !== targetDay) {
-      current.setDate(current.getDate() + 1);
-    }
-    rawExpiryDate = current;
-
-    const year = rawExpiryDate.getFullYear();
-    const month = rawExpiryDate.getMonth();
-    const lastThursday = getLastWeekdayOfMonth(year, month, 4);
-    if (rawExpiryDate.getDate() === lastThursday.getDate() && rawExpiryDate.getMonth() === lastThursday.getMonth()) {
-      isMonthly = true;
-    }
-  } else {
-    let currYear = today.getFullYear();
-    let currMonth = today.getMonth();
-    let lastTue = getLastWeekdayOfMonth(currYear, currMonth, 2);
-
-    if (today > lastTue) {
-      currMonth++;
-      if (currMonth > 11) {
-        currMonth = 0;
-        currYear++;
-      }
-      lastTue = getLastWeekdayOfMonth(currYear, currMonth, 2);
-    }
-    rawExpiryDate = lastTue;
-    isMonthly = true;
-  }
-
-  const finalExpiryDate = adjustForHolidays(rawExpiryDate);
-  const label = `${formatDateStr(finalExpiryDate)} (${isMonthly ? 'Monthly Expiry' : 'Weekly Expiry'})`;
-
-  return [label];
-}
-
-// Yahoo Symbol mapping helper
+// Yahoo Symbol mapping helper for all 42 stocks & indices
 export function getYahooSymbol(symbol) {
   const s = symbol.toUpperCase().trim();
   if (s === 'NIFTY 50' || s === 'NIFTY' || s === 'NIFTY50') return '^NSEI';
@@ -159,6 +54,18 @@ export function getYahooSymbol(symbol) {
   if (s === 'NIFTY IT' || s === 'CNXIT') return '^CNXIT';
   if (s === 'NIFTY FIN SERVICE' || s === 'NIFTY FINANCIAL SERVICES') return 'NIFTY_FIN_SERVICE.NS';
   if (s === 'NIFTY MIDCAP 100' || s === 'NIFTY MIDCAP') return 'NIFTY_MIDCAP_100.NS';
+
+  if (s === 'TMPV' || s === 'TATAMOTORS') return 'TATAMOTORS.NS';
+  if (s === 'NESTLEIND' || s === 'NETSTLE INDIA' || s === 'NESTLE INDIA') return 'NESTLEIND.NS';
+  if (s === 'BRITANNIA' || s === 'BRITANIA') return 'BRITANNIA.NS';
+  if (s === 'TATACONSUM' || s === 'TATA CONSUMER' || s === 'TATA COSUMER') return 'TATACONSUM.NS';
+  if (s === 'HEROMOTOCO' || s === 'HERO MOTORCORP' || s === 'HERO MOTOCORP') return 'HEROMOTOCO.NS';
+  if (s === 'EICHERMOT' || s === 'EICHER MOTORS') return 'EICHERMOT.NS';
+  if (s === 'BAJAJ-AUTO' || s === 'BAJAJ AUTO') return 'BAJAJ-AUTO.NS';
+  if (s === 'BAJAJFINSV' || s === 'BAJAJ FINSERV') return 'BAJAJFINSV.NS';
+  if (s === 'BAJFINANCE' || s === 'BAJAJ FINANCE') return 'BAJFINANCE.NS';
+  if (s === 'LTIM' || s === 'LTM') return 'LTIM.NS';
+  if (s === 'TECHM' || s === 'TECH MAHINDRA') return 'TECHM.NS';
 
   if (s.includes('.NS') || s.includes('.BO') || s.startsWith('^')) return s;
 
@@ -206,16 +113,48 @@ const BASE_INDICES = [
 ];
 
 const BASE_STOCKS = {
+  'RELIANCE': { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 1312.70, open: 1324.20, high: 1324.20, low: 1312.00, prevClose: 1309.00, volume: '9.7M' },
+  'BHARTIARTL': { symbol: 'BHARTIARTL', name: 'Bharti Airtel Ltd.', price: 1680.50, open: 1695.00, high: 1702.00, low: 1675.00, prevClose: 1690.00, volume: '5.2M' },
   'HDFCBANK': { symbol: 'HDFCBANK', name: 'HDFC Bank Ltd.', price: 709.40, open: 713.00, high: 713.00, low: 708.75, prevClose: 711.90, volume: '27.7M' },
   'ICICIBANK': { symbol: 'ICICIBANK', name: 'ICICI Bank Ltd.', price: 1427.30, open: 1434.40, high: 1434.40, low: 1423.40, prevClose: 1438.00, volume: '10.5M' },
   'SBIN': { symbol: 'SBIN', name: 'State Bank of India', price: 1003.60, open: 1021.70, high: 1021.70, low: 1003.20, prevClose: 1034.50, volume: '18.3M' },
+  'SBICARD': { symbol: 'SBICARD', name: 'SBI Cards & Payment Services', price: 661.00, open: 641.00, high: 667.40, low: 641.00, prevClose: 641.00, volume: '2.8M' },
   'TCS': { symbol: 'TCS', name: 'Tata Consultancy Services', price: 2275.30, open: 2299.90, high: 2299.90, low: 2272.20, prevClose: 2369.00, volume: '1.9M' },
-  'INFY': { symbol: 'INFY', name: 'Infosys Limited', price: 1093.40, open: 1109.90, high: 1109.90, low: 1093.20, prevClose: 1156.00, volume: '6.1M' },
-  'RELIANCE': { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 1312.70, open: 1324.20, high: 1324.20, low: 1312.00, prevClose: 1309.00, volume: '9.7M' },
-  'BHARTIARTL': { symbol: 'BHARTIARTL', name: 'Bharti Airtel Ltd.', price: 1680.50, open: 1695.00, high: 1702.00, low: 1675.00, prevClose: 1690.00, volume: '5.2M' },
-  'ITC': { symbol: 'ITC', name: 'ITC Limited', price: 468.20, open: 472.00, high: 474.50, low: 466.00, prevClose: 471.00, volume: '12.1M' },
+  'BAJFINANCE': { symbol: 'BAJFINANCE', name: 'Bajaj Finance Ltd.', price: 6845.00, open: 6802.00, high: 6890.00, low: 6802.00, prevClose: 6802.00, volume: '2.1M' },
   'LT': { symbol: 'LT', name: 'Larsen & Toubro Ltd.', price: 3620.00, open: 3650.00, high: 3675.00, low: 3600.00, prevClose: 3640.00, volume: '2.4M' },
-  'MARUTI': { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', price: 11450.00, open: 11520.00, high: 11600.00, low: 11400.00, prevClose: 11500.00, volume: '850K' }
+  'INFY': { symbol: 'INFY', name: 'Infosys Limited', price: 1093.40, open: 1109.90, high: 1109.90, low: 1093.20, prevClose: 1156.00, volume: '6.1M' },
+  'HINDUNILVR': { symbol: 'HINDUNILVR', name: 'Hindustan Unilever Ltd.', price: 2350.00, open: 2365.00, high: 2370.00, low: 2340.00, prevClose: 2365.00, volume: '2.1M' },
+  'SUNPHARMA': { symbol: 'SUNPHARMA', name: 'Sun Pharmaceutical Ind.', price: 1720.00, open: 1735.00, high: 1745.00, low: 1715.00, prevClose: 1730.00, volume: '3.1M' },
+  'TITAN': { symbol: 'TITAN', name: 'Titan Company Ltd.', price: 3250.00, open: 3270.00, high: 3285.00, low: 3240.00, prevClose: 3260.00, volume: '1.8M' },
+  'KOTAKBANK': { symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank', price: 1780.50, open: 1795.00, high: 1795.00, low: 1775.00, prevClose: 1795.00, volume: '4.2M' },
+  'MARUTI': { symbol: 'MARUTI', name: 'Maruti Suzuki India Ltd.', price: 11450.00, open: 11520.00, high: 11600.00, low: 11400.00, prevClose: 11500.00, volume: '850K' },
+  'M&M': { symbol: 'M&M', name: 'Mahindra & Mahindra Ltd.', price: 2850.00, open: 2880.00, high: 2890.00, low: 2840.00, prevClose: 2880.00, volume: '3.4M' },
+  'ADANIENT': { symbol: 'ADANIENT', name: 'Adani Enterprises Ltd.', price: 2450.00, open: 2480.00, high: 2495.00, low: 2435.00, prevClose: 2470.00, volume: '4.8M' },
+  'ADANIPORTS': { symbol: 'ADANIPORTS', name: 'Adani Ports & SEZ', price: 1180.00, open: 1195.00, high: 1205.00, low: 1175.00, prevClose: 1190.00, volume: '5.6M' },
+  'AXISBANK': { symbol: 'AXISBANK', name: 'Axis Bank Ltd.', price: 1145.00, open: 1152.00, high: 1158.00, low: 1140.00, prevClose: 1152.00, volume: '6.7M' },
+  'TATAMOTORS': { symbol: 'TATAMOTORS', name: 'Tata Motors Limited', price: 785.00, open: 795.00, high: 802.00, low: 780.00, prevClose: 792.00, volume: '11.4M' },
+  'ITC': { symbol: 'ITC', name: 'ITC Limited', price: 468.20, open: 472.00, high: 474.50, low: 466.00, prevClose: 471.00, volume: '12.1M' },
+  'WIPRO': { symbol: 'WIPRO', name: 'Wipro Limited', price: 242.50, open: 246.00, high: 246.00, low: 241.00, prevClose: 246.00, volume: '8.4M' },
+  'HCLTECH': { symbol: 'HCLTECH', name: 'HCL Technologies', price: 1319.00, open: 1345.00, high: 1345.00, low: 1308.00, prevClose: 1345.00, volume: '3.2M' },
+  'BAJAJ-AUTO': { symbol: 'BAJAJ-AUTO', name: 'Bajaj Auto Ltd.', price: 8850.00, open: 8920.00, high: 8950.00, low: 8800.00, prevClose: 8920.00, volume: '620K' },
+  'NTPC': { symbol: 'NTPC', name: 'NTPC Limited', price: 345.00, open: 348.00, high: 351.00, low: 342.00, prevClose: 347.00, volume: '15.2M' },
+  'POWERGRID': { symbol: 'POWERGRID', name: 'Power Grid Corp of India', price: 285.00, open: 288.00, high: 290.00, low: 283.00, prevClose: 287.00, volume: '13.8M' },
+  'BAJAJFINSV': { symbol: 'BAJAJFINSV', name: 'Bajaj Finserv Ltd.', price: 1620.00, open: 1635.00, high: 1642.00, low: 1610.00, prevClose: 1630.00, volume: '3.5M' },
+  'TECHM': { symbol: 'TECHM', name: 'Tech Mahindra Ltd.', price: 1280.00, open: 1295.00, high: 1295.00, low: 1275.00, prevClose: 1295.00, volume: '2.5M' },
+  'LTIM': { symbol: 'LTIM', name: 'LTIMindtree Ltd.', price: 4850.00, open: 4900.00, high: 4920.00, low: 4830.00, prevClose: 4890.00, volume: '1.2M' },
+  'ONGC': { symbol: 'ONGC', name: 'Oil & Natural Gas Corp', price: 236.00, open: 237.80, high: 237.80, low: 235.00, prevClose: 237.80, volume: '14.1M' },
+  'BPCL': { symbol: 'BPCL', name: 'Bharat Petroleum Corp', price: 320.05, open: 317.20, high: 321.95, low: 317.20, prevClose: 317.20, volume: '9.3M' },
+  'ATGL': { symbol: 'ATGL', name: 'Adani Total Gas Ltd.', price: 614.05, open: 622.00, high: 622.00, low: 612.95, prevClose: 622.00, volume: '4.5M' },
+  'GAIL': { symbol: 'GAIL', name: 'GAIL (India) Ltd.', price: 174.67, open: 172.01, high: 174.67, low: 172.01, prevClose: 172.01, volume: '8.7M' },
+  'BRITANNIA': { symbol: 'BRITANNIA', name: 'Britannia Industries', price: 5130.00, open: 5146.00, high: 5146.00, low: 5079.00, prevClose: 5146.00, volume: '620K' },
+  'NESTLEIND': { symbol: 'NESTLEIND', name: 'Nestle India Ltd.', price: 2180.00, open: 2200.00, high: 2210.00, low: 2170.00, prevClose: 2195.00, volume: '810K' },
+  'TATACONSUM': { symbol: 'TATACONSUM', name: 'Tata Consumer Products', price: 1019.20, open: 1008.00, high: 1023.00, low: 1008.00, prevClose: 1008.00, volume: '1.9M' },
+  'DABUR': { symbol: 'DABUR', name: 'Dabur India Ltd.', price: 515.00, open: 520.00, high: 524.00, low: 512.00, prevClose: 518.00, volume: '3.1M' },
+  'MARICO': { symbol: 'MARICO', name: 'Marico Limited', price: 620.00, open: 625.00, high: 628.00, low: 618.00, prevClose: 625.00, volume: '3.4M' },
+  'GODREJCP': { symbol: 'GODREJCP', name: 'Godrej Consumer Products', price: 1180.00, open: 1190.00, high: 1195.00, low: 1175.00, prevClose: 1190.00, volume: '2.2M' },
+  'TMPV': { symbol: 'TMPV', name: 'Tata Motors Passenger Vehicles', price: 785.00, open: 795.00, high: 802.00, low: 780.00, prevClose: 792.00, volume: '11.4M' },
+  'EICHERMOT': { symbol: 'EICHERMOT', name: 'Eicher Motors Ltd.', price: 4780.00, open: 4810.00, high: 4820.00, low: 4750.00, prevClose: 4810.00, volume: '890K' },
+  'HEROMOTOCO': { symbol: 'HEROMOTOCO', name: 'Hero MotoCorp Ltd.', price: 4680.00, open: 4720.00, high: 4730.00, low: 4660.00, prevClose: 4720.00, volume: '750K' }
 };
 
 let cachedIndices = null;
@@ -232,7 +171,6 @@ export async function getIndices() {
   const status = getISTMarketStatus();
   const now = Date.now();
 
-  // Return live-cached or baseline data if market is offline
   if (!status.isOpen && cachedIndices) {
     return {
       success: true,
@@ -242,7 +180,6 @@ export async function getIndices() {
     };
   }
 
-  // Cache check for live session
   if (cachedIndices && (now - lastIndicesFetchTime < CACHE_TTL_MS)) {
     return {
       success: true,
@@ -252,7 +189,6 @@ export async function getIndices() {
     };
   }
 
-  // Fetch from live endpoints
   const updatedIndices = await Promise.all(
     BASE_INDICES.map(async (item) => {
       const result = await fetchYahooFinanceChart(item.yahooSymbol, '5d', '1d');
@@ -263,12 +199,8 @@ export async function getIndices() {
 
         if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
           const closes = result.indicators.quote[0].close.filter(c => c !== null);
-          if (closes.length > 0) {
-            currentPrice = closes[closes.length - 1];
-          }
-          if (closes.length >= 2) {
-            prevClosePrice = closes[closes.length - 2];
-          }
+          if (closes.length > 0) currentPrice = closes[closes.length - 1];
+          if (closes.length >= 2) prevClosePrice = closes[closes.length - 2];
         }
 
         const change = currentPrice - prevClosePrice;
@@ -513,181 +445,4 @@ function seededRandom(symbol, strike, key) {
   }
   const x = Math.sin(hash) * 10000;
   return x - Math.floor(x);
-}
-
-/**
- * Fetch Options Chain Data
- */
-export async function getOptionsChain(symbol = 'NIFTY 50', expiry = '') {
-  const quoteRes = await getQuote(symbol);
-  const spotPrice = quoteRes.data ? quoteRes.data.price : 24000.00;
-
-  let step = 50;
-  let majorRoundStep = 500;
-  const sUpper = symbol.toUpperCase().trim();
-
-  const isBankIndex = (sUpper.includes('BANK NIFTY') || sUpper.includes('BANKNIFTY') || sUpper.includes('NIFTY BANK') || sUpper.includes('SENSEX'));
-  const isNiftyIndex = (sUpper === 'NIFTY 50' || sUpper === 'NIFTY' || sUpper === 'NIFTY50' || sUpper.includes('NIFTY IT') || sUpper.includes('NIFTY FIN'));
-
-  if (isBankIndex) {
-    step = 100;
-    majorRoundStep = 1000;
-  } else if (isNiftyIndex) {
-    step = 50;
-    majorRoundStep = 500;
-  } else if (spotPrice > 3000) {
-    step = 50;
-    majorRoundStep = 200;
-  } else if (spotPrice > 1000) {
-    step = 10;
-    majorRoundStep = 50;
-  } else if (spotPrice > 500) {
-    step = 10;
-    majorRoundStep = 50;
-  } else {
-    step = 5;
-    majorRoundStep = 25;
-  }
-
-  const atmStrike = Math.round(spotPrice / step) * step;
-
-  let targetPutSupport = Math.floor(spotPrice / majorRoundStep) * majorRoundStep;
-  if (targetPutSupport > spotPrice || targetPutSupport === 0) {
-    targetPutSupport = atmStrike - step;
-  }
-
-  let targetCallResistance = Math.ceil(spotPrice / majorRoundStep) * majorRoundStep;
-  if (targetCallResistance <= spotPrice) {
-    targetCallResistance = atmStrike + (majorRoundStep / step >= 2 ? majorRoundStep : 2 * step);
-  }
-
-  const countAround = 8;
-  const strikes = [];
-
-  let totalCallOI = 0;
-  let totalPutOI = 0;
-
-  for (let i = -countAround; i <= countAround; i++) {
-    const strike = atmStrike + i * step;
-    const dist = (strike - spotPrice) / spotPrice;
-
-    let roundnessMultiplier = 1.0;
-    if (majorRoundStep >= 500 && strike % 1000 === 0) roundnessMultiplier = 2.6;
-    else if (strike % majorRoundStep === 0) roundnessMultiplier = 2.2;
-    else if (strike % (majorRoundStep / 2) === 0) roundnessMultiplier = 1.6;
-    else if (strike % (step * 2) === 0) roundnessMultiplier = 1.3;
-    else roundnessMultiplier = 0.85;
-
-    const callDistFromTarget = (strike - targetCallResistance) / step;
-    const callGauss = Math.exp(-Math.pow(callDistFromTarget, 2) / 6.0);
-    const callOI = Math.floor((120000 * callGauss * roundnessMultiplier) + (seededRandom(symbol, strike, 'cOI') * 12000) + 15000);
-    const callOIChange = Math.floor((seededRandom(symbol, strike, 'cChg') - 0.35) * (callOI * 0.15));
-    const callVolume = Math.floor(callOI * (0.35 + seededRandom(symbol, strike, 'cVol') * 0.3));
-
-    const callIntrinsic = Math.max(0, spotPrice - strike);
-    const callTimeValue = Math.exp(-Math.abs(dist) * 8) * spotPrice * 0.018;
-    const callLTP = parseFloat(Math.max(1, callIntrinsic + callTimeValue).toFixed(2));
-    const callIV = parseFloat((14.10 + Math.abs(dist) * 9 + seededRandom(symbol, strike, 'cIV') * 0.5).toFixed(2));
-    const callBid = parseFloat((callLTP * 0.995).toFixed(2));
-    const callAsk = parseFloat((callLTP * 1.005).toFixed(2));
-    const callChg = parseFloat(((seededRandom(symbol, strike, 'cChgVal') - 0.42) * 8).toFixed(2));
-
-    const putDistFromTarget = (strike - targetPutSupport) / step;
-    const putGauss = Math.exp(-Math.pow(putDistFromTarget, 2) / 6.0);
-    const putOI = Math.floor((125000 * putGauss * roundnessMultiplier) + (seededRandom(symbol, strike, 'pOI') * 12000) + 15000);
-    const putOIChange = Math.floor((seededRandom(symbol, strike, 'pChg') - 0.3) * (putOI * 0.15));
-    const putVolume = Math.floor(putOI * (0.38 + seededRandom(symbol, strike, 'pVol') * 0.3));
-
-    const putIntrinsic = Math.max(0, strike - spotPrice);
-    const putTimeValue = Math.exp(-Math.abs(dist) * 8) * spotPrice * 0.018;
-    const putLTP = parseFloat(Math.max(1, putIntrinsic + putTimeValue).toFixed(2));
-    const putIV = parseFloat((14.60 + Math.abs(dist) * 9.5 + seededRandom(symbol, strike, 'pIV') * 0.5).toFixed(2));
-    const putBid = parseFloat((putLTP * 0.995).toFixed(2));
-    const putAsk = parseFloat((putLTP * 1.005).toFixed(2));
-    const putChg = parseFloat(((seededRandom(symbol, strike, 'pChgVal') - 0.38) * 8).toFixed(2));
-
-    totalCallOI += callOI;
-    totalPutOI += putOI;
-
-    strikes.push({
-      strike,
-      isATM: strike === atmStrike,
-      calls: {
-        oi: callOI,
-        oiChange: callOIChange,
-        volume: callVolume,
-        iv: callIV,
-        ltp: callLTP,
-        change: callChg,
-        bid: callBid,
-        ask: callAsk
-      },
-      puts: {
-        oi: putOI,
-        oiChange: putOIChange,
-        volume: putVolume,
-        iv: putIV,
-        ltp: putLTP,
-        change: putChg,
-        bid: putBid,
-        ask: putAsk
-      }
-    });
-  }
-
-  let maxCallOIStrike = strikes[0].strike;
-  let maxCallOIVal = 0;
-  let maxPutOIStrike = strikes[0].strike;
-  let maxPutOIVal = 0;
-
-  strikes.forEach(s => {
-    if (s.calls.oi > maxCallOIVal) {
-      maxCallOIVal = s.calls.oi;
-      maxCallOIStrike = s.strike;
-    }
-    if (s.puts.oi > maxPutOIVal) {
-      maxPutOIVal = s.puts.oi;
-      maxPutOIStrike = s.strike;
-    }
-  });
-
-  const pcr = parseFloat((totalPutOI / (totalCallOI || 1)).toFixed(2));
-  const maxPain = atmStrike;
-
-  return {
-    success: true,
-    symbol,
-    expiry,
-    spotPrice,
-    atmStrike,
-    pcr,
-    maxPain,
-    maxCallOIStrike,
-    maxPutOIStrike,
-    totalCallOI,
-    totalPutOI,
-    strikes
-  };
-}
-
-/**
- * Fetch Market Sentiment
- */
-export async function getMarketSentiment() {
-  return {
-    success: true,
-    sentiment: {
-      niftySentiment: 'BULLISH',
-      niftyScore: 72,
-      bankNiftySentiment: 'NEUTRAL-BULLISH',
-      bankNiftyScore: 58,
-      indiaVix: 13.42,
-      vixChange: -0.45,
-      fiiActivity: { buy: 12450.80, sell: 10890.20, net: +1560.60, unit: 'Cr INR' },
-      diiActivity: { buy: 9810.40, sell: 9120.10, net: +690.30, unit: 'Cr INR' },
-      advanceDecline: { advances: 1420, declines: 780, unchanged: 102, ratio: 1.82 },
-      marketBreadth: 'STRONG BULLISH BREADTH',
-      lastUpdated: new Date().toLocaleTimeString('en-IN')
-    }
-  };
 }
