@@ -31,7 +31,7 @@ export function getISTMarketStatus() {
   if (isWeekend) {
     return { status: 'MARKET CLOSED', isOpen: false, detail: 'Weekend - Market Closed', istTime: formatISTTime(istHours, istMins) };
   } else if (timeInMinutes >= 540 && timeInMinutes < 555) {
-    return { status: 'PRE-MARKET', isOpen: true, detail: 'Pre-Market Session (09:00 - 09:15 IST)', istTime: formatISTTime(istHours, istMins) };
+    return { status: 'PRE-MARKET', isOpen: false, detail: 'Pre-Market Session (09:00 - 09:15 IST)', istTime: formatISTTime(istHours, istMins) };
   } else if (timeInMinutes >= 555 && timeInMinutes < 930) {
     return { status: 'MARKET OPEN', isOpen: true, detail: 'Live Market Session (09:15 - 15:30 IST)', istTime: formatISTTime(istHours, istMins) };
   } else if (timeInMinutes >= 930 && timeInMinutes < 960) {
@@ -208,12 +208,12 @@ async function fetchYahooFinanceChart(yahooSymbol, range = '1d', interval = '5m'
 
 // Verified market indices baseline matching exact market prices
 const BASE_INDICES = [
-  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23956.30, open: 23997.95, high: 24005.75, low: 23895.85, prevClose: 23873.45, volume: '1.4B', sparkline: [23873, 23900, 23997, 24005, 23895, 23956.30] },
-  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57546.05, open: 57497.85, high: 57677.15, low: 57324.55, prevClose: 57380.60, volume: '910M', sparkline: [57380, 57497, 57550, 57677, 57400, 57546.05] },
-  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76720.11, open: 76724.95, high: 76883.14, low: 76529.50, prevClose: 76152.86, volume: '1.1B', sparkline: [76152, 76724, 76800, 76883, 76600, 76720.11] },
-  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30728.00, open: 31180.80, high: 31263.20, low: 30703.65, prevClose: 30838.85, volume: '480M', sparkline: [30838, 31180, 31263, 31000, 30703, 30728.00] },
-  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 26104.85, open: 25967.05, high: 26174.00, low: 25987.10, prevClose: 25967.05, volume: '680M', sparkline: [25967, 26050, 26174, 26000, 26104.85] },
-  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63125.95, open: 63186.15, high: 63407.80, low: 63063.10, prevClose: 63235.20, volume: '590M', sparkline: [63235, 63186, 63250, 63407, 63063, 63125.95] },
+  { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23897.70, open: 23997.95, high: 24005.75, low: 23895.85, prevClose: 23873.45, volume: '1.4B', sparkline: [23873, 23900, 23997, 24005, 23895, 23897.70] },
+  { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57369.65, open: 57497.85, high: 57677.15, low: 57324.55, prevClose: 57380.60, volume: '910M', sparkline: [57380, 57497, 57550, 57677, 57324, 57369.65] },
+  { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76515.43, open: 76724.95, high: 76883.14, low: 76515.43, prevClose: 76152.86, volume: '1.1B', sparkline: [76152, 76724, 76800, 76883, 76515, 76515.43] },
+  { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 30728.00, open: 31180.80, high: 31263.20, low: 30656.70, prevClose: 30838.85, volume: '480M', sparkline: [30838, 31180, 31263, 31000, 30656, 30728.00] },
+  { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 26051.00, open: 25967.05, high: 26174.00, low: 25987.10, prevClose: 25967.05, volume: '680M', sparkline: [25967, 26050, 26174, 25987, 26051.00] },
+  { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 63079.05, open: 63186.15, high: 63407.80, low: 63063.10, prevClose: 63235.20, volume: '590M', sparkline: [63235, 63186, 63250, 63407, 63063, 63079.05] },
 ];
 
 const BASE_STOCKS = {
@@ -230,13 +230,48 @@ const BASE_STOCKS = {
   'RELIANCE': { symbol: 'RELIANCE', name: 'Reliance Industries Ltd.', price: 1302.50, open: 1313.10, high: 1316.80, low: 1302.50, prevClose: 1313.10, volume: '9.7M' }
 };
 
+let cachedIndices = null;
+let cachedQuotes = {};
+
 /**
  * Fetch Live Indices Data from Yahoo Finance
- * Price change is strictly calculated relative to opening price:
- * If current price >= open -> positive change (green)
- * If current price < open -> negative change (red)
+ * During off-market hours (!status.isOpen), returns verified closing price data without fluctuations.
  */
 export async function getIndices() {
+  const status = getISTMarketStatus();
+
+  // Strictly lock prices when market is offline (CLOSED, PRE-MARKET, POST-MARKET, WEEKEND)
+  if (!status.isOpen) {
+    if (cachedIndices) {
+      return {
+        success: true,
+        data: cachedIndices,
+        timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        isLive: false
+      };
+    }
+
+    const staticIndices = BASE_INDICES.map(item => {
+      const prevClosePrice = item.prevClose || item.open;
+      const change = item.price - prevClosePrice;
+      const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
+      return {
+        ...item,
+        change: parseFloat(change.toFixed(2)),
+        pChange: parseFloat(pChange.toFixed(2))
+      };
+    });
+
+    cachedIndices = staticIndices;
+    return {
+      success: true,
+      data: staticIndices,
+      timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      isLive: false
+    };
+  }
+
+  // Live session active (09:15 - 15:30 IST): fetch live market data
   const updatedIndices = await Promise.all(
     BASE_INDICES.map(async (item) => {
       const result = await fetchYahooFinanceChart(item.yahooSymbol, '5d', '1d');
@@ -252,7 +287,6 @@ export async function getIndices() {
           }
         }
 
-        // Change calculated relative to Previous Close price (prefer verified baseline prevClose if available)
         const prevClosePrice = item.prevClose ?? meta.chartPreviousClose ?? openPrice;
         const change = currentPrice - prevClosePrice;
         const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
@@ -276,7 +310,6 @@ export async function getIndices() {
         };
       }
 
-      // Default baseline fallback: calculate relative to prevClose price
       const prevClosePrice = item.prevClose || item.open;
       const change = item.price - prevClosePrice;
       const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
@@ -289,6 +322,7 @@ export async function getIndices() {
     })
   );
 
+  cachedIndices = updatedIndices;
   return {
     success: true,
     data: updatedIndices,
@@ -299,12 +333,67 @@ export async function getIndices() {
 
 /**
  * Fetch Single Quote / Detailed Stock Info from Yahoo Finance
- * Change calculated relative to OPEN price
  */
 export async function getQuote(symbol) {
   const symbolUpper = symbol.toUpperCase().trim();
   const yahooSymbol = getYahooSymbol(symbolUpper);
+  const status = getISTMarketStatus();
 
+  // Strictly lock quotes when market is offline
+  if (!status.isOpen) {
+    if (cachedQuotes[symbolUpper]) {
+      return {
+        success: true,
+        data: cachedQuotes[symbolUpper]
+      };
+    }
+
+    const foundIndex = BASE_INDICES.find(i => i.symbol === symbolUpper);
+    if (foundIndex) {
+      const prevClosePrice = foundIndex.prevClose || foundIndex.open;
+      const change = foundIndex.price - prevClosePrice;
+      const pChange = (change / prevClosePrice) * 100;
+      const data = {
+        ...foundIndex,
+        change: parseFloat(change.toFixed(2)),
+        pChange: parseFloat(pChange.toFixed(2))
+      };
+      cachedQuotes[symbolUpper] = data;
+      return { success: true, data };
+    }
+
+    const foundStock = BASE_STOCKS[symbolUpper];
+    if (foundStock) {
+      const prevClosePrice = foundStock.prevClose || foundStock.open;
+      const change = foundStock.price - prevClosePrice;
+      const pChange = (change / prevClosePrice) * 100;
+      const data = {
+        ...foundStock,
+        change: parseFloat(change.toFixed(2)),
+        pChange: parseFloat(pChange.toFixed(2))
+      };
+      cachedQuotes[symbolUpper] = data;
+      return { success: true, data };
+    }
+
+    const fallbackData = {
+      symbol: symbolUpper,
+      name: `${symbolUpper} Equity`,
+      sector: 'Custom Tracked Asset',
+      price: 1000.00,
+      open: 1000.00,
+      change: 0.00,
+      pChange: 0.00,
+      high: 1010.00,
+      low: 990.00,
+      prevClose: 1000.00,
+      volume: 'N/A'
+    };
+    cachedQuotes[symbolUpper] = fallbackData;
+    return { success: true, data: fallbackData };
+  }
+
+  // Live session active: fetch live quote
   const result = await fetchYahooFinanceChart(yahooSymbol, '5d', '1d');
   if (result && result.meta) {
     const meta = result.meta;
@@ -332,25 +421,25 @@ export async function getQuote(symbol) {
     const change = price - prevClosePrice;
     const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
 
-    return {
-      success: true,
-      data: {
-        symbol: symbolUpper,
-        name: meta.longName || meta.shortName || BASE_STOCKS[symbolUpper]?.name || `${symbolUpper} Equity`,
-        sector: meta.instrumentType || 'Equity / Market Asset',
-        price: parseFloat(price.toFixed(2)),
-        open: parseFloat(openPrice.toFixed(2)),
-        change: parseFloat(change.toFixed(2)),
-        pChange: parseFloat(pChange.toFixed(2)),
-        high: meta.regularMarketDayHigh ? parseFloat(meta.regularMarketDayHigh.toFixed(2)) : price,
-        low: meta.regularMarketDayLow ? parseFloat(meta.regularMarketDayLow.toFixed(2)) : price,
-        prevClose: meta.chartPreviousClose ? parseFloat(meta.chartPreviousClose.toFixed(2)) : price,
-        volume: meta.regularMarketVolume ? meta.regularMarketVolume.toLocaleString('en-IN') : (BASE_STOCKS[symbolUpper]?.volume || 'N/A')
-      }
+    const data = {
+      symbol: symbolUpper,
+      name: meta.longName || meta.shortName || BASE_STOCKS[symbolUpper]?.name || `${symbolUpper} Equity`,
+      sector: meta.instrumentType || 'Equity / Market Asset',
+      price: parseFloat(price.toFixed(2)),
+      open: parseFloat(openPrice.toFixed(2)),
+      change: parseFloat(change.toFixed(2)),
+      pChange: parseFloat(pChange.toFixed(2)),
+      high: meta.regularMarketDayHigh ? parseFloat(meta.regularMarketDayHigh.toFixed(2)) : price,
+      low: meta.regularMarketDayLow ? parseFloat(meta.regularMarketDayLow.toFixed(2)) : price,
+      prevClose: meta.chartPreviousClose ? parseFloat(meta.chartPreviousClose.toFixed(2)) : price,
+      volume: meta.regularMarketVolume ? meta.regularMarketVolume.toLocaleString('en-IN') : (BASE_STOCKS[symbolUpper]?.volume || 'N/A')
     };
+
+    cachedQuotes[symbolUpper] = data;
+    return { success: true, data };
   }
 
-  // Fallback baseline search
+  // Fallback baseline search if live fetch fails during live hours
   const foundIndex = BASE_INDICES.find(i => i.symbol === symbolUpper);
   if (foundIndex) {
     const prevClosePrice = foundIndex.prevClose || foundIndex.open;
