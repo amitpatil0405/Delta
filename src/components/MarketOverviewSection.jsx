@@ -257,80 +257,13 @@ export default function MarketOverviewSection() {
           </div>
         </div>
 
-        {/* 2. Global Market Triggers */}
-        <div>
-          <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest mb-4">
-            <Globe2 className="w-4 h-4" />
-            <span>GLOBAL MACRO TRIGGERS FOR OPTIONS TRADERS</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Crude Oil */}
-            <div className="bg-[#0a0a0a] border border-[#1f1f1f] hover:border-amber-500/40 rounded-xl p-5 transition-all">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-mono text-gray-400 uppercase">COMMODITY TRIGGER</span>
-                  <h4 className="text-lg font-bold text-white font-mono">CRUDE OIL (BRENT)</h4>
-                </div>
-                <span className={`text-xs font-mono font-bold px-2 py-1 rounded ${globalTriggers.crude.change >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
-                  {globalTriggers.crude.change >= 0 ? '+' : ''}{globalTriggers.crude.pChange.toFixed(2)}%
-                </span>
-              </div>
-
-              <div className="mt-4 flex items-baseline space-x-2">
-                <span className="text-2xl font-black font-mono text-white">${globalTriggers.crude.price.toFixed(2)}</span>
-                <span className="text-xs text-gray-400 font-mono">/ barrel</span>
-              </div>
-
-              <p className="mt-3 text-xs text-gray-400 font-sans border-t border-white/5 pt-3 leading-relaxed">
-                Directly influences inflation expectations, paint, auto & aviation margins. Surge triggers put buying across cyclical equities.
-              </p>
-            </div>
-
-            {/* USD-INR */}
-            <div className="bg-[#0a0a0a] border border-[#1f1f1f] hover:border-amber-500/40 rounded-xl p-5 transition-all">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-mono text-gray-400 uppercase">CURRENCY TRIGGER</span>
-                  <h4 className="text-lg font-bold text-white font-mono">USD / INR EXCHANGE RATE</h4>
-                </div>
-                <span className={`text-xs font-mono font-bold px-2 py-1 rounded ${globalTriggers.usdinr.change >= 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
-                  {globalTriggers.usdinr.change >= 0 ? '+' : ''}{globalTriggers.usdinr.pChange.toFixed(2)}%
-                </span>
-              </div>
-
-              <div className="mt-4 flex items-baseline space-x-2">
-                <span className="text-2xl font-black font-mono text-white">₹{globalTriggers.usdinr.price.toFixed(2)}</span>
-                <span className="text-xs text-gray-400 font-mono">per USD</span>
-              </div>
-
-              <p className="mt-3 text-xs text-gray-400 font-sans border-t border-white/5 pt-3 leading-relaxed">
-                Rupee depreciation acts as an export revenue tailwind for NIFTY IT (TCS, INFY) while raising import cost pressures.
-              </p>
-            </div>
-
-            {/* India VIX */}
-            <div className="bg-[#0a0a0a] border border-[#1f1f1f] hover:border-amber-500/40 rounded-xl p-5 transition-all">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-xs font-mono text-gray-400 uppercase">VOLATILITY INDEX</span>
-                  <h4 className="text-lg font-bold text-white font-mono">INDIA VIX INDEX</h4>
-                </div>
-                <span className={`text-xs font-mono font-bold px-2 py-1 rounded ${globalTriggers.vix.change >= 0 ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
-                  {globalTriggers.vix.change >= 0 ? '+' : ''}{globalTriggers.vix.pChange.toFixed(2)}%
-                </span>
-              </div>
-
-              <div className="mt-4 flex items-baseline space-x-2">
-                <span className="text-2xl font-black font-mono text-amber-400">{globalTriggers.vix.price.toFixed(2)}</span>
-                <span className="text-xs text-gray-400 font-mono">pts</span>
-              </div>
-
-              <p className="mt-3 text-xs text-gray-400 font-sans border-t border-white/5 pt-3 leading-relaxed">
-                Primary options pricing variable. Determines call/put option premium size and expected 30-day annualized NIFTY standard deviation.
-              </p>
-            </div>
-          </div>
+        {/* 2. TradingView Market Summary Widget */}
+        <div className="w-full overflow-x-auto rounded-xl border border-[#1f1f1f] bg-[#0a0a0a] p-4">
+          <tv-market-summary
+            symbol-sectors='[{"sectionName":"Commodities","symbols":["TVC:UKOIL","OANDA:NATGASUSD","CAPITALCOM:XAUUSD","CMCMARKETS:SILVERZ2026","IG:COPPER"]}]'
+            direction="horizontal"
+            mode="custom"
+          ></tv-market-summary>
         </div>
 
 
