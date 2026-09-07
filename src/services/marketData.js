@@ -87,6 +87,7 @@ async function fetchYahooFinanceChart(yahooSymbol, range = '5d', interval = '1d'
   const urls = [
     `https://query1.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}&includePrePost=false`,
     `https://query2.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}&includePrePost=false`,
+    `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}`)}`,
     `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}`)}`
   ];
 
@@ -114,6 +115,13 @@ const BASE_INDICES = [
   { symbol: 'NIFTY 50', name: 'NIFTY 50 Index', yahooSymbol: '^NSEI', price: 23774.65, open: 23890.00, high: 23890.00, low: 23771.95, prevClose: 24055.80, volume: '1.4B', sparkline: [24055.80, 23980.00, 23890.00, 23810.00, 23771.95, 23774.65] },
   { symbol: 'BANK NIFTY', name: 'NIFTY Bank', yahooSymbol: '^NSEBANK', price: 57054.85, open: 57426.85, high: 57426.85, low: 57045.95, prevClose: 57409.60, volume: '910M', sparkline: [57409.60, 57350.00, 57220.00, 57110.00, 57045.95, 57054.85] },
   { symbol: 'SENSEX', name: 'BSE SENSEX', yahooSymbol: '^BSESN', price: 76192.62, open: 76477.19, high: 76477.19, low: 76161.43, prevClose: 76944.28, volume: '1.1B', sparkline: [76944.28, 76700.00, 76477.19, 76310.00, 76161.43, 76192.62] },
+  { symbol: 'DOW JONES', name: 'Dow Jones Industrial Average', yahooSymbol: '^DJI', price: 43514.20, open: 43600.00, high: 43750.00, low: 43450.00, prevClose: 43580.00, volume: '320M', sparkline: [43580.00, 43600.00, 43514.20] },
+  { symbol: 'NASDAQ 100', name: 'NASDAQ 100', yahooSymbol: '^NDX', price: 19854.15, open: 19900.00, high: 19980.00, low: 19810.00, prevClose: 19920.00, volume: '850M', sparkline: [19920.00, 19900.00, 19854.15] },
+  { symbol: 'S&P 100', name: 'S&P 100 Index', yahooSymbol: '^OEX', price: 2584.10, open: 2590.00, high: 2598.00, low: 2578.00, prevClose: 2592.00, volume: '410M', sparkline: [2592.00, 2590.00, 2584.10] },
+  { symbol: 'FTSE', name: 'FTSE 100 Index', yahooSymbol: '^FTSE', price: 8248.80, open: 8260.00, high: 8280.00, low: 8230.00, prevClose: 8265.00, volume: '290M', sparkline: [8265.00, 8260.00, 8248.80] },
+  { symbol: 'INDIA VIX', name: 'India Volatility Index', yahooSymbol: '^INDIAVIX', price: 11.60, open: 11.75, high: 11.90, low: 11.45, prevClose: 11.75, volume: 'N/A', sparkline: [11.75, 11.65, 11.60] },
+  { symbol: 'CRUDE OIL', name: 'Brent Crude Oil', yahooSymbol: 'BZ=F', price: 72.85, open: 73.20, high: 73.50, low: 72.40, prevClose: 73.27, volume: '240K', sparkline: [73.27, 73.10, 72.85] },
+  { symbol: 'USD-INR', name: 'USD / INR Exchange Rate', yahooSymbol: 'INR=X', price: 83.98, open: 83.94, high: 84.02, low: 83.92, prevClose: 83.94, volume: 'N/A', sparkline: [83.94, 83.96, 83.98] },
   { symbol: 'NIFTY IT', name: 'NIFTY IT Sector', yahooSymbol: '^CNXIT', price: 29999.15, open: 30377.10, high: 30377.10, low: 29997.40, prevClose: 31496.70, volume: '480M', sparkline: [31496.70, 30800.00, 30377.10, 30150.00, 29997.40, 29999.15] },
   { symbol: 'NIFTY FIN SERVICE', name: 'NIFTY Financial Services', yahooSymbol: 'NIFTY_FIN_SERVICE.NS', price: 25936.35, open: 26080.60, high: 26080.60, low: 25931.55, prevClose: 26051.00, volume: '680M', sparkline: [26051.00, 26080.60, 26010.00, 25970.00, 25931.55, 25936.35] },
   { symbol: 'NIFTY MIDCAP 100', name: 'NIFTY Midcap 100', yahooSymbol: 'NIFTY_MIDCAP_100.NS', price: 62813.90, open: 63166.60, high: 63166.60, low: 62803.45, prevClose: 63079.05, volume: '590M', sparkline: [63079.05, 63166.60, 63000.00, 62900.00, 62803.45, 62813.90] },
@@ -275,8 +283,9 @@ export async function getQuote(symbol) {
   const result = await fetchYahooFinanceChart(yahooSymbol, '5d', '1d');
   if (result && result.meta) {
     const meta = result.meta;
-    let price = meta.regularMarketPrice ?? BASE_STOCKS[symbolUpper]?.price ?? 1000.0;
-    let prevClosePrice = meta.regularMarketPreviousClose ?? meta.chartPreviousClose ?? BASE_STOCKS[symbolUpper]?.prevClose ?? price;
+    const baseObj = BASE_STOCKS[symbolUpper] || BASE_INDICES.find(i => i.symbol === symbolUpper);
+    let price = meta.regularMarketPrice ?? baseObj?.price ?? 100.0;
+    let prevClosePrice = meta.regularMarketPreviousClose ?? meta.chartPreviousClose ?? baseObj?.prevClose ?? price;
 
     if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
       const closes = result.indicators.quote[0].close.filter(c => c !== null);
@@ -329,15 +338,15 @@ export async function getQuote(symbol) {
 
   const fallbackData = {
     symbol: symbolUpper,
-    name: `${symbolUpper} Equity`,
-    sector: 'Custom Tracked Asset',
-    price: 1000.00,
-    open: 1000.00,
+    name: `${symbolUpper} Asset`,
+    sector: 'Market Asset',
+    price: 100.00,
+    open: 100.00,
     change: 0.00,
     pChange: 0.00,
-    high: 1010.00,
-    low: 990.00,
-    prevClose: 1000.00,
+    high: 100.00,
+    low: 100.00,
+    prevClose: 100.00,
     volume: 'N/A'
   };
   cachedQuotes[symbolUpper] = fallbackData;
