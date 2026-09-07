@@ -482,15 +482,21 @@ export default function PortfolioJournalSection() {
                       const isLoss = isTraded && d.pnl < 0;
                       const isHovered = hoveredDay && hoveredDay.key === d.key;
 
-                      let boxClass = 'bg-white/5 border-white/5 text-transparent hover:border-white/30';
+                      let boxClass = 'bg-white/5 border-white/5 text-transparent';
                       if (isProfit) {
-                        boxClass = 'bg-emerald-500 border border-black/90 hover:bg-emerald-400';
+                        boxClass = 'bg-emerald-500 border border-black/90';
                       } else if (isLoss) {
-                        boxClass = 'bg-rose-500 border border-black/90 hover:bg-rose-400';
+                        boxClass = 'bg-rose-500 border border-black/90';
                       }
 
                       if (isHovered) {
-                        boxClass += ' !border-white ring-2 ring-white/60 scale-125 z-20 brightness-125';
+                        if (isProfit) {
+                          boxClass = 'bg-emerald-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
+                        } else if (isLoss) {
+                          boxClass = 'bg-rose-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
+                        } else {
+                          boxClass = 'bg-white/15 border border-white/10 scale-125 z-20 shadow-lg shadow-black/80';
+                        }
                       }
 
                       const totalM = heatmapMonths.length || 12;
