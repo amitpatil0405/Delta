@@ -52,28 +52,28 @@ export default function App() {
             onExploreStrategies={() => handleNavigate('strategies')}
           />
 
-          {/* 2. Intelligence Section (Market Overview, Volatility & Risk Calculator) */}
-          <MarketOverviewSection />
-
-          {/* 3. Technical Analysis Page (Synced from Google Sheet) */}
+          {/* 2. Technical Analysis Page (Synced from Google Sheet) */}
           <TechnicalAnalysisSection />
 
-          {/* 4. Portfolio & Trading Journal */}
+          {/* 3. Portfolio & Trading Journal */}
           <PortfolioJournalSection />
 
-          {/* 7. 3D Scroll-Driven Options Strategies & Payoff Diagrams */}
+          {/* 4. Holiday Calendar (Market Overview & Scheduled Closures) */}
+          <MarketOverviewSection />
+
+          {/* 5. 3D Scroll-Driven Options Strategies & Payoff Diagrams */}
           <OptionsStrategiesSection />
 
-          {/* 8. Training & Options Education */}
+          {/* 6. Training & Options Education */}
           <TrainingSection />
 
-          {/* 9. The DeltaFox Blueprint: Trader Mindset & Market Cycles */}
+          {/* 7. The DeltaFox Blueprint: Trader Mindset & Market Cycles */}
           <BlueprintSection />
 
-          {/* 10. About DeltaFox & Founder Amit Patil */}
+          {/* 8. About DeltaFox & Founder Amit Patil */}
           <AboutFounderSection />
 
-          {/* 11. Contact Section */}
+          {/* 9. Contact Section */}
           <ContactSection />
         </main>
 

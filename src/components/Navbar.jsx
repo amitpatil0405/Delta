@@ -49,9 +49,9 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
     const sectionIds = [
       'home',
-      'intelligence',
       'technical-analysis',
       'portfolio',
+      'intelligence',
       'strategies',
       'training',
       'about',
@@ -86,9 +86,9 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'intelligence', label: 'Holiday calender' },
     { id: 'technical-analysis', label: 'Technical analysis' },
     { id: 'portfolio', label: 'Portfolio' },
+    { id: 'intelligence', label: 'Holiday calender' },
     { id: 'strategies', label: 'Strategies' },
     { id: 'training', label: 'Training' },
     { id: 'about', label: 'About' },
