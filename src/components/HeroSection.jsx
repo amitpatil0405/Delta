@@ -54,7 +54,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          At DeltaFox, we bridge the gap between structural engineering precision and institutional-grade financial markets. Founded on the core principles of non-directional probability, mathematical risk management, and rigorous capital preservation, we transform complex options trading into a disciplined, systematic science.
+          At DeltaFox, we use precise math and smart strategies to trade in the financial markets. We focus on keeping money safe, managing risks carefully, and turning complicated options trading into a simple, disciplined science. Instead of relying on guesswork, our data-driven systems navigate market ups and downs. Every trade is backed by a clear statistical edge and strict risk controls, building long-term stability and consistent growth.
         </p>
 
         {/* Interactive CTA Buttons */}
