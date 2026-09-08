@@ -1,97 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, ChevronRight, BookOpen, TrendingUp, TrendingDown } from 'lucide-react';
-import { getIndices, getQuote } from '../services/marketData';
-import { useMarket } from '../context/MarketContext';
-
-const INDEX_TICKER_ITEMS = [
-  { symbol: 'NIFTY 50', name: 'Nifty 50' },
-  { symbol: 'BANK NIFTY', name: 'Bank Nifty' },
-  { symbol: 'SENSEX', name: 'Sensex' },
-  { symbol: 'DOW JONES', name: 'Dow Jones Industrial Average' },
-  { symbol: 'S&P 500', name: 'S&P 500' },
-  { symbol: 'NASDAQ', name: 'Nasdaq Composite' },
-  { symbol: 'FTSE', name: 'FTSE 100' },
-  { symbol: 'INDIA VIX', name: 'India VIX' }
-];
+import { BarChart3, ChevronRight, BookOpen } from 'lucide-react';
 
 export default function HeroSection({ onExplorePortfolio, onExploreStrategies }) {
   const [loaded, setLoaded] = useState(false);
 
-  // Initialize ticker items immediately with baseline quotes so layout is instant
-  const [tickerItems, setTickerItems] = useState(() => {
-    return INDEX_TICKER_ITEMS.map((item) => {
-      return {
-        symbol: item.symbol,
-        name: item.name,
-        price: item.symbol === 'NIFTY 50' ? 23774.65 : item.symbol === 'BANK NIFTY' ? 57054.85 : item.symbol === 'SENSEX' ? 76192.62 : item.symbol === 'DOW JONES' ? 53414.25 : item.symbol === 'S&P 500' ? 7718.60 : item.symbol === 'NASDAQ' ? 26506.99 : item.symbol === 'FTSE' ? 10847.30 : 11.16,
-        change: -100.0,
-        pChange: -0.45,
-        isVix: item.symbol === 'INDIA VIX'
-      };
-    });
-  });
-
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 50);
     return () => clearTimeout(timer);
-  }, []);
-
-  // Background fetch for live market quotes
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchTickerData = async () => {
-      try {
-        const indicesRes = await getIndices();
-        const indicesData = indicesRes.success ? indicesRes.data : [];
-
-        const items = await Promise.all(
-          INDEX_TICKER_ITEMS.map(async (item) => {
-            const foundIndex = indicesData.find(idx => idx.symbol === item.symbol);
-            if (foundIndex) {
-              return {
-                symbol: item.symbol,
-                name: item.name,
-                price: foundIndex.price,
-                change: foundIndex.change,
-                pChange: foundIndex.pChange,
-                isVix: item.symbol === 'INDIA VIX'
-              };
-            }
-            const q = await getQuote(item.symbol);
-            if (q.success && q.data) {
-              return {
-                symbol: item.symbol,
-                name: item.name,
-                price: q.data.price,
-                change: q.data.change,
-                pChange: q.data.pChange,
-                isVix: item.symbol === 'INDIA VIX'
-              };
-            }
-            return null;
-          })
-        );
-
-        if (isMounted) {
-          const validItems = items.filter(Boolean);
-          if (validItems.length > 0) {
-            setTickerItems(validItems);
-          }
-        }
-      } catch (err) {
-        console.warn('Notice loading live ticker quotes:', err);
-      }
-    };
-
-    // Stagger initial ticker fetch slightly to let DOM paint first
-    const timer = setTimeout(fetchTickerData, 100);
-    const interval = setInterval(fetchTickerData, 10000); // refresh every 10s
-    return () => {
-      isMounted = false;
-      clearTimeout(timer);
-      clearInterval(interval);
-    };
   }, []);
 
   return (
@@ -166,57 +81,19 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
           </button>
         </div>
 
-        {/* Borderless Live Index Rotating Ticker */}
+        {/* Official TradingView Ticker Tape Marquee Widget */}
         <div
-          className={`mt-10 w-full max-w-6xl transition-all duration-1000 delay-500 min-h-[56px] flex items-center justify-center ${
+          className={`mt-10 w-full max-w-6xl transition-all duration-1000 delay-500 overflow-hidden rounded-xl border border-white/10 shadow-2xl bg-neutral-950/80 backdrop-blur-md ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <div className="relative w-full max-w-full overflow-hidden group py-1 min-h-[52px] flex items-center">
-            {/* Fade Edges for Seamless Edge Erasing */}
-            <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-[#050505] to-transparent z-10 pointer-events-none" />
-            <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-[#050505] to-transparent z-10 pointer-events-none" />
-
-            <div className="flex w-max animate-slow-marquee hover:[animation-play-state:paused] space-x-6 sm:space-x-8 py-1.5 items-center">
-                {/* Render ticker items twice for seamless infinite smooth scrolling */}
-                {[...tickerItems, ...tickerItems].map((item, idx) => {
-                  const isPositive = item.change >= 0;
-                  return (
-                    <div
-                      key={`${item.symbol}-${idx}`}
-                      onClick={() => {
-                        const intelSection = document.getElementById('intelligence');
-                        if (intelSection) intelSection.scrollIntoView({ behavior: 'smooth' });
-                      }}
-                      className="flex items-center space-x-2.5 bg-[#121212]/90 border border-white/10 hover:border-amber-500/50 hover:bg-[#1a1a1a] px-4 py-2 rounded-xl transition-all duration-300 cursor-pointer shrink-0 group/item shadow-lg"
-                    >
-                      <span className="text-xs font-mono font-bold text-gray-200 group-hover/item:text-amber-400 transition-colors">
-                        {item.symbol}
-                      </span>
-
-                      <span className="text-xs font-mono font-extrabold text-white">
-                        {item.isVix ? '' : '₹'}{item.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                      </span>
-
-                      <span
-                        className={`flex items-center text-[11px] font-mono font-extrabold px-1.5 py-0.5 rounded ${
-                          isPositive
-                            ? 'text-emerald-400 bg-emerald-500/10 border border-emerald-500/20'
-                            : 'text-red-400 bg-red-500/10 border border-red-500/20'
-                        }`}
-                      >
-                        {isPositive ? (
-                          <TrendingUp className="w-3 h-3 mr-1 inline-block" />
-                        ) : (
-                          <TrendingDown className="w-3 h-3 mr-1 inline-block" />
-                        )}
-                        {isPositive ? '+' : ''}
-                        {item.pChange.toFixed(2)}%
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+          <div className="w-full">
+            <tv-ticker-tape
+              symbols="FOREXCOM:DJI,NSE:NIFTY,NSE:BANKNIFTY,BSE:SENSEX,SPREADEX:FTSE,NASDAQ:NDX"
+              item-size="compact"
+              hover-type="performance-grid"
+              show-hover
+            ></tv-ticker-tape>
           </div>
         </div>
 

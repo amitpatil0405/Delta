@@ -136,12 +136,17 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   );
 }
 
-// Synchronous WebGL availability and mobile capability check
+// Synchronous WebGL availability and mobile / Safari / iOS capability check
 function checkWebGLSupport() {
   if (typeof window === 'undefined') return false;
   try {
-    // Disable heavy 3D canvas on mobile screens or touch-only devices to prevent browser freezes when cache/cookies are cleared
-    const isMobileDevice = window.innerWidth < 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const ua = navigator.userAgent || '';
+    // Completely disable 3D Canvas on iOS (iPhone, iPad, iPod), mobile browsers, or touch devices to eliminate Safari black screen freezes
+    const isMobileDevice =
+      window.innerWidth < 1024 ||
+      /Mobi|Android|iPhone|iPad|iPod|Macintosh/i.test(ua) && navigator.maxTouchPoints > 0 ||
+      /iPhone|iPad|iPod/i.test(ua);
+
     if (isMobileDevice) return false;
 
     const canvas = document.createElement('canvas');
