@@ -86,26 +86,26 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
 
     const scrollVal = scrollYProgress.current || 0;
 
-    // Direct cursor tracking:
-    // When cursor is left (x < 0), fox looks left (positive Y rot)
-    // When cursor is right (x > 0), fox looks right (negative Y rot)
-    // When cursor is up (y > 0), fox looks up (negative X rot)
-    // When cursor is down (y < 0), fox looks down (positive X rot)
-    const targetRotY = -(mousePos.current?.x || 0) * 0.75 + scrollVal * Math.PI * 2;
-    const targetRotX = -(mousePos.current?.y || 0) * 0.55 + Math.sin(scrollVal * Math.PI) * 0.3;
-    const targetRotZ = -(mousePos.current?.x || 0) * 0.15 + Math.sin(scrollVal * Math.PI * 2) * 0.1;
+    // Direct cursor tracking & scroll reaction:
+    // Mouse left (x < 0) -> Fox rotates left (negative Y)
+    // Mouse right (x > 0) -> Fox rotates right (positive Y)
+    // Mouse up (y > 0) -> Fox rotates up (positive X)
+    // Mouse down (y < 0) -> Fox rotates down (negative X)
+    const targetRotY = (mousePos.current?.x || 0) * 0.65 + scrollVal * Math.PI * 1.8;
+    const targetRotX = (mousePos.current?.y || 0) * 0.45 + Math.sin(scrollVal * Math.PI) * 0.2;
+    const targetRotZ = (mousePos.current?.x || 0) * 0.12;
 
     meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
     meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
     meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
 
-    // Centered base position at scroll = 0, with subtle parallax offset towards cursor
-    const targetPosX = (mousePos.current?.x || 0) * 0.4 + Math.sin(scrollVal * Math.PI * 2) * 1.2;
-    const targetPosY = (mousePos.current?.y || 0) * 0.3 - scrollVal * 1.8;
-    const targetPosZ = -0.6 + Math.sin(scrollVal * Math.PI) * 0.4;
+    // Centered base position at scroll = 0, shifting toward the side and backward as user scrolls
+    const targetPosX = (mousePos.current?.x || 0) * 0.5 + scrollVal * 2.2;
+    const targetPosY = (mousePos.current?.y || 0) * 0.35 - scrollVal * 1.2;
+    const targetPosZ = -0.4 - scrollVal * 1.8;
 
-    // Increased fox size for prominent display behind hero text
-    const targetScale = 1.35 + Math.sin(scrollVal * Math.PI) * 0.1;
+    // Refined, balanced fox size
+    const targetScale = 0.85 * (1 - scrollVal * 0.25);
 
     meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetPosX, 0.08);
     meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetPosY, 0.08);
@@ -220,11 +220,13 @@ export default function DeltaFox3DScene() {
       }
     };
 
+    window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('pointermove', handleMouseMove);
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
     return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('pointermove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
     };
