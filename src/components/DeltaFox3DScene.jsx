@@ -92,7 +92,7 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
     // Mouse up / Touch up (y > 0) -> Fox pitches up
     // Mouse down / Touch down (y < 0) -> Fox pitches down
     const targetRotY = (mousePos.current?.x || 0) * 0.85 + scrollVal * Math.PI * 1.8;
-    const targetRotX = (mousePos.current?.y || 0) * 0.65 + Math.sin(scrollVal * Math.PI) * 0.2;
+    const targetRotX = -(mousePos.current?.y || 0) * 0.65 + Math.sin(scrollVal * Math.PI) * 0.2;
     const targetRotZ = (mousePos.current?.x || 0) * 0.25;
 
     meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.1);
