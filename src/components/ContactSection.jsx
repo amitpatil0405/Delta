@@ -6,7 +6,11 @@ const INQUIRIES_DB_URL = 'https://api.restful-api.dev/objects/ff808181a067127101
 
 export default function ContactSection() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
-    return sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+    try {
+      return sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+    } catch (e) {
+      return false;
+    }
   });
 
   const [formData, setFormData] = useState({
@@ -41,7 +45,11 @@ export default function ContactSection() {
 
   useEffect(() => {
     const checkAdmin = () => {
-      setIsAdminLoggedIn(sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true');
+      try {
+        setIsAdminLoggedIn(sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true');
+      } catch (e) {
+        setIsAdminLoggedIn(false);
+      }
     };
     window.addEventListener('storage', checkAdmin);
     checkAdmin();

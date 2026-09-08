@@ -218,12 +218,20 @@ export default function PortfolioJournalSection() {
 
           if (parsedSheetTrades.length > 0) {
             setTrades(parsedSheetTrades);
-            localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(parsedSheetTrades));
+            try {
+              localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(parsedSheetTrades));
+            } catch (e) {
+              console.warn('LocalStorage write restriction:', e);
+            }
           }
 
           if (sheetFyConfig) {
             setFyConfig(sheetFyConfig);
-            localStorage.setItem(FY_CONFIG_STORAGE_KEY, JSON.stringify(sheetFyConfig));
+            try {
+              localStorage.setItem(FY_CONFIG_STORAGE_KEY, JSON.stringify(sheetFyConfig));
+            } catch (e) {
+              console.warn('LocalStorage write restriction:', e);
+            }
           }
         }
       } catch (e) {

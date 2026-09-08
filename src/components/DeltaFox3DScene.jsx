@@ -136,10 +136,14 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   );
 }
 
-// Synchronous WebGL availability check
+// Synchronous WebGL availability and mobile capability check
 function checkWebGLSupport() {
   if (typeof window === 'undefined') return false;
   try {
+    // Disable heavy 3D canvas on mobile screens or touch-only devices to prevent browser freezes when cache/cookies are cleared
+    const isMobileDevice = window.innerWidth < 768 || /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobileDevice) return false;
+
     const canvas = document.createElement('canvas');
     return !!(
       window.WebGLRenderingContext &&
@@ -157,7 +161,7 @@ export default function DeltaFox3DScene() {
   const containerRef = useRef(null);
   const [isVisible, setIsVisible] = React.useState(true);
 
-  // Initialize with synchronous WebGL check so Canvas is never mounted if WebGL is unavailable
+  // Initialize with synchronous WebGL check so Canvas is never mounted if WebGL is unavailable or on mobile
   const [hasWebGL, setHasWebGL] = React.useState(() => checkWebGLSupport());
 
   useEffect(() => {
