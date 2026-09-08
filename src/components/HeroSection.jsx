@@ -16,16 +16,27 @@ const INDEX_TICKER_ITEMS = [
 
 export default function HeroSection({ onExplorePortfolio, onExploreStrategies }) {
   const [loaded, setLoaded] = useState(false);
-  const [tickerItems, setTickerItems] = useState([]);
-  const [tickerLoading, setTickerLoading] = useState(true);
-  const { setActiveSymbol } = useMarket();
+
+  // Initialize ticker items immediately with baseline quotes so layout is instant
+  const [tickerItems, setTickerItems] = useState(() => {
+    return INDEX_TICKER_ITEMS.map((item) => {
+      return {
+        symbol: item.symbol,
+        name: item.name,
+        price: item.symbol === 'NIFTY 50' ? 23774.65 : item.symbol === 'BANK NIFTY' ? 57054.85 : item.symbol === 'SENSEX' ? 76192.62 : item.symbol === 'DOW JONES' ? 53414.25 : item.symbol === 'S&P 500' ? 7718.60 : item.symbol === 'NASDAQ' ? 26506.99 : item.symbol === 'FTSE' ? 10847.30 : 11.16,
+        change: -100.0,
+        pChange: -0.45,
+        isVix: item.symbol === 'INDIA VIX'
+      };
+    });
+  });
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoaded(true), 100);
+    const timer = setTimeout(() => setLoaded(true), 50);
     return () => clearTimeout(timer);
   }, []);
 
-  // Fetch prices for index ticker symbols
+  // Background fetch for live market quotes
   useEffect(() => {
     let isMounted = true;
 
@@ -64,18 +75,21 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
 
         if (isMounted) {
           const validItems = items.filter(Boolean);
-          setTickerItems(validItems);
-          setTickerLoading(false);
+          if (validItems.length > 0) {
+            setTickerItems(validItems);
+          }
         }
       } catch (err) {
-        console.error('Error loading index ticker data:', err);
+        console.warn('Notice loading live ticker quotes:', err);
       }
     };
 
-    fetchTickerData();
-    const interval = setInterval(fetchTickerData, 15000); // refresh every 15s
+    // Stagger initial ticker fetch slightly to let DOM paint first
+    const timer = setTimeout(fetchTickerData, 100);
+    const interval = setInterval(fetchTickerData, 10000); // refresh every 10s
     return () => {
       isMounted = false;
+      clearTimeout(timer);
       clearInterval(interval);
     };
   }, []);
@@ -163,12 +177,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
             <div className="absolute top-0 left-0 bottom-0 w-12 sm:w-24 bg-gradient-to-r from-[#050505] to-transparent z-10 pointer-events-none" />
             <div className="absolute top-0 right-0 bottom-0 w-12 sm:w-24 bg-gradient-to-l from-[#050505] to-transparent z-10 pointer-events-none" />
 
-            {tickerLoading ? (
-              <div className="w-full py-2 text-center text-xs font-mono text-gray-500 tracking-widest animate-pulse flex items-center justify-center min-h-[44px]">
-                LOADING GLOBAL INDEX TICKER...
-              </div>
-            ) : (
-              <div className="flex w-max animate-slow-marquee hover:[animation-play-state:paused] space-x-6 sm:space-x-8 py-1.5 items-center">
+            <div className="flex w-max animate-slow-marquee hover:[animation-play-state:paused] space-x-6 sm:space-x-8 py-1.5 items-center">
                 {/* Render ticker items twice for seamless infinite smooth scrolling */}
                 {[...tickerItems, ...tickerItems].map((item, idx) => {
                   const isPositive = item.change >= 0;
@@ -208,7 +217,6 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
                   );
                 })}
               </div>
-            )}
           </div>
         </div>
 

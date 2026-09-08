@@ -85,29 +85,37 @@ export function getYahooSymbol(symbol) {
 /**
  * Fetch Yahoo Finance chart/quote data with robust multi-endpoint & CORS fallback
  */
-async function fetchYahooFinanceChart(yahooSymbol, range = '5d', interval = '1d') {
+async function fetchYahooFinanceChart(yahooSymbol, range = '1d', interval = '1m') {
   const encoded = encodeURIComponent(yahooSymbol);
-  const urls = [
-    `https://query1.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}&includePrePost=false`,
-    `https://query2.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}&includePrePost=false`,
-    `https://corsproxy.io/?${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}`)}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://query1.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}`)}`
-  ];
+  const targetUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}&includePrePost=true`;
 
-  for (const targetUrl of urls) {
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
+    const res = await fetch(targetUrl, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.chart && data.chart.result && data.chart.result.length > 0) {
+        return data.chart.result[0];
+      }
+    }
+  } catch (e) {
+    // Fallback to query2 on failure or timeout
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
-      const res = await fetch(targetUrl, { signal: controller.signal });
-      clearTimeout(timeoutId);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.chart && data.chart.result && data.chart.result.length > 0) {
-          return data.chart.result[0];
+      const targetUrl2 = `https://query2.finance.yahoo.com/v8/finance/chart/${encoded}?range=${range}&interval=${interval}&includePrePost=true`;
+      const controller2 = new AbortController();
+      const timeoutId2 = setTimeout(() => controller2.abort(), 1200);
+      const res2 = await fetch(targetUrl2, { signal: controller2.signal });
+      clearTimeout(timeoutId2);
+      if (res2.ok) {
+        const data2 = await res2.json();
+        if (data2.chart && data2.chart.result && data2.chart.result.length > 0) {
+          return data2.chart.result[0];
         }
       }
-    } catch (e) {
-      // Continue to next endpoint
+    } catch (err) {
+      // Direct fast fail
     }
   }
   return null;
@@ -191,15 +199,6 @@ export async function getIndices() {
   const status = getISTMarketStatus();
   const now = Date.now();
 
-  if (!status.isOpen && cachedIndices) {
-    return {
-      success: true,
-      data: cachedIndices,
-      timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      isLive: false
-    };
-  }
-
   if (cachedIndices && (now - lastIndicesFetchTime < CACHE_TTL_MS)) {
     return {
       success: true,
@@ -209,63 +208,80 @@ export async function getIndices() {
     };
   }
 
-  const updatedIndices = await Promise.all(
-    BASE_INDICES.map(async (item) => {
-      const result = await fetchYahooFinanceChart(item.yahooSymbol, '5d', '1d');
-      if (result && result.meta) {
-        const meta = result.meta;
-        let currentPrice = meta.regularMarketPrice ?? item.price;
-        let prevClosePrice = meta.chartPreviousClose ?? meta.regularMarketPreviousClose ?? item.prevClose;
+  try {
+    const updatedIndices = await Promise.all(
+      BASE_INDICES.map(async (item) => {
+        const range = status.isOpen ? '1d' : '5d';
+        const interval = status.isOpen ? '1m' : '1d';
+        const result = await fetchYahooFinanceChart(item.yahooSymbol, range, interval);
 
-        if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
-          const closes = result.indicators.quote[0].close.filter(c => c !== null);
-          if (closes.length > 0) currentPrice = closes[closes.length - 1];
-          if (closes.length >= 2) prevClosePrice = closes[closes.length - 2];
+        if (result && result.meta) {
+          const meta = result.meta;
+          let currentPrice = meta.regularMarketPrice ?? item.price;
+          let prevClosePrice = meta.chartPreviousClose ?? meta.regularMarketPreviousClose ?? item.prevClose;
+
+          if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
+            const closes = result.indicators.quote[0].close.filter(c => c !== null && c !== undefined && !isNaN(c));
+            if (closes.length > 0) {
+              currentPrice = closes[closes.length - 1];
+            }
+            if (closes.length >= 2 && !status.isOpen) {
+              prevClosePrice = closes[closes.length - 2];
+            }
+          }
+
+          const change = currentPrice - prevClosePrice;
+          const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
+
+          let sparkline = item.sparkline;
+          if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
+            const closes = result.indicators.quote[0].close.filter(c => c !== null && c !== undefined && !isNaN(c));
+            if (closes.length > 0) sparkline = closes.slice(-8);
+          }
+
+          return {
+            ...item,
+            price: parseFloat(currentPrice.toFixed(2)),
+            open: meta.regularMarketDayOpen ? parseFloat(meta.regularMarketDayOpen.toFixed(2)) : item.open,
+            change: parseFloat(change.toFixed(2)),
+            pChange: parseFloat(pChange.toFixed(2)),
+            high: meta.regularMarketDayHigh ? parseFloat(meta.regularMarketDayHigh.toFixed(2)) : item.high,
+            low: meta.regularMarketDayLow ? parseFloat(meta.regularMarketDayLow.toFixed(2)) : item.low,
+            prevClose: parseFloat(prevClosePrice.toFixed(2)),
+            sparkline
+          };
         }
 
-        const change = currentPrice - prevClosePrice;
+        const prevClosePrice = item.prevClose || item.open;
+        const change = item.price - prevClosePrice;
         const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
-
-        let sparkline = item.sparkline;
-        if (result.indicators && result.indicators.quote && result.indicators.quote[0] && result.indicators.quote[0].close) {
-          const closes = result.indicators.quote[0].close.filter(c => c !== null);
-          if (closes.length > 0) sparkline = closes.slice(-8);
-        }
 
         return {
           ...item,
-          price: parseFloat(currentPrice.toFixed(2)),
-          open: meta.regularMarketDayOpen ? parseFloat(meta.regularMarketDayOpen.toFixed(2)) : item.open,
           change: parseFloat(change.toFixed(2)),
-          pChange: parseFloat(pChange.toFixed(2)),
-          high: meta.regularMarketDayHigh ? parseFloat(meta.regularMarketDayHigh.toFixed(2)) : item.high,
-          low: meta.regularMarketDayLow ? parseFloat(meta.regularMarketDayLow.toFixed(2)) : item.low,
-          prevClose: parseFloat(prevClosePrice.toFixed(2)),
-          sparkline
+          pChange: parseFloat(pChange.toFixed(2))
         };
-      }
+      })
+    );
 
-      const prevClosePrice = item.prevClose || item.open;
-      const change = item.price - prevClosePrice;
-      const pChange = prevClosePrice ? (change / prevClosePrice) * 100 : 0;
+    cachedIndices = updatedIndices;
+    lastIndicesFetchTime = now;
 
-      return {
-        ...item,
-        change: parseFloat(change.toFixed(2)),
-        pChange: parseFloat(pChange.toFixed(2))
-      };
-    })
-  );
-
-  cachedIndices = updatedIndices;
-  lastIndicesFetchTime = now;
-
-  return {
-    success: true,
-    data: updatedIndices,
-    timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-    isLive: status.isOpen
-  };
+    return {
+      success: true,
+      data: updatedIndices,
+      timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      isLive: status.isOpen
+    };
+  } catch (err) {
+    console.warn('Indices live update notice:', err);
+    return {
+      success: true,
+      data: cachedIndices || BASE_INDICES,
+      timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      isLive: false
+    };
+  }
 }
 
 /**

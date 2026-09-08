@@ -161,7 +161,8 @@ export default function DeltaFox3DScene() {
   const containerRef = useRef(null);
   const [isVisible, setIsVisible] = React.useState(true);
 
-  // Initialize with synchronous WebGL check so Canvas is never mounted if WebGL is unavailable or on mobile
+  // Defer canvas mounting until after DOM paint to guarantee instant (0ms) cold load
+  const [shouldRenderCanvas, setShouldRenderCanvas] = React.useState(false);
   const [hasWebGL, setHasWebGL] = React.useState(() => checkWebGLSupport());
 
   useEffect(() => {
@@ -169,6 +170,17 @@ export default function DeltaFox3DScene() {
       setHasWebGL(false);
       return;
     }
+
+    // Defer 3D Canvas initialization by 300ms so HTML/React paints instantly on cold cache
+    const timer = setTimeout(() => {
+      setShouldRenderCanvas(true);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!hasWebGL || !shouldRenderCanvas) return;
 
     const handleMouseMove = (e) => {
       const x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -211,25 +223,27 @@ export default function DeltaFox3DScene() {
     <div
       ref={containerRef}
       className={`fixed inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-700 ${
-        isVisible ? 'opacity-80' : 'opacity-0'
+        isVisible && shouldRenderCanvas ? 'opacity-80' : 'opacity-0'
       }`}
     >
       <ThreeErrorBoundary>
-        <Canvas
-          gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-          style={{ width: '100%', height: '100%' }}
-        >
-          <PerspectiveCamera makeDefault position={[0, 0, 6]} fov={50} />
+        {shouldRenderCanvas && (
+          <Canvas
+            gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+            style={{ width: '100%', height: '100%' }}
+          >
+            <PerspectiveCamera makeDefault position={[0, 0, 6]} fov={50} />
 
-          <ambientLight intensity={0.4} />
-          <directionalLight position={[5, 8, 5]} intensity={2.5} color="#ffffff" />
-          <directionalLight position={[-5, -4, -2]} intensity={1.2} color="#d97706" />
-          <pointLight position={[0, 4, 2]} intensity={2} color="#22c55e" />
+            <ambientLight intensity={0.4} />
+            <directionalLight position={[5, 8, 5]} intensity={2.5} color="#ffffff" />
+            <directionalLight position={[-5, -4, -2]} intensity={1.2} color="#d97706" />
+            <pointLight position={[0, 4, 2]} intensity={2} color="#22c55e" />
 
-          <Float speed={1.5} rotationIntensity={0.15} floatIntensity={0.25}>
-            <MetallicFoxHead mousePos={mousePos} scrollYProgress={scrollYProgress} />
-          </Float>
-        </Canvas>
+            <Float speed={1.5} rotationIntensity={0.15} floatIntensity={0.25}>
+              <MetallicFoxHead mousePos={mousePos} scrollYProgress={scrollYProgress} />
+            </Float>
+          </Canvas>
+        )}
       </ThreeErrorBoundary>
     </div>
   );
