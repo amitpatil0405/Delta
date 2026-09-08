@@ -86,36 +86,36 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
 
     const scrollVal = scrollYProgress.current || 0;
 
-    // Direct cursor tracking & scroll reaction:
-    // Mouse left (x < 0) -> Fox rotates left (negative Y)
-    // Mouse right (x > 0) -> Fox rotates right (positive Y)
-    // Mouse up (y > 0) -> Fox rotates up (positive X)
-    // Mouse down (y < 0) -> Fox rotates down (negative X)
-    const targetRotY = (mousePos.current?.x || 0) * 0.65 + scrollVal * Math.PI * 1.8;
-    const targetRotX = (mousePos.current?.y || 0) * 0.45 + Math.sin(scrollVal * Math.PI) * 0.2;
-    const targetRotZ = (mousePos.current?.x || 0) * 0.12;
+    // Direct cursor & touch tracking & scroll reaction:
+    // Mouse left / Touch left (x < 0) -> Fox rotates left
+    // Mouse right / Touch right (x > 0) -> Fox rotates right
+    // Mouse up / Touch up (y > 0) -> Fox pitches up
+    // Mouse down / Touch down (y < 0) -> Fox pitches down
+    const targetRotY = (mousePos.current?.x || 0) * 0.85 + scrollVal * Math.PI * 1.8;
+    const targetRotX = (mousePos.current?.y || 0) * 0.65 + Math.sin(scrollVal * Math.PI) * 0.2;
+    const targetRotZ = (mousePos.current?.x || 0) * 0.25;
 
-    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
-    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
-    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
+    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.1);
+    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.1);
+    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.1);
 
     // Centered base position at scroll = 0, shifting toward the side and backward as user scrolls
-    const targetPosX = (mousePos.current?.x || 0) * 0.5 + scrollVal * 2.2;
-    const targetPosY = (mousePos.current?.y || 0) * 0.35 - scrollVal * 1.2;
+    const targetPosX = (mousePos.current?.x || 0) * 0.6 + scrollVal * 2.2;
+    const targetPosY = (mousePos.current?.y || 0) * 0.45 - scrollVal * 1.2;
     const targetPosZ = -0.4 - scrollVal * 1.8;
 
     // Refined, balanced fox size
     const targetScale = 0.85 * (1 - scrollVal * 0.25);
 
-    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetPosX, 0.08);
-    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetPosY, 0.08);
-    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetPosZ, 0.08);
+    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetPosX, 0.1);
+    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetPosY, 0.1);
+    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetPosZ, 0.1);
 
     meshRef.current.scale.setScalar(
-      THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.08)
+      THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.1)
     );
 
-    meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 1.5) * 0.002;
+    meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 1.8) * 0.05;
   });
 
   return (
@@ -144,19 +144,10 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
   );
 }
 
-// Synchronous WebGL availability and mobile / Safari / iOS capability check
+// Synchronous WebGL availability check
 function checkWebGLSupport() {
   if (typeof window === 'undefined') return false;
   try {
-    const ua = navigator.userAgent || '';
-    // Completely disable 3D Canvas on iOS (iPhone, iPad, iPod), mobile browsers, or touch devices to eliminate Safari black screen freezes
-    const isMobileDevice =
-      window.innerWidth < 1024 ||
-      /Mobi|Android|iPhone|iPad|iPod|Macintosh/i.test(ua) && navigator.maxTouchPoints > 0 ||
-      /iPhone|iPad|iPod/i.test(ua);
-
-    if (isMobileDevice) return false;
-
     const canvas = document.createElement('canvas');
     return !!(
       window.WebGLRenderingContext &&
@@ -195,10 +186,20 @@ export default function DeltaFox3DScene() {
   useEffect(() => {
     if (!hasWebGL || !shouldRenderCanvas) return;
 
-    const handleMouseMove = (e) => {
-      const x = (e.clientX / window.innerWidth) * 2 - 1;
-      const y = -(e.clientY / window.innerHeight) * 2 + 1;
-      mousePos.current = { x, y };
+    const handlePointer = (e) => {
+      let clientX, clientY;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      if (clientX !== undefined && clientY !== undefined) {
+        const x = (clientX / window.innerWidth) * 2 - 1;
+        const y = -(clientY / window.innerHeight) * 2 + 1;
+        mousePos.current = { x, y };
+      }
     };
 
     const handleScroll = () => {
@@ -220,17 +221,21 @@ export default function DeltaFox3DScene() {
       }
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('pointermove', handleMouseMove);
+    window.addEventListener('mousemove', handlePointer, { passive: true });
+    window.addEventListener('pointermove', handlePointer, { passive: true });
+    window.addEventListener('touchmove', handlePointer, { passive: true });
+    window.addEventListener('touchstart', handlePointer, { passive: true });
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('pointermove', handleMouseMove);
+      window.removeEventListener('mousemove', handlePointer);
+      window.removeEventListener('pointermove', handlePointer);
+      window.removeEventListener('touchmove', handlePointer);
+      window.removeEventListener('touchstart', handlePointer);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [hasWebGL, shouldRenderCanvas]);
 
   if (!hasWebGL) return null;
 
@@ -244,6 +249,7 @@ export default function DeltaFox3DScene() {
       <ThreeErrorBoundary>
         {shouldRenderCanvas && (
           <Canvas
+            dpr={[1, 1.5]}
             gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
             style={{ width: '100%', height: '100%' }}
           >
@@ -254,9 +260,7 @@ export default function DeltaFox3DScene() {
             <directionalLight position={[-5, -4, -2]} intensity={1.2} color="#d97706" />
             <pointLight position={[0, 4, 2]} intensity={2} color="#22c55e" />
 
-            <Float speed={1.5} rotationIntensity={0.15} floatIntensity={0.25}>
-              <MetallicFoxHead mousePos={mousePos} scrollYProgress={scrollYProgress} />
-            </Float>
+            <MetallicFoxHead mousePos={mousePos} scrollYProgress={scrollYProgress} />
           </Canvas>
         )}
       </ThreeErrorBoundary>
