@@ -81,22 +81,6 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
           </button>
         </div>
 
-        {/* Official TradingView Ticker Tape Marquee Widget */}
-        <div
-          className={`mt-10 w-full max-w-6xl transition-all duration-1000 delay-500 overflow-hidden rounded-xl border border-white/10 shadow-2xl bg-neutral-950/80 backdrop-blur-md ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
-          <div className="w-full">
-            <tv-ticker-tape
-              symbols="FOREXCOM:DJI,NSE:NIFTY,NSE:BANKNIFTY,BSE:SENSEX,SPREADEX:FTSE,NASDAQ:NDX"
-              item-size="compact"
-              hover-type="performance-grid"
-              show-hover
-            ></tv-ticker-tape>
-          </div>
-        </div>
-
       </div>
 
     </section>

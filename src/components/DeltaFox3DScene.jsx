@@ -86,28 +86,36 @@ function MetallicFoxHead({ mousePos, scrollYProgress }) {
 
     const scrollVal = scrollYProgress.current || 0;
 
-    const targetRotY = (mousePos.current?.x || 0) * 0.8 + scrollVal * Math.PI * 3;
-    const targetRotX = -(mousePos.current?.y || 0) * 0.6 + Math.sin(scrollVal * Math.PI * 2) * 0.4;
-    const targetRotZ = (mousePos.current?.x || 0) * 0.2 + Math.cos(scrollVal * Math.PI * 2) * 0.2;
+    // Direct cursor tracking:
+    // When cursor is left (x < 0), fox looks left (positive Y rot)
+    // When cursor is right (x > 0), fox looks right (negative Y rot)
+    // When cursor is up (y > 0), fox looks up (negative X rot)
+    // When cursor is down (y < 0), fox looks down (positive X rot)
+    const targetRotY = -(mousePos.current?.x || 0) * 0.75 + scrollVal * Math.PI * 2;
+    const targetRotX = -(mousePos.current?.y || 0) * 0.55 + Math.sin(scrollVal * Math.PI) * 0.3;
+    const targetRotZ = -(mousePos.current?.x || 0) * 0.15 + Math.sin(scrollVal * Math.PI * 2) * 0.1;
 
-    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.06);
-    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.06);
-    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.06);
+    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
+    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
+    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
 
-    const targetPosX = Math.sin(scrollVal * Math.PI * 2.5) * 1.8 + (mousePos.current?.x || 0) * 0.3;
-    const targetPosY = Math.cos(scrollVal * Math.PI * 1.8) * 0.6 + (mousePos.current?.y || 0) * 0.3;
-    const targetPosZ = -2.5 + Math.sin(scrollVal * Math.PI * 3) * 0.5;
-    const targetScale = 0.8 + Math.sin(scrollVal * Math.PI * 2) * 0.15;
+    // Centered base position at scroll = 0, with subtle parallax offset towards cursor
+    const targetPosX = (mousePos.current?.x || 0) * 0.4 + Math.sin(scrollVal * Math.PI * 2) * 1.2;
+    const targetPosY = (mousePos.current?.y || 0) * 0.3 - scrollVal * 1.8;
+    const targetPosZ = -0.6 + Math.sin(scrollVal * Math.PI) * 0.4;
 
-    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetPosX, 0.06);
-    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetPosY, 0.06);
-    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetPosZ, 0.06);
+    // Increased fox size for prominent display behind hero text
+    const targetScale = 1.35 + Math.sin(scrollVal * Math.PI) * 0.1;
+
+    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetPosX, 0.08);
+    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetPosY, 0.08);
+    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetPosZ, 0.08);
 
     meshRef.current.scale.setScalar(
-      THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.06)
+      THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.08)
     );
 
-    meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 1.8) * 0.003;
+    meshRef.current.position.y += Math.sin(state.clock.elapsedTime * 1.5) * 0.002;
   });
 
   return (
