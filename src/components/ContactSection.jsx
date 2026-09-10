@@ -222,8 +222,13 @@ export default function ContactSection() {
           </div>
         )}
 
-        {/* Form Container */}
-        <div className="bg-[#0c0c0e]/90 backdrop-blur-xl rounded-3xl p-8 sm:p-10 border-0 relative shadow-[0_0_50px_rgba(255,102,0,0.55),0_0_100px_rgba(255,102,0,0.25)] animate-pulse hover:shadow-[0_0_70px_rgba(255,102,0,0.7),0_0_120px_rgba(255,102,0,0.35)] transition-shadow duration-500">
+        {/* Form Container with Pulsing Neon Aura Layer */}
+        <div className="relative rounded-3xl">
+          {/* Dedicated Pulsing Neon Background Aura Layer */}
+          <div className="absolute -inset-1 rounded-3xl bg-amber-500/10 shadow-[0_0_50px_rgba(255,102,0,0.6),0_0_100px_rgba(255,102,0,0.3)] animate-pulse pointer-events-none" />
+
+          {/* Static Idle Form Container */}
+          <div className="relative bg-[#0c0c0e] backdrop-blur-xl rounded-3xl p-8 sm:p-10 border-0 shadow-[0_0_30px_rgba(255,102,0,0.2)]">
 
           {submitted ? (
             <div className="py-12 text-center space-y-4 font-mono">
@@ -313,6 +318,7 @@ export default function ContactSection() {
             </form>
           )}
 
+          </div>
         </div>
 
       </div>
