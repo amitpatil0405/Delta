@@ -444,7 +444,7 @@ export default function PortfolioJournalSection() {
         </div>
 
         {/* P&L Contribution Heatmap Grid */}
-        <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/40 shadow-[0_0_45px_rgba(255,102,0,0.3)] relative space-y-4">
+        <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative space-y-4">
           <div className="relative space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
             <div className="flex items-center space-x-2">
