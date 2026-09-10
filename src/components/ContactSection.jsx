@@ -223,7 +223,7 @@ export default function ContactSection() {
         )}
 
         {/* Form Container */}
-        <div className="glass-card rounded-3xl p-8 sm:p-10 border border-white/10 relative">
+        <div className="bg-[#0c0c0e]/90 backdrop-blur-xl rounded-3xl p-8 sm:p-10 border-0 relative shadow-[0_0_50px_rgba(255,102,0,0.55),0_0_100px_rgba(255,102,0,0.25)] animate-pulse hover:shadow-[0_0_70px_rgba(255,102,0,0.7),0_0_120px_rgba(255,102,0,0.35)] transition-shadow duration-500">
 
           {submitted ? (
             <div className="py-12 text-center space-y-4 font-mono">
