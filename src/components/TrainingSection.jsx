@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio } from 'lucide-react';
+import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio, QrCode, Smartphone, CreditCard } from 'lucide-react';
+import paymentQrImg from '../assets/payment_qr.jpg';
 
 export default function TrainingSection() {
   const [selectedModule, setSelectedModule] = useState(0);
@@ -98,8 +99,8 @@ export default function TrainingSection() {
           </p>
         </div>
 
-        {/* Banner Callout: Live Market Training Provided */}
-        <div className="mb-12 glass-card rounded-2xl p-6 border border-amber-500/40 bg-gradient-to-r from-neutral-950 via-amber-950/20 to-neutral-950 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_30px_rgba(217,119,6,0.1)]">
+        {/* Banner Callout: Live Market Training Provided + Pricing */}
+        <div className="mb-12 glass-card rounded-2xl p-6 sm:p-8 border border-amber-500/40 bg-gradient-to-r from-neutral-950 via-amber-950/20 to-neutral-950 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-[0_0_35px_rgba(217,119,6,0.15)]">
           <div className="flex items-center space-x-4">
             <div className="p-3.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 shrink-0">
               <Radio className="w-6 h-6 animate-pulse" />
@@ -111,7 +112,7 @@ export default function TrainingSection() {
                   Live Market Training Included
                 </span>
               </div>
-              <h3 className="text-lg font-bold text-white mt-1">
+              <h3 className="text-xl font-bold text-white mt-1">
                 We Provide Hands-On Training with Live Market Orders & Real-Time Data
               </h3>
               <p className="text-xs text-gray-300 mt-1">
@@ -120,13 +121,21 @@ export default function TrainingSection() {
             </div>
           </div>
 
-          <button
-            onClick={scrollToContact}
-            className="shrink-0 px-6 py-3.5 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] flex items-center space-x-2"
-          >
-            <Mail className="w-4 h-4" />
-            <span>CONTACT US TO JOIN TRAINING PROGRAM</span>
-          </button>
+          <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0 w-full lg:w-auto">
+            <div className="text-center sm:text-right px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-semibold">Program Fee</div>
+              <div className="text-2xl font-black font-mono text-amber-400 tracking-tight">₹19,999</div>
+              <div className="text-[10px] text-gray-300 font-mono">(Basic to Advanced)</div>
+            </div>
+
+            <button
+              onClick={scrollToContact}
+              className="w-full sm:w-auto px-6 py-4 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] flex items-center justify-center space-x-2"
+            >
+              <Mail className="w-4 h-4" />
+              <span>CONTACT US TO JOIN TRAINING PROGRAM</span>
+            </button>
+          </div>
         </div>
 
         {/* Module Selection Grid */}
@@ -217,6 +226,107 @@ export default function TrainingSection() {
               </div>
 
             </div>
+          </div>
+
+        </div>
+
+        {/* Program Fee & Direct Payment QR Code Card */}
+        <div className="mt-16 glass-card rounded-3xl p-6 sm:p-10 border border-amber-500/40 bg-gradient-to-br from-neutral-950 via-[#0c0c0e] to-neutral-950 shadow-[0_0_50px_rgba(217,119,6,0.15)] relative overflow-hidden">
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+
+            {/* Info & Call to Action Column */}
+            <div className="lg:col-span-7 space-y-6">
+
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase">
+                <QrCode className="w-4 h-4" />
+                <span>Instant Enrollment Payment</span>
+              </div>
+
+              <div>
+                <h3 className="text-2xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">
+                  JOIN DELTAFOX OPTIONS MASTERY
+                </h3>
+                <p className="text-sm text-gray-300 mt-2 leading-relaxed">
+                  Enroll directly in our live market options trading program. Scan the official payment QR code using any UPI App (PhonePe, Google Pay, Paytm, BHIM) to complete enrollment.
+                </p>
+              </div>
+
+              {/* Price Details Breakdown */}
+              <div className="p-5 rounded-2xl bg-neutral-900/80 border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs font-mono text-gray-400 uppercase tracking-wider block">Comprehensive Program Fee</span>
+                  <div className="text-3xl sm:text-4xl font-black font-mono text-amber-400 mt-0.5">
+                    ₹19,999 <span className="text-xs font-normal text-gray-300 font-sans">(Basic to Advanced)</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={scrollToContact}
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] shrink-0 flex items-center justify-center space-x-2"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span>Contact Us to Join Training Program</span>
+                </button>
+              </div>
+
+              {/* Payment Highlights */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="flex items-center space-x-2.5 text-xs text-gray-300 font-mono">
+                  <Smartphone className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Supports PhonePe, GPay, Paytm & UPI</span>
+                </div>
+                <div className="flex items-center space-x-2.5 text-xs text-gray-300 font-mono">
+                  <CreditCard className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Account: AMIT MAHADEV PATIL</span>
+                </div>
+                <div className="flex items-center space-x-2.5 text-xs text-gray-300 font-mono">
+                  <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Includes Live Market Mentorship</span>
+                </div>
+                <div className="flex items-center space-x-2.5 text-xs text-gray-300 font-mono">
+                  <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Instant Access to Training Materials</span>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Payment QR Code Box Column */}
+            <div className="lg:col-span-5 flex flex-col items-center justify-center">
+              <div className="relative group p-4 sm:p-5 rounded-2xl bg-neutral-900 border border-amber-500/50 shadow-[0_0_30px_rgba(255,102,0,0.25)] text-center max-w-[280px] w-full">
+
+                {/* Header Badge */}
+                <div className="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-widest mb-3 flex items-center justify-center space-x-1.5">
+                  <QrCode className="w-3.5 h-3.5" />
+                  <span>SCAN & PAY VIA PHONEPE / UPI</span>
+                </div>
+
+                {/* QR Code Container */}
+                <div className="p-2 bg-black rounded-xl border border-white/10 overflow-hidden shadow-inner mb-3">
+                  <img
+                    src={paymentQrImg}
+                    alt="PhonePe Payment QR Code - Amit Mahadev Patil"
+                    className="w-full h-auto object-contain rounded-lg"
+                  />
+                </div>
+
+                {/* Account Details Footer */}
+                <div className="space-y-1">
+                  <div className="text-xs font-mono font-bold text-white tracking-wider">
+                    AMIT MAHADEV PATIL
+                  </div>
+                  <div className="text-[11px] font-mono text-amber-400">
+                    Amount: ₹19,999 (Basic to Advanced)
+                  </div>
+                  <p className="text-[10px] text-gray-400 mt-2 leading-tight">
+                    After completing payment, share confirmation via the contact form or email to activate your training seat.
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
           </div>
 
         </div>
