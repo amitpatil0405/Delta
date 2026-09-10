@@ -587,7 +587,7 @@ export default function PortfolioJournalSection() {
 
         {/* P&L Cumulative Performance Graph */}
         {pnlCurveData.length > 0 && (
-          <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/40 shadow-[0_0_45px_rgba(255,102,0,0.3)] relative space-y-4">
+          <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative space-y-4">
             <h3 className="text-sm font-extrabold font-mono text-white uppercase">
               CUMULATIVE P&L CURVE — FINANCIAL YEAR ({startMonthName} – {endMonthName})
             </h3>
@@ -615,7 +615,7 @@ export default function PortfolioJournalSection() {
         )}
 
         {/* Trade Journal Table */}
-        <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/40 shadow-[0_0_45px_rgba(255,102,0,0.3)] relative overflow-hidden space-y-4">
+        <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative overflow-hidden space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-4">
             <div className="text-xs font-mono font-bold text-white uppercase tracking-wider">
               JOURNAL RECORDS ({displayTrades.length}) — {startMonthName} to {endMonthName}
