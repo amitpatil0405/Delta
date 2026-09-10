@@ -408,44 +408,58 @@ export default function PortfolioJournalSection() {
 
         {/* Portfolio Performance Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-white/10 min-w-0">
-            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">TOTAL TRADES ({startMonthName} – {endMonthName})</span>
-            <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount}</div>
-            <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 block truncate">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
-          </div>
-
-          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-white/10 min-w-0">
-            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">WIN RATE</span>
-            <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{winRate}%</div>
-            <span className="text-[9px] sm:text-[10px] font-mono block truncate">
-              <span className="text-emerald-400 font-bold">{winningTrades.length} Wins</span>
-              <span className="text-gray-400"> / </span>
-              <span className="text-rose-400 font-bold">{losingTrades.length} Losses</span>
-            </span>
-          </div>
-
-          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-white/10 min-w-0">
-            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">NET CUMULATIVE P&L</span>
-            <div className={`text-base sm:text-xl md:text-2xl font-extrabold font-mono mt-1 tracking-tight truncate ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {totalPnl < 0 ? '-' : totalPnl > 0 ? '+' : ''}₹{Math.abs(totalPnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.35)] relative overflow-hidden group min-w-0">
+            <div className="absolute -inset-px bg-gradient-to-r from-amber-500/0 via-orange-500/10 to-amber-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" />
+            <div className="relative z-10">
+              <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">TOTAL TRADES ({startMonthName} – {endMonthName})</span>
+              <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount}</div>
+              <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 block truncate">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
             </div>
-            <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate">{startMonthName} – {endMonthName}</span>
           </div>
 
-          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-white/10 min-w-0">
-            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">AVG PROFIT / LOSS</span>
-            <div className="text-xs sm:text-sm md:text-base xl:text-lg font-extrabold font-mono mt-1 flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1 tracking-tight min-w-0">
-              <span className="text-emerald-400 truncate">+₹{avgProfit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              <span className="text-gray-400 hidden sm:inline">/</span>
-              <span className="text-rose-400 truncate">-₹{avgLoss.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.35)] relative overflow-hidden group min-w-0">
+            <div className="absolute -inset-px bg-gradient-to-r from-amber-500/0 via-orange-500/10 to-amber-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" />
+            <div className="relative z-10">
+              <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">WIN RATE</span>
+              <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{winRate}%</div>
+              <span className="text-[9px] sm:text-[10px] font-mono block truncate">
+                <span className="text-emerald-400 font-bold">{winningTrades.length} Wins</span>
+                <span className="text-gray-400"> / </span>
+                <span className="text-rose-400 font-bold">{losingTrades.length} Losses</span>
+              </span>
             </div>
-            <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate mt-0.5">Risk-Reward Ratio</span>
+          </div>
+
+          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.35)] relative overflow-hidden group min-w-0">
+            <div className="absolute -inset-px bg-gradient-to-r from-amber-500/0 via-orange-500/10 to-amber-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" />
+            <div className="relative z-10">
+              <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">NET CUMULATIVE P&L</span>
+              <div className={`text-base sm:text-xl md:text-2xl font-extrabold font-mono mt-1 tracking-tight truncate ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {totalPnl < 0 ? '-' : totalPnl > 0 ? '+' : ''}₹{Math.abs(totalPnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+              <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate">{startMonthName} – {endMonthName}</span>
+            </div>
+          </div>
+
+          <div className="glass-card rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.35)] relative overflow-hidden group min-w-0">
+            <div className="absolute -inset-px bg-gradient-to-r from-amber-500/0 via-orange-500/10 to-amber-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl" />
+            <div className="relative z-10">
+              <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">AVG PROFIT / LOSS</span>
+              <div className="text-xs sm:text-sm md:text-base xl:text-lg font-extrabold font-mono mt-1 flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-1 tracking-tight min-w-0">
+                <span className="text-emerald-400 truncate">+₹{avgProfit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span className="text-gray-400 hidden sm:inline">/</span>
+                <span className="text-rose-400 truncate">-₹{avgLoss.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              </div>
+              <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate mt-0.5">Risk-Reward Ratio</span>
+            </div>
           </div>
         </div>
 
         {/* P&L Contribution Heatmap Grid */}
-        <div className="glass-card rounded-2xl p-6 border border-white/10 space-y-4 relative">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+        <div className="glass-card rounded-2xl p-6 border border-amber-500/40 shadow-[0_0_40px_rgba(255,102,0,0.25)] relative overflow-hidden space-y-4">
+          <div className="absolute inset-0 bg-radial from-orange-500/10 via-amber-500/5 to-transparent pointer-events-none rounded-2xl" />
+          <div className="relative z-10 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
             <div className="flex items-center space-x-2">
               <Calendar className="w-4 h-4 text-emerald-400" />
               <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
@@ -578,10 +592,10 @@ export default function PortfolioJournalSection() {
             </div>
           </div>
 
-          <div className="flex items-center justify-end text-[10px] font-mono text-gray-500 md:hidden">
-            <span>Scroll horizontally for full financial year →</span>
+            <div className="flex items-center justify-end text-[10px] font-mono text-gray-500 md:hidden">
+              <span>Scroll horizontally for full financial year →</span>
+            </div>
           </div>
-
         </div>
 
         {/* P&L Cumulative Performance Graph */}

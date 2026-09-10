@@ -71,7 +71,7 @@ export default function AboutFounderSection() {
                   Backed by a Bachelor's degree in Computer Science engineering and deep-rooted expertise in financial markets, Amit leads DeltaFox with an engineering-driven, systematic approach.
                 </p>
                 <p>
-                  By blending technical precision with quantitative trading, the platform brings complete transparency by showcasing real-time portfolio details directly on the website.
+                  By blending technical precision with quantitative trading, the platform brings complete transparency by showcasing live market data and real-time portfolio details directly on the website.
                 </p>
                 <p>
                   Specializing in advanced options trading strategies particularly non-directional frameworks, credit spreads, and volatility based execution. The focus remains on building resilient portfolios where data and math take absolute precedence over emotion.
