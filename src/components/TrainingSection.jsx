@@ -294,19 +294,18 @@ export default function TrainingSection() {
 
             {/* Payment QR Code Box Column */}
             <div className="lg:col-span-5 flex flex-col items-center justify-center">
-              <div className="relative group p-4 sm:p-5 rounded-2xl bg-neutral-900 border border-amber-500/50 shadow-[0_0_30px_rgba(255,102,0,0.25)] text-center max-w-[280px] w-full">
+              <div className="relative group p-4 sm:p-5 rounded-2xl bg-neutral-900 border border-amber-500/50 shadow-[0_0_30px_rgba(255,102,0,0.25)] text-center max-w-[300px] w-full">
 
-                {/* Header Badge */}
-                <div className="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-widest mb-3 flex items-center justify-center space-x-1.5">
-                  <QrCode className="w-3.5 h-3.5" />
-                  <span>SCAN & PAY VIA PHONEPE / UPI</span>
-                </div>
+                {/* Header Instruction */}
+                <p className="text-[11px] font-mono font-semibold text-amber-400 leading-snug mb-3">
+                  Scan below QR from PhonePe, Google Pay, Paytm or BHIM to make transaction and book your seat
+                </p>
 
                 {/* QR Code Container */}
                 <div className="p-2 bg-black rounded-xl border border-white/10 overflow-hidden shadow-inner mb-3">
                   <img
                     src={paymentQrImg}
-                    alt="PhonePe Payment QR Code - Amit Mahadev Patil"
+                    alt="Payment QR Code - Amit Mahadev Patil"
                     className="w-full h-auto object-contain rounded-lg"
                   />
                 </div>
@@ -316,7 +315,7 @@ export default function TrainingSection() {
                   <div className="text-xs font-mono font-bold text-white tracking-wider">
                     AMIT MAHADEV PATIL
                   </div>
-                  <div className="text-[11px] font-mono text-amber-400">
+                  <div className="text-[11px] font-mono text-amber-400 font-bold">
                     Amount: ₹19,999 (Basic to Advanced)
                   </div>
                   <p className="text-[10px] text-gray-400 mt-2 leading-tight">
