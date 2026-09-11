@@ -99,7 +99,7 @@ export default function TrainingSection() {
           </p>
         </div>
 
-        {/* Banner Callout: Live Market Training Provided + Pricing */}
+        {/* Banner Callout: Live Market Training Provided */}
         <div className="mb-12 glass-card rounded-2xl p-6 sm:p-8 border border-amber-500/40 bg-gradient-to-r from-neutral-950 via-amber-950/20 to-neutral-950 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-[0_0_35px_rgba(217,119,6,0.15)]">
           <div className="flex items-center space-x-4">
             <div className="p-3.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 shrink-0">
@@ -119,22 +119,6 @@ export default function TrainingSection() {
                 Learn options trading directly in live market conditions with practical strike selection, risk adjustments, and real-time open interest dynamics.
               </p>
             </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0 w-full lg:w-auto">
-            <div className="text-center sm:text-right px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/30">
-              <div className="text-[10px] font-mono uppercase tracking-widest text-amber-400 font-semibold">Program Fee</div>
-              <div className="text-2xl font-black font-mono text-amber-400 tracking-tight">₹19,999</div>
-              <div className="text-[10px] text-gray-300 font-mono">(Basic to Advanced)</div>
-            </div>
-
-            <button
-              onClick={scrollToContact}
-              className="w-full sm:w-auto px-6 py-4 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] flex items-center justify-center space-x-2"
-            >
-              <Mail className="w-4 h-4" />
-              <span>CONTACT US TO JOIN TRAINING PROGRAM</span>
-            </button>
           </div>
         </div>
 
@@ -209,20 +193,10 @@ export default function TrainingSection() {
                 </div>
               </div>
 
-              {/* Action & Contact Redirection */}
-              <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center space-x-2 text-xs font-mono text-gray-400">
-                  <ShieldCheck className="w-4 h-4 text-amber-400" />
-                  <span>Live Market Mentorship & Practical Setup</span>
-                </div>
-
-                <button
-                  onClick={scrollToContact}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] flex items-center justify-center space-x-2"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>CONTACT US TO JOIN TRAINING PROGRAM</span>
-                </button>
+              {/* Mentorship Badge */}
+              <div className="pt-6 border-t border-white/10 flex items-center space-x-2 text-xs font-mono text-gray-400">
+                <ShieldCheck className="w-4 h-4 text-amber-400" />
+                <span>Live Market Mentorship & Practical Setup</span>
               </div>
 
             </div>
@@ -233,7 +207,10 @@ export default function TrainingSection() {
         {/* Program Fee & Direct Payment QR Code Card */}
         <div className="mt-16 glass-card rounded-3xl p-6 sm:p-10 border border-amber-500/40 bg-gradient-to-br from-neutral-950 via-[#0c0c0e] to-neutral-950 shadow-[0_0_50px_rgba(217,119,6,0.15)] relative overflow-hidden">
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          {/* Ambient Backlight Glow for the Payment Card */}
+          <div className="absolute top-1/2 right-10 -translate-y-1/2 w-72 h-72 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
 
             {/* Info & Call to Action Column */}
             <div className="lg:col-span-7 space-y-6">
@@ -254,10 +231,17 @@ export default function TrainingSection() {
 
               {/* Price Details Breakdown */}
               <div className="p-5 rounded-2xl bg-neutral-900/80 border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                  <span className="text-xs font-mono text-gray-400 uppercase tracking-wider block">Comprehensive Program Fee</span>
-                  <div className="text-3xl sm:text-4xl font-black font-mono text-amber-400 mt-0.5">
-                    ₹19,999 <span className="text-xs font-normal text-gray-300 font-sans">(Basic to Advanced)</span>
+                <div className="text-center sm:text-left w-full sm:w-auto">
+                  <span className="text-xs font-mono text-gray-400 uppercase tracking-wider block text-center sm:text-left">
+                    Comprehensive Program Fee
+                  </span>
+                  <div className="mt-1">
+                    <span className="text-3xl sm:text-4xl font-black font-mono text-amber-400 block">
+                      ₹19,999
+                    </span>
+                    <span className="text-xs font-normal text-gray-300 font-mono block mt-0.5">
+                      (Basic to Advanced)
+                    </span>
                   </div>
                 </div>
 
@@ -266,7 +250,7 @@ export default function TrainingSection() {
                   className="w-full sm:w-auto px-6 py-3.5 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] shrink-0 flex items-center justify-center space-x-2"
                 >
                   <Mail className="w-4 h-4" />
-                  <span>Contact Us to Join Training Program</span>
+                  <span>Join Training Program</span>
                 </button>
               </div>
 
@@ -293,20 +277,23 @@ export default function TrainingSection() {
             </div>
 
             {/* Payment QR Code Box Column */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center">
-              <div className="relative group p-4 sm:p-5 rounded-2xl bg-neutral-900 border border-amber-500/50 shadow-[0_0_30px_rgba(255,102,0,0.25)] text-center max-w-[300px] w-full">
+            <div className="lg:col-span-5 flex flex-col items-center justify-center relative">
+              {/* Vivid Neon Green Backlight Glow */}
+              <div className="absolute inset-0 bg-emerald-500/25 rounded-full blur-[60px] pointer-events-none" />
+
+              <div className="relative group p-5 rounded-2xl bg-neutral-900/90 border border-emerald-500/40 shadow-[0_0_35px_rgba(16,185,129,0.3)] text-center max-w-[300px] w-full">
 
                 {/* Header Instruction */}
-                <p className="text-[11px] font-mono font-semibold text-amber-400 leading-snug mb-3">
+                <p className="text-[11px] font-mono font-semibold text-emerald-400 leading-snug mb-3">
                   Scan below QR from PhonePe, Google Pay, Paytm or BHIM to make transaction and book your seat
                 </p>
 
-                {/* QR Code Container */}
-                <div className="p-2 bg-black rounded-xl border border-white/10 overflow-hidden shadow-inner mb-3">
+                {/* QR Code Container (Borderless Image) */}
+                <div className="p-1.5 bg-black rounded-xl overflow-hidden mb-3 shadow-2xl">
                   <img
                     src={paymentQrImg}
                     alt="Payment QR Code - Amit Mahadev Patil"
-                    className="w-full h-auto object-contain rounded-lg"
+                    className="w-full h-auto object-contain rounded-lg border-0 shadow-none block"
                   />
                 </div>
 
@@ -315,8 +302,11 @@ export default function TrainingSection() {
                   <div className="text-xs font-mono font-bold text-white tracking-wider">
                     AMIT MAHADEV PATIL
                   </div>
-                  <div className="text-[11px] font-mono text-amber-400 font-bold">
-                    Amount: ₹19,999 (Basic to Advanced)
+                  <div className="text-[11px] font-mono text-emerald-400 font-bold">
+                    Amount: ₹19,999
+                  </div>
+                  <div className="text-[10px] font-mono text-gray-300">
+                    (Basic to Advanced)
                   </div>
                   <p className="text-[10px] text-gray-400 mt-2 leading-tight">
                     After completing payment, share confirmation via the contact form or email to activate your training seat.
