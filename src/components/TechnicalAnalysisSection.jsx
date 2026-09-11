@@ -390,10 +390,6 @@ export default function TechnicalAnalysisSection() {
 
                     <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-gray-400">
                       <span>PRE-POSITION VERIFIED</span>
-                      <span className="text-emerald-400 flex items-center gap-1">
-                        <CheckCircle className="w-3 h-3" />
-                        DISCIPLINED ENTRY
-                      </span>
                     </div>
                   </div>
                 ))}
