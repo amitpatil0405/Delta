@@ -425,7 +425,7 @@ export default function PortfolioJournalSection() {
           </div>
 
           <div className="bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative min-w-0">
-            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">NET CUMULATIVE P&L</span>
+            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate block">GROSS CUMULATIVE P&L</span>
             <div className={`text-base sm:text-xl md:text-2xl font-extrabold font-mono mt-1 tracking-tight truncate ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {totalPnl < 0 ? '-' : totalPnl > 0 ? '+' : ''}₹{Math.abs(totalPnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
