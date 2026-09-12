@@ -111,7 +111,7 @@ export default function Footer({ onNavigate }) {
           <div className="flex items-start space-x-3 text-gray-500 text-[11px] leading-relaxed font-sans">
             <ShieldAlert className="w-5 h-5 text-amber-500/80 shrink-0 mt-0.5" />
             <p>
-              <strong className="text-gray-400 font-mono">DISCLAIMER:</strong> DeltaFox is an educational and informational platform. Market data and information may be delayed or inaccurate depending on the data provider. Options trading involves substantial risk of loss and is not suitable for all investors. Nothing on this website should be considered financial advice or a recommendation to buy or sell any security.
+              <strong className="text-gray-400 font-mono">DISCLAIMER:</strong> DeltaFox is an educational and informational platform. Options trading involves substantial risk of loss and is not suitable for all investors. Nothing on this website should be considered financial advice or a recommendation to buy or sell any security.
             </p>
           </div>
 
@@ -230,9 +230,9 @@ export default function Footer({ onNavigate }) {
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <h4 className="text-white font-mono font-bold">3. Market Data Delay Disclaimer</h4>
+                    <h4 className="text-white font-mono font-bold">3. Information Disclaimer</h4>
                     <p className="text-gray-400">
-                      Market quotes, indices, and options chain metrics displayed on DeltaFox are sourced from third-party data providers and may be delayed or subject to feed interruptions. DeltaFox assumes no liability for trading decisions made based on website data.
+                      Information and analytical content presented on DeltaFox are provided for educational purposes. DeltaFox assumes no liability for trading decisions made based on website information.
                     </p>
                   </div>
                 </div>
