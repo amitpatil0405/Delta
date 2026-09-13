@@ -293,6 +293,20 @@ export default function PortfolioJournalSection() {
     };
   });
 
+  // Calculate dynamic zero-baseline gradient offset for smooth Red/Green transition
+  const pnlGradientStats = useMemo(() => {
+    if (pnlCurveData.length === 0) return { offset: 0, isAllPos: true, isAllNeg: false };
+    const pnlVals = pnlCurveData.map(d => d.pnl);
+    const maxPnl = Math.max(...pnlVals, 0);
+    const minPnl = Math.min(...pnlVals, 0);
+
+    if (maxPnl <= 0) return { offset: 0, isAllPos: false, isAllNeg: true };
+    if (minPnl >= 0) return { offset: 1, isAllPos: true, isAllNeg: false };
+
+    const offset = maxPnl / (maxPnl - minPnl);
+    return { offset, isAllPos: false, isAllNeg: false };
+  }, [pnlCurveData]);
+
   // Display trades in reverse order so latest trades appear at top of table
   const displayTrades = useMemo(() => [...fyTrades].reverse(), [fyTrades]);
 
@@ -595,23 +609,100 @@ export default function PortfolioJournalSection() {
             <h3 className="text-sm font-extrabold font-mono text-white uppercase">
               CUMULATIVE P&L CURVE — FINANCIAL YEAR ({startMonthName} – {endMonthName})
             </h3>
-            <div className="h-[260px] w-full pt-2">
+            <div className="h-[280px] w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={pnlCurveData}>
+                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="pnlCurve" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0.0}/>
+                    {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
+                    <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
+                      {pnlGradientStats.isAllPos ? (
+                        <>
+                          <stop offset="0%" stopColor="#10b981" />
+                          <stop offset="100%" stopColor="#10b981" />
+                        </>
+                      ) : pnlGradientStats.isAllNeg ? (
+                        <>
+                          <stop offset="0%" stopColor="#f43f5e" />
+                          <stop offset="100%" stopColor="#f43f5e" />
+                        </>
+                      ) : (
+                        <>
+                          <stop offset="0%" stopColor="#10b981" />
+                          <stop offset={`${Math.max(0, pnlGradientStats.offset * 100 - 6)}%`} stopColor="#10b981" />
+                          <stop offset={`${Math.min(100, pnlGradientStats.offset * 100 + 6)}%`} stopColor="#f43f5e" />
+                          <stop offset="100%" stopColor="#f43f5e" />
+                        </>
+                      )}
+                    </linearGradient>
+
+                    {/* Dynamic Fill Area Gradient */}
+                    <linearGradient id="pnlAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                      {pnlGradientStats.isAllPos ? (
+                        <>
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
+                          <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
+                        </>
+                      ) : pnlGradientStats.isAllNeg ? (
+                        <>
+                          <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.02} />
+                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.35} />
+                        </>
+                      ) : (
+                        <>
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
+                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#10b981" stopOpacity={0.03} />
+                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#f43f5e" stopOpacity={0.03} />
+                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.35} />
+                        </>
+                      )}
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#222222" />
+
+                  <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={true} horizontal={true} />
                   <XAxis dataKey="trade" stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
                   <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
+
                   <RechartsTooltip
-                    contentStyle={{ backgroundColor: '#0a0a0c', borderColor: '#333', borderRadius: '8px', color: '#fff' }}
-                    formatter={(value) => [`₹${Number(value).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, 'Cumulative P&L']}
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        const val = data.pnl;
+                        const isNeg = val < 0;
+                        return (
+                          <div className="bg-[#0c0c0e]/95 border border-white/20 rounded-xl p-3 shadow-2xl font-mono text-xs backdrop-blur-md space-y-1">
+                            <div className="text-white font-bold text-sm">{label}</div>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-400 font-medium">Cumulative P&L :</span>
+                              <span className={`font-extrabold text-sm ${isNeg ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                {isNeg ? '-' : '+'}₹{Math.abs(val).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
                   />
-                  <Area type="monotone" dataKey="pnl" stroke="#22c55e" strokeWidth={3} fillOpacity={1} fill="url(#pnlCurve)" />
+
+                  <Area
+                    type="monotone"
+                    dataKey="pnl"
+                    stroke="url(#pnlStrokeGradient)"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#pnlAreaGradient)"
+                    activeDot={({ cx, cy, payload }) => {
+                      if (!cx || !cy || !payload) return null;
+                      const isNeg = payload.pnl < 0;
+                      const dotColor = isNeg ? '#f43f5e' : '#10b981';
+                      return (
+                        <g key={`dot_${cx}_${cy}`}>
+                          <circle cx={cx} cy={cy} r={7} fill={dotColor} fillOpacity={0.3} />
+                          <circle cx={cx} cy={cy} r={4.5} fill={dotColor} stroke="#ffffff" strokeWidth={2} />
+                        </g>
+                      );
+                    }}
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
