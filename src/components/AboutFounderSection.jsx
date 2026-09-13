@@ -53,7 +53,7 @@ export default function AboutFounderSection() {
                   MR. AMIT PATIL
                 </h3>
                 <p className="text-xs font-mono text-amber-400 font-semibold tracking-wider uppercase">
-                  Founder, Derivatives Trader & Private Fund Manager
+                  Founder, Derivatives Trader & Quantitative Strategist
                 </p>
               </div>
             </div>
