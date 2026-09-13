@@ -250,12 +250,13 @@ export default function OptionsStrategiesSection() {
   };
 
   return (
-    <section id="strategies" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050507] border-t border-white/5 relative overflow-hidden">
+    <section id="strategies" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
 
-      {/* Glow Effects */}
-      <div className="absolute top-1/3 right-10 w-96 h-96 bg-amber-500/5 rounded-full blur-[150px] pointer-events-none" />
+      {/* Ambient Radial Glow Effects */}
+      <div className="ambient-glow-amber top-1/4 right-10" />
+      <div className="ambient-glow-emerald bottom-1/4 left-10" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 relative z-10">
 
         {/* Section Heading */}
         <div className="text-center max-w-3xl mx-auto">

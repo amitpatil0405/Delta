@@ -380,8 +380,12 @@ export default function PortfolioJournalSection() {
   const endMonthName = `${MONTH_NAMES[fyConfig.endMonth]} ${fyConfig.endYear}`;
 
   return (
-    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] border-t border-white/5 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+      {/* Soft Ambient Radial Glow */}
+      <div className="ambient-glow-amber top-10 right-10" />
+      <div className="ambient-glow-emerald bottom-10 left-10" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
 
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">

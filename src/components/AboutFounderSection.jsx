@@ -4,10 +4,10 @@ import myPic from '../assets/my_pic.jpg';
 
 export default function AboutFounderSection() {
   return (
-    <section id="about" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] border-t border-white/5 relative overflow-hidden">
+    <section id="about" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
 
-      {/* Background Lighting */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[160px] pointer-events-none" />
+      {/* Ambient Radial Glow Lighting */}
+      <div className="ambient-glow-amber top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
 

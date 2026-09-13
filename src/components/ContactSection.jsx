@@ -144,8 +144,11 @@ export default function ContactSection() {
   };
 
   return (
-    <section id="contact" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#060608] border-t border-white/5 relative">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+      {/* Ambient Radial Glow Lighting */}
+      <div className="ambient-glow-amber top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Header & Admin Controls */}
         <div className="text-center space-y-4 mb-12">
