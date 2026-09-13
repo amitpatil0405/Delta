@@ -120,10 +120,8 @@
 /* Institutional Sub-Page Background Grid & Dot Pattern */
 .bg-subpage-grid {
   background-image:
-    radial-gradient(rgba(217, 119, 6, 0.08) 1px, transparent 1px),
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 28px 28px, 56px 56px, 56px 56px;
+    radial-gradient(rgba(217, 119, 6, 0.08) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
 /* Institutional Soft Radial Ambient Lighting Glows */
