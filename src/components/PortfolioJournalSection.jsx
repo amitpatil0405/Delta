@@ -287,7 +287,7 @@ export default function PortfolioJournalSection() {
   const losingTrades = closedTrades.filter(t => t.manualPnl < 0 || t.status === 'CLOSED LOSS');
 
   const totalTradesCount = fyTrades.length;
-  const winRate = closedTrades.length > 0 ? ((winningTrades.length / closedTrades.length) * 100).toFixed(1) : '0.0';
+  const winRate = closedTrades.length > 0 ? ((winningTrades.length / closedTrades.length) * 100).toFixed(2) : '0.00';
   const totalPnl = closedTrades.reduce((acc, t) => acc + t.manualPnl, 0);
 
   const avgProfit = winningTrades.length > 0
