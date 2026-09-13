@@ -22,6 +22,7 @@ export default function ContactSection() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [needsActivation, setNeedsActivation] = useState(false);
   const [error, setError] = useState('');
 
   // Admin view inquiries state
@@ -121,7 +122,7 @@ export default function ContactSection() {
 
     // 2. Submit via FormSubmit API to send email directly to deltafox.options@yahoo.com
     try {
-      await fetch('https://formsubmit.co/ajax/deltafox.options@yahoo.com', {
+      const response = await fetch('https://formsubmit.co/ajax/deltafox.options@yahoo.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -135,6 +136,12 @@ export default function ContactSection() {
           _captcha: 'false'
         })
       });
+      const result = await response.json().catch(() => null);
+      if (result && result.message && result.message.includes('Activation')) {
+        setNeedsActivation(true);
+      } else {
+        setNeedsActivation(false);
+      }
     } catch (err) {
       console.warn('FormSubmit endpoint dispatch attempt completed:', err);
     }
@@ -236,13 +243,35 @@ export default function ContactSection() {
           {submitted ? (
             <div className="py-12 text-center space-y-4 font-mono">
               <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto animate-bounce" />
-              <h3 className="text-2xl font-bold text-white">INQUIRY SENT</h3>
-              <p className="text-xs text-gray-300 max-w-md mx-auto font-sans">
-                Your message has been received and routed to <strong className="text-amber-400">deltafox.options@yahoo.com</strong>.
+              <h3 className="text-2xl font-bold text-white">INQUIRY RECORDED</h3>
+
+              {needsActivation ? (
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/40 max-w-md mx-auto space-y-2 text-left font-sans">
+                  <div className="text-amber-400 font-mono font-bold text-xs uppercase flex items-center space-x-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-amber-400" />
+                    <span>ONE-TIME ACTIVATION REQUIRED FOR YAHOO MAIL</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    FormSubmit has dispatched a <strong>one-time activation email</strong> to <strong className="text-amber-400">deltafox.options@yahoo.com</strong>.
+                  </p>
+                  <p className="text-xs text-gray-400 leading-relaxed">
+                    Please check your Yahoo inbox (or Spam folder) for an email from FormSubmit and click <strong>"Activate Form"</strong>. Once clicked, all future user inquiries will land directly in your Yahoo inbox.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-xs text-gray-300 max-w-md mx-auto font-sans">
+                  Your message has been received and routed to <strong className="text-amber-400">deltafox.options@yahoo.com</strong>.
+                </p>
+              )}
+
+              <p className="text-[11px] text-emerald-400/90 max-w-md mx-auto font-sans">
+                ✓ Your inquiry is also saved in the central admin database.
               </p>
+
               <button
                 onClick={() => {
                   setSubmitted(false);
+                  setNeedsActivation(false);
                   setFormData({ name: '', email: '', subject: '', message: '' });
                 }}
                 className="mt-4 px-6 py-2.5 bg-neutral-900 border border-amber-500/40 text-amber-400 text-xs font-bold rounded-xl hover:bg-neutral-800 transition-all"
