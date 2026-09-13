@@ -611,7 +611,7 @@ export default function PortfolioJournalSection() {
             </h3>
             <div className="h-[280px] w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
+                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 0 }}>
                   <defs>
                     {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
                     <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
@@ -659,7 +659,7 @@ export default function PortfolioJournalSection() {
                   </defs>
 
                   <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={true} horizontal={true} />
-                  <XAxis dataKey="trade" stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
+                  <XAxis dataKey="trade" stroke="#666" tick={{ fontSize: 10.5, fill: '#888' }} interval={0} />
                   <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
 
                   <RechartsTooltip
