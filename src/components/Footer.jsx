@@ -89,16 +89,28 @@ export default function Footer({ onNavigate }) {
             <div className="space-y-3 col-span-2 sm:col-span-1">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px]">FOUNDER</span>
               <div className="text-gray-300 font-sans text-xs space-y-1">
-                <span className="block font-bold text-white font-mono">AMIT PATIL</span>
-                <span className="block text-[11px] text-gray-400">Derivatives trader & Private fund manager</span>
-                <a
-                  href="https://www.deltafox.in"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block text-[11px] text-amber-400 hover:text-amber-300 font-mono transition-colors pt-0.5"
-                >
-                  www.deltafox.in
-                </a>
+                <span className="block font-bold text-white font-mono">Mr. Amit Patil</span>
+                <span className="block text-[11px] text-gray-400">Derivatives trader & quantitative strategist</span>
+                <div className="text-[11px] text-gray-400 font-mono pt-1">
+                  <span>Email: </span>
+                  <a
+                    href="mailto:deltafox.options@yahoo.com"
+                    className="text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    deltafox.options@yahoo.com
+                  </a>
+                </div>
+                <div className="text-[11px] text-gray-400 font-mono">
+                  <span>Website: </span>
+                  <a
+                    href="https://www.deltafox.in"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    www.deltafox.in
+                  </a>
+                </div>
               </div>
             </div>
 
