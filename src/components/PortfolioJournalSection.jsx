@@ -288,6 +288,7 @@ export default function PortfolioJournalSection() {
     runningPnl += t.manualPnl;
     return {
       trade: `Trade ${idx + 1}`,
+      tradeNum: `#${idx + 1}`,
       pnl: runningPnl,
       tradePnl: t.manualPnl
     };
@@ -658,19 +659,19 @@ export default function PortfolioJournalSection() {
                     </linearGradient>
                   </defs>
 
-                  <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={true} horizontal={true} />
-                  <XAxis dataKey="trade" stroke="#666" tick={{ fontSize: 10.5, fill: '#888' }} interval={0} />
-                  <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={false} horizontal={true} />
+                  <XAxis dataKey="tradeNum" stroke="#666" tick={{ fontSize: 10, fill: '#888' }} minTickGap={25} axisLine={{ stroke: '#333' }} tickLine={false} />
+                  <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} axisLine={{ stroke: '#333' }} tickLine={false} />
 
                   <RechartsTooltip
-                    content={({ active, payload, label }) => {
+                    content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         const val = data.pnl;
                         const isNeg = val < 0;
                         return (
                           <div className="bg-[#0c0c0e]/95 border border-white/20 rounded-xl p-3 shadow-2xl font-mono text-xs backdrop-blur-md space-y-1">
-                            <div className="text-white font-bold text-sm">{label}</div>
+                            <div className="text-white font-bold text-sm">{data.trade} ({data.tradeNum})</div>
                             <div className="flex items-center space-x-2">
                               <span className="text-gray-400 font-medium">Cumulative P&L :</span>
                               <span className={`font-extrabold text-sm ${isNeg ? 'text-rose-400' : 'text-emerald-400'}`}>
