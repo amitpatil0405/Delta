@@ -168,6 +168,22 @@ function parseCSVRows(csvText) {
 }
 
 export default function PortfolioJournalSection() {
+  // Responsive mobile state tracking
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Trades state initialized from local cache
   const [trades, setTrades] = useState(() => {
     try {
@@ -290,9 +306,30 @@ export default function PortfolioJournalSection() {
       trade: `Trade ${idx + 1}`,
       tradeNum: `#${idx + 1}`,
       pnl: runningPnl,
-      tradePnl: t.manualPnl
+      tradePnl: t.manualPnl,
+      symbol: t.symbol,
+      strategy: t.strategy,
+      date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date
     };
   });
+
+  // Calculate sampled ticks for mobile viewport so only selected ticks/vertical lines show on mobile
+  const mobileTicks = useMemo(() => {
+    if (!pnlCurveData.length) return [];
+    if (pnlCurveData.length <= 5) {
+      return pnlCurveData.map(d => d.trade);
+    }
+    const ticks = [];
+    const step = Math.ceil(pnlCurveData.length / 5);
+    for (let i = 0; i < pnlCurveData.length; i += step) {
+      ticks.push(pnlCurveData[i].trade);
+    }
+    const lastTrade = pnlCurveData[pnlCurveData.length - 1].trade;
+    if (!ticks.includes(lastTrade)) {
+      ticks.push(lastTrade);
+    }
+    return ticks;
+  }, [pnlCurveData]);
 
   // Calculate dynamic zero-baseline gradient offset for smooth Red/Green transition
   const pnlGradientStats = useMemo(() => {
@@ -659,8 +696,16 @@ export default function PortfolioJournalSection() {
                     </linearGradient>
                   </defs>
 
-                  <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={false} horizontal={true} />
-                  <XAxis dataKey="tradeNum" stroke="#666" tick={{ fontSize: 10, fill: '#888' }} minTickGap={25} axisLine={{ stroke: '#333' }} tickLine={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={true} horizontal={true} />
+                  <XAxis
+                    dataKey="trade"
+                    stroke="#666"
+                    tick={{ fontSize: 10, fill: '#888' }}
+                    interval={isMobile ? undefined : 0}
+                    ticks={isMobile ? mobileTicks : undefined}
+                    axisLine={{ stroke: '#333' }}
+                    tickLine={false}
+                  />
                   <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} axisLine={{ stroke: '#333' }} tickLine={false} />
 
                   <RechartsTooltip
@@ -668,13 +713,34 @@ export default function PortfolioJournalSection() {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         const val = data.pnl;
+                        const tradePnlVal = data.tradePnl;
                         const isNeg = val < 0;
+                        const isTradePnlNeg = tradePnlVal < 0;
                         return (
-                          <div className="bg-[#0c0c0e]/95 border border-white/20 rounded-xl p-3 shadow-2xl font-mono text-xs backdrop-blur-md space-y-1">
-                            <div className="text-white font-bold text-sm">{data.trade} ({data.tradeNum})</div>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-gray-400 font-medium">Cumulative P&L :</span>
-                              <span className={`font-extrabold text-sm ${isNeg ? 'text-rose-400' : 'text-emerald-400'}`}>
+                          <div className="bg-[#0c0c0e]/95 border border-white/20 rounded-xl p-3 shadow-2xl font-mono text-xs backdrop-blur-md space-y-1.5 min-w-[200px]">
+                            <div className="flex items-center justify-between border-b border-white/10 pb-1 gap-2">
+                              <span className="text-white font-bold text-sm">{data.trade}</span>
+                              <span className="text-amber-400 font-bold text-[10px]">{data.symbol}</span>
+                            </div>
+                            <div className="text-[10px] text-gray-400 flex items-center justify-between">
+                              <span>Strategy:</span>
+                              <span className="text-gray-200 font-semibold">{data.strategy}</span>
+                            </div>
+                            {data.date && (
+                              <div className="text-[10px] text-gray-400 flex items-center justify-between">
+                                <span>Date:</span>
+                                <span className="text-gray-200 font-semibold">{data.date}</span>
+                              </div>
+                            )}
+                            <div className="flex items-center justify-between text-[11px] pt-0.5">
+                              <span className="text-gray-400 font-medium">Trade P&L:</span>
+                              <span className={`font-extrabold ${isTradePnlNeg ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                {isTradePnlNeg ? '-' : '+'}₹{Math.abs(tradePnlVal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-xs font-bold border-t border-white/10 pt-1">
+                              <span className="text-gray-300">Cumulative P&L:</span>
+                              <span className={`font-extrabold ${isNeg ? 'text-rose-400' : 'text-emerald-400'}`}>
                                 {isNeg ? '-' : '+'}₹{Math.abs(val).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                               </span>
                             </div>
