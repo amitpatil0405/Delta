@@ -129,10 +129,13 @@ export default function ContactSection() {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
+          'Name': formData.name,
+          'Email Address': formData.email,
+          'Subject': formData.subject || 'DeltaFox Inquiry',
+          'User Message': formData.message,
           _subject: formData.subject ? `[DELTAFOX] ${formData.subject}` : `[DELTAFOX] Inquiry from ${formData.name}`,
-          message: formData.message,
+          _replyto: formData.email,
+          _template: 'table',
           _captcha: 'false'
         })
       });
