@@ -119,9 +119,9 @@ export default function ContactSection() {
     // 1. Save to cloud database for Admin visibility
     await saveInquiryToCloud(inquiryRecord);
 
-    // 2. Submit via FormSubmit API to send email directly to amitpatil0405@gmail.com
+    // 2. Submit via FormSubmit API to send email directly to deltafox.options@yahoo.com
     try {
-      await fetch('https://formsubmit.co/ajax/amitpatil0405@gmail.com', {
+      await fetch('https://formsubmit.co/ajax/deltafox.options@yahoo.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -238,7 +238,7 @@ export default function ContactSection() {
               <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto animate-bounce" />
               <h3 className="text-2xl font-bold text-white">INQUIRY SENT</h3>
               <p className="text-xs text-gray-300 max-w-md mx-auto font-sans">
-                Your message has been received and routed to <strong className="text-amber-400">amitpatil0405@gmail.com</strong>.
+                Your message has been received and routed to <strong className="text-amber-400">deltafox.options@yahoo.com</strong>.
               </p>
               <button
                 onClick={() => {
