@@ -176,7 +176,10 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
           {/* Right Top Corner: Market Status Indicator & Live Date/Time Display */}
           <div className="hidden xl:flex items-center space-x-3">
             <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
-              <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusBadge.dotBg}`}></span>
+                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${statusBadge.dotBg}`}></span>
+              </span>
               <span className={`font-bold uppercase ${statusBadge.textColor}`}>{statusBadge.text}</span>
             </div>
 
@@ -192,7 +195,10 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
           <div className="hidden sm:flex xl:hidden items-center space-x-2">
             <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
-              <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
+              <span className="relative flex h-2.5 w-2.5">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusBadge.dotBg}`}></span>
+                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${statusBadge.dotBg}`}></span>
+              </span>
               <span className={`font-bold uppercase ${statusBadge.textColor}`}>{statusBadge.text}</span>
             </div>
             <div className="flex flex-col items-end px-2.5 py-1 rounded-lg bg-neutral-900/90 border border-amber-500/30 font-mono text-right">
@@ -208,7 +214,10 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
           {/* Mobile Hamburger Toggle */}
           <div className="lg:hidden flex items-center space-x-3">
             <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-neutral-900 border border-white/10 text-[10px] font-mono">
-              <span className={`w-2 h-2 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
+              <span className="relative flex h-2 w-2">
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusBadge.dotBg}`}></span>
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${statusBadge.dotBg}`}></span>
+              </span>
               <span className={`font-bold ${statusBadge.textColor}`}>{statusBadge.text}</span>
             </div>
             <button
