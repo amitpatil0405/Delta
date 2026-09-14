@@ -88,7 +88,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     { id: 'home', label: 'Home' },
     { id: 'technical-analysis', label: 'Technical analysis' },
     { id: 'portfolio', label: 'Portfolio' },
-    { id: 'intelligence', label: 'Holiday calender' },
+    { id: 'intelligence', label: 'Holiday calendar' },
     { id: 'strategies', label: 'Strategies' },
     { id: 'training', label: 'Training' },
     { id: 'about', label: 'About us' },

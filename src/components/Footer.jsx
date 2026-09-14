@@ -72,7 +72,7 @@ export default function Footer({ onNavigate }) {
                 <li><button onClick={() => handleLinkClick('home')} className="hover:text-amber-400 transition-colors">Home</button></li>
                 <li><button onClick={() => handleLinkClick('technical-analysis')} className="hover:text-amber-400 transition-colors">Technical Analysis</button></li>
                 <li><button onClick={() => handleLinkClick('portfolio')} className="hover:text-amber-400 transition-colors">Trading Portfolio</button></li>
-                <li><button onClick={() => handleLinkClick('intelligence')} className="hover:text-amber-400 transition-colors">Holiday calender</button></li>
+                <li><button onClick={() => handleLinkClick('intelligence')} className="hover:text-amber-400 transition-colors">Holiday calendar</button></li>
               </ul>
             </div>
 
