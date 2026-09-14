@@ -12,6 +12,7 @@ export default function TrainingSection() {
       subtitle: 'Understanding calls, puts, strike prices, moneyness, and options contracts fundamentals.',
       level: 'FOUNDATION',
       duration: 'Comprehensive Level 1',
+      price: '₹2,999',
       lessons: [
         'Call & Put Options Definition and Payoff Structures',
         'In-The-Money (ITM), At-The-Money (ATM), and Out-Of-The-Money (OTM) Moneyness',
@@ -27,6 +28,7 @@ export default function TrainingSection() {
       subtitle: 'In-depth breakdown of Delta, Gamma, Theta, Vega, Rho, and Implied Volatility (IV).',
       level: 'INTERMEDIATE',
       duration: 'Comprehensive Level 2',
+      price: '₹3,500',
       lessons: [
         'Delta: Directional Sensitivity, Probability Metric & Hedge Ratios',
         'Gamma: Acceleration Risk, Near-Expiry Volatility & Gamma Squeeze Mechanics',
@@ -42,6 +44,7 @@ export default function TrainingSection() {
       subtitle: 'Step-by-step frameworks for income, directional, neutral, and volatile market strategies.',
       level: 'ADVANCED',
       duration: 'Comprehensive Level 3',
+      price: '₹5,500',
       lessons: [
         'Income Strategies: Short Strangles, Iron Condors & Credit Spreads',
         'Hedging & Portfolio Protection: Bull Put Spreads, Bear Call Spreads & Collar Strategies',
@@ -57,6 +60,7 @@ export default function TrainingSection() {
       subtitle: 'Real-time market order flow, position sizing, drawdown protection, and portfolio compounding.',
       level: 'INSTITUTIONAL',
       duration: 'Comprehensive Level 4',
+      price: '₹7,999',
       lessons: [
         'Live Market Analysis & Real-Time Open Interest (OI) / PCR Interpretation',
         'Strict Capital Allocation: Maximum 1-3% Portfolio Risk Protocols',
@@ -140,13 +144,18 @@ export default function TrainingSection() {
                       : 'bg-neutral-950/60 border-white/5 hover:border-white/20 hover:bg-neutral-900/40'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded ${
-                      active ? 'bg-amber-500 text-black' : 'bg-neutral-800 text-gray-400'
-                    }`}>
-                      {mod.level}
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <div className="flex items-center space-x-2">
+                      <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded ${
+                        active ? 'bg-amber-500 text-black' : 'bg-neutral-800 text-gray-400'
+                      }`}>
+                        {mod.level}
+                      </span>
+                      <span className="text-xs font-mono text-gray-400">{mod.duration}</span>
+                    </div>
+                    <span className="text-xs font-mono font-extrabold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/30">
+                      Fee: {mod.price}
                     </span>
-                    <span className="text-xs font-mono text-gray-400">{mod.duration}</span>
                   </div>
                   <h3 className={`text-base font-bold font-mono transition-colors ${
                     active ? 'text-amber-400' : 'text-white'
@@ -166,9 +175,14 @@ export default function TrainingSection() {
             <div className="glass-card rounded-2xl p-6 sm:p-8 border border-amber-500/30 bg-neutral-950/80 backdrop-blur-md h-full flex flex-col justify-between">
 
               <div>
-                <div className="flex items-center space-x-3 text-xs font-mono text-amber-400 mb-3">
-                  <BookOpen className="w-4 h-4" />
-                  <span>DETAILED CURRICULUM TOPICS</span>
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-amber-400 mb-3">
+                  <div className="flex items-center space-x-3">
+                    <BookOpen className="w-4 h-4" />
+                    <span>DETAILED CURRICULUM TOPICS</span>
+                  </div>
+                  <div className="text-xs font-bold text-amber-400 bg-amber-500/15 px-3 py-1 rounded-lg border border-amber-500/40">
+                    Module Fee: <span className="text-sm text-amber-300 font-extrabold">{modules[selectedModule].price}</span>
+                  </div>
                 </div>
 
                 <h3 className="text-2xl font-extrabold text-white font-mono mb-3">
