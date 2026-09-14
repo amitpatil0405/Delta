@@ -645,8 +645,9 @@ export default function PortfolioJournalSection() {
         {/* P&L Cumulative Performance Graph */}
         {pnlCurveData.length > 0 && (
           <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative space-y-4">
-            <h3 className="text-sm font-extrabold font-mono text-white uppercase">
-              CUMULATIVE P&L CURVE — FINANCIAL YEAR ({startMonthName} – {endMonthName})
+            <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
+              <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
+              <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
             <div className="h-[280px] w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
@@ -780,10 +781,10 @@ export default function PortfolioJournalSection() {
         {/* Trade Journal Table */}
         <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative overflow-hidden space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-2">
-            <div className="text-xs font-mono font-bold text-white uppercase tracking-wider">
+            <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
               <span className="block sm:inline">JOURNAL RECORDS ({displayTrades.length})</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
-            </div>
+            </h3>
             <span className="text-[11px] font-mono text-gray-400 shrink-0">READ ONLY MODE</span>
           </div>
 
