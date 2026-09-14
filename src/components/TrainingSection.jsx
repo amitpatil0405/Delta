@@ -60,7 +60,7 @@ export default function TrainingSection() {
       subtitle: 'Real-time market order flow, position sizing, drawdown protection, and portfolio compounding.',
       level: 'INSTITUTIONAL',
       duration: 'Comprehensive Level 4',
-      price: '₹7,999',
+      price: '₹8,000',
       lessons: [
         'Live Market Analysis & Real-Time Open Interest (OI) / PCR Interpretation',
         'Strict Capital Allocation: Maximum 1-3% Portfolio Risk Protocols',
