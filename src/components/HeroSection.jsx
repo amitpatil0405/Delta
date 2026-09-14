@@ -3,19 +3,10 @@ import { BarChart3, ChevronRight, BookOpen } from 'lucide-react';
 
 export default function HeroSection({ onExplorePortfolio, onExploreStrategies }) {
   const [loaded, setLoaded] = useState(false);
-  const [taglineGreen, setTaglineGreen] = useState(true);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 50);
     return () => clearTimeout(timer);
-  }, []);
-
-  // Alternating red/green stock market color effect for tagline (slow, smooth transition to prevent rapid flashing)
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTaglineGreen((prev) => !prev);
-    }, 4000);
-    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -28,21 +19,13 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
       {/* Main Viewport Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
 
-        {/* Animated Brand Badge with Smooth Green/Red Market Alternating Color Shift */}
+        {/* Animated Brand Badge in Premium Golden/Amber Theme */}
         <div
-          className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full text-xs font-mono tracking-widest uppercase mb-8 transition-all duration-1000 ease-in-out ${
-            taglineGreen
-              ? 'bg-emerald-500/10 border border-emerald-500/40 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
-              : 'bg-rose-500/10 border border-rose-500/40 text-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.2)]'
-          } ${
+          className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase mb-8 shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all duration-700 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          <span
-            className={`w-2 h-2 rounded-full animate-ping transition-colors duration-1000 ${
-              taglineGreen ? 'bg-emerald-400' : 'bg-rose-400'
-            }`}
-          />
+          <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
           <span>Systematic Options Trading & Portfolio Intelligence</span>
         </div>
 
