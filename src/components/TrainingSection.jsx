@@ -92,7 +92,7 @@ export default function TrainingSection() {
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase mb-4">
+          <div className="inline-flex items-center space-x-2 text-amber-400 text-xs font-mono tracking-widest uppercase mb-3">
             <GraduationCap className="w-4 h-4" />
             <span>DeltaFox Options Training Program</span>
           </div>
