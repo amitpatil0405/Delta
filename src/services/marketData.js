@@ -6,6 +6,24 @@
  * Uses Yahoo Finance primary API endpoints query1 & query2 with CORS proxies fallback.
  */
 
+const SCHEDULED_HOLIDAYS_2026 = [
+  '2026-01-26', // Republic Day
+  '2026-03-03', // Holi
+  '2026-03-26', // Shri Ram Navami
+  '2026-03-31', // Shri Mahavir Jayanti
+  '2026-04-03', // Good Friday
+  '2026-04-14', // Dr. Baba Saheb Ambedkar Jayanti
+  '2026-05-01', // Maharashtra Day
+  '2026-05-28', // Bakri Id
+  '2026-06-26', // Muharram
+  '2026-09-14', // Ganesh Chaturthi
+  '2026-10-02', // Mahatma Gandhi Jayanti
+  '2026-10-20', // Dussehra
+  '2026-11-10', // Diwali-Balipratipada
+  '2026-11-24', // Prakash Gurpurb Sri Guru Nanak Dev
+  '2026-12-25', // Christmas
+];
+
 // IST Helper to determine market status dynamically
 export function getISTMarketStatus() {
   const now = new Date();
@@ -24,9 +42,17 @@ export function getISTMarketStatus() {
   const istDate = new Date(now.getTime() + 5.5 * 3600 * 1000);
   const day = istDate.getUTCDay(); // 0: Sun, 6: Sat
 
-  const isWeekend = day === 0 || day === 6;
+  const year = istDate.getUTCFullYear();
+  const month = String(istDate.getUTCMonth() + 1).padStart(2, '0');
+  const dateNum = String(istDate.getUTCDate()).padStart(2, '0');
+  const dateStrYYYYMMDD = `${year}-${month}-${dateNum}`;
 
-  if (isWeekend) {
+  const isWeekend = day === 0 || day === 6;
+  const isHoliday = SCHEDULED_HOLIDAYS_2026.includes(dateStrYYYYMMDD);
+
+  if (isHoliday) {
+    return { status: 'MARKET CLOSED', isOpen: false, detail: 'Trading Holiday - Market Closed', istTime: formatISTTime(istHours, istMins) };
+  } else if (isWeekend) {
     return { status: 'MARKET CLOSED', isOpen: false, detail: 'Weekend - Market Closed', istTime: formatISTTime(istHours, istMins) };
   } else if (timeInMinutes >= 540 && timeInMinutes < 555) {
     return { status: 'PRE-MARKET', isOpen: false, detail: 'Pre-Market Session (09:00 - 09:15 IST)', istTime: formatISTTime(istHours, istMins) };

@@ -40,11 +40,13 @@ export default function MarketOverviewSection() {
   const [lastSyncTime, setLastSyncTime] = useState('');
   const [selectedYear, setSelectedYear] = useState('2026');
 
-  // Parse date string into Date object
+  // Parse date string into local midnight Date object
   const parseHolidayDate = (dateStr) => {
     try {
       const parsed = new Date(dateStr);
-      if (!isNaN(parsed.getTime())) return parsed;
+      if (!isNaN(parsed.getTime())) {
+        return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+      }
     } catch (e) {
       console.error('Error parsing date:', dateStr, e);
     }
@@ -103,8 +105,8 @@ export default function MarketOverviewSection() {
 
   const processedHolidays = (holidays.length > 0 ? holidays : FALLBACK_HOLIDAYS).map(item => {
     const d = parseHolidayDate(item.dateStr);
-    const isPast = d ? d < today : false;
     const isToday = d ? d.getTime() === today.getTime() : false;
+    const isPast = d ? d.getTime() < today.getTime() : false;
 
     // Calculate days remaining
     let daysDiff = null;
@@ -256,11 +258,15 @@ export default function MarketOverviewSection() {
               <tbody className="divide-y divide-white/5 text-xs font-mono">
                 {processedHolidays.map((item) => {
                   const isNextUpcoming = upcomingHoliday && upcomingHoliday.srNo === item.srNo;
+                  const isTodayHoliday = item.isToday;
+
                   return (
                     <tr
                       key={item.srNo}
                       className={`transition-colors ${
-                        isNextUpcoming
+                        isTodayHoliday
+                          ? 'bg-rose-500/10 border-l-4 border-l-rose-500 font-bold'
+                          : isNextUpcoming
                           ? 'bg-amber-500/10 border-l-4 border-l-amber-400 font-bold'
                           : item.isPast
                           ? 'opacity-50 hover:bg-white/[0.02]'
@@ -281,15 +287,24 @@ export default function MarketOverviewSection() {
 
                       <td className="py-4 px-4 text-gray-100 font-sans text-sm font-semibold">
                         {item.holiday}
-                        {isNextUpcoming && (
+                        {isTodayHoliday ? (
+                          <span className="ml-2.5 inline-block text-[10px] font-mono font-bold uppercase bg-rose-500 text-white px-2 py-0.5 rounded animate-pulse">
+                            TODAY HOLIDAY
+                          </span>
+                        ) : isNextUpcoming ? (
                           <span className="ml-2.5 inline-block text-[10px] font-mono font-bold uppercase bg-amber-400 text-black px-2 py-0.5 rounded">
                             NEXT HOLIDAY
                           </span>
-                        )}
+                        ) : null}
                       </td>
 
                       <td className="py-4 px-4 text-right whitespace-nowrap">
-                        {item.isPast ? (
+                        {isTodayHoliday ? (
+                          <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/50 animate-pulse">
+                            <AlertCircle className="w-3 h-3 text-rose-400" />
+                            <span>CLOSED TODAY</span>
+                          </span>
+                        ) : item.isPast ? (
                           <span className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full text-[10px] font-mono font-medium bg-neutral-800 text-gray-400 border border-neutral-700">
                             <CheckCircle2 className="w-3 h-3 text-emerald-500" />
                             <span>COMPLETED</span>
