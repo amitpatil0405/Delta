@@ -465,9 +465,10 @@ export default function PortfolioJournalSection() {
         {/* Portfolio Performance Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <div className="bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative min-w-0 flex flex-col items-center justify-center text-center">
-            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">TOTAL TRADES ({startMonthName} – {endMonthName})</span>
+            <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">TOTAL TRADES</span>
             <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount}</div>
-            <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 block truncate w-full">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
+            <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 block truncate w-full mt-0.5">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
+            <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full mt-0.5">{startMonthName} – {endMonthName}</span>
           </div>
 
           <div className="bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative min-w-0 flex flex-col items-center justify-center text-center">
