@@ -144,18 +144,13 @@ export default function TrainingSection() {
                       : 'bg-neutral-950/60 border-white/5 hover:border-white/20 hover:bg-neutral-900/40'
                   }`}
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <div className="flex items-center space-x-2">
-                      <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded ${
-                        active ? 'bg-amber-500 text-black' : 'bg-neutral-800 text-gray-400'
-                      }`}>
-                        {mod.level}
-                      </span>
-                      <span className="text-xs font-mono text-gray-400">{mod.duration}</span>
-                    </div>
-                    <span className="text-xs font-mono font-extrabold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/30">
-                      Fee: {mod.price}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded ${
+                      active ? 'bg-amber-500 text-black' : 'bg-neutral-800 text-gray-400'
+                    }`}>
+                      {mod.level}
                     </span>
+                    <span className="text-xs font-mono text-gray-400">{mod.duration}</span>
                   </div>
                   <h3 className={`text-base font-bold font-mono transition-colors ${
                     active ? 'text-amber-400' : 'text-white'
