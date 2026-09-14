@@ -91,7 +91,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     { id: 'intelligence', label: 'Holiday calender' },
     { id: 'strategies', label: 'Strategies' },
     { id: 'training', label: 'Training' },
-    { id: 'about', label: 'About' },
+    { id: 'about', label: 'About us' },
     { id: 'contact', label: 'Contact' }
   ];
 

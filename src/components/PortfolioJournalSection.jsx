@@ -507,7 +507,7 @@ export default function PortfolioJournalSection() {
               <Calendar className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5 sm:mt-0" />
               <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
                 <span className="block sm:inline">DAILY P&L PERFORMANCE HEATMAP</span>{' '}
-                <span className="block sm:inline whitespace-nowrap text-emerald-400 sm:text-white">({startMonthName} – {endMonthName})</span>
+                <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
               </h3>
             </div>
             <div className="flex items-center space-x-4 text-[10px] font-mono text-gray-400">
@@ -782,7 +782,7 @@ export default function PortfolioJournalSection() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-2">
             <div className="text-xs font-mono font-bold text-white uppercase tracking-wider">
               <span className="block sm:inline">JOURNAL RECORDS ({displayTrades.length})</span>{' '}
-              <span className="block sm:inline whitespace-nowrap text-amber-400 sm:text-white">— {startMonthName} to {endMonthName}</span>
+              <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </div>
             <span className="text-[11px] font-mono text-gray-400 shrink-0">READ ONLY MODE</span>
           </div>
