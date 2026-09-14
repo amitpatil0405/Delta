@@ -503,10 +503,11 @@ export default function PortfolioJournalSection() {
         <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative space-y-4">
           <div className="relative space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-emerald-400" />
+            <div className="flex items-start sm:items-center space-x-2">
+              <Calendar className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5 sm:mt-0" />
               <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
-                DAILY P&L PERFORMANCE HEATMAP ({startMonthName} – {endMonthName})
+                <span className="block sm:inline">DAILY P&L PERFORMANCE HEATMAP</span>{' '}
+                <span className="block sm:inline whitespace-nowrap text-emerald-400 sm:text-white">({startMonthName} – {endMonthName})</span>
               </h3>
             </div>
             <div className="flex items-center space-x-4 text-[10px] font-mono text-gray-400">
@@ -778,11 +779,21 @@ export default function PortfolioJournalSection() {
 
         {/* Trade Journal Table */}
         <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative overflow-hidden space-y-4">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-2">
             <div className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-              JOURNAL RECORDS ({displayTrades.length}) — {startMonthName} to {endMonthName}
+              <span className="block sm:inline">JOURNAL RECORDS ({displayTrades.length})</span>{' '}
+              <span className="block sm:inline whitespace-nowrap text-amber-400 sm:text-white">— {startMonthName} to {endMonthName}</span>
             </div>
-            <span className="text-[11px] font-mono text-gray-400">READ ONLY MODE</span>
+            <span className="text-[11px] font-mono text-gray-400 shrink-0">READ ONLY MODE</span>
+          </div>
+
+          {/* Mobile Horizontal Scroll Hint */}
+          <div className="sm:hidden flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 text-[10px] font-mono text-amber-300">
+            <span className="flex items-center space-x-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+              <span>Scroll horizontally to view full trade records</span>
+            </span>
+            <span className="font-bold text-amber-400">→</span>
           </div>
 
           <div className="overflow-x-auto">
