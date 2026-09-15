@@ -345,8 +345,30 @@ export default function PortfolioJournalSection() {
     return { offset, isAllPos: false, isAllNeg: false };
   }, [pnlCurveData]);
 
+  // Pagination State for Journal Records Table (20 records per page)
+  const ITEMS_PER_PAGE = 20;
+  const [currentPage, setCurrentPage] = useState(1);
+
   // Display trades in reverse order so latest trades appear at top of table
   const displayTrades = useMemo(() => [...fyTrades].reverse(), [fyTrades]);
+
+  // Total pages based on trades count
+  const totalPages = useMemo(() => {
+    return Math.max(1, Math.ceil(displayTrades.length / ITEMS_PER_PAGE));
+  }, [displayTrades.length]);
+
+  // Adjust current page if total pages change
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [totalPages, currentPage]);
+
+  // Paginated trades slice
+  const paginatedTrades = useMemo(() => {
+    const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+    return displayTrades.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+  }, [displayTrades, currentPage]);
 
   // Build Daily P&L Map for Heatmap
   const dailyPnlMap = useMemo(() => {
@@ -781,12 +803,67 @@ export default function PortfolioJournalSection() {
 
         {/* Trade Journal Table */}
         <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative overflow-hidden space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
             <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
               <span className="block sm:inline">JOURNAL RECORDS ({displayTrades.length})</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <span className="text-[11px] font-mono text-gray-400 shrink-0">READ ONLY MODE</span>
+
+            {/* Top Pagination Controls */}
+            {displayTrades.length > 0 && (
+              <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 text-xs font-mono">
+                <span className="text-[10px] sm:text-xs text-gray-400 mr-1">
+                  Showing <span className="text-amber-400 font-bold">{Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, displayTrades.length)}</span>–<span className="text-amber-400 font-bold">{Math.min(currentPage * ITEMS_PER_PAGE, displayTrades.length)}</span> of <span className="text-white font-bold">{displayTrades.length}</span>
+                </span>
+                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+                  <button
+                    onClick={() => setCurrentPage(1)}
+                    disabled={currentPage === 1}
+                    className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                    title="First Page"
+                  >
+                    First
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                    title="Previous Page"
+                  >
+                    Prev
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`px-2.5 py-1 rounded text-[10px] sm:text-xs font-bold transition-all border ${
+                        pageNum === currentPage
+                          ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                          : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                    title="Next Page"
+                  >
+                    Next
+                  </button>
+                  <button
+                    onClick={() => setCurrentPage(totalPages)}
+                    disabled={currentPage === totalPages}
+                    className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                    title="Last Page"
+                  >
+                    Last
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Mobile Horizontal Scroll Hint */}
@@ -829,7 +906,7 @@ export default function PortfolioJournalSection() {
                     </td>
                   </tr>
                 ) : (
-                  displayTrades.map((t) => {
+                  paginatedTrades.map((t) => {
                     const statusUpper = (t.status || '').toUpperCase();
                     const isOpen = statusUpper.includes('OPEN') || statusUpper.includes('RUNNING');
                     const isClosedProfit = statusUpper === 'CLOSED PROFIT' || (statusUpper === 'CLOSED' && t.manualPnl >= 0);
@@ -889,6 +966,63 @@ export default function PortfolioJournalSection() {
               </tbody>
             </table>
           </div>
+
+          {/* Bottom Pagination Controls */}
+          {displayTrades.length > 0 && (
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10 font-mono text-xs">
+              <span className="text-[10px] sm:text-xs text-gray-400">
+                Showing <span className="text-amber-400 font-bold">{Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, displayTrades.length)}</span>–<span className="text-amber-400 font-bold">{Math.min(currentPage * ITEMS_PER_PAGE, displayTrades.length)}</span> of <span className="text-white font-bold">{displayTrades.length}</span> trade records
+              </span>
+
+              <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+                <button
+                  onClick={() => setCurrentPage(1)}
+                  disabled={currentPage === 1}
+                  className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                  title="First Page"
+                >
+                  First
+                </button>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                  title="Previous Page"
+                >
+                  Prev
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`px-2.5 py-1 rounded text-[10px] sm:text-xs font-bold transition-all border ${
+                      pageNum === currentPage
+                        ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                        : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                  title="Next Page"
+                >
+                  Next
+                </button>
+                <button
+                  onClick={() => setCurrentPage(totalPages)}
+                  disabled={currentPage === totalPages}
+                  className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                  title="Last Page"
+                >
+                  Last
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>
