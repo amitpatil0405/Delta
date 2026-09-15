@@ -227,14 +227,14 @@ export default function MarketOverviewSection() {
                       </span>
                     </div>
                     <span className="text-[11px] text-gray-400 font-mono block mt-1">
-                      {upcomingHoliday.wish || (upcomingHoliday.daysDiff === 0 ? 'Holiday is tomorrow' : `Approaching on ${upcomingHoliday.weekday}`)}
+                      Approaching on {upcomingHoliday.weekday}
                     </span>
                   </div>
                 ) : (
                   <div>
                     <span className="text-amber-400 font-mono font-bold text-lg">{upcomingHoliday.dateStr}</span>
                     <span className="text-[11px] text-gray-400 font-mono block mt-1">
-                      {upcomingHoliday.wish}
+                      Approaching on {upcomingHoliday.weekday}
                     </span>
                   </div>
                 )}
