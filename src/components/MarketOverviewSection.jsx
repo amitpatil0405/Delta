@@ -14,23 +14,23 @@ import {
 
 const HOLIDAY_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=170756965';
 
-// Fallback data matching the exact Google Sheet
+// Fallback data matching the exact Google Sheet (including Column E: Wishes)
 const FALLBACK_HOLIDAYS = [
-  { srNo: '1', dateStr: '26 January 2026', weekday: 'Monday', holiday: 'Republic Day' },
-  { srNo: '2', dateStr: '3 March 2026', weekday: 'Tuesday', holiday: 'Holi' },
-  { srNo: '3', dateStr: '26 March 2026', weekday: 'Thursday', holiday: 'Shri Ram Navami' },
-  { srNo: '4', dateStr: '31 March 2026', weekday: 'Tuesday', holiday: 'Shri Mahavir Jayanti' },
-  { srNo: '5', dateStr: '3 April 2026', weekday: 'Friday', holiday: 'Good Friday' },
-  { srNo: '6', dateStr: '14 April 2026', weekday: 'Tuesday', holiday: 'Dr. Baba Saheb Ambedkar Jayanti' },
-  { srNo: '7', dateStr: '01 May 2026', weekday: 'Friday', holiday: 'Maharashtra Day' },
-  { srNo: '8', dateStr: '28 May 2026', weekday: 'Thursday', holiday: 'Bakri Id' },
-  { srNo: '9', dateStr: '26 June 2026', weekday: 'Friday', holiday: 'Muharram' },
-  { srNo: '10', dateStr: '14 September 2026', weekday: 'Monday', holiday: 'Ganesh Chaturthi' },
-  { srNo: '11', dateStr: '2 October 2026', weekday: 'Friday', holiday: 'Mahatma Gandhi Jayanti' },
-  { srNo: '12', dateStr: '20 October 2026', weekday: 'Tuesday', holiday: 'Dussehra' },
-  { srNo: '13', dateStr: '10 November 2026', weekday: 'Tuesday', holiday: 'Diwali-Balipratipada' },
-  { srNo: '14', dateStr: '24 November 2026', weekday: 'Tuesday', holiday: 'Prakash Gurpurb Sri Guru Nanak Dev' },
-  { srNo: '15', dateStr: '25 December 2026', weekday: 'Friday', holiday: 'Christmas' }
+  { srNo: '1', dateStr: '26 January 2026', weekday: 'Monday', holiday: 'Republic Day', wish: 'Happy Republic Day!' },
+  { srNo: '2', dateStr: '3 March 2026', weekday: 'Tuesday', holiday: 'Holi', wish: 'Happy Holi! 🍧' },
+  { srNo: '3', dateStr: '26 March 2026', weekday: 'Thursday', holiday: 'Shri Ram Navami', wish: 'Happy Ram Navami!' },
+  { srNo: '4', dateStr: '31 March 2026', weekday: 'Tuesday', holiday: 'Shri Mahavir Jayanti', wish: 'Happy Mahavir Jayanti! ✨' },
+  { srNo: '5', dateStr: '3 April 2026', weekday: 'Friday', holiday: 'Good Friday', wish: 'Happy Good Friday! 🕊️' },
+  { srNo: '6', dateStr: '14 April 2026', weekday: 'Tuesday', holiday: 'Dr. Baba Saheb Ambedkar Jayanti', wish: 'Happy Ambedkar Jayanti! 💙' },
+  { srNo: '7', dateStr: '01 May 2026', weekday: 'Friday', holiday: 'Maharashtra Day', wish: 'महाराष्ट्र दिन आणि कामगार दिनाच्या शुभेच्छा! 🚩' },
+  { srNo: '8', dateStr: '28 May 2026', weekday: 'Thursday', holiday: 'Bakri Id', wish: 'Eid Mubarak! 🌙' },
+  { srNo: '9', dateStr: '26 June 2026', weekday: 'Friday', holiday: 'Muharram', wish: 'Muharram Mubarak!' },
+  { srNo: '10', dateStr: '14 September 2026', weekday: 'Monday', holiday: 'Ganesh Chaturthi', wish: 'Happy Ganesh Chaturthi! 🐘' },
+  { srNo: '11', dateStr: '2 October 2026', weekday: 'Friday', holiday: 'Mahatma Gandhi Jayanti', wish: 'Happy Gandhi Jayanti!' },
+  { srNo: '12', dateStr: '20 October 2026', weekday: 'Tuesday', holiday: 'Dussehra', wish: 'Happy Dussehra! ✨' },
+  { srNo: '13', dateStr: '10 November 2026', weekday: 'Tuesday', holiday: 'Diwali-Balipratipada', wish: 'Happy Diwali! 🪔' },
+  { srNo: '14', dateStr: '24 November 2026', weekday: 'Tuesday', holiday: 'Prakash Gurpurb Sri Guru Nanak Dev', wish: 'Happy Gurpurab! 🙏' },
+  { srNo: '15', dateStr: '25 December 2026', weekday: 'Friday', holiday: 'Christmas', wish: 'Merry Christmas! 🎄' }
 ];
 
 export default function MarketOverviewSection() {
@@ -53,20 +53,47 @@ export default function MarketOverviewSection() {
     return null;
   };
 
+  // Helper to parse individual CSV line respecting quotes
+  const parseCSVLine = (line) => {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"' || char === "'") {
+        if (inQuotes && line[i + 1] === char) {
+          current += char;
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current.trim());
+    return result.map(c => c.replace(/^["'](.*)["']$/, '$1').trim());
+  };
+
   // Helper to parse CSV text
   const parseCSV = (csvText) => {
     const lines = csvText.split('\n').map(l => l.trim()).filter(Boolean);
     const parsedList = [];
 
     for (let i = 0; i < lines.length; i++) {
-      const row = lines[i].split(',').map(cell => cell.replace(/^"(.*)"$/, '$1').trim());
+      const row = parseCSVLine(lines[i]);
       // Skip title header row if present
       if (row.length >= 4 && !isNaN(parseInt(row[0]))) {
+        const fallbackMatch = FALLBACK_HOLIDAYS.find(f => f.srNo === row[0]);
         parsedList.push({
           srNo: row[0],
           dateStr: row[1],
           weekday: row[2],
-          holiday: row[3]
+          holiday: row[3],
+          wish: row[4] && row[4].trim() ? row[4].trim() : (fallbackMatch ? fallbackMatch.wish : '')
         });
       }
     }
@@ -182,7 +209,9 @@ export default function MarketOverviewSection() {
                 {upcomingHoliday.isToday ? (
                   <div>
                     <span className="text-rose-500 font-black text-2xl font-mono block uppercase">MARKET CLOSED TODAY</span>
-                    <span className="text-xs text-gray-400 font-mono mt-1 block">Happy {upcomingHoliday.holiday}!</span>
+                    <span className="text-[11px] text-gray-400 font-mono block mt-1">
+                      {upcomingHoliday.wish || `Happy ${upcomingHoliday.holiday}!`}
+                    </span>
                   </div>
                 ) : upcomingHoliday.daysDiff !== null ? (
                   <div>
@@ -198,12 +227,15 @@ export default function MarketOverviewSection() {
                       </span>
                     </div>
                     <span className="text-[11px] text-gray-400 font-mono block mt-1">
-                      {upcomingHoliday.daysDiff === 0 ? 'Holiday is tomorrow' : `Approaching on ${upcomingHoliday.weekday}`}
+                      {upcomingHoliday.wish || (upcomingHoliday.daysDiff === 0 ? 'Holiday is tomorrow' : `Approaching on ${upcomingHoliday.weekday}`)}
                     </span>
                   </div>
                 ) : (
                   <div>
                     <span className="text-amber-400 font-mono font-bold text-lg">{upcomingHoliday.dateStr}</span>
+                    <span className="text-[11px] text-gray-400 font-mono block mt-1">
+                      {upcomingHoliday.wish}
+                    </span>
                   </div>
                 )}
               </div>
