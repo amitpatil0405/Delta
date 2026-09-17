@@ -54,7 +54,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          At DeltaFox, founded in September 2025, we use precise math and smart strategies to trade in financial markets. We focus on protecting capital, managing risk carefully, and transforming complex options trading into a simple, disciplined science. Our approach combines data-driven insights, statistical analysis, and structured risk management. Every trade is backed by a clear statistical edge and strict risk controls, with a focus on long-term stability and consistent growth.
+          At DeltaFox, founded in September 2025, we use precise math and smart strategies to trade in financial markets. We focus on protecting capital, managing risk carefully and transforming complex options trading into a simple, disciplined science. Our approach combines data-driven insights, statistical analysis and structured risk management. Every trade is backed by a clear statistical edge and strict risk controls with a focus on long-term stability and consistent growth.
         </p>
 
         {/* Interactive CTA Buttons */}
