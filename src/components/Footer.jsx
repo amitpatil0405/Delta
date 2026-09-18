@@ -120,10 +120,13 @@ export default function Footer({ onNavigate }) {
 
         {/* Regulatory Risk Disclaimer */}
         <div className="mt-12 pt-8 border-t border-white/5 space-y-4">
-          <div className="flex items-start space-x-3 text-gray-500 text-[11px] leading-relaxed font-sans">
-            <ShieldAlert className="w-5 h-5 text-amber-500/80 shrink-0 mt-0.5" />
-            <p>
-              <strong className="text-gray-400 font-mono">DISCLAIMER:</strong> DeltaFox is an educational and informational platform. Options trading involves substantial risk of loss and is not suitable for all investors. Nothing on this website should be considered financial advice or a recommendation to buy or sell any security.
+          <div className="flex flex-col items-center justify-center text-center text-gray-500 text-[11px] leading-relaxed font-sans max-w-4xl mx-auto space-y-1.5">
+            <div className="flex items-center justify-center space-x-1.5 text-amber-400 font-mono font-bold uppercase tracking-wider text-xs">
+              <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>Disclaimer</span>
+            </div>
+            <p className="text-gray-400">
+              DeltaFox is an educational and informational platform. Options trading involves substantial risk of loss and is not suitable for all investors. Nothing on this website should be considered financial advice or a recommendation to buy or sell any security.
             </p>
           </div>
 
