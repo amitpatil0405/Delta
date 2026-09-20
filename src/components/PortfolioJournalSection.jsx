@@ -216,6 +216,11 @@ export default function PortfolioJournalSection() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredDay, setHoveredDay] = useState(null);
+  const [activeGlowBox, setActiveGlowBox] = useState(null);
+
+  const toggleGlowBox = (boxId) => {
+    setActiveGlowBox(prev => prev === boxId ? null : boxId);
+  };
 
   // Fetch Global Trades on mount & Periodic Sync (every 10s) from Google Sheet CSV
   useEffect(() => {
@@ -436,12 +441,16 @@ export default function PortfolioJournalSection() {
         });
       }
 
+      // Calculate overall monthly P&L
+      const monthTotalPnl = daysList.reduce((acc, day) => acc + (day.pnl || 0), 0);
+
       months.push({
         label: monthLabel,
         year,
         monthIdx,
         monthOrder: mOrder,
-        days: daysList
+        days: daysList,
+        monthTotalPnl
       });
 
       cur = new Date(year, monthIdx + 1, 1);
@@ -454,7 +463,7 @@ export default function PortfolioJournalSection() {
   const endMonthName = `${MONTH_NAMES[fyConfig.endMonth]} ${fyConfig.endYear}`;
 
   return (
-    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber top-10 right-10" />
       <div className="ambient-glow-emerald bottom-10 left-10" />
@@ -486,14 +495,28 @@ export default function PortfolioJournalSection() {
 
         {/* Portfolio Performance Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-          <div className="bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative min-w-0 flex flex-col items-center justify-center text-center">
+          <div
+            onClick={() => toggleGlowBox('stat-1')}
+            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+              activeGlowBox === 'stat-1'
+                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+            }`}
+          >
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">TOTAL TRADES</span>
             <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount}</div>
             <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 block truncate w-full mt-0.5">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full mt-0.5">{startMonthName} – {endMonthName}</span>
           </div>
 
-          <div className="bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative min-w-0 flex flex-col items-center justify-center text-center">
+          <div
+            onClick={() => toggleGlowBox('stat-2')}
+            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+              activeGlowBox === 'stat-2'
+                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+            }`}
+          >
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">WIN RATE</span>
             <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{winRate}%</div>
             <span className="text-[9px] sm:text-[10px] font-mono block truncate w-full">
@@ -503,7 +526,14 @@ export default function PortfolioJournalSection() {
             </span>
           </div>
 
-          <div className="bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative min-w-0 flex flex-col items-center justify-center text-center">
+          <div
+            onClick={() => toggleGlowBox('stat-3')}
+            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+              activeGlowBox === 'stat-3'
+                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+            }`}
+          >
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">GROSS CUMULATIVE P&L</span>
             <div className={`text-base sm:text-xl md:text-2xl font-extrabold font-mono mt-1 tracking-tight truncate w-full ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
               {totalPnl < 0 ? '-' : totalPnl > 0 ? '+' : ''}₹{Math.abs(totalPnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -511,7 +541,14 @@ export default function PortfolioJournalSection() {
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full">{startMonthName} – {endMonthName}</span>
           </div>
 
-          <div className="bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative min-w-0 flex flex-col items-center justify-center text-center">
+          <div
+            onClick={() => toggleGlowBox('stat-4')}
+            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+              activeGlowBox === 'stat-4'
+                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+            }`}
+          >
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">AVG PROFIT / LOSS</span>
             <div className="text-xs sm:text-sm md:text-base xl:text-lg font-extrabold font-mono mt-1 flex flex-col sm:flex-row sm:items-center justify-center gap-0.5 sm:gap-1 tracking-tight w-full min-w-0">
               <span className="text-emerald-400 truncate">+₹{avgProfit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
@@ -523,7 +560,17 @@ export default function PortfolioJournalSection() {
         </div>
 
         {/* P&L Contribution Heatmap Grid */}
-        <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative space-y-4">
+        <div
+          onClick={(e) => {
+            if (e.target.closest('.heatmap-box') || e.target.closest('button')) return;
+            toggleGlowBox('heatmap-container');
+          }}
+          className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
+            activeGlowBox === 'heatmap-container'
+              ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+              : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+          }`}
+        >
           <div className="relative space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
             <div className="flex items-start sm:items-center space-x-2">
@@ -555,7 +602,60 @@ export default function PortfolioJournalSection() {
               {heatmapMonths.map((m) => (
                 <div key={`${m.year}_${m.monthIdx}`} className="flex flex-col items-center space-y-1.5 flex-shrink-0 md:flex-1 md:min-w-0">
                   {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
-                  <div className="grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
+                  <div className="relative grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
+                    {/* SVG Light Beam Overlay for Overall Monthly Profit/Loss */}
+                    {m.monthTotalPnl !== 0 && (
+                      <svg
+                        className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
+                        viewBox="0 0 100 100"
+                        preserveAspectRatio="none"
+                      >
+                        <defs>
+                          <linearGradient
+                            id={`beamGrad_${m.year}_${m.monthIdx}`}
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="0%"
+                            gradientUnits="userSpaceOnUse"
+                          >
+                            <stop offset="0%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="1" />
+                            <stop offset="35%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0.8" />
+                            <stop offset="65%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0.2" />
+                            <stop offset="100%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0" />
+                          </linearGradient>
+                        </defs>
+                        {/* Background Base Border Highlight */}
+                        <rect
+                          x="0.5"
+                          y="0.5"
+                          width="99"
+                          height="99"
+                          rx="8"
+                          ry="8"
+                          fill="none"
+                          stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
+                          strokeWidth="1"
+                          strokeOpacity="0.25"
+                        />
+                        {/* Moving Pulse Dot with Trailing Tail Beam */}
+                        <rect
+                          x="0.5"
+                          y="0.5"
+                          width="99"
+                          height="99"
+                          rx="8"
+                          ry="8"
+                          fill="none"
+                          stroke={`url(#beamGrad_${m.year}_${m.monthIdx})`}
+                          strokeWidth="2"
+                          pathLength="100"
+                          strokeDasharray="25 75"
+                          className={m.monthTotalPnl > 0 ? 'animate-border-beam-green' : 'animate-border-beam-red'}
+                        />
+                      </svg>
+                    )}
+
                     {m.days.map((d) => {
                       if (d.isPadding) {
                         return (
@@ -667,7 +767,14 @@ export default function PortfolioJournalSection() {
 
         {/* P&L Cumulative Performance Graph */}
         {pnlCurveData.length > 0 && (
-          <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative space-y-4">
+          <div
+            onClick={() => toggleGlowBox('graph-container')}
+            className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
+              activeGlowBox === 'graph-container'
+                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+            }`}
+          >
             <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
@@ -802,7 +909,17 @@ export default function PortfolioJournalSection() {
         )}
 
         {/* Trade Journal Table */}
-        <div className="bg-[#0a0a0c] rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 transition-all duration-300 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] relative overflow-hidden space-y-4">
+        <div
+          onClick={(e) => {
+            if (e.target.closest('button') || e.target.closest('tr')) return;
+            toggleGlowBox('table-container');
+          }}
+          className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
+            activeGlowBox === 'table-container'
+              ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+              : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+          }`}
+        >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
             <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
               <span className="block sm:inline">JOURNAL RECORDS ({displayTrades.length})</span>{' '}

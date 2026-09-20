@@ -4,7 +4,7 @@ import myPic from '../assets/my_pic.jpg';
 
 export default function AboutFounderSection() {
   return (
-    <section id="about" className="pt-8 sm:pt-10 pb-16 scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+    <section id="about" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
 
       {/* Ambient Radial Glow Lighting */}
       <div className="ambient-glow-amber top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />

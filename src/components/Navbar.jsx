@@ -234,18 +234,6 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#0a0a0c] border-b border-white/10 px-4 pt-4 pb-6 space-y-3 animate-fadeIn">
-          <div className="flex flex-col space-y-2 px-3 py-2.5 mb-2 bg-neutral-900/80 rounded-lg border border-white/5 text-xs font-mono">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-500 text-[10px]">MARKET:</span>
-              <div className="flex items-center space-x-2">
-                <span className={`w-2.5 h-2.5 rounded-full animate-pulse ${statusBadge.dotBg}`}></span>
-                <span className={`font-bold ${statusBadge.textColor}`}>
-                  {statusBadge.text}
-                </span>
-              </div>
-            </div>
-          </div>
-
           <div className="grid grid-cols-2 gap-2">
             {navItems.map((item) => (
               <button
