@@ -603,7 +603,7 @@ export default function PortfolioJournalSection() {
                 <div key={`${m.year}_${m.monthIdx}`} className="flex flex-col items-center space-y-1.5 flex-shrink-0 md:flex-1 md:min-w-0">
                   {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
                   <div className="relative grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
-                    {/* SVG Light Beam Overlay for Overall Monthly Profit/Loss */}
+                    {/* SVG Slim Light Beam Overlay for Overall Monthly Profit/Loss */}
                     {m.monthTotalPnl !== 0 && (
                       <svg
                         className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
@@ -619,13 +619,13 @@ export default function PortfolioJournalSection() {
                             y2="0%"
                             gradientUnits="userSpaceOnUse"
                           >
-                            <stop offset="0%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="1" />
-                            <stop offset="35%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0.8" />
+                            <stop offset="0%" stopColor={m.monthTotalPnl > 0 ? '#047857' : '#9f1239'} stopOpacity="1" />
+                            <stop offset="25%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0.9" />
                             <stop offset="65%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0.2" />
                             <stop offset="100%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0" />
                           </linearGradient>
                         </defs>
-                        {/* Background Base Border Highlight */}
+                        {/* Faint Background Border Line */}
                         <rect
                           x="0.5"
                           y="0.5"
@@ -636,9 +636,9 @@ export default function PortfolioJournalSection() {
                           fill="none"
                           stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
                           strokeWidth="1"
-                          strokeOpacity="0.25"
+                          strokeOpacity="0.15"
                         />
-                        {/* Moving Pulse Dot with Trailing Tail Beam */}
+                        {/* Moving Slim Pulse Dot with Fading Neon Trailing Tail */}
                         <rect
                           x="0.5"
                           y="0.5"
@@ -648,9 +648,9 @@ export default function PortfolioJournalSection() {
                           ry="8"
                           fill="none"
                           stroke={`url(#beamGrad_${m.year}_${m.monthIdx})`}
-                          strokeWidth="2"
+                          strokeWidth="1.2"
                           pathLength="100"
-                          strokeDasharray="25 75"
+                          strokeDasharray="12 88"
                           className={m.monthTotalPnl > 0 ? 'animate-border-beam-green' : 'animate-border-beam-red'}
                         />
                       </svg>
