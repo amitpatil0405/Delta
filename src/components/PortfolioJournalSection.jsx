@@ -619,9 +619,9 @@ export default function PortfolioJournalSection() {
                             y2="0%"
                             gradientUnits="userSpaceOnUse"
                           >
-                            <stop offset="0%" stopColor={m.monthTotalPnl > 0 ? '#047857' : '#9f1239'} stopOpacity="1" />
-                            <stop offset="25%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0.9" />
-                            <stop offset="65%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0.2" />
+                            <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
+                            <stop offset="20%" stopColor={m.monthTotalPnl > 0 ? '#34d399' : '#fb7185'} stopOpacity="1" />
+                            <stop offset="60%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0.4" />
                             <stop offset="100%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0" />
                           </linearGradient>
                         </defs>
@@ -636,9 +636,9 @@ export default function PortfolioJournalSection() {
                           fill="none"
                           stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
                           strokeWidth="1"
-                          strokeOpacity="0.15"
+                          strokeOpacity="0.12"
                         />
-                        {/* Moving Slim Pulse Dot with Fading Neon Trailing Tail */}
+                        {/* Moving Heartbeat Pulse Dot with Fading Neon Trailing Tail */}
                         <rect
                           x="0.5"
                           y="0.5"
@@ -648,9 +648,9 @@ export default function PortfolioJournalSection() {
                           ry="8"
                           fill="none"
                           stroke={`url(#beamGrad_${m.year}_${m.monthIdx})`}
-                          strokeWidth="1.2"
+                          strokeWidth="1.5"
                           pathLength="100"
-                          strokeDasharray="12 88"
+                          strokeDasharray="6 94"
                           className={m.monthTotalPnl > 0 ? 'animate-border-beam-green' : 'animate-border-beam-red'}
                         />
                       </svg>
@@ -751,7 +751,9 @@ export default function PortfolioJournalSection() {
                   </div>
 
                   {/* Month Label */}
-                  <span className="text-[9px] sm:text-[10px] font-mono font-bold text-gray-400 uppercase tracking-tight text-center truncate w-full">
+                  <span className={`text-[9px] sm:text-[10px] font-mono font-extrabold uppercase tracking-tight text-center truncate w-full ${
+                    m.monthTotalPnl > 0 ? 'text-emerald-400 drop-shadow-[0_0_6px_rgba(16,185,129,0.4)]' : m.monthTotalPnl < 0 ? 'text-rose-400 drop-shadow-[0_0_6px_rgba(244,63,94,0.4)]' : 'text-gray-400'
+                  }`}>
                     {m.label}
                   </span>
                 </div>
