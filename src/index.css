@@ -144,3 +144,23 @@
   filter: blur(90px);
   pointer-events: none;
 }
+
+/* Heatmap Month Animated Border Beam Motion */
+@keyframes borderBeamMotion {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-border-beam-green {
+  animation: borderBeamMotion 5s linear infinite;
+  filter: drop-shadow(0 0 3px #10b981) drop-shadow(0 0 6px #10b981);
+}
+
+.animate-border-beam-red {
+  animation: borderBeamMotion 5s linear infinite;
+  filter: drop-shadow(0 0 3px #f43f5e) drop-shadow(0 0 6px #f43f5e);
+}
