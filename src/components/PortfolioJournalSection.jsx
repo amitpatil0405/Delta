@@ -603,28 +603,13 @@ export default function PortfolioJournalSection() {
                 <div key={`${m.year}_${m.monthIdx}`} className="flex flex-col items-center space-y-1.5 flex-shrink-0 md:flex-1 md:min-w-0">
                   {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
                   <div className="relative grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
-                    {/* SVG Slim Light Beam Overlay for Overall Monthly Profit/Loss */}
+                    {/* SVG 5-Dot Animated Border Beam Overlay for Overall Monthly Profit/Loss */}
                     {m.monthTotalPnl !== 0 && (
                       <svg
                         className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
                         viewBox="0 0 100 100"
                         preserveAspectRatio="none"
                       >
-                        <defs>
-                          <linearGradient
-                            id={`beamGrad_${m.year}_${m.monthIdx}`}
-                            x1="0%"
-                            y1="0%"
-                            x2="100%"
-                            y2="0%"
-                            gradientUnits="userSpaceOnUse"
-                          >
-                            <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                            <stop offset="20%" stopColor={m.monthTotalPnl > 0 ? '#34d399' : '#fb7185'} stopOpacity="1" />
-                            <stop offset="60%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0.4" />
-                            <stop offset="100%" stopColor={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'} stopOpacity="0" />
-                          </linearGradient>
-                        </defs>
                         {/* Faint Background Border Line */}
                         <rect
                           x="0.5"
@@ -638,7 +623,7 @@ export default function PortfolioJournalSection() {
                           strokeWidth="1"
                           strokeOpacity="0.12"
                         />
-                        {/* Moving Heartbeat Pulse Dot with Fading Neon Trailing Tail */}
+                        {/* 5 Distinct Green/Red Round Dots Moving in Formation */}
                         <rect
                           x="0.5"
                           y="0.5"
@@ -647,10 +632,11 @@ export default function PortfolioJournalSection() {
                           rx="8"
                           ry="8"
                           fill="none"
-                          stroke={`url(#beamGrad_${m.year}_${m.monthIdx})`}
-                          strokeWidth="1.5"
+                          stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
                           pathLength="100"
-                          strokeDasharray="6 94"
+                          strokeDasharray="0.01 4 0.01 4 0.01 4 0.01 4 0.01 83.95"
                           className={m.monthTotalPnl > 0 ? 'animate-border-beam-green' : 'animate-border-beam-red'}
                         />
                       </svg>
