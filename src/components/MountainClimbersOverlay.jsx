@@ -216,26 +216,23 @@ export default function MountainClimbersOverlay({
           ))}
         </g>
 
-        {/* Basecamp Tent at Trade 1 Origin */}
-        <g transform={`translate(${basecampPoint.x - 18}, ${basecampPoint.y - 24})`}>
+        {/* Expedition Tent at Trade 1 Origin */}
+        <g transform={`translate(${basecampPoint.x}, ${basecampPoint.y})`}>
           <polygon
-            points="18,2 34,22 2,22"
+            points="0,-12 10,0 -10,0"
             fill="url(#tentGrad)"
             stroke="#f59e0b"
-            strokeWidth="1.5"
-            className="drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]"
+            strokeWidth="1.2"
+            className="drop-shadow-[0_0_6px_rgba(249,115,22,0.5)]"
           />
-          <polygon points="18,10 24,22 12,22" fill="#0f172a" />
-          <line x1="18" y1="2" x2="18" y2="-8" stroke="#cbd5e1" strokeWidth="1.5" />
-          <polygon points="18,-8 28,-4 18,0" fill="#10b981" />
+          <polygon points="0,-6 4,0 -4,0" fill="#0f172a" />
+          <line x1="0" y1="-12" x2="0" y2="-18" stroke="#cbd5e1" strokeWidth="1.2" />
+          <polygon points="0,-18 6,-15 0,-12" fill="#10b981" />
 
-          {/* Basecamp Label Badge */}
-          <foreignObject x="-45" y="25" width="120" height="40">
-            <div className="flex flex-col items-center">
-              <span className="bg-[#0c0c0e]/90 border border-amber-500/40 text-[8.5px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded shadow-lg backdrop-blur-sm tracking-wider whitespace-nowrap">
-                EVEREST BASECAMP
-              </span>
-              <span className="text-[7.5px] font-mono text-gray-400 uppercase mt-0.5 whitespace-nowrap">
+          {/* Tent Status Badge - Right Aligned to prevent left-edge clipping */}
+          <foreignObject x="14" y="-16" width="130" height="28">
+            <div className="flex items-center h-full">
+              <span className="bg-[#0c0c0e]/95 border border-amber-500/50 text-[8px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded shadow-lg backdrop-blur-sm tracking-wider whitespace-nowrap">
                 {isPreOpen ? 'PREPARING GEAR...' : isOpen ? 'EXPEDITION IN PROGRESS' : 'RESTING AT TENT'}
               </span>
             </div>
@@ -275,15 +272,20 @@ export default function MountainClimbersOverlay({
             />
 
             {/* Follower Mountaineer */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 18})`}>
-              <circle cx="0" cy="-6" r="3" fill="#38bdf8" />
-              <line x1="0" y1="-3" x2="0" y2="6" stroke="#0284c7" strokeWidth="2.5" />
-              <line x1="0" y1="6" x2="-4" y2="12" stroke="#0284c7" strokeWidth="2" />
-              <line x1="0" y1="6" x2="4" y2="12" stroke="#0284c7" strokeWidth="2" />
-              <line x1="-3" y1="0" x2="-7" y2="-4" stroke="#cbd5e1" strokeWidth="1.5" />
-              <foreignObject x="-30" y="-32" width="60" height="20">
-                <div className="text-center">
-                  <span className="bg-[#0c0c0e]/80 text-[7px] font-mono text-sky-400 font-bold px-1 py-0.5 rounded border border-sky-500/30 whitespace-nowrap">
+            <g transform={`translate(${followerPos.x}, ${followerPos.y - 14})`}>
+              <circle cx="0" cy="-6" r="2.5" fill="#38bdf8" />
+              <line x1="0" y1="-3.5" x2="0" y2="4" stroke="#0284c7" strokeWidth="2" />
+              <line x1="0" y1="4" x2="-3" y2="9" stroke="#0284c7" strokeWidth="1.5" />
+              <line x1="0" y1="4" x2="3" y2="9" stroke="#0284c7" strokeWidth="1.5" />
+              <line x1="-2" y1="-1" x2="-5" y2="-5" stroke="#cbd5e1" strokeWidth="1.2" />
+              <foreignObject
+                x={followerPos.x > containerWidth - 90 ? -75 : 8}
+                y="-20"
+                width="70"
+                height="20"
+              >
+                <div className={`flex items-center ${followerPos.x > containerWidth - 90 ? 'justify-end' : 'justify-start'}`}>
+                  <span className="bg-[#0c0c0e]/95 text-[7px] font-mono text-sky-400 font-extrabold px-1 py-0.5 rounded border border-sky-500/40 shadow-md whitespace-nowrap">
                     CLIMBER #2
                   </span>
                 </div>
@@ -291,29 +293,34 @@ export default function MountainClimbersOverlay({
             </g>
 
             {/* Lead Mountaineer */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 20})`}>
-              <circle cx="0" cy="-7" r="3.5" fill="#f59e0b" />
-              <line x1="0" y1="-3.5" x2="0" y2="7" stroke="#d97706" strokeWidth="3" />
-              <line x1="0" y1="-1" x2="-6" y2="-6" stroke="#d97706" strokeWidth="2" />
-              <line x1="0" y1="-1" x2="6" y2="-5" stroke="#d97706" strokeWidth="2" />
-              <line x1="0" y1="7" x2="-5" y2="14" stroke="#d97706" strokeWidth="2.5" />
-              <line x1="0" y1="7" x2="5" y2="14" stroke="#d97706" strokeWidth="2.5" />
-              <line x1="6" y1="-5" x2="11" y2="-9" stroke="#e2e8f0" strokeWidth="1.5" />
-              <path d="M 9 -10 L 12 -9 L 10 -7" fill="#e2e8f0" />
+            <g transform={`translate(${leadPos.x}, ${leadPos.y - 16})`}>
+              <circle cx="0" cy="-6" r="3" fill="#f59e0b" />
+              <line x1="0" y1="-3" x2="0" y2="5" stroke="#d97706" strokeWidth="2.5" />
+              <line x1="0" y1="-1" x2="-5" y2="-5" stroke="#d97706" strokeWidth="1.8" />
+              <line x1="0" y1="-1" x2="5" y2="-4" stroke="#d97706" strokeWidth="1.8" />
+              <line x1="0" y1="5" x2="-4" y2="11" stroke="#d97706" strokeWidth="2" />
+              <line x1="0" y1="5" x2="4" y2="11" stroke="#d97706" strokeWidth="2" />
+              <line x1="5" y1="-4" x2="9" y2="-8" stroke="#e2e8f0" strokeWidth="1.2" />
+              <path d="M 7 -9 L 10 -8 L 8 -6" fill="#e2e8f0" />
 
-              {/* Status Badge */}
-              <foreignObject x="-50" y="-48" width="100" height="30">
-                <div className="flex flex-col items-center">
+              {/* Status Badge - Positioned cleanly on right or left if near boundary */}
+              <foreignObject
+                x={leadPos.x > containerWidth - 110 ? -105 : 10}
+                y="-28"
+                width="110"
+                height="28"
+              >
+                <div className={`flex items-center h-full ${leadPos.x > containerWidth - 110 ? 'justify-end' : 'justify-start'}`}>
                   {isSummit ? (
                     <span className="bg-emerald-500 text-black text-[8px] font-mono font-extrabold px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.8)] animate-bounce whitespace-nowrap">
                       🏔️ PEAK SUMMIT!
                     </span>
                   ) : isRedZone ? (
-                    <span className="bg-rose-500 text-white text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(244,63,94,0.7)] animate-pulse whitespace-nowrap">
+                    <span className="bg-rose-500 text-white text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(244,63,94,0.8)] border border-rose-300/50 animate-pulse whitespace-nowrap">
                       ⚠️ RED ZONE ROPE
                     </span>
                   ) : (
-                    <span className="bg-[#0c0c0e]/90 text-amber-400 border border-amber-500/40 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
+                    <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
                       {isOpen ? 'CLIMBING...' : 'LEAD EXPEDITION'}
                     </span>
                   )}
