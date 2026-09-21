@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Search, RefreshCw, CheckCircle, AlertCircle, FileText, Calendar, Layers, Activity, Megaphone } from 'lucide-react';
+import { LineChart, RefreshCw, CheckCircle, AlertCircle, FileText, Calendar, Layers, Activity, Megaphone } from 'lucide-react';
 
 const STOCK_TECHNICAL_SHEET_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=613914429';
 const INDEX_WEEKLY_SHEET_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=1423192425';
@@ -34,7 +34,6 @@ export default function TechnicalAnalysisSection() {
   const [indexData, setIndexData] = useState(FALLBACK_INDEX_DATA);
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
   const [lastSyncTime, setLastSyncTime] = useState('');
 
   const fetchAllSheetData = async () => {
@@ -256,23 +255,8 @@ export default function TechnicalAnalysisSection() {
     return result;
   }
 
-  const filteredStockData = stockData.filter(item => {
-    const query = searchTerm.toLowerCase();
-    return (
-      item.stockName.toLowerCase().includes(query) ||
-      item.description.toLowerCase().includes(query) ||
-      item.date.toLowerCase().includes(query)
-    );
-  });
-
-  const filteredIndexData = indexData.filter(item => {
-    const query = searchTerm.toLowerCase();
-    return (
-      item.indexName.toLowerCase().includes(query) ||
-      item.analysis.toLowerCase().includes(query) ||
-      item.date.toLowerCase().includes(query)
-    );
-  });
+  const filteredStockData = stockData;
+  const filteredIndexData = indexData;
 
   // Calculate dynamic tab label and combined count
   const combinedStockTabCount = stockData.length + announcements.length;
@@ -311,46 +295,34 @@ export default function TechnicalAnalysisSection() {
           </div>
         </div>
 
-        {/* Section Navigation Tabs & Search Controls */}
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-neutral-900/60 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
+        {/* Section Navigation Tabs Centered Without Search Bar */}
+        <div className="flex items-center justify-center bg-neutral-900/60 p-3 sm:p-4 rounded-2xl border border-white/10 backdrop-blur-md shadow-lg">
 
-          {/* Tabs */}
-          <div className="flex items-center space-x-2 bg-black/60 p-1.5 rounded-xl border border-white/5">
+          {/* Tabs Bar Centered with clear Clickable Button Affordance */}
+          <div className="flex flex-wrap items-center justify-center gap-3 bg-black/80 p-2 rounded-xl border border-white/10 max-w-full">
             <button
               onClick={() => setActiveTab('index')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+              className={`cursor-pointer flex items-center space-x-2.5 px-5 py-2.5 rounded-lg text-xs font-mono font-extrabold uppercase transition-all duration-200 active:scale-95 ${
                 activeTab === 'index'
-                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-[0_0_15px_rgba(217,119,6,0.3)]'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-amber-500/25 text-amber-400 border-2 border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.35)]'
+                  : 'bg-neutral-900/90 text-gray-300 border border-white/20 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]'
               }`}
             >
-              <Activity className="w-4 h-4" />
+              <Activity className={`w-4 h-4 ${activeTab === 'index' ? 'text-amber-400 animate-pulse' : 'text-gray-400'}`} />
               <span>WEEKLY INDEX ANALYSIS ({indexData.length})</span>
             </button>
 
             <button
               onClick={() => setActiveTab('stock')}
-              className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+              className={`cursor-pointer flex items-center space-x-2.5 px-5 py-2.5 rounded-lg text-xs font-mono font-extrabold uppercase transition-all duration-200 active:scale-95 ${
                 activeTab === 'stock'
-                  ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-[0_0_15px_rgba(217,119,6,0.3)]'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-amber-500/25 text-amber-400 border-2 border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.35)]'
+                  : 'bg-neutral-900/90 text-gray-300 border border-white/20 hover:border-amber-500/60 hover:text-amber-400 hover:bg-amber-500/10 hover:shadow-[0_0_15px_rgba(245,158,11,0.2)]'
               }`}
             >
-              <StockTabIcon className="w-4 h-4" />
+              <StockTabIcon className={`w-4 h-4 ${activeTab === 'stock' ? 'text-amber-400 animate-pulse' : 'text-gray-400'}`} />
               <span>{stockTabLabel} ({combinedStockTabCount})</span>
             </button>
-          </div>
-
-          {/* Search Input */}
-          <div className="relative w-full lg:w-80">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder={activeTab === 'index' ? "Search index analysis or date..." : "Search stock name, description or date..."}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-black/80 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs font-mono text-white placeholder-gray-500 focus:outline-none focus:border-amber-500 transition-colors"
-            />
           </div>
 
         </div>
@@ -372,7 +344,7 @@ export default function TechnicalAnalysisSection() {
             ) : filteredIndexData.length === 0 ? (
               <div className="bg-[#0d0d10] border border-white/10 rounded-2xl p-12 text-center text-gray-400 font-mono text-xs">
                 <AlertCircle className="w-8 h-8 text-amber-400 mx-auto mb-3" />
-                NO MATCHING INDEX TECHNICAL ANALYSIS RECORDS FOUND FOR "{searchTerm}".
+                NO INDEX TECHNICAL ANALYSIS RECORDS FOUND.
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -509,7 +481,7 @@ export default function TechnicalAnalysisSection() {
                 ) : filteredStockData.length === 0 ? (
                   <div className="bg-[#0d0d10] border border-white/10 rounded-2xl p-8 text-center text-gray-400 font-mono text-xs">
                     <AlertCircle className="w-8 h-8 text-amber-400 mx-auto mb-3" />
-                    NO MATCHING STOCK TECHNICAL ANALYSIS RECORDS FOUND FOR "{searchTerm}".
+                    NO STOCK TECHNICAL ANALYSIS RECORDS FOUND.
                   </div>
                 ) : (
                   /* Vertically stacked stock cards (one below another) */
