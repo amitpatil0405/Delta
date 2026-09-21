@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
 import { BookOpen, Calendar } from 'lucide-react';
+import MountainClimbersOverlay from './MountainClimbersOverlay';
+import { getISTMarketStatus } from '../services/marketData';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
 const TRADES_STORAGE_KEY = 'deltafox_portfolio_trades_v5';
@@ -168,6 +170,18 @@ function parseCSVRows(csvText) {
 }
 
 export default function PortfolioJournalSection() {
+  // Container ref and dimensions state for overlay rendering
+  const chartContainerRef = useRef(null);
+  const [chartDims, setChartDims] = useState({ width: 0, height: 0 });
+  const [marketStatusInfo, setMarketStatusInfo] = useState(() => getISTMarketStatus());
+
+  useEffect(() => {
+    const statusTimer = setInterval(() => {
+      setMarketStatusInfo(getISTMarketStatus());
+    }, 10000);
+    return () => clearInterval(statusTimer);
+  }, []);
+
   // Responsive mobile state tracking
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -179,7 +193,14 @@ export default function PortfolioJournalSection() {
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
+      if (chartContainerRef.current) {
+        setChartDims({
+          width: chartContainerRef.current.clientWidth,
+          height: chartContainerRef.current.clientHeight
+        });
+      }
     };
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -767,7 +788,13 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <div className="h-[280px] w-full pt-2">
+            <div ref={chartContainerRef} className="h-[280px] w-full pt-2 relative">
+              <MountainClimbersOverlay
+                pnlData={pnlCurveData}
+                containerWidth={chartDims.width}
+                containerHeight={chartDims.height}
+                marketStatus={marketStatusInfo.status}
+              />
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 0 }}>
                   <defs>
