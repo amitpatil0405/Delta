@@ -233,7 +233,7 @@ export default function MountainClimbersOverlay({
           <foreignObject x="14" y="-16" width="130" height="28">
             <div className="flex items-center h-full">
               <span className="bg-[#0c0c0e]/95 border border-amber-500/50 text-[8px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded shadow-lg backdrop-blur-sm tracking-wider whitespace-nowrap">
-                {isPreOpen ? 'PREPARING GEAR...' : isOpen ? 'EXPEDITION IN PROGRESS' : 'RESTING AT TENT'}
+                {isPreOpen ? 'PREPARING GEARS..' : isOpen ? 'EXPEDITION IN PROGRESS' : 'RESTING AT TENT'}
               </span>
             </div>
           </foreignObject>
@@ -279,14 +279,14 @@ export default function MountainClimbersOverlay({
               <line x1="0" y1="4" x2="3" y2="9" stroke="#0284c7" strokeWidth="1.5" />
               <line x1="-2" y1="-1" x2="-5" y2="-5" stroke="#cbd5e1" strokeWidth="1.2" />
               <foreignObject
-                x={followerPos.x > containerWidth - 90 ? -75 : 8}
+                x={followerPos.x > containerWidth - 100 ? -85 : 8}
                 y="-20"
-                width="70"
+                width="85"
                 height="20"
               >
-                <div className={`flex items-center ${followerPos.x > containerWidth - 90 ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex items-center ${followerPos.x > containerWidth - 100 ? 'justify-end' : 'justify-start'}`}>
                   <span className="bg-[#0c0c0e]/95 text-[7px] font-mono text-sky-400 font-extrabold px-1 py-0.5 rounded border border-sky-500/40 shadow-md whitespace-nowrap">
-                    CLIMBER #2
+                    FOLLOWER CLIMBER
                   </span>
                 </div>
               </foreignObject>
@@ -305,23 +305,19 @@ export default function MountainClimbersOverlay({
 
               {/* Status Badge - Positioned cleanly on right or left if near boundary */}
               <foreignObject
-                x={leadPos.x > containerWidth - 110 ? -105 : 10}
+                x={leadPos.x > containerWidth - 100 ? -95 : 10}
                 y="-28"
-                width="110"
+                width="95"
                 height="28"
               >
-                <div className={`flex items-center h-full ${leadPos.x > containerWidth - 110 ? 'justify-end' : 'justify-start'}`}>
+                <div className={`flex items-center h-full ${leadPos.x > containerWidth - 100 ? 'justify-end' : 'justify-start'}`}>
                   {isSummit ? (
                     <span className="bg-emerald-500 text-black text-[8px] font-mono font-extrabold px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.8)] animate-bounce whitespace-nowrap">
                       🏔️ PEAK SUMMIT!
                     </span>
-                  ) : isRedZone ? (
-                    <span className="bg-rose-500 text-white text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(244,63,94,0.8)] border border-rose-300/50 animate-pulse whitespace-nowrap">
-                      ⚠️ RED ZONE ROPE
-                    </span>
                   ) : (
                     <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
-                      {isOpen ? 'CLIMBING...' : 'LEAD EXPEDITION'}
+                      LEAD CLIMBER
                     </span>
                   )}
                 </div>
