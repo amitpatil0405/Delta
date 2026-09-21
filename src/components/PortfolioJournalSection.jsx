@@ -195,14 +195,33 @@ export default function PortfolioJournalSection() {
       setIsMobile(window.innerWidth < 768);
       if (chartContainerRef.current) {
         setChartDims({
-          width: chartContainerRef.current.clientWidth,
-          height: chartContainerRef.current.clientHeight
+          width: chartContainerRef.current.clientWidth || chartContainerRef.current.getBoundingClientRect().width,
+          height: chartContainerRef.current.clientHeight || chartContainerRef.current.getBoundingClientRect().height || 280
         });
       }
     };
     handleResize();
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    let observer;
+    if (chartContainerRef.current && typeof ResizeObserver !== 'undefined') {
+      observer = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect) {
+            setChartDims({
+              width: entry.contentRect.width,
+              height: entry.contentRect.height || 280
+            });
+          }
+        }
+      });
+      observer.observe(chartContainerRef.current);
+    }
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (observer) observer.disconnect();
+    };
   }, []);
 
   // Trades state initialized from local cache
