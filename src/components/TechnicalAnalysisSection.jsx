@@ -274,6 +274,12 @@ export default function TechnicalAnalysisSection() {
     );
   });
 
+  // Calculate dynamic tab label and combined count
+  const combinedStockTabCount = stockData.length + announcements.length;
+  const isOnlyAnnouncement = stockData.length === 0 && announcements.length > 0;
+  const stockTabLabel = isOnlyAnnouncement ? 'ANNOUNCEMENT' : 'STOCK ANALYSIS FOR POSITIONS';
+  const StockTabIcon = isOnlyAnnouncement ? Megaphone : FileText;
+
   return (
     <section id="technical-analysis" className="relative bg-[#050505] bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 px-4 md:px-8 border-t border-[#1a1a1a] overflow-hidden">
       {/* Soft Ambient Radial Glow */}
@@ -330,8 +336,8 @@ export default function TechnicalAnalysisSection() {
                   : 'text-gray-400 hover:text-white'
               }`}
             >
-              <FileText className="w-4 h-4" />
-              <span>STOCK ANALYSIS BEFORE POSITION ({stockData.length})</span>
+              <StockTabIcon className="w-4 h-4" />
+              <span>{stockTabLabel} ({combinedStockTabCount})</span>
             </button>
           </div>
 
