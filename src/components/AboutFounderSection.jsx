@@ -1,6 +1,7 @@
 import React from 'react';
-import { ShieldCheck, Target, Terminal, Compass, Award, Cpu } from 'lucide-react';
+import { ShieldCheck, Target, Compass, Cpu } from 'lucide-react';
 import myPic from '../assets/my_pic.jpg';
+import StockMarketCanvasBg from './StockMarketCanvasBg';
 
 export default function AboutFounderSection() {
   return (
@@ -28,80 +29,88 @@ export default function AboutFounderSection() {
           </p>
         </div>
 
-        {/* Founder Presentation */}
-        <div className="glass-card rounded-3xl p-8 sm:p-12 border border-amber-500/30 relative overflow-hidden bg-gradient-to-br from-neutral-950 via-[#0a0a0c] to-black">
+        {/* Founder Presentation Card with Stock Market Canvas Background Animation */}
+        <div className="glass-card rounded-3xl p-8 sm:p-12 border border-amber-500/30 relative overflow-hidden bg-gradient-to-br from-neutral-950/90 via-[#0a0a0c]/90 to-black/95">
 
-          <div className="text-center mb-10">
-            <span className="text-base sm:text-lg font-mono text-amber-400 uppercase tracking-widest font-extrabold">
-              MEET THE FOUNDER
-            </span>
-          </div>
+          {/* Stock Market Canvas Animation Background */}
+          <StockMarketCanvasBg />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+          {/* Vignette Overlay to ensure high text contrast */}
+          <div className="absolute inset-0 bg-radial-vignette pointer-events-none z-[1] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/40 to-black/80" />
 
-            {/* Founder Photo Presentation */}
-            <div className="lg:col-span-5 flex flex-col items-center">
-              <div className="relative w-64 h-80 rounded-2xl overflow-hidden border-2 border-amber-500/50 shadow-[0_0_35px_rgba(217,119,6,0.25)] group mb-4">
-                <img
-                  src={myPic}
-                  alt="MR. AMIT PATIL - Founder of DeltaFox"
-                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
-                />
-              </div>
-              <div className="text-center space-y-1">
-                <h3 className="text-2xl font-extrabold text-white font-mono tracking-wide">
-                  MR. AMIT PATIL
-                </h3>
-                <p className="text-xs font-mono text-amber-400 font-semibold tracking-wider uppercase">
-                  Founder, Derivatives Trader & Quantitative Strategist
-                </p>
-              </div>
+          <div className="relative z-10">
+            <div className="text-center mb-10">
+              <span className="text-base sm:text-lg font-mono text-amber-400 uppercase tracking-widest font-extrabold">
+                MEET THE FOUNDER
+              </span>
             </div>
 
-            {/* Founder Story & Bio */}
-            <div className="lg:col-span-7 space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
 
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono">
-                <Cpu className="w-3.5 h-3.5" />
-                <span>Bachelor Of Engineering ( Computer-Science ) & Quantitative Intelligence</span>
-              </div>
-
-              <div className="space-y-4 text-sm sm:text-base text-gray-200 leading-relaxed font-sans">
-                <p>
-                  Backed by a Bachelor's degree in Computer Science engineering and deep-rooted expertise in financial markets, Amit leads DeltaFox with an engineering-driven, systematic approach.
-                </p>
-                <p>
-                  By blending technical precision with quantitative trading, the platform brings complete transparency by showcasing live market data and real-time portfolio details directly on the website.
-                </p>
-                <p>
-                  Specializing in advanced options trading strategies particularly non-directional frameworks, credit spreads, and volatility based execution. The focus remains on building resilient portfolios where data and math take absolute precedence over emotion.
-                </p>
-                <p>
-                  In addition to systematic trading, DeltaFox offers specialized training programs designed to educate aspiring traders. <span className="text-amber-400 font-mono text-xs font-semibold">[Enrollment is subject to strict terms and conditions, risk disclosures, and eligibility criteria.]</span> The core philosophy revolves around uncompromised capital preservation, strict rule execution, and navigating changing market regimes with complete discipline.
-                </p>
-              </div>
-
-              {/* Core Values */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
-                <div className="flex items-start space-x-3">
-                  <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold text-white block uppercase">CAPITAL PRESERVATION</span>
-                    <span className="text-gray-400 text-[11px] font-sans">Strict position sizing rules and strict drawdown management.</span>
-                  </div>
+              {/* Founder Photo Presentation */}
+              <div className="lg:col-span-5 flex flex-col items-center">
+                <div className="relative w-64 h-80 rounded-2xl overflow-hidden border-2 border-amber-500/50 shadow-[0_0_35px_rgba(217,119,6,0.25)] group mb-4">
+                  <img
+                    src={myPic}
+                    alt="MR. AMIT PATIL - Founder of DeltaFox"
+                    className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
-
-                <div className="flex items-start space-x-3">
-                  <Target className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold text-white block uppercase">SYSTEMATIC EXECUTION</span>
-                    <span className="text-gray-400 text-[11px] font-sans">Mathematical probabilities and non-directional volatility edges.</span>
-                  </div>
+                <div className="text-center space-y-1">
+                  <h3 className="text-2xl font-extrabold text-white font-mono tracking-wide">
+                    MR. AMIT PATIL
+                  </h3>
+                  <p className="text-xs font-mono text-amber-400 font-semibold tracking-wider uppercase">
+                    Founder, Derivatives Trader & Quantitative Strategist
+                  </p>
                 </div>
               </div>
 
-            </div>
+              {/* Founder Story & Bio */}
+              <div className="lg:col-span-7 space-y-6">
 
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono">
+                  <Cpu className="w-3.5 h-3.5" />
+                  <span>Bachelor Of Engineering ( Computer-Science ) & Quantitative Intelligence</span>
+                </div>
+
+                <div className="space-y-4 text-sm sm:text-base text-gray-200 leading-relaxed font-sans">
+                  <p>
+                    Backed by a Bachelor's degree in Computer Science engineering and deep-rooted expertise in financial markets, Amit leads DeltaFox with an engineering-driven, systematic approach.
+                  </p>
+                  <p>
+                    By blending technical precision with quantitative trading, the platform brings complete transparency by showcasing live market data and real-time portfolio details directly on the website.
+                  </p>
+                  <p>
+                    Specializing in advanced options trading strategies particularly non-directional frameworks, credit spreads, and volatility based execution. The focus remains on building resilient portfolios where data and math take absolute precedence over emotion.
+                  </p>
+                  <p>
+                    In addition to systematic trading, DeltaFox offers specialized training programs designed to educate aspiring traders. <span className="text-amber-400 font-mono text-xs font-semibold">[Enrollment is subject to strict terms and conditions, risk disclosures, and eligibility criteria.]</span> The core philosophy revolves around uncompromised capital preservation, strict rule execution, and navigating changing market regimes with complete discipline.
+                  </p>
+                </div>
+
+                {/* Core Values */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
+                  <div className="flex items-start space-x-3">
+                    <ShieldCheck className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold text-white block uppercase">CAPITAL PRESERVATION</span>
+                      <span className="text-gray-400 text-[11px] font-sans">Strict position sizing rules and strict drawdown management.</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-3">
+                    <Target className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold text-white block uppercase">SYSTEMATIC EXECUTION</span>
+                      <span className="text-gray-400 text-[11px] font-sans">Mathematical probabilities and non-directional volatility edges.</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
           </div>
 
         </div>
