@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Search, RefreshCw, CheckCircle, AlertCircle, FileText, Calendar, Layers, Activity } from 'lucide-react';
+import { LineChart, Search, RefreshCw, CheckCircle, AlertCircle, FileText, Calendar, Layers, Activity, Megaphone } from 'lucide-react';
 
 const STOCK_TECHNICAL_SHEET_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=613914429';
 const INDEX_WEEKLY_SHEET_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=1423192425';
@@ -45,6 +45,7 @@ export default function TechnicalAnalysisSection() {
   const [activeTab, setActiveTab] = useState('index'); // 'index' or 'stock'
   const [stockData, setStockData] = useState(FALLBACK_STOCK_DATA);
   const [indexData, setIndexData] = useState(FALLBACK_INDEX_DATA);
+  const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [lastSyncTime, setLastSyncTime] = useState('');
@@ -52,12 +53,13 @@ export default function TechnicalAnalysisSection() {
   const fetchAllSheetData = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Stock Analysis (gid=613914429)
+      // 1. Fetch Stock Analysis & Announcements (gid=613914429)
       const stockRes = await fetch(`${STOCK_TECHNICAL_SHEET_URL}&t=${Date.now()}`);
       if (stockRes.ok) {
         const text = await stockRes.text();
-        const parsed = parseStockCSV(text);
-        if (parsed && parsed.length > 0) setStockData(parsed);
+        const { stocks, announcements: parsedAnnouncements } = parseStockAndAnnouncementCSV(text);
+        setStockData(stocks);
+        setAnnouncements(parsedAnnouncements);
       }
 
       // 2. Fetch Index Weekly Analysis (gid=1423192425)
@@ -133,27 +135,115 @@ export default function TechnicalAnalysisSection() {
     return text;
   }
 
-  function parseStockCSV(csvText) {
+  function parseStockAndAnnouncementCSV(csvText) {
     const rows = parseFullCSV(csvText);
-    if (rows.length <= 1) return null;
+    if (!rows || rows.length === 0) return { stocks: [], announcements: [] };
 
-    const result = [];
+    const stocks = [];
+    const announcements = [];
+    let isAnnouncementTable = false;
+
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
-      const dateVal = cleanCellVal(row[1]);
-      const stockName = cleanCellVal(row[2]);
-      const description = cleanCellVal(row[3]);
+      if (!row || row.length === 0) continue;
 
-      if (stockName && stockName.toLowerCase() !== 'stock name') {
-        result.push({
-          id: `stock-${i}`,
-          date: dateVal || 'LIVE',
-          stockName: stockName,
-          description: description || 'No detailed technical justification recorded.'
-        });
+      const col0 = cleanCellVal(row[0]);
+      const col1 = cleanCellVal(row[1]); // Date
+      const col2 = cleanCellVal(row[2]); // Stock Name or Status
+      const col3 = cleanCellVal(row[3]); // Description or Details
+
+      // Check if we hit Table 2 (Announcements)
+      if (
+        col0.toLowerCase().includes('announcement') ||
+        col2.toLowerCase() === 'status' ||
+        col3.toLowerCase() === 'details'
+      ) {
+        isAnnouncementTable = true;
+        continue; // Skip header row
+      }
+
+      if (!isAnnouncementTable) {
+        // Table 1: Stock Technical Analysis
+        const stockLower = col2.toLowerCase();
+        const descLower = col3.toLowerCase();
+        const dateLower = col1.toLowerCase();
+
+        // Skip header rows
+        if (
+          stockLower === 'stock name' ||
+          descLower === 'description of technical analysis' ||
+          dateLower === 'date'
+        ) {
+          continue;
+        }
+
+        // Check if this row is actually an announcement entry placed in top table ("working on stocks")
+        if (stockLower === 'working on stocks' || stockLower === 'status') {
+          if (col3) {
+            announcements.push({
+              id: `announcement-top-${i}`,
+              date: col1 || 'LIVE',
+              status: col2 || 'Enable',
+              title: col2,
+              details: col3
+            });
+          }
+          continue; // Do not render "Working on stocks" as a stock card
+        }
+
+        // Valid Stock Entry
+        if (col2 && col3) {
+          stocks.push({
+            id: `stock-${i}`,
+            date: col1 || 'LIVE',
+            stockName: col2,
+            description: col3
+          });
+        }
+      } else {
+        // Table 2: Announcement(s) Section
+        const statusLower = col2.toLowerCase();
+        const detailsLower = col3.toLowerCase();
+        const dateLower = col1.toLowerCase();
+
+        if (
+          statusLower === 'status' ||
+          detailsLower === 'details' ||
+          dateLower === 'date'
+        ) {
+          continue;
+        }
+
+        if (col2 || col3) {
+          const statusVal = col2 || 'Enable';
+          const detailsVal = col3;
+
+          // Check if enabled/active
+          const isEnabled =
+            statusVal.toLowerCase().includes('enable') ||
+            statusVal.toLowerCase().includes('active') ||
+            statusVal.toLowerCase().includes('live') ||
+            statusVal.toLowerCase().includes('yes') ||
+            statusVal.toLowerCase().includes('true');
+
+          if (isEnabled && detailsVal) {
+            announcements.push({
+              id: `announcement-${i}`,
+              date: col1 || 'LIVE',
+              status: statusVal,
+              title: 'ANNOUNCEMENT',
+              details: detailsVal
+            });
+          }
+        }
       }
     }
-    return result;
+
+    // Latest data shown on top (bottom rows in Excel moved to top of array)
+    stocks.reverse();
+    announcements.reverse();
+
+    return { stocks, announcements };
   }
 
   function parseIndexCSV(csvText) {
@@ -340,13 +430,70 @@ export default function TechnicalAnalysisSection() {
         {/* SECTION 2: STOCK ANALYSIS BEFORE TAKING POSITION */}
         {activeTab === 'stock' && (
           <div className="space-y-6">
-            <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest">
+
+            {/* ANNOUNCEMENT SECTION (Only rendered if an enabled announcement exists) */}
+            {announcements.length > 0 && (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest">
+                  <Megaphone className="w-4 h-4 text-amber-400 animate-pulse" />
+                  <span>PLATFORM ANNOUNCEMENT</span>
+                </div>
+
+                <div className="space-y-4">
+                  {announcements.map((ann) => (
+                    <div
+                      key={ann.id}
+                      className="relative bg-amber-950/20 border-2 border-amber-500/40 hover:border-amber-400 rounded-2xl p-6 space-y-4 transition-all duration-300 shadow-[0_0_25px_rgba(245,158,11,0.2)] overflow-hidden"
+                    >
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500" />
+
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                            <Megaphone className="w-5 h-5" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg sm:text-xl font-black font-mono text-amber-400 uppercase tracking-wide">
+                              {ann.title || 'ANNOUNCEMENT'}
+                            </h3>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] font-mono font-bold uppercase flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
+                            <span>{ann.status || 'ACTIVE'}</span>
+                          </span>
+
+                          <span className="text-xs font-mono font-bold text-amber-300 bg-amber-500/20 border border-amber-500/40 px-3 py-1 rounded-full flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>DATE: {ann.date}</span>
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="bg-black/70 border border-amber-500/20 rounded-xl p-4 font-mono text-xs text-amber-100 leading-relaxed space-y-2">
+                        <span className="text-amber-400 font-extrabold block text-[11px] uppercase tracking-wider">
+                          ANNOUNCEMENT DETAILS:
+                        </span>
+                        <p className="text-amber-50 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
+                          {ann.details}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* STOCK ANALYSIS TITLE HEADER */}
+            <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest pt-2">
               <FileText className="w-4 h-4" />
               <span>EQUITY TRADES & TECHNICAL ANALYSIS JUSTIFICATION BEFORE TAKING POSITION</span>
             </div>
 
             {loading && stockData.length === 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-6">
                 {[1, 2].map((i) => (
                   <div key={i} className="bg-[#0d0d10] border border-white/10 rounded-2xl p-6 animate-pulse h-48" />
                 ))}
@@ -357,7 +504,8 @@ export default function TechnicalAnalysisSection() {
                 NO MATCHING STOCK TECHNICAL ANALYSIS RECORDS FOUND FOR "{searchTerm}".
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              /* Vertically stacked stock cards (one below another) */
+              <div className="flex flex-col space-y-6">
                 {filteredStockData.map((item) => (
                   <div
                     key={item.id}
@@ -365,7 +513,7 @@ export default function TechnicalAnalysisSection() {
                   >
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700" />
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="flex items-center space-x-3">
                         <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
                           <FileText className="w-5 h-5" />
@@ -390,10 +538,6 @@ export default function TechnicalAnalysisSection() {
                       <p className="text-gray-200 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
                         {item.description}
                       </p>
-                    </div>
-
-                    <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-gray-400">
-                      <span>PRE-POSITION VERIFIED</span>
                     </div>
                   </div>
                 ))}
