@@ -5,20 +5,7 @@ const STOCK_TECHNICAL_SHEET_URL = 'https://docs.google.com/spreadsheets/d/11yWye
 const INDEX_WEEKLY_SHEET_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=1423192425';
 
 // Static fallbacks for Stock and Index analysis
-const FALLBACK_STOCK_DATA = [
-  {
-    id: 1,
-    date: '07/09/2026',
-    stockName: 'SBI card',
-    description: 'Technical indicators suggest that SBICARD is currently moving within a defined consolidation range, respecting key support and resistance zones established over recent sessions.'
-  },
-  {
-    id: 2,
-    date: '07/09/2026',
-    stockName: 'Reliance industried ltd',
-    description: 'Reliance is currently displaying strong structural stability by holding firmly above its crucial multi-week support level, preventing any sharp downward continuation.'
-  }
-];
+const FALLBACK_STOCK_DATA = [];
 
 const FALLBACK_INDEX_DATA = [
   {
@@ -431,118 +418,136 @@ export default function TechnicalAnalysisSection() {
         {activeTab === 'stock' && (
           <div className="space-y-6">
 
-            {/* ANNOUNCEMENT SECTION (Only rendered if an enabled announcement exists) */}
+            {/* ANNOUNCEMENT SECTION (Distinct Non-Golden Cyan/Indigo Theme) */}
             {announcements.length > 0 && (
               <div className="space-y-4">
-                <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest">
-                  <Megaphone className="w-4 h-4 text-amber-400 animate-pulse" />
+                <div className="flex items-center space-x-2 text-xs font-mono text-cyan-400 uppercase tracking-widest">
+                  <Megaphone className="w-4 h-4 text-cyan-400 animate-pulse" />
                   <span>PLATFORM ANNOUNCEMENT</span>
                 </div>
 
-                <div className="space-y-4">
-                  {announcements.map((ann) => (
-                    <div
-                      key={ann.id}
-                      className="relative bg-amber-950/20 border-2 border-amber-500/40 hover:border-amber-400 rounded-2xl p-6 space-y-4 transition-all duration-300 shadow-[0_0_25px_rgba(245,158,11,0.2)] overflow-hidden"
-                    >
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-500" />
+                {/* Primary Announcement Container */}
+                <div className="relative bg-[#080d1a] border-2 border-cyan-500/40 hover:border-cyan-400 rounded-2xl p-6 space-y-4 transition-all duration-300 shadow-[0_0_25px_rgba(6,182,212,0.15)] overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500" />
 
-                      <div className="flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="p-2.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300">
-                            <Megaphone className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg sm:text-xl font-black font-mono text-amber-400 uppercase tracking-wide">
-                              {ann.title || 'ANNOUNCEMENT'}
-                            </h3>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <span className="px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[11px] font-mono font-bold uppercase flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
-                            <span>{ann.status || 'ACTIVE'}</span>
-                          </span>
-
-                          <span className="text-xs font-mono font-bold text-amber-300 bg-amber-500/20 border border-amber-500/40 px-3 py-1 rounded-full flex items-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5" />
-                            <span>DATE: {ann.date}</span>
-                          </span>
-                        </div>
+                  {/* Main Announcement Header */}
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                        <Megaphone className="w-5 h-5" />
                       </div>
-
-                      <div className="bg-black/70 border border-amber-500/20 rounded-xl p-4 font-mono text-xs text-amber-100 leading-relaxed space-y-2">
-                        <span className="text-amber-400 font-extrabold block text-[11px] uppercase tracking-wider">
-                          ANNOUNCEMENT DETAILS:
-                        </span>
-                        <p className="text-amber-50 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
-                          {ann.details}
-                        </p>
+                      <div>
+                        <h3 className="text-lg sm:text-xl font-black font-mono text-cyan-300 uppercase tracking-wide">
+                          {announcements[0].title || 'ANNOUNCEMENT'}
+                        </h3>
                       </div>
                     </div>
-                  ))}
+
+                    <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>DATE: {announcements[0].date}</span>
+                    </span>
+                  </div>
+
+                  {/* Main Announcement Details */}
+                  <div className="bg-[#050812] border border-cyan-500/20 rounded-xl p-4 font-mono text-xs text-cyan-100 leading-relaxed space-y-2">
+                    <span className="text-cyan-400 font-extrabold block text-[11px] uppercase tracking-wider">
+                      ANNOUNCEMENT DETAILS:
+                    </span>
+                    <p className="text-gray-200 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
+                      {announcements[0].details}
+                    </p>
+                  </div>
+
+                  {/* Sub-Announcements (rendered as compact cards underneath if multiple exist) */}
+                  {announcements.length > 1 && (
+                    <div className="pt-4 border-t border-cyan-500/20 space-y-3">
+                      <span className="text-[10px] font-mono uppercase tracking-widest text-cyan-400/80 font-bold block">
+                        ADDITIONAL UPDATES ({announcements.length - 1}):
+                      </span>
+
+                      <div className="grid grid-cols-1 gap-3">
+                        {announcements.slice(1).map((subAnn) => (
+                          <div key={subAnn.id} className="bg-[#0b1329] border border-cyan-500/20 rounded-xl p-3.5 space-y-2">
+                            <div className="flex items-center justify-between text-xs font-mono">
+                              <span className="font-bold text-cyan-300 uppercase">{subAnn.title || 'UPDATE'}</span>
+                              <span className="text-[11px] text-cyan-400/80 font-mono">DATE: {subAnn.date}</span>
+                            </div>
+                            <p className="text-gray-300 text-xs font-sans leading-relaxed whitespace-pre-line">
+                              {subAnn.details}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               </div>
             )}
 
-            {/* STOCK ANALYSIS TITLE HEADER */}
-            <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest pt-2">
-              <FileText className="w-4 h-4" />
-              <span>EQUITY TRADES & TECHNICAL ANALYSIS JUSTIFICATION BEFORE TAKING POSITION</span>
-            </div>
+            {/* STOCK ANALYSIS SECTION (Only rendered when stock technical analysis entries exist) */}
+            {stockData.length > 0 && (
+              <div className="space-y-6 pt-2">
+                <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest">
+                  <FileText className="w-4 h-4" />
+                  <span>EQUITY TRADES & TECHNICAL ANALYSIS JUSTIFICATION BEFORE TAKING POSITION</span>
+                </div>
 
-            {loading && stockData.length === 0 ? (
-              <div className="flex flex-col space-y-6">
-                {[1, 2].map((i) => (
-                  <div key={i} className="bg-[#0d0d10] border border-white/10 rounded-2xl p-6 animate-pulse h-48" />
-                ))}
-              </div>
-            ) : filteredStockData.length === 0 ? (
-              <div className="bg-[#0d0d10] border border-white/10 rounded-2xl p-12 text-center text-gray-400 font-mono text-xs">
-                <AlertCircle className="w-8 h-8 text-amber-400 mx-auto mb-3" />
-                NO MATCHING STOCK TECHNICAL ANALYSIS RECORDS FOUND FOR "{searchTerm}".
-              </div>
-            ) : (
-              /* Vertically stacked stock cards (one below another) */
-              <div className="flex flex-col space-y-6">
-                {filteredStockData.map((item) => (
-                  <div
-                    key={item.id}
-                    className="group bg-gradient-to-br from-[#0a0a0d] to-[#121217] border border-white/10 hover:border-amber-500/50 rounded-2xl p-6 space-y-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(217,119,6,0.15)] relative overflow-hidden"
-                  >
-                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700" />
+                {loading && stockData.length === 0 ? (
+                  <div className="flex flex-col space-y-6">
+                    {[1, 2].map((i) => (
+                      <div key={i} className="bg-[#0d0d10] border border-white/10 rounded-2xl p-6 animate-pulse h-48" />
+                    ))}
+                  </div>
+                ) : filteredStockData.length === 0 ? (
+                  <div className="bg-[#0d0d10] border border-white/10 rounded-2xl p-8 text-center text-gray-400 font-mono text-xs">
+                    <AlertCircle className="w-8 h-8 text-amber-400 mx-auto mb-3" />
+                    NO MATCHING STOCK TECHNICAL ANALYSIS RECORDS FOUND FOR "{searchTerm}".
+                  </div>
+                ) : (
+                  /* Vertically stacked stock cards (one below another) */
+                  <div className="flex flex-col space-y-6">
+                    {filteredStockData.map((item) => (
+                      <div
+                        key={item.id}
+                        className="group bg-gradient-to-br from-[#0a0a0d] to-[#121217] border border-white/10 hover:border-amber-500/50 rounded-2xl p-6 space-y-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(217,119,6,0.15)] relative overflow-hidden"
+                      >
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700" />
 
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                          <FileText className="w-5 h-5" />
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                              <FileText className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h3 className="text-xl font-extrabold font-mono text-white group-hover:text-amber-400 transition-colors uppercase">
+                                {item.stockName}
+                              </h3>
+                            </div>
+                          </div>
+
+                          <span className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>DATE: {item.date}</span>
+                          </span>
                         </div>
-                        <div>
-                          <h3 className="text-xl font-extrabold font-mono text-white group-hover:text-amber-400 transition-colors uppercase">
-                            {item.stockName}
-                          </h3>
+
+                        <div className="bg-black/60 border border-white/5 rounded-xl p-4 font-mono text-xs text-gray-300 leading-relaxed space-y-2">
+                          <span className="text-amber-400 font-bold block text-[11px] uppercase tracking-wider">
+                            DESCRIPTION OF TECHNICAL ANALYSIS BEFORE TAKING POSITION:
+                          </span>
+                          <p className="text-gray-200 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
+                            {item.description}
+                          </p>
                         </div>
                       </div>
-
-                      <span className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span>DATE: {item.date}</span>
-                      </span>
-                    </div>
-
-                    <div className="bg-black/60 border border-white/5 rounded-xl p-4 font-mono text-xs text-gray-300 leading-relaxed space-y-2">
-                      <span className="text-amber-400 font-bold block text-[11px] uppercase tracking-wider">
-                        DESCRIPTION OF TECHNICAL ANALYSIS BEFORE TAKING POSITION:
-                      </span>
-                      <p className="text-gray-200 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
-                        {item.description}
-                      </p>
-                    </div>
+                    ))}
                   </div>
-                ))}
+                )}
               </div>
             )}
+
           </div>
         )}
 
