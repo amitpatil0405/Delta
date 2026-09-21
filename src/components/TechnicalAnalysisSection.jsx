@@ -424,40 +424,40 @@ export default function TechnicalAnalysisSection() {
         {activeTab === 'stock' && (
           <div className="space-y-6">
 
-            {/* ANNOUNCEMENT SECTION (Distinct Non-Golden Cyan/Indigo Theme) */}
+            {/* ANNOUNCEMENT SECTION */}
             {announcements.length > 0 && (
               <div className="space-y-4">
-                <div className="flex items-center space-x-2 text-xs font-mono text-cyan-400 uppercase tracking-widest">
-                  <Megaphone className="w-4 h-4 text-cyan-400 animate-pulse" />
+                <div className="flex items-center space-x-2 text-xs font-mono text-amber-400 uppercase tracking-widest">
+                  <Megaphone className="w-4 h-4 text-amber-400 animate-pulse" />
                   <span>PLATFORM ANNOUNCEMENT</span>
                 </div>
 
-                {/* Primary Announcement Container */}
-                <div className="relative bg-[#080d1a] border-2 border-cyan-500/40 hover:border-cyan-400 rounded-2xl p-6 space-y-4 transition-all duration-300 shadow-[0_0_25px_rgba(6,182,212,0.15)] overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 via-sky-400 to-blue-500" />
+                {/* Primary Announcement Container with Rainbow Smooth Transition */}
+                <div className="relative bg-[#080d1a] border-2 rounded-2xl p-6 space-y-4 transition-all duration-300 overflow-hidden animate-rainbow-box">
+                  <div className="absolute top-0 left-0 right-0 h-1 animate-rainbow-bar" />
 
                   {/* Main Announcement Header */}
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
                         <Megaphone className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="text-lg sm:text-xl font-black font-mono text-cyan-300 uppercase tracking-wide">
+                        <h3 className="text-lg sm:text-xl font-black font-mono text-white uppercase tracking-wide">
                           {announcements[0].title || 'ANNOUNCEMENT'}
                         </h3>
                       </div>
                     </div>
 
-                    <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                    <span className="text-xs font-mono font-bold text-amber-300 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-amber-400" />
                       <span>DATE: {announcements[0].date}</span>
                     </span>
                   </div>
 
                   {/* Main Announcement Details */}
-                  <div className="bg-[#050812] border border-cyan-500/20 rounded-xl p-4 font-mono text-xs text-cyan-100 leading-relaxed space-y-2">
-                    <span className="text-cyan-400 font-extrabold block text-[11px] uppercase tracking-wider">
+                  <div className="bg-[#050812] border border-white/10 rounded-xl p-4 font-mono text-xs text-gray-100 leading-relaxed space-y-2">
+                    <span className="text-amber-400 font-extrabold block text-[11px] uppercase tracking-wider">
                       ANNOUNCEMENT DETAILS:
                     </span>
                     <p className="text-gray-200 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
