@@ -301,7 +301,7 @@ export default function MountainClimbersOverlay({
             <foreignObject x="-25" y="-22" width="90" height="20">
               <div className="flex items-center justify-center">
                 <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
-                  ⛺ Taking rest
+                  Taking rest
                 </span>
               </div>
             </foreignObject>
