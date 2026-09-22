@@ -298,20 +298,6 @@ export default function MountainClimbersOverlay({
           <polygon points="0,-18 6,-15 0,-12" fill="#10b981" />
         </g>
 
-        {/* Tent Status Badge - Positioned right below the tent & trade markers */}
-        <foreignObject
-          x={Math.max(5, Math.min(width - 150, basecampPoint.x - 35))}
-          y={Math.min(height - 24, basecampPoint.y + 10)}
-          width="150"
-          height="24"
-        >
-          <div className="flex items-center justify-center h-full">
-            <span className="bg-[#0c0c0e]/95 border border-amber-500/50 text-[7.5px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded shadow-lg backdrop-blur-sm tracking-wider whitespace-nowrap">
-              {isPreOpen ? 'PREPARING GEARS..' : isOpen ? 'EXPEDITION IN PROGRESS' : 'RESTING AT TENT'}
-            </span>
-          </div>
-        </foreignObject>
-
         {/* Safety Lines & Anchors along trade path */}
         {points.length > 1 && (
           <g className="climber-ropes">
