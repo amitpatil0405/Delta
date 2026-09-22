@@ -1,4 +1,32 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
+import tentImg from '../assets/tent.png';
+
+/**
+ * Helper to compute Recharts-like nice Y-axis domain ticks
+ */
+function getNiceDomain(dataMin, dataMax) {
+  let min = Math.min(dataMin, 0);
+  let max = Math.max(dataMax, 0);
+  if (min === max) {
+    min = min < 0 ? min * 1.1 : -1000;
+    max = max > 0 ? max * 1.1 : 1000;
+  }
+
+  // Choose nice tick step (e.g. 15000)
+  const range = max - min;
+  const rawStep = range / 3;
+  const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+  const residual = rawStep / mag;
+  let step;
+  if (residual < 1.5) step = 1 * mag;
+  else if (residual < 3) step = 2 * mag;
+  else if (residual < 7) step = 5 * mag;
+  else step = 10 * mag;
+
+  const niceMin = Math.floor(min / step) * step;
+  const niceMax = Math.ceil(max / step) * step;
+  return { minPnl: niceMin, maxPnl: niceMax };
+}
 
 /**
  * MountainClimbersOverlay
@@ -44,22 +72,14 @@ export default function MountainClimbersOverlay({
 
   const { minPnl, maxPnl } = useMemo(() => {
     if (pnlVals.length === 0) return { minPnl: 0, maxPnl: 1000 };
-    let min = Math.min(...pnlVals, 0);
-    let max = Math.max(...pnlVals, 0);
-    if (max === min) {
-      max += 1000;
-      min -= 1000;
-    } else {
-      const range = max - min;
-      max += range * 0.08;
-      min -= range * 0.08;
-    }
-    return { minPnl: min, maxPnl: max };
+    const min = Math.min(...pnlVals, 0);
+    const max = Math.max(...pnlVals, 0);
+    return getNiceDomain(min, max);
   }, [pnlVals]);
 
-  // Basecamp origin at Y-axis and X-axis intersection (left corner on X-axis line)
+  // Basecamp origin at Y-axis and X-axis intersection, offset slightly left so ascent path angles smoothly from tent to Trade 1
   const basecampPoint = useMemo(() => ({
-    x: margin.left,
+    x: margin.left - 18,
     y: xAxisY,
     pnl: 0,
     index: -1
@@ -192,11 +212,9 @@ export default function MountainClimbersOverlay({
   // Find highest point in P&L curve (excluding basecamp)
   const highestPoint = [...tradePoints].sort((a, b) => b.pnl - a.pnl)[0];
 
-  // Highest trade P&L value across entire historical data
-  const overallMaxTradePnl = Math.max(...pnlVals, 0);
-
-  // Check if highest point is ATH (All-Time High)
-  const isATH = highestPoint && highestPoint.pnl >= overallMaxTradePnl && highestPoint.pnl > 0;
+  // Check if highest point is the latest trade (All-Time High at current end) vs a past peak followed by drawdown
+  const lastPoint = tradePoints[tradePoints.length - 1];
+  const isATH = highestPoint && lastPoint && highestPoint.index === lastPoint.index && highestPoint.pnl > 0;
 
   // Compute Lead & Follower positions based on climbProgress along path
   let leadPos = points[0];
@@ -261,11 +279,6 @@ export default function MountainClimbersOverlay({
             <stop offset="100%" stopColor="#ea580c" />
           </linearGradient>
 
-          <linearGradient id="groundSnowGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
-            <stop offset="100%" stopColor="#cbd5e1" stopOpacity="0.2" />
-          </linearGradient>
-
           <filter id="ropeGlow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#f59e0b" floodOpacity="0.6" />
           </filter>
@@ -308,52 +321,16 @@ export default function MountainClimbersOverlay({
           ))}
         </g>
 
-        {/* Accumulated Ground Snow Layer resting directly on X-axis line (above line only) */}
-        <g className="ground-snow-layer" clipPath="url(#snowClip)">
-          {/* Procedural snowdrift mounds along the X-axis baseline */}
-          <path
-            d={`
-              M ${margin.left} ${xAxisY}
-              Q ${margin.left + chartW * 0.08} ${xAxisY - 5}, ${margin.left + chartW * 0.15} ${xAxisY - 2}
-              T ${margin.left + chartW * 0.32} ${xAxisY - 4}
-              T ${margin.left + chartW * 0.48} ${xAxisY - 6}
-              T ${margin.left + chartW * 0.65} ${xAxisY - 3}
-              T ${margin.left + chartW * 0.82} ${xAxisY - 5}
-              T ${margin.left + chartW} ${xAxisY}
-              Z
-            `}
-            fill="url(#groundSnowGrad)"
+        {/* Expedition Tent Image at X/Y axis corner on X-axis line */}
+        <g transform={`translate(${basecampPoint.x - 18}, ${basecampPoint.y - 32})`}>
+          <image
+            href={tentImg}
+            x="0"
+            y="0"
+            width="36"
+            height="34"
+            preserveAspectRatio="xMidYMid meet"
           />
-          {/* Bright white top contour highlight line on snowdrifts */}
-          <path
-            d={`
-              M ${margin.left} ${xAxisY}
-              Q ${margin.left + chartW * 0.08} ${xAxisY - 5}, ${margin.left + chartW * 0.15} ${xAxisY - 2}
-              T ${margin.left + chartW * 0.32} ${xAxisY - 4}
-              T ${margin.left + chartW * 0.48} ${xAxisY - 6}
-              T ${margin.left + chartW * 0.65} ${xAxisY - 3}
-              T ${margin.left + chartW * 0.82} ${xAxisY - 5}
-              T ${margin.left + chartW} ${xAxisY}
-            `}
-            fill="none"
-            stroke="#ffffff"
-            strokeWidth="1.2"
-            strokeOpacity="0.8"
-          />
-        </g>
-
-        {/* Expedition Tent at Trade 1 Origin */}
-        <g transform={`translate(${basecampPoint.x}, ${basecampPoint.y})`}>
-          <polygon
-            points="0,-12 10,0 -10,0"
-            fill="url(#tentGrad)"
-            stroke="#f59e0b"
-            strokeWidth="1.2"
-            className="drop-shadow-[0_0_6px_rgba(249,115,22,0.5)]"
-          />
-          <polygon points="0,-6 4,0 -4,0" fill="#0f172a" />
-          <line x1="0" y1="-12" x2="0" y2="-18" stroke="#cbd5e1" strokeWidth="1.2" />
-          <polygon points="0,-18 6,-15 0,-12" fill="#10b981" />
         </g>
 
         {/* Safety Lines & Anchors along trade path */}
@@ -463,7 +440,7 @@ export default function MountainClimbersOverlay({
                     🏔️ PEAK SUMMIT!
                   </span>
                 ) : (
-                  <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/50 text-[7.5px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
+                  <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/50 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
                     LEADER
                   </span>
                 )}
