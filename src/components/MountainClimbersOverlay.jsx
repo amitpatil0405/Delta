@@ -294,10 +294,10 @@ export default function MountainClimbersOverlay({
           <line x1="0" y1="-12" x2="0" y2="-18" stroke="#cbd5e1" strokeWidth="1.2" />
           <polygon points="0,-18 6,-15 0,-12" fill="#10b981" />
 
-          {/* Tent Status Badge - Positioned cleanly right of tent */}
-          <foreignObject x="14" y="-16" width="130" height="28">
-            <div className="flex items-center h-full">
-              <span className="bg-[#0c0c0e]/95 border border-amber-500/50 text-[8px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded shadow-lg backdrop-blur-sm tracking-wider whitespace-nowrap">
+          {/* Tent Status Badge - Positioned cleanly below the tent icon so Trade 1 and Trade 2 remain fully visible */}
+          <foreignObject x="-60" y="8" width="120" height="24">
+            <div className="flex items-center justify-center h-full">
+              <span className="bg-[#0c0c0e]/95 border border-amber-500/50 text-[7.5px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded shadow-lg backdrop-blur-sm tracking-wider whitespace-nowrap">
                 {isPreOpen ? 'PREPARING GEARS..' : isOpen ? 'EXPEDITION IN PROGRESS' : 'RESTING AT TENT'}
               </span>
             </div>
@@ -360,7 +360,7 @@ export default function MountainClimbersOverlay({
               </g>
             </g>
 
-            {/* Follower Status Badge - Centered well above Follower Climber so head is clear */}
+            {/* Follower Status Badge - Centered well above Follower so head is clear */}
             <foreignObject
               x={Math.max(10, Math.min(containerWidth - 110, followerPos.x - 50))}
               y={followerPos.y - 42}
@@ -368,8 +368,8 @@ export default function MountainClimbersOverlay({
               height="20"
             >
               <div className="flex items-center justify-center h-full">
-                <span className="bg-[#0c0c0e]/95 text-[7px] font-mono text-sky-400 font-extrabold px-1.5 py-0.5 rounded border border-sky-500/40 shadow-md whitespace-nowrap">
-                  FOLLOWER CLIMBER
+                <span className="bg-[#0c0c0e]/95 text-[7.5px] font-mono text-sky-400 font-extrabold px-1.5 py-0.5 rounded border border-sky-500/40 shadow-md whitespace-nowrap">
+                  FOLLOWER
                 </span>
               </div>
             </foreignObject>
@@ -398,7 +398,7 @@ export default function MountainClimbersOverlay({
               </g>
             </g>
 
-            {/* Lead Status Badge - Centered well above Lead Climber (GREEN tagline) so head is clear */}
+            {/* Lead Status Badge - Centered well above Leader (GREEN tagline) so head is clear */}
             <foreignObject
               x={Math.max(10, Math.min(containerWidth - 110, leadPos.x - 50))}
               y={leadPos.y - 45}
@@ -412,7 +412,7 @@ export default function MountainClimbersOverlay({
                   </span>
                 ) : (
                   <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/50 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
-                    LEAD CLIMBER
+                    LEADER
                   </span>
                 )}
               </div>
