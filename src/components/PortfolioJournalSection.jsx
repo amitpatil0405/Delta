@@ -344,9 +344,9 @@ export default function PortfolioJournalSection() {
     ? Math.abs(losingTrades.reduce((acc, t) => acc + t.manualPnl, 0) / losingTrades.length)
     : 0;
 
-  // Cumulative P&L curve dataset
+  // Cumulative P&L curve dataset starting from Origin (Tent Basecamp at index 0, PnL = 0)
   let runningPnl = 0;
-  const pnlCurveData = closedTrades.map((t, idx) => {
+  const rawPnlCurveData = closedTrades.map((t, idx) => {
     runningPnl += t.manualPnl;
     return {
       trade: `Trade ${idx + 1}`,
@@ -355,22 +355,38 @@ export default function PortfolioJournalSection() {
       tradePnl: t.manualPnl,
       symbol: t.symbol,
       strategy: t.strategy,
-      date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date
+      date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date,
+      isOrigin: false
     };
   });
+
+  const pnlCurveData = [
+    {
+      trade: '',
+      tradeNum: '#0',
+      pnl: 0,
+      tradePnl: 0,
+      symbol: 'BASECAMP',
+      strategy: 'ORIGIN',
+      date: 'START',
+      isOrigin: true
+    },
+    ...rawPnlCurveData
+  ];
 
   // Calculate sampled ticks for mobile viewport so only selected ticks/vertical lines show on mobile
   const mobileTicks = useMemo(() => {
     if (!pnlCurveData.length) return [];
-    if (pnlCurveData.length <= 5) {
+    const tradedItems = pnlCurveData.filter(d => !d.isOrigin);
+    if (tradedItems.length <= 5) {
       return pnlCurveData.map(d => d.trade);
     }
-    const ticks = [];
-    const step = Math.ceil(pnlCurveData.length / 5);
-    for (let i = 0; i < pnlCurveData.length; i += step) {
-      ticks.push(pnlCurveData[i].trade);
+    const ticks = ['']; // Include origin tick
+    const step = Math.ceil(tradedItems.length / 5);
+    for (let i = 0; i < tradedItems.length; i += step) {
+      ticks.push(tradedItems[i].trade);
     }
-    const lastTrade = pnlCurveData[pnlCurveData.length - 1].trade;
+    const lastTrade = tradedItems[tradedItems.length - 1].trade;
     if (!ticks.includes(lastTrade)) {
       ticks.push(lastTrade);
     }
@@ -841,7 +857,7 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <div ref={chartContainerRef} className="h-[280px] w-full pt-2 relative">
+            <div ref={chartContainerRef} className="h-[320px] w-full pt-2 relative">
               <MountainClimbersOverlay
                 pnlData={pnlCurveData}
                 containerWidth={chartDims.width}
@@ -851,7 +867,7 @@ export default function PortfolioJournalSection() {
                 maxPnlProp={chartMaxPnl}
               />
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={pnlCurveData} margin={{ top: 45, right: 25, left: 10, bottom: 0 }}>
+                <AreaChart data={pnlCurveData} margin={{ top: 65, right: 25, left: 10, bottom: 5 }}>
                   <defs>
                     {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
                     <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
@@ -914,6 +930,7 @@ export default function PortfolioJournalSection() {
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
+                        if (data.isOrigin) return null;
                         const val = data.pnl;
                         const tradePnlVal = data.tradePnl;
                         const isNeg = val < 0;

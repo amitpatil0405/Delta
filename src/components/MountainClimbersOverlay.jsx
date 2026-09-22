@@ -6,22 +6,14 @@ import tentImg from '../assets/tent.png';
  * Helper to generate exact monotone cubic spline SVG path using d3-shape's curveMonotoneX
  * matching Recharts area curve calculation precisely.
  */
-function getMonotonePath(tradePoints, basecampPoint) {
-  if (!tradePoints || tradePoints.length === 0) return '';
+function getMonotonePath(points) {
+  if (!points || points.length === 0) return '';
   const lineGenerator = d3Line()
     .x((d) => d.x)
     .y((d) => d.y)
     .curve(d3CurveMonotoneX);
 
-  const rechartsCurveD = lineGenerator(tradePoints) || '';
-  if (!basecampPoint) return rechartsCurveD;
-
-  const firstTrade = tradePoints[0];
-  const cIndex = rechartsCurveD.indexOf('C');
-  if (cIndex !== -1) {
-    return `M ${basecampPoint.x.toFixed(2)} ${basecampPoint.y.toFixed(2)} L ${firstTrade.x.toFixed(2)} ${firstTrade.y.toFixed(2)} ${rechartsCurveD.substring(cIndex)}`;
-  }
-  return `M ${basecampPoint.x.toFixed(2)} ${basecampPoint.y.toFixed(2)} L ${rechartsCurveD.substring(1)}`;
+  return lineGenerator(points) || '';
 }
 
 /**
@@ -43,31 +35,19 @@ export default function MountainClimbersOverlay({
   const [walkPhase, setWalkPhase] = useState(0);
 
   const width = containerWidth > 0 ? containerWidth : 800;
-  const height = containerHeight > 0 ? containerHeight : 280;
+  const height = containerHeight > 0 ? containerHeight : 320;
 
-  const margin = { top: 45, right: 25, left: 70, bottom: 30 };
+  // Margin synchronized with Recharts AreaChart (top: 65, right: 25, left: 10 + YAxis(60), bottom: 35)
+  const margin = { top: 65, right: 25, left: 70, bottom: 35 };
   const chartW = Math.max(10, width - margin.left - margin.right);
   const chartH = Math.max(10, height - margin.top - margin.bottom);
   const xAxisY = margin.top + chartH;
 
-  const pnlVals = useMemo(() => pnlData.map((d) => d.pnl), [pnlData]);
-
   const minPnl = minPnlProp !== null ? minPnlProp : -20000;
   const maxPnl = maxPnlProp !== null ? maxPnlProp : 60000;
 
-  const y0 = useMemo(() => {
-    const ratio0 = (maxPnl - minPnl) > 0 ? (0 - minPnl) / (maxPnl - minPnl) : 0.5;
-    return margin.top + (1 - ratio0) * chartH;
-  }, [minPnl, maxPnl, chartH, margin.top]);
-
-  const basecampPoint = useMemo(() => ({
-    x: margin.left - 18,
-    y: y0,
-    pnl: 0,
-    index: -1
-  }), [margin.left, y0]);
-
-  const tradePoints = useMemo(() => {
+  // Points mapped exactly to Recharts coordinates
+  const points = useMemo(() => {
     if (pnlData.length === 0) return [];
     return pnlData.map((d, i) => {
       const step = pnlData.length > 1 ? chartW / (pnlData.length - 1) : chartW / 2;
@@ -78,14 +58,11 @@ export default function MountainClimbersOverlay({
     });
   }, [pnlData, chartW, chartH, minPnl, maxPnl]);
 
-  const points = useMemo(() => {
-    if (tradePoints.length === 0) return [];
-    return [basecampPoint, ...tradePoints];
-  }, [basecampPoint, tradePoints]);
+  const originPoint = points[0] || { x: margin.left, y: margin.top + chartH / 2 };
 
   const dPath = useMemo(() => {
-    return getMonotonePath(tradePoints, basecampPoint);
-  }, [tradePoints, basecampPoint]);
+    return getMonotonePath(points);
+  }, [points]);
 
   const snowflakes = useMemo(() => {
     return Array.from({ length: 32 }, (_, i) => ({
@@ -109,6 +86,7 @@ export default function MountainClimbersOverlay({
     }
   }, [dPath, width, height]);
 
+  // IST Market Hours Schedule Animation Loop
   useEffect(() => {
     let animFrameId;
 
@@ -124,10 +102,10 @@ export default function MountainClimbersOverlay({
 
       const isWeekend = istDate.getDay() === 0 || istDate.getDay() === 6;
 
-      const startAscent = 9 * 60 + 30;  // 9:30 AM
-      const reachPeak   = 12 * 60 + 30; // 12:30 PM
-      const leavePeak   = 12 * 60 + 35; // 12:35 PM
-      const reachTent   = 15 * 60 + 40; // 3:40 PM
+      const startAscent = 9 * 60 + 30;  // 09:30 AM IST
+      const reachPeak   = 12 * 60 + 30; // 12:30 PM IST
+      const leavePeak   = 12 * 60 + 35; // 12:35 PM IST
+      const reachTent   = 15 * 60 + 40; // 03:40 PM IST
 
       let progress = 0;
       let descending = false;
@@ -173,15 +151,16 @@ export default function MountainClimbersOverlay({
     return null;
   }
 
-  // Identify highest point across all trades (ATH Peak)
-  const highestTradePoint = tradePoints.reduce(
+  // Identify highest point across all closed trades (ATH Peak)
+  const tradedPoints = points.filter(p => !p.isOrigin);
+  const highestTradePoint = tradedPoints.reduce(
     (max, pt) => (pt.pnl > max.pnl ? pt : max),
-    tradePoints[0] || { pnl: 0 }
+    tradedPoints[0] || { pnl: 0 }
   );
 
-  const latestTradePoint = tradePoints[tradePoints.length - 1];
+  const endpointTradePoint = points[points.length - 1];
 
-  const isEndpointATH = highestTradePoint && latestTradePoint && highestTradePoint.index === latestTradePoint.index;
+  const isEndpointATH = highestTradePoint && endpointTradePoint && highestTradePoint.index === endpointTradePoint.index;
   const isAtEndpointCelebrating = climbProgress >= 0.98;
 
   let leadPos = points[0];
@@ -190,12 +169,23 @@ export default function MountainClimbersOverlay({
   if (pathRef.current && pathLength > 0) {
     try {
       const currentLen = pathLength * climbProgress;
-      const separation = isAtEndpointCelebrating ? 14 : 50;
-      const followerOffset = isDescending ? separation : -separation;
-      const followerLen = Math.max(0, Math.min(pathLength, currentLen + followerOffset));
+      const separation = isAtEndpointCelebrating ? 14 : 45;
 
-      const ptLead = pathRef.current.getPointAtLength(currentLen);
-      const ptFollower = pathRef.current.getPointAtLength(followerLen);
+      let ptLead, ptFollower;
+
+      if (!isDescending) {
+        // Ascent: Leader is ahead (larger path length), Follower behind (smaller path length)
+        const leadLen = Math.max(0, Math.min(pathLength, currentLen));
+        const followerLen = Math.max(0, Math.min(pathLength, currentLen - separation));
+        ptLead = pathRef.current.getPointAtLength(leadLen);
+        ptFollower = pathRef.current.getPointAtLength(followerLen);
+      } else {
+        // Return Journey (Descent): Leader leads in front facing left towards Tent (smaller path length), Follower behind Leader (larger path length)
+        const leadLen = Math.max(0, Math.min(pathLength, currentLen - separation));
+        const followerLen = Math.max(0, Math.min(pathLength, currentLen));
+        ptLead = pathRef.current.getPointAtLength(leadLen);
+        ptFollower = pathRef.current.getPointAtLength(followerLen);
+      }
 
       const activeIdx = Math.min(
         points.length - 1,
@@ -221,12 +211,16 @@ export default function MountainClimbersOverlay({
   }
 
   const isRedZone = leadPos.pnl < 0;
-
   const isMoving = walkPhase !== 0;
-  const legAngle1 = isMoving ? Math.sin(walkPhase) * 15 : 0;
-  const legAngle2 = isMoving ? -Math.sin(walkPhase) * 15 : 0;
-  const armAngle1 = isMoving ? -Math.sin(walkPhase) * 20 : (isAtEndpointCelebrating ? -130 : 0);
-  const armAngle2 = isMoving ? Math.sin(walkPhase) * 20 : (isAtEndpointCelebrating ? 130 : 0);
+
+  // Realistic jointed 2-segment leg walking cycle angles
+  const thighAngle1 = isMoving ? Math.sin(walkPhase) * 22 : 0;
+  const shinAngle1  = isMoving ? Math.max(0, Math.sin(walkPhase + 0.5) * 20) : 0;
+  const thighAngle2 = isMoving ? -Math.sin(walkPhase) * 22 : 0;
+  const shinAngle2  = isMoving ? Math.max(0, -Math.sin(walkPhase + 0.5) * 20) : 0;
+
+  const armAngle1 = isMoving ? -Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? -135 : -15);
+  const armAngle2 = isMoving ? Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? 135 : 15);
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10 hidden md:block overflow-hidden">
@@ -252,7 +246,7 @@ export default function MountainClimbersOverlay({
 
         <path ref={pathRef} d={dPath} fill="none" stroke="none" />
 
-        {/* Ambient Snowfall Layer */}
+        {/* Ambient Snowfall Layer strictly above X-axis */}
         <g className="snowfall-layer" clipPath="url(#snowClip)">
           {snowflakes.map((s) => (
             <circle
@@ -281,8 +275,8 @@ export default function MountainClimbersOverlay({
           ))}
         </g>
 
-        {/* Basecamp Tent Image at origin (PnL = 0, X axis start) */}
-        <g transform={`translate(${basecampPoint.x - 18}, ${basecampPoint.y - 32})`}>
+        {/* Basecamp Tent Graphic at Origin (Index 0, PnL = 0) */}
+        <g transform={`translate(${originPoint.x - 18}, ${originPoint.y - 32})`}>
           <image
             href={tentImg}
             x="0"
@@ -293,12 +287,12 @@ export default function MountainClimbersOverlay({
           />
         </g>
 
-        {/* Safety Anchors on exact cumulative P&L trade curve points */}
+        {/* Safety Anchor Dots on cumulative P&L trade curve points (Index > 0) */}
         {points.length > 1 && (
           <g className="climber-anchors">
-            {tradePoints.map((pt, i) => (
+            {tradedPoints.map((pt, i) => (
               <g key={`anchor_${i}`}>
-                <circle cx={pt.x} cy={pt.y} r="3" fill="#f59e0b" stroke="#ffffff" strokeWidth="1" opacity="0.9" />
+                <circle cx={pt.x} cy={pt.y} r="3.5" fill="#f59e0b" stroke="#ffffff" strokeWidth="1.2" opacity="0.9" />
               </g>
             ))}
           </g>
@@ -307,22 +301,22 @@ export default function MountainClimbersOverlay({
         {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) */}
         {highestTradePoint && highestTradePoint.pnl > 0 && (
           <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y - 8})`}>
-            <line x1="0" y1="0" x2="0" y2="-24" stroke="#f59e0b" strokeWidth="1.5" />
+            <line x1="0" y1="0" x2="0" y2="-26" stroke="#f59e0b" strokeWidth="1.8" />
 
             <polygon
-              points="0,-24 20,-18 0,-12"
+              points="0,-26 22,-19 0,-12"
               fill="#10b981"
               stroke="#047857"
               strokeWidth="1"
               className="drop-shadow-[0_0_6px_rgba(16,185,129,0.8)]"
             />
-            <text x="2" y="-15" fill="#ffffff" fontSize="6" fontWeight="bold" fontFamily="monospace">
+            <text x="2" y="-16" fill="#ffffff" fontSize="6.5" fontWeight="bold" fontFamily="monospace">
               ATH
             </text>
 
-            <foreignObject x="-75" y="-46" width="150" height="22">
+            <foreignObject x="-75" y="-52" width="150" height="24">
               <div className="flex items-center justify-center">
-                <span className="bg-emerald-500 text-black border border-emerald-300 text-[7.5px] font-mono font-extrabold px-2 py-0.5 rounded shadow-[0_0_12px_rgba(16,185,129,0.9)] whitespace-nowrap">
+                <span className="bg-emerald-500 text-black border border-emerald-300 text-[8px] font-mono font-extrabold px-2.5 py-0.5 rounded shadow-[0_0_12px_rgba(16,185,129,0.9)] whitespace-nowrap">
                   🏆 ALL-TIME HIGH SUMMIT
                 </span>
               </div>
@@ -330,9 +324,10 @@ export default function MountainClimbersOverlay({
           </g>
         )}
 
-        {/* Expedition Team (Follower & Lead Climber) */}
+        {/* Expedition Team (Follower & Lead Mountaineers) */}
         {points.length > 0 && (
           <g className="climber-team">
+            {/* Connected Safety Rope */}
             <path
               d={`M ${followerPos.x} ${followerPos.y - 5} Q ${(followerPos.x + leadPos.x) / 2} ${(followerPos.y + leadPos.y) / 2 + 3} ${leadPos.x} ${leadPos.y - 6}`}
               fill="none"
@@ -342,64 +337,97 @@ export default function MountainClimbersOverlay({
             />
 
             {/* Follower Mountaineer */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 9}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-              <circle cx="0" cy="-6" r="2.5" fill="#38bdf8" />
-              <line x1="0" y1="-3.5" x2="0" y2="4" stroke="#0284c7" strokeWidth="2" />
-              <g transform={`rotate(${legAngle1}, 0, 4)`}>
-                <line x1="0" y1="4" x2="-3" y2="9" stroke="#0284c7" strokeWidth="1.5" />
+            <g transform={`translate(${followerPos.x}, ${followerPos.y - 11}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+              {/* Head */}
+              <circle cx="0" cy="-7" r="2.8" fill="#38bdf8" />
+              {/* Torso */}
+              <line x1="0" y1="-4.2" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.2" />
+
+              {/* Leg 1 (Jointed Thigh + Shin) */}
+              <g transform={`rotate(${thighAngle1}, 0, 4)`}>
+                <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.6" />
+                <g transform={`rotate(${shinAngle1}, -2, 8)`}>
+                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.5" />
+                </g>
               </g>
-              <g transform={`rotate(${legAngle2}, 0, 4)`}>
-                <line x1="0" y1="4" x2="3" y2="9" stroke="#0284c7" strokeWidth="1.5" />
+
+              {/* Leg 2 (Jointed Thigh + Shin) */}
+              <g transform={`rotate(${thighAngle2}, 0, 4)`}>
+                <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.6" />
+                <g transform={`rotate(${shinAngle2}, 2, 8)`}>
+                  <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.5" />
+                </g>
               </g>
-              <g transform={`rotate(${armAngle1}, 0, -1)`}>
-                <line x1="0" y1="-1" x2="-4" y2="3" stroke="#cbd5e1" strokeWidth="1.2" />
+
+              {/* Arm 1 */}
+              <g transform={`rotate(${armAngle1}, 0, -2)`}>
+                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.4" />
               </g>
-              <g transform={`rotate(${armAngle2}, 0, -1)`}>
-                <line x1="0" y1="-1" x2="4" y2="3" stroke="#cbd5e1" strokeWidth="1.2" />
+
+              {/* Arm 2 */}
+              <g transform={`rotate(${armAngle2}, 0, -2)`}>
+                <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.4" />
               </g>
             </g>
 
             {/* Lead Mountaineer */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 9}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-              <circle cx="0" cy="-6" r="2.5" fill="#f59e0b" />
-              <line x1="0" y1="-3.5" x2="0" y2="4" stroke="#d97706" strokeWidth="2" />
-              <g transform={`rotate(${legAngle1}, 0, 4)`}>
-                <line x1="0" y1="4" x2="-3" y2="9" stroke="#d97706" strokeWidth="1.5" />
+            <g transform={`translate(${leadPos.x}, ${leadPos.y - 11}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+              {/* Head */}
+              <circle cx="0" cy="-7" r="2.8" fill="#f59e0b" />
+              {/* Torso */}
+              <line x1="0" y1="-4.2" x2="0" y2="4" stroke="#d97706" strokeWidth="2.2" />
+
+              {/* Leg 1 (Jointed Thigh + Shin) */}
+              <g transform={`rotate(${thighAngle1}, 0, 4)`}>
+                <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.6" />
+                <g transform={`rotate(${shinAngle1}, -2, 8)`}>
+                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.5" />
+                </g>
               </g>
-              <g transform={`rotate(${legAngle2}, 0, 4)`}>
-                <line x1="0" y1="4" x2="3" y2="9" stroke="#d97706" strokeWidth="1.5" />
+
+              {/* Leg 2 (Jointed Thigh + Shin) */}
+              <g transform={`rotate(${thighAngle2}, 0, 4)`}>
+                <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.6" />
+                <g transform={`rotate(${shinAngle2}, 2, 8)`}>
+                  <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.5" />
+                </g>
               </g>
-              <g transform={`rotate(${armAngle1}, 0, -1)`}>
-                <line x1="0" y1="-1" x2="-4" y2="3" stroke="#f59e0b" strokeWidth="1.2" />
+
+              {/* Arm 1 */}
+              <g transform={`rotate(${armAngle1}, 0, -2)`}>
+                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.4" />
               </g>
-              <g transform={`rotate(${armAngle2}, 0, -1)`}>
-                <line x1="0" y1="-1" x2="4" y2="3" stroke="#f59e0b" strokeWidth="1.2" />
+
+              {/* Arm 2 */}
+              <g transform={`rotate(${armAngle2}, 0, -2)`}>
+                <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.4" />
               </g>
             </g>
 
+            {/* Elevated Banner Box above climbers */}
             <foreignObject
-              x={Math.max(10, Math.min(width - 180, (leadPos.x + followerPos.x) / 2 - 80))}
-              y={Math.min(leadPos.y, followerPos.y) - 42}
-              width="160"
-              height="26"
+              x={Math.max(10, Math.min(width - 200, (leadPos.x + followerPos.x) / 2 - 90))}
+              y={Math.min(leadPos.y, followerPos.y) - 52}
+              width="180"
+              height="32"
             >
               <div className="flex items-center justify-center h-full">
                 {isAtEndpointCelebrating ? (
                   isEndpointATH ? (
-                    <span className="bg-emerald-500 text-black text-[8px] font-mono font-extrabold px-2.5 py-0.5 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.9)] animate-bounce whitespace-nowrap">
+                    <span className="bg-emerald-500 text-black text-[8.5px] font-mono font-extrabold px-3 py-1 rounded-full shadow-[0_0_18px_rgba(16,185,129,0.95)] animate-bounce whitespace-nowrap">
                       🏔️ PEAK SUMMIT CELEBRATION! 🎉
                     </span>
                   ) : (
-                    <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[7.5px] font-mono font-extrabold px-2 py-0.5 rounded shadow-[0_0_12px_rgba(245,158,11,0.5)] animate-pulse whitespace-nowrap">
+                    <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
                       🙌 We will go high more next time
                     </span>
                   )
                 ) : (
-                  <div className="flex items-center space-x-1">
-                    <span className="bg-[#0c0c0e]/95 text-sky-400 border border-sky-500/40 text-[7px] font-mono font-bold px-1 py-0.5 rounded">
+                  <div className="flex items-center space-x-1.5">
+                    <span className="bg-[#0c0c0e]/95 text-sky-400 border border-sky-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
                       FOLLOWER
                     </span>
-                    <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/40 text-[7px] font-mono font-bold px-1 py-0.5 rounded">
+                    <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
                       LEADER
                     </span>
                   </div>
