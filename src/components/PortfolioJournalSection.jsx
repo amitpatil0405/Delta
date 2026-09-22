@@ -823,7 +823,7 @@ export default function PortfolioJournalSection() {
                 marketStatus={marketStatusInfo.status}
               />
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 0 }}>
+                <AreaChart data={pnlCurveData} margin={{ top: 45, right: 25, left: 10, bottom: 0 }}>
                   <defs>
                     {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
                     <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
