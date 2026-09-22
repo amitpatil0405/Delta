@@ -377,19 +377,45 @@ export default function PortfolioJournalSection() {
     return ticks;
   }, [pnlCurveData]);
 
+  // Calculate explicit Y-axis domain boundaries shared with MountainClimbersOverlay
+  const { chartMinPnl, chartMaxPnl } = useMemo(() => {
+    if (pnlCurveData.length === 0) return { chartMinPnl: 0, chartMaxPnl: 1000 };
+    const pnlVals = pnlCurveData.map(d => d.pnl);
+    const min = Math.min(...pnlVals, 0);
+    const max = Math.max(...pnlVals, 0);
+
+    // Choose nice tick step matching getNiceDomain
+    let minP = Math.min(min, 0);
+    let maxP = Math.max(max, 0);
+    if (minP === maxP) {
+      minP = minP < 0 ? minP * 1.1 : -1000;
+      maxP = maxP > 0 ? maxP * 1.1 : 1000;
+    }
+    const range = maxP - minP;
+    const rawStep = range / 3;
+    const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const residual = rawStep / mag;
+    let step;
+    if (residual < 1.5) step = 1 * mag;
+    else if (residual < 3) step = 2 * mag;
+    else if (residual < 7) step = 5 * mag;
+    else step = 10 * mag;
+
+    const niceMin = Math.floor(minP / step) * step;
+    const niceMax = Math.ceil(maxP / step) * step;
+    return { chartMinPnl: niceMin, chartMaxPnl: niceMax };
+  }, [pnlCurveData]);
+
   // Calculate dynamic zero-baseline gradient offset for smooth Red/Green transition
   const pnlGradientStats = useMemo(() => {
     if (pnlCurveData.length === 0) return { offset: 0, isAllPos: true, isAllNeg: false };
-    const pnlVals = pnlCurveData.map(d => d.pnl);
-    const maxPnl = Math.max(...pnlVals, 0);
-    const minPnl = Math.min(...pnlVals, 0);
 
-    if (maxPnl <= 0) return { offset: 0, isAllPos: false, isAllNeg: true };
-    if (minPnl >= 0) return { offset: 1, isAllPos: true, isAllNeg: false };
+    if (chartMaxPnl <= 0) return { offset: 0, isAllPos: false, isAllNeg: true };
+    if (chartMinPnl >= 0) return { offset: 1, isAllPos: true, isAllNeg: false };
 
-    const offset = maxPnl / (maxPnl - minPnl);
+    const offset = chartMaxPnl / (chartMaxPnl - chartMinPnl);
     return { offset, isAllPos: false, isAllNeg: false };
-  }, [pnlCurveData]);
+  }, [pnlCurveData, chartMinPnl, chartMaxPnl]);
 
   // Pagination State for Journal Records Table (20 records per page)
   const ITEMS_PER_PAGE = 20;
@@ -821,6 +847,8 @@ export default function PortfolioJournalSection() {
                 containerWidth={chartDims.width}
                 containerHeight={chartDims.height}
                 marketStatus={marketStatusInfo.status}
+                minPnlProp={chartMinPnl}
+                maxPnlProp={chartMaxPnl}
               />
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={pnlCurveData} margin={{ top: 45, right: 25, left: 10, bottom: 0 }}>
@@ -880,7 +908,7 @@ export default function PortfolioJournalSection() {
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                   />
-                  <YAxis width={60} stroke="#666" tick={{ fontSize: 11, fill: '#888' }} axisLine={{ stroke: '#333' }} tickLine={false} />
+                  <YAxis domain={[chartMinPnl, chartMaxPnl]} width={60} stroke="#666" tick={{ fontSize: 11, fill: '#888' }} axisLine={{ stroke: '#333' }} tickLine={false} />
 
                   <RechartsTooltip
                     content={({ active, payload }) => {
