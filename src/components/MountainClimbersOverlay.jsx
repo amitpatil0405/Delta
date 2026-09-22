@@ -235,10 +235,6 @@ export default function MountainClimbersOverlay({
             <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
           </radialGradient>
 
-          <filter id="ropeGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#f59e0b" floodOpacity="0.6" />
-          </filter>
-
           <clipPath id="snowClip">
             <rect x="0" y="0" width={width} height={xAxisY} />
           </clipPath>
@@ -275,14 +271,14 @@ export default function MountainClimbersOverlay({
           ))}
         </g>
 
-        {/* Basecamp Tent Graphic at Origin (Index 0, PnL = 0) */}
-        <g transform={`translate(${originPoint.x - 18}, ${originPoint.y - 32})`}>
+        {/* Basecamp Tent Graphic placed on the Left Side of Y-Axis Line */}
+        <g transform={`translate(${originPoint.x - 42}, ${originPoint.y - 32})`}>
           <image
             href={tentImg}
             x="0"
             y="0"
-            width="36"
-            height="34"
+            width="38"
+            height="36"
             preserveAspectRatio="xMidYMid meet"
           />
         </g>
@@ -316,15 +312,6 @@ export default function MountainClimbersOverlay({
         {/* Expedition Team (Follower & Lead Mountaineers) */}
         {points.length > 0 && (
           <g className="climber-team">
-            {/* Connected Safety Rope */}
-            <path
-              d={`M ${followerPos.x} ${followerPos.y - 5} Q ${(followerPos.x + leadPos.x) / 2} ${(followerPos.y + leadPos.y) / 2 + 3} ${leadPos.x} ${leadPos.y - 6}`}
-              fill="none"
-              stroke={isRedZone ? '#f43f5e' : '#10b981'}
-              strokeWidth="1.8"
-              filter="url(#ropeGlow)"
-            />
-
             {/* Follower Mountaineer */}
             <g transform={`translate(${followerPos.x}, ${followerPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
@@ -393,16 +380,16 @@ export default function MountainClimbersOverlay({
               </g>
             </g>
 
-            {/* Elevated Banner Box above climbers */}
-            <foreignObject
-              x={Math.max(10, Math.min(width - 200, (leadPos.x + followerPos.x) / 2 - 90))}
-              y={Math.min(leadPos.y, followerPos.y) - 52}
-              width="180"
-              height="32"
-            >
-              <div className="flex items-center justify-center h-full">
-                {isAtEndpointCelebrating ? (
-                  isEndpointATH ? (
+            {/* Individual Badges & Summit Celebration Text */}
+            {isAtEndpointCelebrating ? (
+              <foreignObject
+                x={Math.max(10, Math.min(width - 200, (leadPos.x + followerPos.x) / 2 - 90))}
+                y={Math.min(leadPos.y, followerPos.y) - 52}
+                width="180"
+                height="32"
+              >
+                <div className="flex items-center justify-center h-full">
+                  {isEndpointATH ? (
                     <span className="bg-emerald-500 text-black text-[8.5px] font-mono font-extrabold px-3 py-1 rounded-full shadow-[0_0_18px_rgba(16,185,129,0.95)] animate-bounce whitespace-nowrap">
                       🏔️ PEAK SUMMIT CELEBRATION! 🎉
                     </span>
@@ -410,19 +397,40 @@ export default function MountainClimbersOverlay({
                     <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
                       🙌 We will go high more next time
                     </span>
-                  )
-                ) : (
-                  <div className="flex items-center space-x-1.5">
+                  )}
+                </div>
+              </foreignObject>
+            ) : (
+              <>
+                {/* FOLLOWER Badge directly above Follower */}
+                <foreignObject
+                  x={followerPos.x - 35}
+                  y={followerPos.y - 32}
+                  width="70"
+                  height="18"
+                >
+                  <div className="flex justify-center items-center h-full">
                     <span className="bg-[#0c0c0e]/95 text-sky-400 border border-sky-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
                       FOLLOWER
                     </span>
+                  </div>
+                </foreignObject>
+
+                {/* LEADER Badge directly above Leader */}
+                <foreignObject
+                  x={leadPos.x - 30}
+                  y={leadPos.y - 32}
+                  width="60"
+                  height="18"
+                >
+                  <div className="flex justify-center items-center h-full">
                     <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
                       LEADER
                     </span>
                   </div>
-                )}
-              </div>
-            </foreignObject>
+                </foreignObject>
+              </>
+            )}
           </g>
         )}
       </svg>
