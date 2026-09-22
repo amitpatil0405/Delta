@@ -25,40 +25,16 @@ function getMonotonePath(tradePoints, basecampPoint) {
 }
 
 /**
- * Helper to compute Recharts-like nice Y-axis domain ticks
- */
-function getNiceDomain(dataMin, dataMax) {
-  let min = Math.min(dataMin, 0);
-  let max = Math.max(dataMax, 0);
-  if (min === max) {
-    min = min < 0 ? min * 1.1 : -1000;
-    max = max > 0 ? max * 1.1 : 1000;
-  }
-
-  const range = max - min;
-  const rawStep = range / 3;
-  const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
-  const residual = rawStep / mag;
-  let step;
-  if (residual < 1.5) step = 1 * mag;
-  else if (residual < 3) step = 2 * mag;
-  else if (residual < 7) step = 5 * mag;
-  else step = 10 * mag;
-
-  const niceMin = Math.floor(min / step) * step;
-  const niceMax = Math.ceil(max / step) * step;
-  return { minPnl: niceMin, maxPnl: niceMax };
-}
-
-/**
  * MountainClimbersOverlay
- * Interactive Mount Everest expedition animation layer on top of the Cumulative P&L Chart.
+ * Renders an interactive Mount Everest expedition animation layer on top of the Cumulative P&L Chart.
  */
 export default function MountainClimbersOverlay({
   pnlData = [],
   containerWidth = 0,
   containerHeight = 0,
-  marketStatus = 'CLOSED'
+  marketStatus = 'CLOSED',
+  minPnlProp = null,
+  maxPnlProp = null
 }) {
   const pathRef = useRef(null);
   const [climbProgress, setClimbProgress] = useState(0.0);
@@ -76,12 +52,8 @@ export default function MountainClimbersOverlay({
 
   const pnlVals = useMemo(() => pnlData.map((d) => d.pnl), [pnlData]);
 
-  const { minPnl, maxPnl } = useMemo(() => {
-    if (pnlVals.length === 0) return { minPnl: 0, maxPnl: 1000 };
-    const min = Math.min(...pnlVals, 0);
-    const max = Math.max(...pnlVals, 0);
-    return getNiceDomain(min, max);
-  }, [pnlVals]);
+  const minPnl = minPnlProp !== null ? minPnlProp : -20000;
+  const maxPnl = maxPnlProp !== null ? maxPnlProp : 60000;
 
   const y0 = useMemo(() => {
     const ratio0 = (maxPnl - minPnl) > 0 ? (0 - minPnl) / (maxPnl - minPnl) : 0.5;
@@ -209,10 +181,7 @@ export default function MountainClimbersOverlay({
 
   const latestTradePoint = tradePoints[tradePoints.length - 1];
 
-  // Check if current endpoint is ATH (within rounding margin)
   const isEndpointATH = highestTradePoint && latestTradePoint && highestTradePoint.index === latestTradePoint.index;
-
-  // Determine if climbers are stationary at endpoint celebrating
   const isAtEndpointCelebrating = climbProgress >= 0.98;
 
   let leadPos = points[0];
@@ -221,7 +190,6 @@ export default function MountainClimbersOverlay({
   if (pathRef.current && pathLength > 0) {
     try {
       const currentLen = pathLength * climbProgress;
-      // When celebrating at endpoint, stand close together (14px separation); otherwise 50px apart while walking
       const separation = isAtEndpointCelebrating ? 14 : 50;
       const followerOffset = isDescending ? separation : -separation;
       const followerLen = Math.max(0, Math.min(pathLength, currentLen + followerOffset));
@@ -254,7 +222,6 @@ export default function MountainClimbersOverlay({
 
   const isRedZone = leadPos.pnl < 0;
 
-  // Arm and leg angle calculations
   const isMoving = walkPhase !== 0;
   const legAngle1 = isMoving ? Math.sin(walkPhase) * 15 : 0;
   const legAngle2 = isMoving ? -Math.sin(walkPhase) * 15 : 0;
@@ -337,13 +304,11 @@ export default function MountainClimbersOverlay({
           </g>
         )}
 
-        {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) - Always placed at highest P&L trade point */}
+        {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) */}
         {highestTradePoint && highestTradePoint.pnl > 0 && (
           <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y - 8})`}>
-            {/* Flagpole */}
             <line x1="0" y1="0" x2="0" y2="-24" stroke="#f59e0b" strokeWidth="1.5" />
 
-            {/* Flag Polygon */}
             <polygon
               points="0,-24 20,-18 0,-12"
               fill="#10b981"
@@ -355,7 +320,6 @@ export default function MountainClimbersOverlay({
               ATH
             </text>
 
-            {/* ATH Flag Header Badge */}
             <foreignObject x="-75" y="-46" width="150" height="22">
               <div className="flex items-center justify-center">
                 <span className="bg-emerald-500 text-black border border-emerald-300 text-[7.5px] font-mono font-extrabold px-2 py-0.5 rounded shadow-[0_0_12px_rgba(16,185,129,0.9)] whitespace-nowrap">
@@ -369,7 +333,6 @@ export default function MountainClimbersOverlay({
         {/* Expedition Team (Follower & Lead Climber) */}
         {points.length > 0 && (
           <g className="climber-team">
-            {/* Connecting Safety Rope */}
             <path
               d={`M ${followerPos.x} ${followerPos.y - 5} Q ${(followerPos.x + leadPos.x) / 2} ${(followerPos.y + leadPos.y) / 2 + 3} ${leadPos.x} ${leadPos.y - 6}`}
               fill="none"
@@ -414,7 +377,6 @@ export default function MountainClimbersOverlay({
               </g>
             </g>
 
-            {/* Combined Celebration Message / Status Badge at Endpoint or during journey */}
             <foreignObject
               x={Math.max(10, Math.min(width - 180, (leadPos.x + followerPos.x) / 2 - 80))}
               y={Math.min(leadPos.y, followerPos.y) - 42}
