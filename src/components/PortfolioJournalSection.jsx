@@ -857,7 +857,7 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <div ref={chartContainerRef} className="h-[320px] w-full pt-2 relative">
+            <div ref={chartContainerRef} className="h-[320px] w-full relative">
               <MountainClimbersOverlay
                 pnlData={pnlCurveData}
                 containerWidth={chartDims.width}
@@ -923,8 +923,17 @@ export default function PortfolioJournalSection() {
                     ticks={isMobile ? mobileTicks : undefined}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
+                    height={30}
                   />
-                  <YAxis domain={[chartMinPnl, chartMaxPnl]} width={60} stroke="#666" tick={{ fontSize: 11, fill: '#888' }} axisLine={{ stroke: '#333' }} tickLine={false} />
+                  <YAxis
+                    domain={[chartMinPnl, chartMaxPnl]}
+                    width={60}
+                    stroke="#666"
+                    tick={{ fontSize: 11, fill: '#888' }}
+                    axisLine={{ stroke: '#333' }}
+                    tickLine={false}
+                    tickFormatter={(value) => (value === 0 ? '' : value)}
+                  />
 
                   <RechartsTooltip
                     content={({ active, payload }) => {
