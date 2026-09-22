@@ -4,6 +4,7 @@ import {
 } from 'recharts';
 import { BookOpen, Calendar } from 'lucide-react';
 import MountainClimbersOverlay from './MountainClimbersOverlay';
+import portfolioBg from '../assets/portfolio_bg.jpg';
 import { getISTMarketStatus } from '../services/marketData';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
@@ -504,6 +505,13 @@ export default function PortfolioJournalSection() {
 
   return (
     <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+      {/* Darkened Mountain Peak Background Layer */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 pointer-events-none"
+        style={{ backgroundImage: `url(${portfolioBg})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/90 via-black/75 to-[#050505]/95 pointer-events-none" />
+
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber top-10 right-10" />
       <div className="ambient-glow-emerald bottom-10 left-10" />
