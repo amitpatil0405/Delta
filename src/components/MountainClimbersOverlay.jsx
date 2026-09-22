@@ -24,14 +24,18 @@ export default function MountainClimbersOverlay({
   const [pathLength, setPathLength] = useState(0);
   const [walkPhase, setWalkPhase] = useState(0);
 
+  // Fallback dimensions if containerWidth/Height are initially 0
+  const width = containerWidth > 0 ? containerWidth : 800;
+  const height = containerHeight > 0 ? containerHeight : 280;
+
   // Determine market session state
   const isOpen = marketStatus === 'MARKET OPEN';
   const isPreOpen = marketStatus === 'PRE-MARKET';
 
-  // Increased top margin from 10 to 45 so taglines/flags on peak are fully visible
-  const margin = { top: 45, right: 25, left: 10, bottom: 0 };
-  const chartW = Math.max(10, containerWidth - margin.left - margin.right);
-  const chartH = Math.max(10, containerHeight - margin.top - margin.bottom);
+  // Left margin includes Recharts YAxis width (60px) + chart margin (10px) = 70px
+  const margin = { top: 45, right: 25, left: 70, bottom: 0 };
+  const chartW = Math.max(10, width - margin.left - margin.right);
+  const chartH = Math.max(10, height - margin.top - margin.bottom);
 
   // Compute scale boundaries for chart alignment matching Recharts
   const pnlVals = useMemo(() => pnlData.map((d) => d.pnl), [pnlData]);
@@ -74,17 +78,16 @@ export default function MountainClimbersOverlay({
 
   // Snowfall particles config
   const snowflakes = useMemo(() => {
-    if (!containerWidth || !containerHeight) return [];
     return Array.from({ length: 32 }, (_, i) => ({
       id: i,
-      cx: (i * 37) % containerWidth,
-      cy: (i * 23) % containerHeight,
+      cx: (i * 37) % width,
+      cy: (i * 23) % height,
       r: (i % 3) + 1.2,
       opacity: 0.3 + (i % 5) * 0.12,
       dur: 4 + (i % 4) * 2,
       delay: (i % 7) * 0.5
     }));
-  }, [containerWidth, containerHeight]);
+  }, [width, height]);
 
   // Update total path length when path changes
   useEffect(() => {
@@ -95,7 +98,7 @@ export default function MountainClimbersOverlay({
         setPathLength(0);
       }
     }
-  }, [dPath, containerWidth, containerHeight]);
+  }, [dPath, width, height]);
 
   // Walking legs and arms animation loop + IST schedule calculation
   useEffect(() => {
@@ -166,7 +169,7 @@ export default function MountainClimbersOverlay({
   }, []);
 
   // Early return after all hooks have been declared
-  if (!containerWidth || !containerHeight || pnlData.length === 0 || points.length === 0) {
+  if (pnlData.length === 0 || points.length === 0) {
     return null;
   }
 
@@ -229,8 +232,8 @@ export default function MountainClimbersOverlay({
   return (
     <div className="absolute inset-0 pointer-events-none z-10 hidden md:block overflow-hidden">
       <svg
-        width={containerWidth}
-        height={containerHeight}
+        width={width}
+        height={height}
         className="w-full h-full overflow-visible"
       >
         <defs>
@@ -266,7 +269,7 @@ export default function MountainClimbersOverlay({
               <animate
                 attributeName="cy"
                 from={-10}
-                to={containerHeight + 10}
+                to={height + 10}
                 dur={`${s.dur}s`}
                 begin={`${s.delay}s`}
                 repeatCount="indefinite"
@@ -293,16 +296,21 @@ export default function MountainClimbersOverlay({
           <polygon points="0,-6 4,0 -4,0" fill="#0f172a" />
           <line x1="0" y1="-12" x2="0" y2="-18" stroke="#cbd5e1" strokeWidth="1.2" />
           <polygon points="0,-18 6,-15 0,-12" fill="#10b981" />
-
-          {/* Tent Status Badge - Positioned cleanly below the tent icon so Trade 1 and Trade 2 remain fully visible */}
-          <foreignObject x="-60" y="8" width="120" height="24">
-            <div className="flex items-center justify-center h-full">
-              <span className="bg-[#0c0c0e]/95 border border-amber-500/50 text-[7.5px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded shadow-lg backdrop-blur-sm tracking-wider whitespace-nowrap">
-                {isPreOpen ? 'PREPARING GEARS..' : isOpen ? 'EXPEDITION IN PROGRESS' : 'RESTING AT TENT'}
-              </span>
-            </div>
-          </foreignObject>
         </g>
+
+        {/* Tent Status Badge - Positioned right below the tent & trade markers */}
+        <foreignObject
+          x={Math.max(5, Math.min(width - 150, basecampPoint.x - 35))}
+          y={Math.min(height - 24, basecampPoint.y + 10)}
+          width="150"
+          height="24"
+        >
+          <div className="flex items-center justify-center h-full">
+            <span className="bg-[#0c0c0e]/95 border border-amber-500/50 text-[7.5px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded shadow-lg backdrop-blur-sm tracking-wider whitespace-nowrap">
+              {isPreOpen ? 'PREPARING GEARS..' : isOpen ? 'EXPEDITION IN PROGRESS' : 'RESTING AT TENT'}
+            </span>
+          </div>
+        </foreignObject>
 
         {/* Safety Lines & Anchors along trade path */}
         {points.length > 1 && (
@@ -362,7 +370,7 @@ export default function MountainClimbersOverlay({
 
             {/* Follower Status Badge - Centered well above Follower so head is clear */}
             <foreignObject
-              x={Math.max(10, Math.min(containerWidth - 110, followerPos.x - 50))}
+              x={Math.max(10, Math.min(width - 110, followerPos.x - 50))}
               y={followerPos.y - 42}
               width="100"
               height="20"
@@ -400,7 +408,7 @@ export default function MountainClimbersOverlay({
 
             {/* Lead Status Badge - Centered well above Leader (GREEN tagline) so head is clear */}
             <foreignObject
-              x={Math.max(10, Math.min(containerWidth - 110, leadPos.x - 50))}
+              x={Math.max(10, Math.min(width - 110, leadPos.x - 50))}
               y={leadPos.y - 45}
               width="100"
               height="24"
@@ -411,7 +419,7 @@ export default function MountainClimbersOverlay({
                     🏔️ PEAK SUMMIT!
                   </span>
                 ) : (
-                  <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/50 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
+                  <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/50 text-[7.5px] font-mono text-amber-400 font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
                     LEADER
                   </span>
                 )}
