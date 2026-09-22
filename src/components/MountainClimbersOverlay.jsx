@@ -188,8 +188,8 @@ export default function MountainClimbersOverlay({
   if (pathRef.current && pathLength > 0) {
     try {
       const currentLen = pathLength * climbProgress;
-      // Safety distance offset for follower
-      const followerOffset = isDescending ? 30 : -30;
+      // Safety distance offset for follower (~70px separation along path)
+      const followerOffset = isDescending ? 70 : -70;
       const followerLen = Math.max(0, Math.min(pathLength, currentLen + followerOffset));
 
       const ptLead = pathRef.current.getPointAtLength(currentLen);
@@ -327,17 +327,17 @@ export default function MountainClimbersOverlay({
         {/* Expedition Team (Follower & Lead Climber with Foot Movement) */}
         {points.length > 0 && (
           <g className="climber-team">
-            {/* Connecting Safety Rope */}
+            {/* Connecting Safety Rope with subtle downward sag */}
             <path
-              d={`M ${followerPos.x} ${followerPos.y - 12} Q ${(followerPos.x + leadPos.x) / 2} ${(followerPos.y + leadPos.y) / 2 + 10} ${leadPos.x} ${leadPos.y - 12}`}
+              d={`M ${followerPos.x} ${followerPos.y - 5} Q ${(followerPos.x + leadPos.x) / 2} ${(followerPos.y + leadPos.y) / 2 + 4} ${leadPos.x} ${leadPos.y - 6}`}
               fill="none"
               stroke={isRedZone ? '#f43f5e' : '#10b981'}
-              strokeWidth="2"
+              strokeWidth="1.8"
               filter="url(#ropeGlow)"
             />
 
-            {/* Follower Mountaineer with Animated Legs and Arms */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 14}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            {/* Follower Mountaineer - Feet anchored precisely on line (translate y = y - 9) */}
+            <g transform={`translate(${followerPos.x}, ${followerPos.y - 9}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
               <circle cx="0" cy="-6" r="2.5" fill="#38bdf8" />
               {/* Body */}
@@ -358,25 +358,24 @@ export default function MountainClimbersOverlay({
               <g transform={`rotate(${armAngle2}, 0, -1)`}>
                 <line x1="0" y1="-1" x2="4" y2="3" stroke="#cbd5e1" strokeWidth="1.2" />
               </g>
-
-              {/* Status Badge */}
-              <foreignObject
-                x={followerPos.x > containerWidth - 100 ? -85 : 8}
-                y="-20"
-                width="85"
-                height="20"
-                transform={`scale(${isDescending ? '-1,1' : '1,1'})`}
-              >
-                <div className={`flex items-center ${followerPos.x > containerWidth - 100 ? 'justify-end' : 'justify-start'}`}>
-                  <span className="bg-[#0c0c0e]/95 text-[7px] font-mono text-sky-400 font-extrabold px-1 py-0.5 rounded border border-sky-500/40 shadow-md whitespace-nowrap">
-                    FOLLOWER CLIMBER
-                  </span>
-                </div>
-              </foreignObject>
             </g>
 
-            {/* Lead Mountaineer with Animated Legs and Arms */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 16}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            {/* Follower Status Badge - Centered above Follower Climber */}
+            <foreignObject
+              x={Math.max(10, Math.min(containerWidth - 110, followerPos.x - 50))}
+              y={followerPos.y - 32}
+              width="100"
+              height="20"
+            >
+              <div className="flex items-center justify-center h-full">
+                <span className="bg-[#0c0c0e]/95 text-[7px] font-mono text-sky-400 font-extrabold px-1.5 py-0.5 rounded border border-sky-500/40 shadow-md whitespace-nowrap">
+                  FOLLOWER CLIMBER
+                </span>
+              </div>
+            </foreignObject>
+
+            {/* Lead Mountaineer - Feet anchored precisely on line (translate y = y - 11) */}
+            <g transform={`translate(${leadPos.x}, ${leadPos.y - 11}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
               <circle cx="0" cy="-6" r="3" fill="#f59e0b" />
               {/* Body */}
@@ -398,28 +397,27 @@ export default function MountainClimbersOverlay({
                 <line x1="5" y1="-4" x2="9" y2="-8" stroke="#e2e8f0" strokeWidth="1.2" />
                 <path d="M 7 -9 L 10 -8 L 8 -6" fill="#e2e8f0" />
               </g>
-
-              {/* Status Badge */}
-              <foreignObject
-                x={leadPos.x > containerWidth - 100 ? -95 : 10}
-                y="-28"
-                width="95"
-                height="28"
-                transform={`scale(${isDescending ? '-1,1' : '1,1'})`}
-              >
-                <div className={`flex items-center h-full ${leadPos.x > containerWidth - 100 ? 'justify-end' : 'justify-start'}`}>
-                  {climbProgress > 0.95 && isATH ? (
-                    <span className="bg-emerald-500 text-black text-[8px] font-mono font-extrabold px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.8)] animate-bounce whitespace-nowrap">
-                      🏔️ PEAK SUMMIT!
-                    </span>
-                  ) : (
-                    <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
-                      LEAD CLIMBER
-                    </span>
-                  )}
-                </div>
-              </foreignObject>
             </g>
+
+            {/* Lead Status Badge - Centered above Lead Climber (GREEN tagline) */}
+            <foreignObject
+              x={Math.max(10, Math.min(containerWidth - 110, leadPos.x - 50))}
+              y={leadPos.y - 35}
+              width="100"
+              height="24"
+            >
+              <div className="flex items-center justify-center h-full">
+                {climbProgress > 0.95 && isATH ? (
+                  <span className="bg-emerald-500 text-black text-[8px] font-mono font-extrabold px-2 py-0.5 rounded-full shadow-[0_0_12px_rgba(16,185,129,0.8)] animate-bounce whitespace-nowrap">
+                    🏔️ PEAK SUMMIT!
+                  </span>
+                ) : (
+                  <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/50 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded backdrop-blur-sm whitespace-nowrap">
+                    LEAD CLIMBER
+                  </span>
+                )}
+              </div>
+            </foreignObject>
           </g>
         )}
 
