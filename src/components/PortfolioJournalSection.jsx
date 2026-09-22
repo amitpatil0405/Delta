@@ -973,18 +973,20 @@ export default function PortfolioJournalSection() {
                   <Area
                     type="monotone"
                     dataKey="pnl"
-                    stroke="url(#pnlStrokeGradient)"
-                    strokeWidth={3}
+                    baseValue={0}
+                    stroke="#38bdf8"
+                    strokeWidth={2}
+                    dot={false}
                     fillOpacity={1}
                     fill="url(#pnlAreaGradient)"
                     activeDot={({ cx, cy, payload }) => {
-                      if (!cx || !cy || !payload) return null;
+                      if (!cx || !cy || !payload || payload.isOrigin) return null;
                       const isNeg = payload.pnl < 0;
                       const dotColor = isNeg ? '#f43f5e' : '#10b981';
                       return (
                         <g key={`dot_${cx}_${cy}`}>
-                          <circle cx={cx} cy={cy} r={7} fill={dotColor} fillOpacity={0.3} />
-                          <circle cx={cx} cy={cy} r={4.5} fill={dotColor} stroke="#ffffff" strokeWidth={2} />
+                          <circle cx={cx} cy={cy} r={6} fill={dotColor} fillOpacity={0.4} />
+                          <circle cx={cx} cy={cy} r={4} fill={dotColor} stroke="#ffffff" strokeWidth={1.5} />
                         </g>
                       );
                     }}
