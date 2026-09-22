@@ -360,10 +360,10 @@ export default function MountainClimbersOverlay({
               </g>
             </g>
 
-            {/* Follower Status Badge - Centered above Follower Climber */}
+            {/* Follower Status Badge - Centered well above Follower Climber so head is clear */}
             <foreignObject
               x={Math.max(10, Math.min(containerWidth - 110, followerPos.x - 50))}
-              y={followerPos.y - 32}
+              y={followerPos.y - 42}
               width="100"
               height="20"
             >
@@ -374,35 +374,34 @@ export default function MountainClimbersOverlay({
               </div>
             </foreignObject>
 
-            {/* Lead Mountaineer - Feet anchored precisely on line (translate y = y - 11) */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 11}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            {/* Lead Mountaineer - Feet anchored precisely on line (translate y = y - 9) matching follower structure */}
+            <g transform={`translate(${leadPos.x}, ${leadPos.y - 9}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
-              <circle cx="0" cy="-6" r="3" fill="#f59e0b" />
+              <circle cx="0" cy="-6" r="2.5" fill="#f59e0b" />
               {/* Body */}
-              <line x1="0" y1="-3" x2="0" y2="5" stroke="#d97706" strokeWidth="2.5" />
-              {/* Left Leg */}
-              <g transform={`rotate(${legAngle1}, 0, 5)`}>
-                <line x1="0" y1="5" x2="-4" y2="11" stroke="#d97706" strokeWidth="2" />
+              <line x1="0" y1="-3.5" x2="0" y2="4" stroke="#d97706" strokeWidth="2" />
+              {/* Left Leg with foot motion matching follower */}
+              <g transform={`rotate(${legAngle1}, 0, 4)`}>
+                <line x1="0" y1="4" x2="-3" y2="9" stroke="#d97706" strokeWidth="1.5" />
               </g>
-              {/* Right Leg */}
-              <g transform={`rotate(${legAngle2}, 0, 5)`}>
-                <line x1="0" y1="5" x2="4" y2="11" stroke="#d97706" strokeWidth="2" />
+              {/* Right Leg with foot motion matching follower */}
+              <g transform={`rotate(${legAngle2}, 0, 4)`}>
+                <line x1="0" y1="4" x2="3" y2="9" stroke="#d97706" strokeWidth="1.5" />
               </g>
-              {/* Arms holding ice axe */}
+              {/* Left Arm with walking motion matching follower */}
               <g transform={`rotate(${armAngle1}, 0, -1)`}>
-                <line x1="0" y1="-1" x2="-5" y2="-5" stroke="#d97706" strokeWidth="1.8" />
+                <line x1="0" y1="-1" x2="-4" y2="3" stroke="#f59e0b" strokeWidth="1.2" />
               </g>
+              {/* Right Arm with walking motion matching follower */}
               <g transform={`rotate(${armAngle2}, 0, -1)`}>
-                <line x1="0" y1="-1" x2="5" y2="-4" stroke="#d97706" strokeWidth="1.8" />
-                <line x1="5" y1="-4" x2="9" y2="-8" stroke="#e2e8f0" strokeWidth="1.2" />
-                <path d="M 7 -9 L 10 -8 L 8 -6" fill="#e2e8f0" />
+                <line x1="0" y1="-1" x2="4" y2="3" stroke="#f59e0b" strokeWidth="1.2" />
               </g>
             </g>
 
-            {/* Lead Status Badge - Centered above Lead Climber (GREEN tagline) */}
+            {/* Lead Status Badge - Centered well above Lead Climber (GREEN tagline) so head is clear */}
             <foreignObject
               x={Math.max(10, Math.min(containerWidth - 110, leadPos.x - 50))}
-              y={leadPos.y - 35}
+              y={leadPos.y - 45}
               width="100"
               height="24"
             >
