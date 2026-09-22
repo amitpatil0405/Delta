@@ -1,65 +1,28 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
+import { line as d3Line, curveMonotoneX as d3CurveMonotoneX } from 'd3-shape';
 import tentImg from '../assets/tent.png';
 
 /**
- * Helper to generate monotone cubic spline SVG path matching Recharts curveMonotoneX
+ * Helper to generate exact monotone cubic spline SVG path using d3-shape's curveMonotoneX
+ * matching Recharts area curve calculation precisely.
  */
-function getMonotonePath(points) {
-  if (!points || points.length === 0) return '';
-  if (points.length === 1) return `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
-  if (points.length === 2) return `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)} L ${points[1].x.toFixed(2)} ${points[1].y.toFixed(2)}`;
+function getMonotonePath(tradePoints, basecampPoint) {
+  if (!tradePoints || tradePoints.length === 0) return '';
+  const lineGenerator = d3Line()
+    .x((d) => d.x)
+    .y((d) => d.y)
+    .curve(d3CurveMonotoneX);
 
-  const n = points.length;
-  const dx = new Array(n - 1);
-  const dy = new Array(n - 1);
-  const slope = new Array(n - 1);
+  const rechartsCurveD = lineGenerator(tradePoints) || '';
+  if (!basecampPoint) return rechartsCurveD;
 
-  for (let i = 0; i < n - 1; i++) {
-    dx[i] = points[i + 1].x - points[i].x;
-    dy[i] = points[i + 1].y - points[i].y;
-    slope[i] = dy[i] / (dx[i] || 1e-6);
+  // Prepend straight line from basecampPoint to first trade point
+  const firstTrade = tradePoints[0];
+  const cIndex = rechartsCurveD.indexOf('C');
+  if (cIndex !== -1) {
+    return `M ${basecampPoint.x.toFixed(2)} ${basecampPoint.y.toFixed(2)} L ${firstTrade.x.toFixed(2)} ${firstTrade.y.toFixed(2)} ${rechartsCurveD.substring(cIndex)}`;
   }
-
-  const tangents = new Array(n);
-  tangents[0] = slope[0];
-  tangents[n - 1] = slope[n - 2];
-
-  for (let i = 1; i < n - 1; i++) {
-    if (slope[i - 1] * slope[i] <= 0) {
-      tangents[i] = 0;
-    } else {
-      const common = dx[i - 1] + dx[i];
-      tangents[i] = (3 * common) / ((common + dx[i]) / slope[i - 1] + (common + dx[i - 1]) / slope[i]);
-    }
-  }
-
-  if (slope[0] === 0) tangents[0] = 0;
-  else {
-    const check0 = tangents[0] / slope[0];
-    if (check0 < 0) tangents[0] = 0;
-  }
-  if (slope[n - 2] === 0) tangents[n - 1] = 0;
-  else {
-    const checkN = tangents[n - 1] / slope[n - 2];
-    if (checkN < 0) tangents[n - 1] = 0;
-  }
-
-  let path = `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
-
-  for (let i = 0; i < n - 1; i++) {
-    const p0 = points[i];
-    const p1 = points[i + 1];
-    const h = dx[i];
-
-    const c1x = p0.x + h / 3;
-    const c1y = p0.y + (tangents[i] * h) / 3;
-    const c2x = p1.x - h / 3;
-    const c2y = p1.y - (tangents[i + 1] * h) / 3;
-
-    path += ` C ${c1x.toFixed(2)} ${c1y.toFixed(2)}, ${c2x.toFixed(2)} ${c2y.toFixed(2)}, ${p1.x.toFixed(2)} ${p1.y.toFixed(2)}`;
-  }
-
-  return path;
+  return `M ${basecampPoint.x.toFixed(2)} ${basecampPoint.y.toFixed(2)} L ${rechartsCurveD.substring(1)}`;
 }
 
 /**
@@ -172,8 +135,8 @@ export default function MountainClimbersOverlay({
 
   // Path string using monotone cubic spline matching Recharts curveMonotoneX exactly
   const dPath = useMemo(() => {
-    return getMonotonePath(points);
-  }, [points]);
+    return getMonotonePath(tradePoints, basecampPoint);
+  }, [tradePoints, basecampPoint]);
 
   // Snowfall particles config bounded strictly to chart area above X-axis
   const snowflakes = useMemo(() => {
@@ -396,21 +359,13 @@ export default function MountainClimbersOverlay({
           />
         </g>
 
-        {/* Safety Lines & Anchors along trade path */}
+        {/* Safety Anchors along trade path (Dotted guide line removed so climbers walk directly on P&L curve) */}
         {points.length > 1 && (
-          <g className="climber-ropes">
-            <path
-              d={dPath}
-              fill="none"
-              stroke="#f59e0b"
-              strokeWidth="1.2"
-              strokeDasharray="3 3"
-              opacity="0.5"
-            />
+          <g className="climber-anchors">
             {tradePoints.map((pt, i) => (
               <g key={`anchor_${i}`}>
-                <circle cx={pt.x} cy={pt.y} r="2.5" fill="#f59e0b" />
-                <line x1={pt.x} y1={pt.y} x2={pt.x} y2={pt.y + 6} stroke="#94a3b8" strokeWidth="1" />
+                <circle cx={pt.x} cy={pt.y} r="2.5" fill="#f59e0b" opacity="0.6" />
+                <line x1={pt.x} y1={pt.y} x2={pt.x} y2={pt.y + 6} stroke="#94a3b8" strokeWidth="1" opacity="0.5" />
               </g>
             ))}
           </g>
