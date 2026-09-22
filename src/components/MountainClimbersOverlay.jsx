@@ -287,17 +287,6 @@ export default function MountainClimbersOverlay({
           />
         </g>
 
-        {/* Safety Anchor Dots on cumulative P&L trade curve points (Index > 0) */}
-        {points.length > 1 && (
-          <g className="climber-anchors">
-            {tradedPoints.map((pt, i) => (
-              <g key={`anchor_${i}`}>
-                <circle cx={pt.x} cy={pt.y} r="3.5" fill="#f59e0b" stroke="#ffffff" strokeWidth="1.2" opacity="0.9" />
-              </g>
-            ))}
-          </g>
-        )}
-
         {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) */}
         {highestTradePoint && highestTradePoint.pnl > 0 && (
           <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y - 8})`}>
@@ -337,7 +326,7 @@ export default function MountainClimbersOverlay({
             />
 
             {/* Follower Mountaineer */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 11}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            <g transform={`translate(${followerPos.x}, ${followerPos.y - 12.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
               <circle cx="0" cy="-7" r="2.8" fill="#38bdf8" />
               {/* Torso */}
@@ -371,7 +360,7 @@ export default function MountainClimbersOverlay({
             </g>
 
             {/* Lead Mountaineer */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 11}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            <g transform={`translate(${leadPos.x}, ${leadPos.y - 12.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
               <circle cx="0" cy="-7" r="2.8" fill="#f59e0b" />
               {/* Torso */}
