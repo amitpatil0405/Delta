@@ -326,7 +326,7 @@ export default function MountainClimbersOverlay({
             />
 
             {/* Follower Mountaineer */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 12.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            <g transform={`translate(${followerPos.x}, ${followerPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
               <circle cx="0" cy="-7" r="2.8" fill="#38bdf8" />
               {/* Torso */}
@@ -360,7 +360,7 @@ export default function MountainClimbersOverlay({
             </g>
 
             {/* Lead Mountaineer */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 12.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            <g transform={`translate(${leadPos.x}, ${leadPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
               <circle cx="0" cy="-7" r="2.8" fill="#f59e0b" />
               {/* Torso */}
