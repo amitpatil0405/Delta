@@ -315,68 +315,68 @@ export default function MountainClimbersOverlay({
             {/* Follower Mountaineer */}
             <g transform={`translate(${followerPos.x}, ${followerPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
-              <circle cx="0" cy="-7" r="2.8" fill="#38bdf8" />
+              <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
               {/* Torso */}
-              <line x1="0" y1="-4.2" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.2" />
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" />
 
               {/* Leg 1 (Jointed Thigh + Shin) */}
               <g transform={`rotate(${thighAngle1}, 0, 4)`}>
-                <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.6" />
+                <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
                 <g transform={`rotate(${shinAngle1}, -2, 8)`}>
-                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.5" />
+                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
                 </g>
               </g>
 
               {/* Leg 2 (Jointed Thigh + Shin) */}
               <g transform={`rotate(${thighAngle2}, 0, 4)`}>
-                <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.6" />
+                <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
                 <g transform={`rotate(${shinAngle2}, 2, 8)`}>
-                  <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.5" />
+                  <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
                 </g>
               </g>
 
               {/* Arm 1 */}
               <g transform={`rotate(${armAngle1}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.4" />
+                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
               </g>
 
               {/* Arm 2 */}
               <g transform={`rotate(${armAngle2}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.4" />
+                <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
               </g>
             </g>
 
             {/* Lead Mountaineer */}
             <g transform={`translate(${leadPos.x}, ${leadPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
-              <circle cx="0" cy="-7" r="2.8" fill="#f59e0b" />
+              <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
               {/* Torso */}
-              <line x1="0" y1="-4.2" x2="0" y2="4" stroke="#d97706" strokeWidth="2.2" />
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" />
 
               {/* Leg 1 (Jointed Thigh + Shin) */}
               <g transform={`rotate(${thighAngle1}, 0, 4)`}>
-                <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.6" />
+                <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" />
                 <g transform={`rotate(${shinAngle1}, -2, 8)`}>
-                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.5" />
+                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" />
                 </g>
               </g>
 
               {/* Leg 2 (Jointed Thigh + Shin) */}
               <g transform={`rotate(${thighAngle2}, 0, 4)`}>
-                <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.6" />
+                <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" />
                 <g transform={`rotate(${shinAngle2}, 2, 8)`}>
-                  <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.5" />
+                  <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" />
                 </g>
               </g>
 
               {/* Arm 1 */}
               <g transform={`rotate(${armAngle1}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.4" />
+                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
               </g>
 
               {/* Arm 2 */}
               <g transform={`rotate(${armAngle2}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.4" />
+                <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
               </g>
             </g>
 
@@ -384,7 +384,7 @@ export default function MountainClimbersOverlay({
             {isAtEndpointCelebrating ? (
               <foreignObject
                 x={Math.max(10, Math.min(width - 200, (leadPos.x + followerPos.x) / 2 - 90))}
-                y={Math.min(leadPos.y, followerPos.y) - 52}
+                y={Math.min(leadPos.y, followerPos.y) - 56}
                 width="180"
                 height="32"
               >
@@ -402,12 +402,12 @@ export default function MountainClimbersOverlay({
               </foreignObject>
             ) : (
               <>
-                {/* FOLLOWER Badge directly above Follower */}
+                {/* FOLLOWER Badge directly above Follower with clear head clearance */}
                 <foreignObject
                   x={followerPos.x - 35}
-                  y={followerPos.y - 32}
+                  y={followerPos.y - 48}
                   width="70"
-                  height="18"
+                  height="20"
                 >
                   <div className="flex justify-center items-center h-full">
                     <span className="bg-[#0c0c0e]/95 text-sky-400 border border-sky-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
@@ -416,12 +416,12 @@ export default function MountainClimbersOverlay({
                   </div>
                 </foreignObject>
 
-                {/* LEADER Badge directly above Leader */}
+                {/* LEADER Badge directly above Leader with clear head clearance */}
                 <foreignObject
                   x={leadPos.x - 30}
-                  y={leadPos.y - 32}
+                  y={leadPos.y - 48}
                   width="60"
-                  height="18"
+                  height="20"
                 >
                   <div className="flex justify-center items-center h-full">
                     <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
