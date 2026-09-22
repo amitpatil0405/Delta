@@ -2,6 +2,67 @@ import React, { useMemo, useState, useEffect, useRef } from 'react';
 import tentImg from '../assets/tent.png';
 
 /**
+ * Helper to generate monotone cubic spline SVG path matching Recharts curveMonotoneX
+ */
+function getMonotonePath(points) {
+  if (!points || points.length === 0) return '';
+  if (points.length === 1) return `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+  if (points.length === 2) return `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)} L ${points[1].x.toFixed(2)} ${points[1].y.toFixed(2)}`;
+
+  const n = points.length;
+  const dx = new Array(n - 1);
+  const dy = new Array(n - 1);
+  const slope = new Array(n - 1);
+
+  for (let i = 0; i < n - 1; i++) {
+    dx[i] = points[i + 1].x - points[i].x;
+    dy[i] = points[i + 1].y - points[i].y;
+    slope[i] = dy[i] / (dx[i] || 1e-6);
+  }
+
+  const tangents = new Array(n);
+  tangents[0] = slope[0];
+  tangents[n - 1] = slope[n - 2];
+
+  for (let i = 1; i < n - 1; i++) {
+    if (slope[i - 1] * slope[i] <= 0) {
+      tangents[i] = 0;
+    } else {
+      const common = dx[i - 1] + dx[i];
+      tangents[i] = (3 * common) / ((common + dx[i]) / slope[i - 1] + (common + dx[i - 1]) / slope[i]);
+    }
+  }
+
+  if (slope[0] === 0) tangents[0] = 0;
+  else {
+    const check0 = tangents[0] / slope[0];
+    if (check0 < 0) tangents[0] = 0;
+  }
+  if (slope[n - 2] === 0) tangents[n - 1] = 0;
+  else {
+    const checkN = tangents[n - 1] / slope[n - 2];
+    if (checkN < 0) tangents[n - 1] = 0;
+  }
+
+  let path = `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+
+  for (let i = 0; i < n - 1; i++) {
+    const p0 = points[i];
+    const p1 = points[i + 1];
+    const h = dx[i];
+
+    const c1x = p0.x + h / 3;
+    const c1y = p0.y + (tangents[i] * h) / 3;
+    const c2x = p1.x - h / 3;
+    const c2y = p1.y - (tangents[i + 1] * h) / 3;
+
+    path += ` C ${c1x.toFixed(2)} ${c1y.toFixed(2)}, ${c2x.toFixed(2)} ${c2y.toFixed(2)}, ${p1.x.toFixed(2)} ${p1.y.toFixed(2)}`;
+  }
+
+  return path;
+}
+
+/**
  * Helper to compute Recharts-like nice Y-axis domain ticks
  */
 function getNiceDomain(dataMin, dataMax) {
@@ -77,13 +138,19 @@ export default function MountainClimbersOverlay({
     return getNiceDomain(min, max);
   }, [pnlVals]);
 
-  // Basecamp origin at Y-axis and X-axis intersection, offset slightly left so ascent path angles smoothly from tent to Trade 1
+  // Calculate Y-coordinate for 0 PnL level on the chart
+  const y0 = useMemo(() => {
+    const ratio0 = (maxPnl - minPnl) > 0 ? (0 - minPnl) / (maxPnl - minPnl) : 0.5;
+    return margin.top + (1 - ratio0) * chartH;
+  }, [minPnl, maxPnl, chartH, margin.top]);
+
+  // Basecamp origin at 0 point on Y-axis (PnL = 0 level at left margin)
   const basecampPoint = useMemo(() => ({
     x: margin.left - 18,
-    y: xAxisY,
+    y: y0,
     pnl: 0,
     index: -1
-  }), [margin.left, xAxisY]);
+  }), [margin.left, y0]);
 
   // Points array for all trades
   const tradePoints = useMemo(() => {
@@ -103,13 +170,9 @@ export default function MountainClimbersOverlay({
     return [basecampPoint, ...tradePoints];
   }, [basecampPoint, tradePoints]);
 
-  // Path string for SVG guide line
+  // Path string using monotone cubic spline matching Recharts curveMonotoneX exactly
   const dPath = useMemo(() => {
-    if (points.length === 0) return '';
-    return points.reduce(
-      (acc, pt, i) => (i === 0 ? `M ${pt.x} ${pt.y}` : `${acc} L ${pt.x} ${pt.y}`),
-      ''
-    );
+    return getMonotonePath(points);
   }, [points]);
 
   // Snowfall particles config bounded strictly to chart area above X-axis
