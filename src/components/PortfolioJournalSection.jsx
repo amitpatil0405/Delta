@@ -869,8 +869,15 @@ export default function PortfolioJournalSection() {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={pnlCurveData} margin={{ top: 65, right: 25, left: 10, bottom: 5 }}>
                   <defs>
-                    {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
-                    <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
+                    {/* UserSpaceOnUse Stroke Gradient: Smooth transition across zero baseline */}
+                    <linearGradient
+                      id="pnlStrokeGradient"
+                      gradientUnits="userSpaceOnUse"
+                      x1="0"
+                      y1={65}
+                      x2="0"
+                      y2={65 + Math.max(10, chartDims.height - 100)}
+                    >
                       {pnlGradientStats.isAllPos ? (
                         <>
                           <stop offset="0%" stopColor="#10b981" />
@@ -884,31 +891,39 @@ export default function PortfolioJournalSection() {
                       ) : (
                         <>
                           <stop offset="0%" stopColor="#10b981" />
-                          <stop offset={`${Math.max(0, pnlGradientStats.offset * 100 - 6)}%`} stopColor="#10b981" />
-                          <stop offset={`${Math.min(100, pnlGradientStats.offset * 100 + 6)}%`} stopColor="#f43f5e" />
+                          <stop offset={`${Math.max(0, pnlGradientStats.offset * 100 - 4)}%`} stopColor="#10b981" />
+                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#10b981" />
+                          <stop offset={`${Math.min(100, pnlGradientStats.offset * 100 + 4)}%`} stopColor="#f43f5e" />
                           <stop offset="100%" stopColor="#f43f5e" />
                         </>
                       )}
                     </linearGradient>
 
-                    {/* Dynamic Fill Area Gradient */}
-                    <linearGradient id="pnlAreaGradient" x1="0" y1="0" x2="0" y2="1">
+                    {/* UserSpaceOnUse Area Gradient: Pure green above 0 baseline, pure red below 0 baseline */}
+                    <linearGradient
+                      id="pnlAreaGradient"
+                      gradientUnits="userSpaceOnUse"
+                      x1="0"
+                      y1={65}
+                      x2="0"
+                      y2={65 + Math.max(10, chartDims.height - 100)}
+                    >
                       {pnlGradientStats.isAllPos ? (
                         <>
-                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
-                          <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                          <stop offset="100%" stopColor="#10b981" stopOpacity={0.05} />
                         </>
                       ) : pnlGradientStats.isAllNeg ? (
                         <>
-                          <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.02} />
-                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.35} />
+                          <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.05} />
+                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.4} />
                         </>
                       ) : (
                         <>
-                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
-                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#10b981" stopOpacity={0.03} />
-                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#f43f5e" stopOpacity={0.03} />
-                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.35} />
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
+                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#10b981" stopOpacity={0.05} />
+                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#f43f5e" stopOpacity={0.05} />
+                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.4} />
                         </>
                       )}
                     </linearGradient>
@@ -983,8 +998,8 @@ export default function PortfolioJournalSection() {
                     type="monotone"
                     dataKey="pnl"
                     baseValue={0}
-                    stroke="#38bdf8"
-                    strokeWidth={2}
+                    stroke="url(#pnlStrokeGradient)"
+                    strokeWidth={2.5}
                     dot={false}
                     fillOpacity={1}
                     fill="url(#pnlAreaGradient)"

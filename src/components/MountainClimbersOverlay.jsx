@@ -31,6 +31,7 @@ export default function MountainClimbersOverlay({
   const pathRef = useRef(null);
   const [climbProgress, setClimbProgress] = useState(0.0);
   const [isDescending, setIsDescending] = useState(false);
+  const [isResting, setIsResting] = useState(false);
   const [pathLength, setPathLength] = useState(0);
   const [walkPhase, setWalkPhase] = useState(0);
 
@@ -106,33 +107,47 @@ export default function MountainClimbersOverlay({
       const reachPeak   = 12 * 60 + 30; // 12:30 PM IST
       const leavePeak   = 12 * 60 + 35; // 12:35 PM IST
       const reachTent   = 15 * 60 + 40; // 03:40 PM IST
+      const restTime    = 15 * 60 + 45; // 03:45 PM IST
 
       let progress = 0;
       let descending = false;
       let isMoving = false;
+      let resting = false;
 
-      if (!isWeekend && istMinutes >= startAscent && istMinutes <= reachTent) {
+      if (!isWeekend && istMinutes >= startAscent && istMinutes < restTime) {
         if (istMinutes < reachPeak) {
           progress = (istMinutes - startAscent) / (reachPeak - startAscent);
           descending = false;
           isMoving = true;
+          resting = false;
         } else if (istMinutes <= leavePeak) {
           progress = 1.0;
           descending = false;
           isMoving = false;
+          resting = false;
         } else if (istMinutes <= reachTent) {
           progress = 1.0 - (istMinutes - leavePeak) / (reachTent - leavePeak);
           descending = true;
           isMoving = true;
+          resting = false;
+        } else {
+          // Between 3:40 PM and 3:45 PM: At tent
+          progress = 0;
+          descending = true;
+          isMoving = false;
+          resting = false;
         }
       } else {
+        // At 3:45 PM and onwards or off-market hours: Hide climbers & show "Taking rest"
         progress = 0;
         descending = false;
         isMoving = false;
+        resting = true;
       }
 
       setClimbProgress(Math.max(0, Math.min(1, progress)));
       setIsDescending(descending);
+      setIsResting(resting);
 
       if (isMoving) {
         setWalkPhase((prev) => (prev + 0.15) % (Math.PI * 2));
@@ -281,36 +296,63 @@ export default function MountainClimbersOverlay({
             height="36"
             preserveAspectRatio="xMidYMid meet"
           />
-        </g>
-
-        {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) */}
-        {highestTradePoint && highestTradePoint.pnl > 0 && (
-          <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y - 8})`}>
-            <line x1="0" y1="0" x2="0" y2="-26" stroke="#f59e0b" strokeWidth="1.8" />
-
-            <polygon
-              points="0,-26 22,-19 0,-12"
-              fill="#10b981"
-              stroke="#047857"
-              strokeWidth="1"
-              className="drop-shadow-[0_0_6px_rgba(16,185,129,0.8)]"
-            />
-            <text x="2" y="-16" fill="#ffffff" fontSize="6.5" fontWeight="bold" fontFamily="monospace">
-              ATH
-            </text>
-
-            <foreignObject x="-75" y="-52" width="150" height="24">
+          {/* Taking Rest Tagline displayed when climbers are resting (after 3:45 PM IST / off-market) */}
+          {isResting && (
+            <foreignObject x="-25" y="-22" width="90" height="20">
               <div className="flex items-center justify-center">
-                <span className="bg-emerald-500 text-black border border-emerald-300 text-[8px] font-mono font-extrabold px-2.5 py-0.5 rounded shadow-[0_0_12px_rgba(16,185,129,0.9)] whitespace-nowrap">
-                  🏆 ALL-TIME HIGH SUMMIT
+                <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
+                  ⛺ Taking rest
                 </span>
               </div>
             </foreignObject>
+          )}
+        </g>
+
+        {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) connected directly to curve line */}
+        {highestTradePoint && highestTradePoint.pnl > 0 && (
+          <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y})`}>
+            {/* Anchor dot directly on curve line */}
+            <circle cx="0" cy="0" r="3.5" fill="#10b981" stroke="#ffffff" strokeWidth="1.2" className="drop-shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
+
+            {/* Flagpole connected directly to anchor dot */}
+            <line x1="0" y1="0" x2="0" y2="-32" stroke="#f59e0b" strokeWidth="2" />
+
+            {/* Flag Banner */}
+            <polygon
+              points="0,-32 24,-24 0,-16"
+              fill="#10b981"
+              stroke="#047857"
+              strokeWidth="1"
+              className="drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]"
+            />
+            <text x="2" y="-21" fill="#ffffff" fontSize="7" fontWeight="bold" fontFamily="monospace">
+              ATH
+            </text>
+
+            {/* Top Badge: Horizontally adjusted so it never clips off the right screen border */}
+            {(() => {
+              const bannerWidth = 150;
+              let bannerOffsetX = -75; // Default center
+              if (highestTradePoint.x + 75 > width - 15) {
+                bannerOffsetX = -135; // Shift left if near right edge
+              } else if (highestTradePoint.x - 75 < 15) {
+                bannerOffsetX = -10; // Shift right if near left edge
+              }
+              return (
+                <foreignObject x={bannerOffsetX} y="-60" width={bannerWidth} height="26">
+                  <div className="flex items-center justify-center">
+                    <span className="bg-emerald-500 text-black border border-emerald-300 text-[8px] font-mono font-extrabold px-2.5 py-0.5 rounded shadow-[0_0_12px_rgba(16,185,129,0.9)] whitespace-nowrap">
+                      🏆 ALL-TIME HIGH SUMMIT
+                    </span>
+                  </div>
+                </foreignObject>
+              );
+            })()}
           </g>
         )}
 
-        {/* Expedition Team (Follower & Lead Mountaineers) */}
-        {points.length > 0 && (
+        {/* Expedition Team (Follower & Lead Mountaineers) - Hidden when resting (after 3:45 PM IST / off-market) */}
+        {points.length > 0 && !isResting && (
           <g className="climber-team">
             {/* Follower Mountaineer */}
             <g transform={`translate(${followerPos.x}, ${followerPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
