@@ -33,9 +33,11 @@ export default function MountainClimbersOverlay({
   const isPreOpen = marketStatus === 'PRE-MARKET';
 
   // Left margin includes Recharts YAxis width (60px) + chart margin (10px) = 70px
-  const margin = { top: 45, right: 25, left: 70, bottom: 0 };
+  // Bottom margin matches Recharts default XAxis height (30px) so plot area baseline aligns at xAxisY
+  const margin = { top: 45, right: 25, left: 70, bottom: 30 };
   const chartW = Math.max(10, width - margin.left - margin.right);
   const chartH = Math.max(10, height - margin.top - margin.bottom);
+  const xAxisY = margin.top + chartH;
 
   // Compute scale boundaries for chart alignment matching Recharts
   const pnlVals = useMemo(() => pnlData.map((d) => d.pnl), [pnlData]);
@@ -55,8 +57,16 @@ export default function MountainClimbersOverlay({
     return { minPnl: min, maxPnl: max };
   }, [pnlVals]);
 
+  // Basecamp origin at Y-axis and X-axis intersection (left corner on X-axis line)
+  const basecampPoint = useMemo(() => ({
+    x: margin.left,
+    y: xAxisY,
+    pnl: 0,
+    index: -1
+  }), [margin.left, xAxisY]);
+
   // Points array for all trades
-  const points = useMemo(() => {
+  const tradePoints = useMemo(() => {
     if (pnlData.length === 0) return [];
     return pnlData.map((d, i) => {
       const step = pnlData.length > 1 ? chartW / (pnlData.length - 1) : chartW / 2;
@@ -67,6 +77,12 @@ export default function MountainClimbersOverlay({
     });
   }, [pnlData, chartW, chartH, minPnl, maxPnl]);
 
+  // Full expedition path starting from Basecamp tent at X-axis corner
+  const points = useMemo(() => {
+    if (tradePoints.length === 0) return [];
+    return [basecampPoint, ...tradePoints];
+  }, [basecampPoint, tradePoints]);
+
   // Path string for SVG guide line
   const dPath = useMemo(() => {
     if (points.length === 0) return '';
@@ -76,18 +92,18 @@ export default function MountainClimbersOverlay({
     );
   }, [points]);
 
-  // Snowfall particles config
+  // Snowfall particles config bounded strictly to chart area above X-axis
   const snowflakes = useMemo(() => {
     return Array.from({ length: 32 }, (_, i) => ({
       id: i,
-      cx: (i * 37) % width,
-      cy: (i * 23) % height,
+      cx: margin.left + ((i * 37) % chartW),
+      cy: margin.top + ((i * 23) % chartH),
       r: (i % 3) + 1.2,
       opacity: 0.3 + (i % 5) * 0.12,
       dur: 4 + (i % 4) * 2,
       delay: (i % 7) * 0.5
     }));
-  }, [width, height]);
+  }, [margin.left, margin.top, chartW, chartH]);
 
   // Update total path length when path changes
   useEffect(() => {
@@ -173,10 +189,8 @@ export default function MountainClimbersOverlay({
     return null;
   }
 
-  const basecampPoint = points[0] || { x: margin.left, y: margin.top + chartH };
-
-  // Find highest point in P&L curve
-  const highestPoint = [...points].sort((a, b) => b.pnl - a.pnl)[0];
+  // Find highest point in P&L curve (excluding basecamp)
+  const highestPoint = [...tradePoints].sort((a, b) => b.pnl - a.pnl)[0];
 
   // Highest trade P&L value across entire historical data
   const overallMaxTradePnl = Math.max(...pnlVals, 0);
@@ -247,16 +261,26 @@ export default function MountainClimbersOverlay({
             <stop offset="100%" stopColor="#ea580c" />
           </linearGradient>
 
+          <linearGradient id="groundSnowGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#ffffff" stopOpacity="0.75" />
+            <stop offset="100%" stopColor="#cbd5e1" stopOpacity="0.2" />
+          </linearGradient>
+
           <filter id="ropeGlow" x="-20%" y="-20%" width="140%" height="140%">
             <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="#f59e0b" floodOpacity="0.6" />
           </filter>
+
+          {/* Strict Clip Path so snowfall and snowdrifts never extend below the X-axis line */}
+          <clipPath id="snowClip">
+            <rect x="0" y="0" width={width} height={xAxisY} />
+          </clipPath>
         </defs>
 
         {/* Hidden path element for getPointAtLength coordinate calculations */}
         <path ref={pathRef} d={dPath} fill="none" stroke="none" />
 
-        {/* Ambient Snowfall Layer */}
-        <g className="snowfall-layer">
+        {/* Ambient Snowfall Layer - Bounded strictly above X-axis line */}
+        <g className="snowfall-layer" clipPath="url(#snowClip)">
           {snowflakes.map((s) => (
             <circle
               key={s.id}
@@ -268,8 +292,8 @@ export default function MountainClimbersOverlay({
             >
               <animate
                 attributeName="cy"
-                from={-10}
-                to={height + 10}
+                from={margin.top - 10}
+                to={xAxisY}
                 dur={`${s.dur}s`}
                 begin={`${s.delay}s`}
                 repeatCount="indefinite"
@@ -282,6 +306,40 @@ export default function MountainClimbersOverlay({
               />
             </circle>
           ))}
+        </g>
+
+        {/* Accumulated Ground Snow Layer resting directly on X-axis line (above line only) */}
+        <g className="ground-snow-layer" clipPath="url(#snowClip)">
+          {/* Procedural snowdrift mounds along the X-axis baseline */}
+          <path
+            d={`
+              M ${margin.left} ${xAxisY}
+              Q ${margin.left + chartW * 0.08} ${xAxisY - 5}, ${margin.left + chartW * 0.15} ${xAxisY - 2}
+              T ${margin.left + chartW * 0.32} ${xAxisY - 4}
+              T ${margin.left + chartW * 0.48} ${xAxisY - 6}
+              T ${margin.left + chartW * 0.65} ${xAxisY - 3}
+              T ${margin.left + chartW * 0.82} ${xAxisY - 5}
+              T ${margin.left + chartW} ${xAxisY}
+              Z
+            `}
+            fill="url(#groundSnowGrad)"
+          />
+          {/* Bright white top contour highlight line on snowdrifts */}
+          <path
+            d={`
+              M ${margin.left} ${xAxisY}
+              Q ${margin.left + chartW * 0.08} ${xAxisY - 5}, ${margin.left + chartW * 0.15} ${xAxisY - 2}
+              T ${margin.left + chartW * 0.32} ${xAxisY - 4}
+              T ${margin.left + chartW * 0.48} ${xAxisY - 6}
+              T ${margin.left + chartW * 0.65} ${xAxisY - 3}
+              T ${margin.left + chartW * 0.82} ${xAxisY - 5}
+              T ${margin.left + chartW} ${xAxisY}
+            `}
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="1.2"
+            strokeOpacity="0.8"
+          />
         </g>
 
         {/* Expedition Tent at Trade 1 Origin */}
@@ -309,7 +367,7 @@ export default function MountainClimbersOverlay({
               strokeDasharray="3 3"
               opacity="0.5"
             />
-            {points.map((pt, i) => (
+            {tradePoints.map((pt, i) => (
               <g key={`anchor_${i}`}>
                 <circle cx={pt.x} cy={pt.y} r="2.5" fill="#f59e0b" />
                 <line x1={pt.x} y1={pt.y} x2={pt.x} y2={pt.y + 6} stroke="#94a3b8" strokeWidth="1" />
