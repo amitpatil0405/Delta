@@ -107,10 +107,10 @@ export default function BlueprintSection() {
               return (
                 <div
                   key={index}
-                  className={`glass-card rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-1 ${
+                  className={`rounded-2xl p-7 border transition-all duration-300 hover:-translate-y-1 ${
                     isAmber
-                      ? 'border-amber-500/30 bg-neutral-950/80 hover:border-amber-500/60 hover:shadow-[0_0_25px_rgba(217,119,6,0.12)]'
-                      : 'border-emerald-500/30 bg-neutral-950/80 hover:border-emerald-500/60 hover:shadow-[0_0_25px_rgba(16,185,129,0.12)]'
+                      ? 'border-amber-500/30 bg-[#0a0a0c]/65 backdrop-blur-xl hover:border-amber-500/60 hover:shadow-[0_0_25px_rgba(217,119,6,0.12)]'
+                      : 'border-emerald-500/30 bg-[#0a0a0c]/65 backdrop-blur-xl hover:border-emerald-500/60 hover:shadow-[0_0_25px_rgba(16,185,129,0.12)]'
                   }`}
                 >
                   <div className="flex items-start space-x-4">
@@ -167,7 +167,7 @@ export default function BlueprintSection() {
             {volatilityRegimes.map((regime, index) => (
               <div
                 key={index}
-                className={`glass-card rounded-2xl p-7 border bg-neutral-950/90 flex flex-col justify-between ${regime.borderColor} transition-all duration-300 hover:-translate-y-1`}
+                className={`rounded-2xl p-7 border bg-[#0a0a0c]/65 backdrop-blur-xl flex flex-col justify-between ${regime.borderColor} transition-all duration-300 hover:-translate-y-1`}
               >
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">

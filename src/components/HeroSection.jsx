@@ -19,14 +19,17 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
       {/* Main Viewport Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
 
-        {/* Animated Brand Badge in Premium Golden/Amber Theme */}
+        {/* Dynamic Tagline Banner with Alternating Candle Colors */}
         <div
-          className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase mb-4 sm:mb-6 shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all duration-700 ${
+          className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-black/60 backdrop-blur-xl border border-amber-500/30 text-xs sm:text-sm font-mono tracking-widest uppercase mb-4 sm:mb-6 shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all duration-700 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-          <span>Systematic Options Trading & Portfolio Intelligence</span>
+          <span className="inline-block w-2.5 h-3 bg-white border border-rose-500 rounded-sm shadow-[0_0_6px_rgba(244,63,94,0.6)]" />
+          <span className="font-bold tracking-wider text-white">TRADE WITH LOGIC.</span>
+          <span className="text-amber-400/80 mx-1">•</span>
+          <span className="font-bold tracking-wider text-white">MOVE WITH THE MARKET.</span>
+          <span className="inline-block w-2.5 h-3 bg-emerald-500 border border-white rounded-sm shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
         </div>
 
         {/* Main Brand Title & Headings */}
@@ -42,7 +45,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
         </h1>
 
         <p
-          className={`mt-6 text-base sm:text-xl text-gray-400 font-medium tracking-wide max-w-3xl transition-all duration-700 delay-200 ${
+          className={`mt-6 text-base sm:text-xl text-amber-400/90 font-mono font-medium tracking-wide max-w-3xl transition-all duration-700 delay-200 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
@@ -81,14 +84,14 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
           </button>
         </div>
 
-        {/* Institutional Pillars Feature Cards (Compact Version) */}
+        {/* Institutional Pillars Feature Cards (Glassmorphism Version) */}
         <div
           className={`mt-6 sm:mt-7 grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 w-full max-w-5xl text-left transition-all duration-700 delay-500 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
           {/* Card 1: Quantitative Execution */}
-          <div className="bg-[#0c0c0e]/90 border border-amber-500/30 hover:border-amber-400/70 rounded-xl p-3.5 sm:p-4 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] group relative overflow-hidden">
+          <div className="bg-[#0a0a0c]/65 backdrop-blur-xl border border-amber-500/30 hover:border-amber-400/70 rounded-xl p-3.5 sm:p-4 transition-all duration-300 hover:shadow-[0_0_25px_rgba(245,158,11,0.25)] group relative overflow-hidden">
             <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
               <Cpu className="w-10 h-10 text-amber-400" />
             </div>
@@ -98,13 +101,13 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
             <h3 className="text-xs sm:text-sm font-bold text-white tracking-wide mb-1 flex items-center space-x-2">
               <span>Quantitative Execution</span>
             </h3>
-            <p className="text-[11px] sm:text-xs text-gray-400/90 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-gray-300/90 leading-relaxed">
               Rules-based non-directional options models driven by volatility surfaces and statistical probability edge.
             </p>
           </div>
 
           {/* Card 2: Capital Preservation */}
-          <div className="bg-[#0c0c0e]/90 border border-amber-500/30 hover:border-amber-400/70 rounded-xl p-3.5 sm:p-4 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] group relative overflow-hidden">
+          <div className="bg-[#0a0a0c]/65 backdrop-blur-xl border border-amber-500/30 hover:border-amber-400/70 rounded-xl p-3.5 sm:p-4 transition-all duration-300 hover:shadow-[0_0_25px_rgba(245,158,11,0.25)] group relative overflow-hidden">
             <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
               <ShieldCheck className="w-10 h-10 text-emerald-400" />
             </div>
@@ -114,13 +117,13 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
             <h3 className="text-xs sm:text-sm font-bold text-white tracking-wide mb-1 flex items-center space-x-2">
               <span>Capital Preservation</span>
             </h3>
-            <p className="text-[11px] sm:text-xs text-gray-400/90 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-gray-300/90 leading-relaxed">
               Strict position sizing and loss thresholds designed to safeguard principal during volatile market regimes.
             </p>
           </div>
 
           {/* Card 3: Live Verified Journal */}
-          <div className="bg-[#0c0c0e]/90 border border-amber-500/30 hover:border-amber-400/70 rounded-xl p-3.5 sm:p-4 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] group relative overflow-hidden">
+          <div className="bg-[#0a0a0c]/65 backdrop-blur-xl border border-amber-500/30 hover:border-amber-400/70 rounded-xl p-3.5 sm:p-4 transition-all duration-300 hover:shadow-[0_0_25px_rgba(245,158,11,0.25)] group relative overflow-hidden">
             <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
               <LineChart className="w-10 h-10 text-sky-400" />
             </div>
@@ -130,7 +133,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
             <h3 className="text-xs sm:text-sm font-bold text-white tracking-wide mb-1 flex items-center space-x-2">
               <span>Live Verified Journal</span>
             </h3>
-            <p className="text-[11px] sm:text-xs text-gray-400/90 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-gray-300/90 leading-relaxed">
               Transparent trade logging synced directly with live database records, cumulative P&L curves, and analytics.
             </p>
           </div>

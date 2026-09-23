@@ -30,7 +30,7 @@ export default function AboutFounderSection() {
         </div>
 
         {/* Founder Presentation Card with Stock Market Canvas Background Animation */}
-        <div className="glass-card rounded-3xl p-8 sm:p-12 border border-amber-500/30 relative overflow-hidden bg-gradient-to-br from-neutral-950/90 via-[#0a0a0c]/90 to-black/95">
+        <div className="rounded-3xl p-8 sm:p-12 border border-amber-500/30 relative overflow-hidden bg-[#0a0a0c]/75 backdrop-blur-2xl">
 
           {/* Stock Market Canvas Animation Background */}
           <StockMarketCanvasBg />
