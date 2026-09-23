@@ -149,6 +149,12 @@
   pointer-events: none;
 }
 
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 /* Heatmap Month Animated Border Beam Motion */
 @keyframes borderBeamMotion {
   from {
