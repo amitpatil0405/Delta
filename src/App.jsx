@@ -50,6 +50,7 @@ export default function App() {
           <HeroSection
             onExplorePortfolio={() => handleNavigate('portfolio')}
             onExploreStrategies={() => handleNavigate('strategies')}
+            onNavigate={handleNavigate}
           />
 
           {/* 2. Technical Analysis Page (Synced from Google Sheet) */}
