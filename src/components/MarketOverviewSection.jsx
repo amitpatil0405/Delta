@@ -149,7 +149,7 @@ export default function MarketOverviewSection() {
   const upcomingHoliday = processedHolidays.find(h => h.dateObj && h.dateObj >= today) || processedHolidays[processedHolidays.length - 1];
 
   return (
-    <section id="intelligence" className="relative bg-[#050505] bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 px-4 md:px-8 border-t border-[#1a1a1a] overflow-hidden">
+    <section id="intelligence" className="relative bg-transparent bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 px-4 md:px-8 border-t border-white/5 overflow-hidden">
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber top-0 right-1/4" />
 
@@ -276,7 +276,7 @@ export default function MarketOverviewSection() {
           </div>
 
           {/* Desktop & Mobile Table View */}
-          <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#050505]">
+          <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#0a0a0c]/65 backdrop-blur-xl">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-neutral-900/90 text-amber-400 font-mono text-xs uppercase tracking-wider border-b border-white/10">

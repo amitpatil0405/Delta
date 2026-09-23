@@ -265,7 +265,7 @@ export default function TechnicalAnalysisSection() {
   const StockTabIcon = isOnlyAnnouncement ? Megaphone : FileText;
 
   return (
-    <section id="technical-analysis" className="relative bg-[#050505] bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 px-4 md:px-8 border-t border-[#1a1a1a] overflow-hidden">
+    <section id="technical-analysis" className="relative bg-transparent bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 px-4 md:px-8 border-t border-white/5 overflow-hidden">
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber -top-20 -left-20" />
       <div className="ambient-glow-emerald bottom-0 right-0" />
@@ -288,7 +288,7 @@ export default function TechnicalAnalysisSection() {
           </div>
 
           <div className="flex items-center self-start md:self-auto">
-            <div className="flex items-center gap-2 bg-[#111111] border border-[#222222] px-3.5 py-2 rounded-lg text-xs font-mono text-gray-300 whitespace-nowrap">
+            <div className="flex items-center gap-2 bg-[#0a0a0c]/65 backdrop-blur-xl border border-amber-500/30 px-3.5 py-2 rounded-lg text-xs font-mono text-gray-300 whitespace-nowrap">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
               <span>LIVE SYNCED: {lastSyncTime || 'LIVE'}</span>
             </div>

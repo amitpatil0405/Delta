@@ -64,7 +64,7 @@ export default function BlueprintSection() {
   ];
 
   return (
-    <section id="blueprint" className="pt-8 sm:pt-10 pb-24 scroll-mt-16 sm:scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+    <section id="blueprint" className="pt-8 sm:pt-10 pb-24 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid border-t border-white/5 relative overflow-hidden">
 
       {/* Ambient Radial Glow Lighting */}
       <div className="ambient-glow-amber top-1/3 left-1/2 -translate-x-1/2" />
