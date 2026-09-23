@@ -50,7 +50,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
         </p>
 
         <p
-          className={`mt-4 sm:mt-6 text-xs sm:text-base text-gray-400/90 leading-relaxed max-w-3xl transition-all duration-700 delay-300 font-normal ${
+          className={`mt-4 sm:mt-6 text-sm sm:text-base text-gray-400/90 leading-relaxed text-justify sm:text-center max-w-3xl transition-all duration-700 delay-300 font-normal ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
