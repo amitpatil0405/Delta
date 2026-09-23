@@ -24,7 +24,7 @@ export default function MountainClimbersOverlay({
   pnlData = [],
   containerWidth = 0,
   containerHeight = 0,
-  marketStatus = 'CLOSED',
+  marketStatus = null,
   minPnlProp = null,
   maxPnlProp = null
 }) {
@@ -32,16 +32,17 @@ export default function MountainClimbersOverlay({
   const [climbProgress, setClimbProgress] = useState(0.0);
   const [isDescending, setIsDescending] = useState(false);
   const [isResting, setIsResting] = useState(false);
+  const [isHoliday, setIsHoliday] = useState(false);
   const [isWalking, setIsWalking] = useState(false);
-  const [tentTagline, setTentTagline] = useState('Taking rest');
+  const [tentTagline, setTentTagline] = useState(null);
   const [pathLength, setPathLength] = useState(0);
   const [walkPhase, setWalkPhase] = useState(0);
 
   const width = containerWidth > 0 ? containerWidth : 800;
   const height = containerHeight > 0 ? containerHeight : 320;
 
-  // Margin synchronized with Recharts AreaChart (top: 65, right: 25, left: 10 + YAxis(60), bottom: 35)
-  const margin = { top: 65, right: 25, left: 70, bottom: 35 };
+  // Margin synchronized with Recharts AreaChart (top: 10, right: 25, left: 10 + YAxis(60), bottom: 35)
+  const margin = { top: 10, right: 25, left: 70, bottom: 35 };
   const chartW = Math.max(10, width - margin.left - margin.right);
   const chartH = Math.max(10, height - margin.top - margin.bottom);
   const xAxisY = margin.top + chartH;
@@ -103,11 +104,23 @@ export default function MountainClimbersOverlay({
       const sec = istDate.getSeconds();
       const istMinutes = hour * 60 + min + sec / 60;
 
-      const isWeekend = istDate.getDay() === 0 || istDate.getDay() === 6;
+      const dayOfWeek = istDate.getDay();
+      const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+      // Extract status text from marketStatus prop or object
+      let statusStr = '';
+      if (typeof marketStatus === 'string') {
+        statusStr = marketStatus.toUpperCase();
+      } else if (marketStatus && typeof marketStatus.status === 'string') {
+        statusStr = marketStatus.status.toUpperCase();
+      } else if (marketStatus && typeof marketStatus.message === 'string') {
+        statusStr = marketStatus.message.toUpperCase();
+      }
+
+      const isHolidayToday = !isWeekend && (statusStr.includes('HOLIDAY') || statusStr.includes('CLOSED'));
 
       const preOpenStart  = 9 * 60;        // 09:00 AM IST
       const startAscent   = 9 * 60 + 15;   // 09:15 AM IST
-      const journey5Min   = 9 * 60 + 20;   // 09:20 AM IST (5 mins after ascent)
       const reachPeak     = 12 * 60 + 30;  // 12:30 PM IST
       const leavePeak     = 12 * 60 + 35;  // 12:35 PM IST
       const reachTent     = 15 * 60 + 40;  // 03:40 PM IST
@@ -117,45 +130,48 @@ export default function MountainClimbersOverlay({
       let descending = false;
       let isMoving = false;
       let resting = false;
+      let holiday = false;
       let tagline = null;
 
-      const isPreMarketProp = typeof marketStatus === 'string' && (marketStatus.includes('PRE') || marketStatus.includes('Pre'));
-
-      if (!isWeekend && ((istMinutes >= preOpenStart && istMinutes < restTime) || isPreMarketProp)) {
-        if (isPreMarketProp || istMinutes < startAscent) {
-          // Pre-Open session (09:00 AM - 09:15 AM IST): Both climbers visible at start point, tagline "Preparing" in yellow
+      if (isHolidayToday) {
+        // Weekday Market Closed / Holiday: Show "Holiday today" near tent
+        progress = 0;
+        descending = false;
+        isMoving = false;
+        resting = true;
+        holiday = true;
+        tagline = 'Holiday today';
+      } else if (!isWeekend && istMinutes >= preOpenStart && istMinutes < restTime) {
+        if (istMinutes < startAscent) {
+          // 09:00 AM - 09:15 AM IST: Emerge at Tent, tagline "Preparing"
           progress = 0;
           descending = false;
           isMoving = false;
           resting = false;
           tagline = 'Preparing';
         } else if (istMinutes < reachPeak) {
-          // Ascent (09:15 AM - 12:30 PM IST)
+          // 09:15 AM - 12:30 PM IST: Ascent Left to Right
           progress = (istMinutes - startAscent) / (reachPeak - startAscent);
           descending = false;
           isMoving = true;
           resting = false;
-
-          // "Journey started" in green for 5 mins after journey start
-          if (istMinutes < journey5Min) {
-            tagline = 'Journey started';
-          } else {
-            tagline = null;
-          }
+          tagline = null;
         } else if (istMinutes <= leavePeak) {
+          // 12:30 PM - 12:35 PM IST: Reach end point, pause & celebrate / peak tagline
           progress = 1.0;
           descending = false;
           isMoving = false;
           resting = false;
           tagline = null;
         } else if (istMinutes <= reachTent) {
+          // 12:35 PM - 03:40 PM IST: Return journey Right to Left back to Tent
           progress = 1.0 - (istMinutes - leavePeak) / (reachTent - leavePeak);
           descending = true;
           isMoving = true;
           resting = false;
           tagline = null;
         } else {
-          // Between 3:40 PM and 3:45 PM: At tent
+          // 03:40 PM - 03:45 PM IST: Arrived at Tent
           progress = 0;
           descending = true;
           isMoving = false;
@@ -163,17 +179,19 @@ export default function MountainClimbersOverlay({
           tagline = null;
         }
       } else {
-        // At 3:45 PM and onwards or off-market hours: Hide climbers & show "Taking rest"
+        // Post-3:40 PM / 3:45 PM+ or Weekend: Disappear back into tent, tagline "Taking rest"
         progress = 0;
         descending = false;
         isMoving = false;
         resting = true;
+        holiday = false;
         tagline = 'Taking rest';
       }
 
       setClimbProgress(Math.max(0, Math.min(1, progress)));
       setIsDescending(descending);
       setIsResting(resting);
+      setIsHoliday(holiday);
       setIsWalking(isMoving);
       setTentTagline(tagline);
 
@@ -219,7 +237,7 @@ export default function MountainClimbersOverlay({
       let ptLead, ptFollower;
 
       if (!isDescending) {
-        // Ascent: Leader is ahead (larger path length), Follower behind (smaller path length)
+        // Morning Ascent (Left to Right): Leader ahead, Follower behind
         const leadLen = Math.max(0, Math.min(pathLength, currentLen));
         const followerLen = Math.max(0, Math.min(pathLength, currentLen - separation));
         ptLead = pathRef.current.getPointAtLength(leadLen);
@@ -228,7 +246,7 @@ export default function MountainClimbersOverlay({
         isLeaderMoving = isWalking && currentLen > 0 && leadLen < pathLength;
         isFollowerMoving = isWalking && currentLen >= separation && followerLen < pathLength;
       } else {
-        // Return Journey (Descent): Leader leaves endpoint first moving towards Tent, Follower stays at endpoint until Leader gains separation distance
+        // Return Journey (Right to Left): Leader leaves endpoint first moving back towards Tent
         const leadLen = Math.max(0, Math.min(pathLength, currentLen));
         const followerLen = Math.min(pathLength, currentLen + separation);
         ptLead = pathRef.current.getPointAtLength(leadLen);
@@ -260,8 +278,6 @@ export default function MountainClimbersOverlay({
       // Fallback
     }
   }
-
-  const isRedZone = leadPos.pnl < 0;
 
   // Realistic jointed 2-segment leg walking cycle angles for Leader
   const leaderThigh1 = isLeaderMoving ? Math.sin(walkPhase) * 22 : 0;
@@ -328,7 +344,7 @@ export default function MountainClimbersOverlay({
           ))}
         </g>
 
-        {/* Basecamp Tent Graphic placed on the Left Side of Y-Axis Line */}
+        {/* Basecamp Tent Graphic placed at Left Side Y-Axis Line */}
         <g transform={`translate(${originPoint.x - 42}, ${originPoint.y - 32})`}>
           <image
             href={tentImg}
@@ -348,20 +364,20 @@ export default function MountainClimbersOverlay({
               </div>
             </foreignObject>
           )}
-          {tentTagline === 'Journey started' && (
-            <foreignObject x="-35" y="-22" width="110" height="20">
-              <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.4)] whitespace-nowrap animate-pulse">
-                  Journey started
-                </span>
-              </div>
-            </foreignObject>
-          )}
           {tentTagline === 'Taking rest' && (
             <foreignObject x="-25" y="-22" width="90" height="20">
               <div className="flex items-center justify-center">
                 <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
                   Taking rest
+                </span>
+              </div>
+            </foreignObject>
+          )}
+          {tentTagline === 'Holiday today' && (
+            <foreignObject x="-30" y="-22" width="100" height="20">
+              <div className="flex items-center justify-center">
+                <span className="bg-[#0c0c0e]/95 text-rose-400 border border-rose-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(244,63,94,0.4)] whitespace-nowrap animate-pulse">
+                  Holiday today
                 </span>
               </div>
             </foreignObject>
@@ -389,7 +405,7 @@ export default function MountainClimbersOverlay({
               ATH
             </text>
 
-            {/* Top Badge: Horizontally adjusted so it never clips off the right screen border */}
+            {/* Top Badge: Horizontally adjusted so it never clips off screen border */}
             {(() => {
               const bannerWidth = 150;
               let bannerOffsetX = -75; // Default center
@@ -411,7 +427,7 @@ export default function MountainClimbersOverlay({
           </g>
         )}
 
-        {/* Expedition Team (Follower & Lead Mountaineers) - Hidden when resting (after 3:45 PM IST / off-market) */}
+        {/* Expedition Team (Follower & Lead Mountaineers) - Hidden when resting or holiday */}
         {points.length > 0 && !isResting && (
           <g className="climber-team">
             {/* Follower Mountaineer */}
@@ -497,7 +513,7 @@ export default function MountainClimbersOverlay({
                     </span>
                   ) : (
                     <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
-                      🙌 We will go high next time
+                      🙌 We will go high again
                     </span>
                   )}
                 </div>
