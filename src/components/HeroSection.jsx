@@ -19,15 +19,15 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
       {/* Main Viewport Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
 
-        {/* Golden Transparent Glassmorphic Tagline Banner */}
+        {/* Golden Moving Shimmer Tagline Banner with Black Font */}
         <div
-          className={`relative overflow-hidden inline-flex items-center px-5 py-2.5 rounded-full bg-amber-500/10 backdrop-blur-md border border-amber-500/40 text-xs sm:text-sm font-mono tracking-widest uppercase mb-4 sm:mb-6 shadow-[0_0_20px_rgba(245,158,11,0.25)] transition-all duration-700 group ${
+          className={`relative overflow-hidden inline-flex items-center px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 border border-amber-300/60 text-xs sm:text-sm font-mono tracking-widest uppercase mb-4 sm:mb-6 shadow-[0_0_25px_rgba(245,158,11,0.5)] transition-all duration-700 group ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          {/* Shimmer Sweep Beam Effect */}
-          <div className="absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-amber-300/25 to-transparent pointer-events-none" />
-          <span className="relative z-10 font-extrabold tracking-wider text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">
+          {/* Continuous Moving Golden Sweep Beam Effect */}
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_2.5s_infinite] bg-gradient-to-r from-transparent via-yellow-100/60 to-transparent pointer-events-none" />
+          <span className="relative z-10 font-black tracking-wider text-black drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]">
             DELTAFOX: PROBABILITY OVER PREDICTION
           </span>
         </div>
