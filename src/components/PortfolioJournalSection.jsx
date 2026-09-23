@@ -853,7 +853,7 @@ export default function PortfolioJournalSection() {
           <div
             onClick={() => toggleGlowBox('graph-container')}
             onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
+            className={`bg-[#0a0a0c] rounded-2xl p-4 sm:p-6 border transition-all duration-300 relative space-y-4 ${
               activeGlowBox === 'graph-container'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -863,7 +863,7 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <div ref={chartContainerRef} className="h-[320px] w-full relative">
+            <div ref={chartContainerRef} className="h-[280px] sm:h-[320px] w-full relative">
               <MountainClimbersOverlay
                 pnlData={pnlCurveData}
                 containerWidth={chartDims.width}
@@ -873,16 +873,16 @@ export default function PortfolioJournalSection() {
                 maxPnlProp={chartMaxPnl}
               />
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={pnlCurveData} margin={{ top: 65, right: 25, left: 10, bottom: 5 }}>
+                <AreaChart data={pnlCurveData} margin={{ top: isMobile ? 15 : 65, right: isMobile ? 10 : 25, left: isMobile ? 0 : 10, bottom: 5 }}>
                   <defs>
                     {/* UserSpaceOnUse Stroke Gradient: Smooth transition across zero baseline */}
                     <linearGradient
                       id="pnlStrokeGradient"
                       gradientUnits="userSpaceOnUse"
                       x1="0"
-                      y1={65}
+                      y1={isMobile ? 15 : 65}
                       x2="0"
-                      y2={65 + Math.max(10, chartDims.height - 100)}
+                      y2={(isMobile ? 15 : 65) + Math.max(10, chartDims.height - (isMobile ? 30 : 100))}
                     >
                       {pnlGradientStats.isAllPos ? (
                         <>
