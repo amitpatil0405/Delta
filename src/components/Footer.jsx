@@ -64,10 +64,10 @@ export default function Footer({ onNavigate }) {
           </div>
 
           {/* Structured Link Columns & Founder Info (Right) */}
-          <div className="md:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-6 text-xs">
+          <div className="md:col-span-8 flex flex-wrap sm:flex-nowrap items-start gap-8 sm:gap-10 lg:gap-12 text-xs">
 
             {/* Quick Links Column */}
-            <div className="space-y-3">
+            <div className="space-y-3 min-w-[140px]">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">QUICK LINKS</span>
               <ul className="space-y-2">
                 <li><button onClick={() => handleLinkClick('home')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Home</button></li>
@@ -78,7 +78,7 @@ export default function Footer({ onNavigate }) {
             </div>
 
             {/* Resources Column */}
-            <div className="space-y-3">
+            <div className="space-y-3 min-w-[110px]">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">RESOURCES</span>
               <ul className="space-y-2">
                 <li><button onClick={() => handleLinkClick('strategies')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Strategies</button></li>
@@ -87,7 +87,7 @@ export default function Footer({ onNavigate }) {
             </div>
 
             {/* Company / Support Column */}
-            <div className="space-y-3">
+            <div className="space-y-3 min-w-[130px]">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">COMPANY / SUPPORT</span>
               <ul className="space-y-2">
                 <li><button onClick={() => handleLinkClick('about')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">About DeltaFox</button></li>
@@ -96,7 +96,7 @@ export default function Footer({ onNavigate }) {
             </div>
 
             {/* Founder Column (Far Right) */}
-            <div className="space-y-3 col-span-2 sm:col-span-1">
+            <div className="space-y-3 min-w-[180px]">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">FOUNDER</span>
               <div className="text-gray-300 text-xs space-y-1 font-roboto-mono">
                 <span className="block font-bold text-white">Mr. Amit Patil</span>
