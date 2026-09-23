@@ -168,7 +168,7 @@ export default function Footer({ onNavigate }) {
 
           {/* Interactive Legal Policy Content Viewport */}
           {activeLegalTab && (
-            <div className="mt-6 bg-neutral-950/90 border border-amber-500/20 rounded-2xl p-6 sm:p-8 text-xs font-sans text-gray-300 leading-relaxed relative shadow-2xl animate-fadeIn">
+            <div className="mt-6 bg-[#0a0a0c]/85 backdrop-blur-2xl border border-amber-500/30 rounded-2xl p-6 sm:p-8 text-xs font-sans text-gray-300 leading-relaxed relative shadow-2xl animate-fadeIn">
               <button
                 onClick={() => setActiveLegalTab(null)}
                 className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors p-1 rounded-lg bg-white/5 hover:bg-white/10"

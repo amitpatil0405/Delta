@@ -588,7 +588,7 @@ export default function PortfolioJournalSection() {
           <div
             onClick={() => toggleGlowBox('stat-1')}
             onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-1'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -603,7 +603,7 @@ export default function PortfolioJournalSection() {
           <div
             onClick={() => toggleGlowBox('stat-2')}
             onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-2'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -621,7 +621,7 @@ export default function PortfolioJournalSection() {
           <div
             onClick={() => toggleGlowBox('stat-3')}
             onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-3'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -637,7 +637,7 @@ export default function PortfolioJournalSection() {
           <div
             onClick={() => toggleGlowBox('stat-4')}
             onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-4'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -660,7 +660,7 @@ export default function PortfolioJournalSection() {
             toggleGlowBox('heatmap-container');
           }}
           onMouseLeave={() => setActiveGlowBox(null)}
-          className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
+          className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
             activeGlowBox === 'heatmap-container'
               ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
               : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -853,7 +853,7 @@ export default function PortfolioJournalSection() {
           <div
             onClick={() => toggleGlowBox('graph-container')}
             onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c] rounded-2xl p-4 sm:p-6 border transition-all duration-300 relative space-y-4 ${
+            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-4 sm:p-6 border transition-all duration-300 relative space-y-4 ${
               activeGlowBox === 'graph-container'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -1034,7 +1034,7 @@ export default function PortfolioJournalSection() {
             toggleGlowBox('table-container');
           }}
           onMouseLeave={() => setActiveGlowBox(null)}
-          className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
+          className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
             activeGlowBox === 'table-container'
               ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
               : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'

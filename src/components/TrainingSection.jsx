@@ -105,7 +105,7 @@ export default function TrainingSection() {
         </div>
 
         {/* Banner Callout: Live Market Training Provided */}
-        <div className="mb-12 glass-card rounded-2xl p-6 sm:p-8 border border-amber-500/40 bg-gradient-to-r from-neutral-950 via-amber-950/20 to-neutral-950 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-[0_0_35px_rgba(217,119,6,0.15)]">
+        <div className="mb-12 rounded-2xl p-6 sm:p-8 border border-amber-500/40 bg-[#0a0a0c]/65 backdrop-blur-xl flex flex-col lg:flex-row items-center justify-between gap-6 shadow-[0_0_35px_rgba(217,119,6,0.15)]">
           <div className="flex items-center space-x-4">
             <div className="p-3.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 shrink-0">
               <Radio className="w-6 h-6 animate-pulse" />
@@ -167,7 +167,7 @@ export default function TrainingSection() {
 
           {/* Module Detail & Curriculum Display */}
           <div className="lg:col-span-7">
-            <div className="glass-card rounded-2xl p-6 sm:p-8 border border-amber-500/30 bg-neutral-950/80 backdrop-blur-md h-full flex flex-col justify-between">
+            <div className="rounded-2xl p-6 sm:p-8 border border-amber-500/30 bg-[#0a0a0c]/65 backdrop-blur-xl h-full flex flex-col justify-between">
 
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-amber-400 mb-3">
@@ -215,7 +215,7 @@ export default function TrainingSection() {
         </div>
 
         {/* Program Fee & Direct Payment QR Code Card */}
-        <div className="mt-16 glass-card rounded-3xl p-6 sm:p-10 border border-amber-500/40 bg-gradient-to-br from-neutral-950 via-[#0c0c0e] to-neutral-950 shadow-[0_0_50px_rgba(217,119,6,0.15)] relative overflow-hidden">
+        <div className="mt-16 rounded-3xl p-6 sm:p-10 border border-amber-500/40 bg-[#0a0a0c]/75 backdrop-blur-2xl shadow-[0_0_50px_rgba(217,119,6,0.15)] relative overflow-hidden">
 
           {/* Ambient Backlight Glow for the Payment Card */}
           <div className="absolute top-1/2 right-10 -translate-y-1/2 w-72 h-72 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none" />

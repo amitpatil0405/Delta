@@ -320,7 +320,7 @@ export default function OptionsStrategiesSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
           {/* Strategy Details (Left Panel) */}
-          <div className="lg:col-span-5 glass-card rounded-2xl p-6 border border-white/10 space-y-6">
+          <div className="lg:col-span-5 bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-6 border border-amber-500/30 space-y-6">
 
             <div>
               <span className="text-[10px] font-mono text-amber-400 uppercase tracking-widest block mb-1">SELECTED FRAMEWORK</span>
@@ -366,7 +366,7 @@ export default function OptionsStrategiesSection() {
           </div>
 
           {/* Payoff Curve Diagram (Right Panel) */}
-          <div className="lg:col-span-7 glass-card rounded-2xl p-6 border border-white/10 space-y-4">
+          <div className="lg:col-span-7 bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-6 border border-amber-500/30 space-y-4">
 
             <div className="flex items-center justify-between pb-4 border-b border-white/10">
               <div>

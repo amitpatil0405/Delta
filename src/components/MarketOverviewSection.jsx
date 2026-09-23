@@ -245,7 +245,7 @@ export default function MarketOverviewSection() {
         )}
 
         {/* Main Holiday Calendar Table & Grid View */}
-        <div className="bg-[#0a0a0c] border border-white/10 rounded-2xl overflow-hidden shadow-2xl space-y-6 p-6 sm:p-8">
+        <div className="bg-[#0a0a0c]/65 backdrop-blur-xl border border-amber-500/30 rounded-2xl overflow-hidden shadow-2xl space-y-6 p-6 sm:p-8">
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
             <div className="flex items-center space-x-3">
