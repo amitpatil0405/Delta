@@ -125,6 +125,7 @@ export default function MountainClimbersOverlay({
 
       const preOpenStart  = 9 * 60;        // 09:00 AM IST
       const startAscent   = 9 * 60 + 15;   // 09:15 AM IST
+      const journeyTagEnd = 9 * 60 + 20;   // 09:20 AM IST (5 mins after departure)
       const reachPeak     = 12 * 60 + 30;  // 12:30 PM IST
       const leavePeak     = 12 * 60 + 35;  // 12:35 PM IST
       const reachTent     = 15 * 60 + 40;  // 03:40 PM IST
@@ -146,8 +147,8 @@ export default function MountainClimbersOverlay({
         holiday = true;
         tagline = 'Holiday today';
       } else if (!isWeekend && istMinutes >= preOpenStart && istMinutes < restTime) {
-        if (istMinutes < startAscent) {
-          // 09:00 AM - 09:15 AM IST: Emerge at Tent, tagline "Preparing"
+        if (istMinutes < startAscent || statusStr.includes('PRE-OPEN')) {
+          // 09:00 AM - 09:15 AM IST: Tagline "Preparing" in yellow above tent, climbers visible at start
           progress = 0;
           descending = false;
           isMoving = false;
@@ -159,9 +160,9 @@ export default function MountainClimbersOverlay({
           descending = false;
           isMoving = true;
           resting = false;
-          tagline = null;
+          tagline = istMinutes <= journeyTagEnd ? 'Journey started' : null;
         } else if (istMinutes <= leavePeak) {
-          // 12:30 PM - 12:35 PM IST: Reach end point, pause & celebrate / peak tagline
+          // 12:30 PM - 12:35 PM IST: Reach end point, pause & celebrate
           progress = 1.0;
           descending = false;
           isMoving = false;
@@ -368,6 +369,15 @@ export default function MountainClimbersOverlay({
               </div>
             </foreignObject>
           )}
+          {tentTagline === 'Journey started' && (
+            <foreignObject x="-30" y="-22" width="100" height="20">
+              <div className="flex items-center justify-center">
+                <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.4)] whitespace-nowrap animate-pulse">
+                  Journey started
+                </span>
+              </div>
+            </foreignObject>
+          )}
           {tentTagline === 'Taking rest' && (
             <foreignObject x="-25" y="-22" width="90" height="20">
               <div className="flex items-center justify-center">
@@ -394,20 +404,15 @@ export default function MountainClimbersOverlay({
           if (tradeNum % 5 === 0) {
             return (
               <g key={`tree_${tradeNum}`} transform={`translate(${pt.x}, ${pt.y})`}>
-                {/* Base anchor dot on curve */}
+                {/* Base anchor dot directly on curve */}
                 <circle cx="0" cy="0" r="2.5" fill="#10b981" />
-                {/* Pine Tree SVG placed on top of curve */}
-                <g transform="translate(-8, -22)">
-                  {/* Trunk */}
-                  <rect x="7" y="15" width="2" height="7" fill="#78350f" />
-                  {/* Leaves layers */}
-                  <polygon points="8,1 2,8 14,8" fill="#059669" />
-                  <polygon points="8,6 1,13 15,13" fill="#10b981" />
-                  <polygon points="8,10 0,17 16,17" fill="#047857" />
+                {/* Clean Pine Tree vector sitting directly on top of curve */}
+                <g transform="translate(-8, -20)">
+                  <rect x="7.2" y="14" width="1.6" height="6" fill="#78350f" />
+                  <polygon points="8,1 2,7 14,7" fill="#059669" />
+                  <polygon points="8,5 1,12 15,12" fill="#10b981" />
+                  <polygon points="8,9 0,16 16,16" fill="#047857" />
                 </g>
-                <text x="0" y="-24" textAnchor="middle" fill="#10b981" fontSize="7" fontWeight="extrabold" fontFamily="monospace">
-                  🌲
-                </text>
               </g>
             );
           }
@@ -531,9 +536,9 @@ export default function MountainClimbersOverlay({
             {/* Individual Badges & Summit Celebration Text */}
             {isAtEndpointCelebrating ? (
               <foreignObject
-                x={Math.max(10, Math.min(width - 200, (leadPos.x + followerPos.x) / 2 - 90))}
-                y={Math.min(leadPos.y, followerPos.y) - 56}
-                width="180"
+                x={Math.max(10, Math.min(width - 210, (leadPos.x + followerPos.x) / 2 - 95))}
+                y={Math.min(leadPos.y, followerPos.y) - 60}
+                width="190"
                 height="32"
               >
                 <div className="flex items-center justify-center h-full">
@@ -543,18 +548,18 @@ export default function MountainClimbersOverlay({
                     </span>
                   ) : (
                     <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
-                      🙌 We will go high again
+                      🙌 We will go high next time
                     </span>
                   )}
                 </div>
               </foreignObject>
             ) : (
               <>
-                {/* FOLLOWER Badge directly above Follower when Follower is walking */}
+                {/* FOLLOWER Badge elevated well above Follower head when Follower is walking */}
                 {isFollowerMoving && (
                   <foreignObject
                     x={followerPos.x - 35}
-                    y={followerPos.y - 48}
+                    y={followerPos.y - 54}
                     width="70"
                     height="20"
                   >
@@ -566,11 +571,11 @@ export default function MountainClimbersOverlay({
                   </foreignObject>
                 )}
 
-                {/* LEADER Badge directly above Leader when Leader is walking */}
+                {/* LEADER Badge elevated well above Leader head when Leader is walking */}
                 {isLeaderMoving && (
                   <foreignObject
                     x={leadPos.x - 30}
-                    y={leadPos.y - 48}
+                    y={leadPos.y - 54}
                     width="60"
                     height="20"
                   >

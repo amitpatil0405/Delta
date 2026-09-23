@@ -341,6 +341,19 @@ export default function PortfolioJournalSection() {
     };
   });
 
+  // Calculate explicit Y domain to ensure 100% pixel-perfect alignment with Overlay
+  const chartYDomain = useMemo(() => {
+    if (pnlCurveData.length === 0) return [-15000, 45000];
+    const vals = pnlCurveData.map(d => d.pnl);
+    const rawMin = Math.min(...vals, 0);
+    const rawMax = Math.max(...vals, 0);
+
+    const step = 15000;
+    const yMin = Math.floor((rawMin - 5000) / step) * step;
+    const yMax = Math.ceil((rawMax + 5000) / step) * step;
+    return [yMin, yMax > yMin ? yMax : yMin + 30000];
+  }, [pnlCurveData]);
+
   // Calculate sampled ticks for mobile viewport so only selected ticks/vertical lines show on mobile
   const mobileTicks = useMemo(() => {
     if (!pnlCurveData.length) return [];
@@ -796,11 +809,11 @@ export default function PortfolioJournalSection() {
                 containerWidth={graphDimensions.width}
                 containerHeight={graphDimensions.height}
                 marketStatus={marketStatus}
-                minPnlProp={Math.min(...pnlCurveData.map(d => d.pnl), 0)}
-                maxPnlProp={Math.max(...pnlCurveData.map(d => d.pnl), 0)}
+                minPnlProp={chartYDomain[0]}
+                maxPnlProp={chartYDomain[1]}
               />
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 0 }}>
+                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 25 }}>
                   <defs>
                     {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
                     <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
@@ -862,6 +875,8 @@ export default function PortfolioJournalSection() {
                     tick={{ fontSize: 11, fill: '#888' }}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
+                    domain={chartYDomain}
+                    width={60}
                     tickFormatter={(val) => (val === 0 ? '' : val)}
                   />
 
