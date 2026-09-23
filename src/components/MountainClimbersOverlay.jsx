@@ -106,8 +106,8 @@ export default function MountainClimbersOverlay({
       const isWeekend = istDate.getDay() === 0 || istDate.getDay() === 6;
 
       const preOpenStart  = 9 * 60;        // 09:00 AM IST
-      const startAscent   = 9 * 60 + 30;   // 09:30 AM IST
-      const journey5Min   = 9 * 60 + 35;   // 09:35 AM IST (5 mins after ascent)
+      const startAscent   = 9 * 60 + 15;   // 09:15 AM IST
+      const journey5Min   = 9 * 60 + 20;   // 09:20 AM IST (5 mins after ascent)
       const reachPeak     = 12 * 60 + 30;  // 12:30 PM IST
       const leavePeak     = 12 * 60 + 35;  // 12:35 PM IST
       const reachTent     = 15 * 60 + 40;  // 03:40 PM IST
@@ -123,14 +123,14 @@ export default function MountainClimbersOverlay({
 
       if (!isWeekend && ((istMinutes >= preOpenStart && istMinutes < restTime) || isPreMarketProp)) {
         if (isPreMarketProp || istMinutes < startAscent) {
-          // Pre-Open session (09:00 AM - 09:30 AM IST): Both climbers visible at start point, tagline "Preparing" in yellow
+          // Pre-Open session (09:00 AM - 09:15 AM IST): Both climbers visible at start point, tagline "Preparing" in yellow
           progress = 0;
           descending = false;
           isMoving = false;
           resting = false;
           tagline = 'Preparing';
         } else if (istMinutes < reachPeak) {
-          // Ascent (09:30 AM - 12:30 PM IST)
+          // Ascent (09:15 AM - 12:30 PM IST)
           progress = (istMinutes - startAscent) / (reachPeak - startAscent);
           descending = false;
           isMoving = true;
@@ -483,7 +483,7 @@ export default function MountainClimbersOverlay({
                     </span>
                   ) : (
                     <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
-                      🙌 We will go high more next time
+                      🙌 We will go high next time
                     </span>
                   )}
                 </div>
