@@ -87,11 +87,11 @@ export default function Footer({ onNavigate }) {
             </div>
 
             <div className="space-y-3 col-span-2 sm:col-span-1">
-              <span className="text-white font-bold block uppercase tracking-wider text-[11px]">FOUNDER</span>
-              <div className="text-gray-300 font-sans text-xs space-y-1">
-                <span className="block font-bold text-white font-mono">Mr. Amit Patil</span>
+              <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">FOUNDER</span>
+              <div className="text-gray-300 text-xs space-y-1 font-roboto-mono">
+                <span className="block font-bold text-white">Mr. Amit Patil</span>
                 <span className="block text-[11px] text-gray-400">Derivatives trader & quantitative strategist</span>
-                <div className="text-[11px] text-gray-400 font-mono pt-1">
+                <div className="text-[11px] text-gray-400 pt-1">
                   <span>Email: </span>
                   <a
                     href="mailto:deltafox.options@yahoo.com"
@@ -100,7 +100,7 @@ export default function Footer({ onNavigate }) {
                     deltafox.options@yahoo.com
                   </a>
                 </div>
-                <div className="text-[11px] text-gray-400 font-mono">
+                <div className="text-[11px] text-gray-400">
                   <span>Website: </span>
                   <a
                     href="https://www.deltafox.in"
