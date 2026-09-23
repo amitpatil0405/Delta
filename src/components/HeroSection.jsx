@@ -59,13 +59,13 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
 
         {/* Interactive CTA Buttons */}
         <div
-          className={`mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto transition-all duration-700 delay-400 ${
+          className={`mt-5 sm:mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto transition-all duration-700 delay-400 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
           <button
             onClick={onExplorePortfolio}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all duration-300 shadow-[0_0_30px_rgba(217,119,6,0.4)] flex items-center justify-center space-x-3 group active:scale-95"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all duration-300 shadow-[0_0_25px_rgba(217,119,6,0.4)] flex items-center justify-center space-x-2.5 group active:scale-95"
           >
             <BookOpen className="w-4 h-4 text-black" />
             <span>VIEW TRADING PORTFOLIO</span>
@@ -74,102 +74,63 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
 
           <button
             onClick={onExploreStrategies}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold tracking-wider uppercase text-gray-200 bg-neutral-900/80 hover:bg-neutral-800 border border-white/10 hover:border-amber-500/40 transition-all duration-300 flex items-center justify-center space-x-3 group active:scale-95"
+            className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl text-xs sm:text-sm font-bold tracking-wider uppercase text-gray-200 bg-neutral-900/80 hover:bg-neutral-800 border border-white/10 hover:border-amber-500/40 transition-all duration-300 flex items-center justify-center space-x-2.5 group active:scale-95"
           >
             <BarChart3 className="w-4 h-4 text-amber-400" />
             <span>OUR STRATEGIES</span>
           </button>
         </div>
 
-        {/* Quick Access Navigation Chips */}
+        {/* Institutional Pillars Feature Cards (Compact Version) */}
         <div
-          className={`mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3 transition-all duration-700 delay-500 ${
-            loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
-          }`}
-        >
-          <button
-            onClick={() => onNavigate && onNavigate('technical-analysis')}
-            className="px-3.5 py-1.5 rounded-lg bg-[#0a0a0c]/80 border border-amber-500/20 hover:border-amber-400/60 text-xs font-mono text-gray-300 hover:text-amber-400 transition-all duration-300 flex items-center space-x-1.5 group backdrop-blur-md"
-          >
-            <LineChart className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
-            <span>Technical Analysis</span>
-          </button>
-
-          <button
-            onClick={() => onNavigate && onNavigate('intelligence')}
-            className="px-3.5 py-1.5 rounded-lg bg-[#0a0a0c]/80 border border-amber-500/20 hover:border-amber-400/60 text-xs font-mono text-gray-300 hover:text-amber-400 transition-all duration-300 flex items-center space-x-1.5 group backdrop-blur-md"
-          >
-            <Calendar className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
-            <span>Holiday Calendar</span>
-          </button>
-
-          <button
-            onClick={() => onNavigate && onNavigate('training')}
-            className="px-3.5 py-1.5 rounded-lg bg-[#0a0a0c]/80 border border-amber-500/20 hover:border-amber-400/60 text-xs font-mono text-gray-300 hover:text-amber-400 transition-all duration-300 flex items-center space-x-1.5 group backdrop-blur-md"
-          >
-            <GraduationCap className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
-            <span>Training Program</span>
-          </button>
-
-          <button
-            onClick={() => onNavigate && onNavigate('blueprint')}
-            className="px-3.5 py-1.5 rounded-lg bg-[#0a0a0c]/80 border border-amber-500/20 hover:border-amber-400/60 text-xs font-mono text-gray-300 hover:text-amber-400 transition-all duration-300 flex items-center space-x-1.5 group backdrop-blur-md"
-          >
-            <Compass className="w-3.5 h-3.5 text-amber-400 group-hover:scale-110 transition-transform" />
-            <span>Trader Blueprint</span>
-          </button>
-        </div>
-
-        {/* Institutional Pillars Feature Cards */}
-        <div
-          className={`mt-8 sm:mt-10 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 w-full max-w-5xl text-left transition-all duration-700 delay-600 ${
+          className={`mt-6 sm:mt-7 grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 w-full max-w-5xl text-left transition-all duration-700 delay-500 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
           {/* Card 1: Quantitative Execution */}
-          <div className="bg-[#0c0c0e]/90 border border-amber-500/30 hover:border-amber-400/70 rounded-2xl p-5 sm:p-6 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] group relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-              <Cpu className="w-16 h-16 text-amber-400" />
+          <div className="bg-[#0c0c0e]/90 border border-amber-500/30 hover:border-amber-400/70 rounded-xl p-3.5 sm:p-4 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] group relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+              <Cpu className="w-10 h-10 text-amber-400" />
             </div>
-            <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <Cpu className="w-5 h-5 text-amber-400" />
+            <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
+              <Cpu className="w-4 h-4 text-amber-400" />
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-white tracking-wide mb-2 flex items-center space-x-2">
+            <h3 className="text-xs sm:text-sm font-bold text-white tracking-wide mb-1 flex items-center space-x-2">
               <span>Quantitative Execution</span>
             </h3>
-            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-gray-400/90 leading-relaxed">
               Rules-based non-directional options models driven by volatility surfaces and statistical probability edge.
             </p>
           </div>
 
           {/* Card 2: Capital Preservation */}
-          <div className="bg-[#0c0c0e]/90 border border-amber-500/30 hover:border-amber-400/70 rounded-2xl p-5 sm:p-6 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] group relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-              <ShieldCheck className="w-16 h-16 text-emerald-400" />
+          <div className="bg-[#0c0c0e]/90 border border-amber-500/30 hover:border-amber-400/70 rounded-xl p-3.5 sm:p-4 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] group relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+              <ShieldCheck className="w-10 h-10 text-emerald-400" />
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <ShieldCheck className="w-5 h-5 text-emerald-400" />
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
+              <ShieldCheck className="w-4 h-4 text-emerald-400" />
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-white tracking-wide mb-2 flex items-center space-x-2">
+            <h3 className="text-xs sm:text-sm font-bold text-white tracking-wide mb-1 flex items-center space-x-2">
               <span>Capital Preservation</span>
             </h3>
-            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-gray-400/90 leading-relaxed">
               Strict position sizing and loss thresholds designed to safeguard principal during volatile market regimes.
             </p>
           </div>
 
           {/* Card 3: Live Verified Journal */}
-          <div className="bg-[#0c0c0e]/90 border border-amber-500/30 hover:border-amber-400/70 rounded-2xl p-5 sm:p-6 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.2)] group relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-              <LineChart className="w-16 h-16 text-sky-400" />
+          <div className="bg-[#0c0c0e]/90 border border-amber-500/30 hover:border-amber-400/70 rounded-xl p-3.5 sm:p-4 backdrop-blur-md transition-all duration-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] group relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
+              <LineChart className="w-10 h-10 text-sky-400" />
             </div>
-            <div className="w-10 h-10 rounded-xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-              <LineChart className="w-5 h-5 text-sky-400" />
+            <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
+              <LineChart className="w-4 h-4 text-sky-400" />
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-white tracking-wide mb-2 flex items-center space-x-2">
+            <h3 className="text-xs sm:text-sm font-bold text-white tracking-wide mb-1 flex items-center space-x-2">
               <span>Live Verified Journal</span>
             </h3>
-            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
+            <p className="text-[11px] sm:text-xs text-gray-400/90 leading-relaxed">
               Transparent trade logging synced directly with live database records, cumulative P&L curves, and analytics.
             </p>
           </div>
