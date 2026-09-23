@@ -26,93 +26,221 @@ class ThreeErrorBoundary extends Component {
   }
 }
 
-// Procedural Metallic DeltaFox Emblem Mesh
-function MetallicFoxHead({ scrollProgress }) {
-  const meshRef = useRef();
-  const wireframeRef = useRef();
+// Procedural Sleek Metallic/Glowing Bull Model (Emerald Green Theme)
+function MetallicBull({ scrollProgress }) {
+  const groupRef = useRef();
 
-  const geometry = useMemo(() => {
-    const geom = new THREE.BufferGeometry();
-    const vertices = new Float32Array([
-      0.0, -1.2, 0.8,
-      0.0, -0.2, 1.2,
-      0.0, 1.4, 0.5,
-      -1.4, -0.3, 0.2,
-      1.4, -0.3, 0.2,
-      -0.6, 0.6, 0.8,
-      0.6, 0.6, 0.8,
-      -1.8, 2.2, -0.2,
-      -0.5, 1.1, 0.3,
-      1.8, 2.2, -0.2,
-      0.5, 1.1, 0.3,
-      0.0, 0.2, -0.8,
-      0.0, -1.6, -0.2
-    ]);
+  const bodyGeometry = useMemo(() => {
+    const shape = new THREE.Shape();
+    // Muscular Charging Bull Body Profile
+    shape.moveTo(-1.2, -0.4);
+    shape.lineTo(-1.0, 0.5);
+    shape.lineTo(-0.3, 0.9);
+    shape.lineTo(0.5, 0.7);
+    shape.lineTo(1.1, 0.3);
+    shape.lineTo(1.3, -0.3);
+    shape.lineTo(0.6, -0.6);
+    shape.lineTo(-0.6, -0.6);
+    shape.closePath();
 
-    const indices = [
-      0, 1, 3,  0, 4, 1,  1, 5, 3,  1, 4, 6,
-      1, 6, 5,  5, 2, 8,  6, 10, 2, 5, 8, 2,
-      6, 2, 10, 5, 7, 8,  3, 7, 5,  6, 10, 9,
-      4, 6, 9,  0, 3, 12, 0, 12, 4, 7, 11, 8,
-      9, 10, 11, 3, 11, 7, 4, 9, 11, 12, 11, 3,
-      12, 4, 11
-    ];
+    const extrudeSettings = { depth: 0.8, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.15, bevelThickness: 0.15 };
+    return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  }, []);
 
-    geom.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geom.setIndex(indices);
-    geom.computeVertexNormals();
+  const hornGeometry = useMemo(() => {
+    const geom = new THREE.ConeGeometry(0.18, 1.2, 16);
+    geom.rotateZ(-Math.PI / 3);
     return geom;
   }, []);
 
   useFrame((state) => {
-    if (!meshRef.current) return;
+    if (!groupRef.current) return;
     const sp = scrollProgress.current || 0;
+    const time = state.clock.elapsedTime;
 
-    // Cinematic continuous motion across story scroll
-    const targetRotY = sp * Math.PI * 4 + Math.sin(state.clock.elapsedTime * 0.5) * 0.2;
-    const targetRotX = Math.sin(sp * Math.PI * 2) * 0.4 + Math.cos(state.clock.elapsedTime * 0.3) * 0.15;
-    const targetRotZ = Math.cos(sp * Math.PI) * 0.2;
+    // Charging Bull Momentum Motion
+    const targetX = -2.2 + Math.sin(sp * Math.PI * 3 + time * 0.8) * 1.5;
+    const targetY = 0.8 + Math.cos(time * 1.2) * 0.3 - sp * 1.2;
+    const targetZ = -1.5 + Math.cos(sp * Math.PI * 2) * 2.0;
 
-    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
-    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
-    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
+    groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.06);
+    groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.06);
+    groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, 0.06);
 
-    // Dynamic 3D positioning: pulls back in intro, shifts laterally, floats in trading floor, settles in footer
-    const targetX = Math.sin(sp * Math.PI * 3) * 2.2;
-    const targetY = Math.cos(sp * Math.PI * 2) * 1.5 - sp * 1.8;
-    const targetZ = -0.5 - sp * 4.0;
-    const targetScale = (0.95 - Math.sin(sp * Math.PI) * 0.25);
-
-    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.06);
-    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.06);
-    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.06);
-
-    meshRef.current.scale.setScalar(
-      THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.06)
-    );
+    groupRef.current.rotation.y = time * 0.4 + sp * Math.PI * 2;
+    groupRef.current.rotation.x = Math.sin(time * 0.8) * 0.15 + 0.1;
   });
 
   return (
-    <group ref={meshRef}>
-      <mesh geometry={geometry}>
+    <group ref={groupRef} scale={0.7}>
+      {/* Bull Main Body */}
+      <mesh geometry={bodyGeometry} position={[0, 0, -0.4]}>
         <meshStandardMaterial
-          color="#18181b"
-          metalness={0.96}
-          roughness={0.12}
-          envMapIntensity={3.2}
+          color="#064e3b"
+          metalness={0.92}
+          roughness={0.15}
+          emissive="#10b981"
+          emissiveIntensity={0.45}
         />
       </mesh>
 
-      <mesh geometry={geometry} scale={1.012} ref={wireframeRef}>
-        <meshBasicMaterial
-          color="#d97706"
-          wireframe={true}
-          transparent={true}
-          opacity={0.45}
+      {/* Horns */}
+      <mesh geometry={hornGeometry} position={[0.9, 0.7, 0.3]}>
+        <meshStandardMaterial color="#34d399" metalness={0.9} roughness={0.1} emissive="#059669" emissiveIntensity={0.8} />
+      </mesh>
+      <mesh geometry={hornGeometry} position={[0.9, 0.7, -0.3]}>
+        <meshStandardMaterial color="#34d399" metalness={0.9} roughness={0.1} emissive="#059669" emissiveIntensity={0.8} />
+      </mesh>
+
+      {/* Bull Head / Snout */}
+      <mesh position={[1.2, 0.2, 0]}>
+        <boxGeometry args={[0.7, 0.6, 0.7]} />
+        <meshStandardMaterial color="#047857" metalness={0.85} roughness={0.2} emissive="#10b981" emissiveIntensity={0.3} />
+      </mesh>
+
+      <pointLight color="#10b981" intensity={4} distance={6} position={[1, 0.5, 0]} />
+    </group>
+  );
+}
+
+// Procedural Sleek Metallic/Glowing Bear Model (Rose Red Theme)
+function MetallicBear({ scrollProgress }) {
+  const groupRef = useRef();
+
+  const bodyGeometry = useMemo(() => {
+    const shape = new THREE.Shape();
+    // Massive Power Bear Body Profile
+    shape.moveTo(-1.3, -0.6);
+    shape.lineTo(-1.1, 0.7);
+    shape.lineTo(-0.2, 1.1);
+    shape.lineTo(0.7, 0.8);
+    shape.lineTo(1.2, 0.1);
+    shape.lineTo(1.1, -0.5);
+    shape.lineTo(0.3, -0.8);
+    shape.lineTo(-0.7, -0.8);
+    shape.closePath();
+
+    const extrudeSettings = { depth: 0.9, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.18, bevelThickness: 0.18 };
+    return new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  }, []);
+
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    const sp = scrollProgress.current || 0;
+    const time = state.clock.elapsedTime;
+
+    // Bear Momentum Orbit Motion
+    const targetX = 2.2 - Math.sin(sp * Math.PI * 3 + time * 0.8) * 1.5;
+    const targetY = -0.6 - Math.sin(time * 1.1) * 0.3 - sp * 1.2;
+    const targetZ = -2.0 - Math.sin(sp * Math.PI * 2) * 1.8;
+
+    groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetX, 0.06);
+    groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetY, 0.06);
+    groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetZ, 0.06);
+
+    groupRef.current.rotation.y = -time * 0.4 - sp * Math.PI * 2;
+    groupRef.current.rotation.x = Math.cos(time * 0.7) * 0.15 - 0.1;
+  });
+
+  return (
+    <group ref={groupRef} scale={0.7}>
+      {/* Bear Main Body */}
+      <mesh geometry={bodyGeometry} position={[0, 0, -0.45]}>
+        <meshStandardMaterial
+          color="#881337"
+          metalness={0.92}
+          roughness={0.15}
+          emissive="#f43f5e"
+          emissiveIntensity={0.45}
         />
       </mesh>
 
-      <pointLight color="#f59e0b" intensity={5} distance={8} position={[0, 0, 0.5]} />
+      {/* Bear Head / Snout */}
+      <mesh position={[-1.2, 0.3, 0]}>
+        <boxGeometry args={[0.8, 0.7, 0.8]} />
+        <meshStandardMaterial color="#be123c" metalness={0.85} roughness={0.2} emissive="#f43f5e" emissiveIntensity={0.4} />
+      </mesh>
+
+      {/* Bear Claws / Ears */}
+      <mesh position={[-1.1, 0.8, 0.35]}>
+        <sphereGeometry args={[0.2, 12, 12]} />
+        <meshStandardMaterial color="#fb7185" metalness={0.9} roughness={0.1} emissive="#e11d48" emissiveIntensity={0.7} />
+      </mesh>
+      <mesh position={[-1.1, 0.8, -0.35]}>
+        <sphereGeometry args={[0.2, 12, 12]} />
+        <meshStandardMaterial color="#fb7185" metalness={0.9} roughness={0.1} emissive="#e11d48" emissiveIntensity={0.7} />
+      </mesh>
+
+      <pointLight color="#f43f5e" intensity={4} distance={6} position={[-1, 0.5, 0]} />
+    </group>
+  );
+}
+
+// 3D Animated NSE & BSE Floating Exchange Tokens & Light Waves
+function ExchangeTokens3D({ scrollProgress }) {
+  const nseRef = useRef();
+  const bseRef = useRef();
+  const waveRef = useRef();
+
+  useFrame((state) => {
+    const time = state.clock.elapsedTime;
+    const sp = scrollProgress.current || 0;
+
+    if (nseRef.current) {
+      nseRef.current.rotation.y = time * 0.8;
+      nseRef.current.position.y = 1.8 + Math.sin(time * 1.5) * 0.25 - sp * 2.0;
+      nseRef.current.position.x = -3.5 + Math.cos(sp * Math.PI) * 0.5;
+    }
+
+    if (bseRef.current) {
+      bseRef.current.rotation.y = -time * 0.8;
+      bseRef.current.position.y = 1.8 - Math.sin(time * 1.5) * 0.25 - sp * 2.0;
+      bseRef.current.position.x = 3.5 - Math.cos(sp * Math.PI) * 0.5;
+    }
+
+    if (waveRef.current) {
+      waveRef.current.rotation.z = time * 0.1;
+      waveRef.current.position.z = -4 - sp * 3;
+    }
+  });
+
+  return (
+    <group>
+      {/* NSE Floating 3D Gold Token Badge */}
+      <group ref={nseRef} position={[-3.5, 1.8, -2]}>
+        <mesh>
+          <cylinderGeometry args={[0.8, 0.8, 0.2, 32]} />
+          <meshStandardMaterial color="#18181b" metalness={0.95} roughness={0.1} emissive="#f59e0b" emissiveIntensity={0.3} />
+        </mesh>
+        <mesh position={[0, 0, 0.11]}>
+          <ringGeometry args={[0.5, 0.7, 32]} />
+          <meshStandardMaterial color="#fbbf24" metalness={0.9} roughness={0.1} emissive="#f59e0b" emissiveIntensity={0.8} />
+        </mesh>
+      </group>
+
+      {/* BSE Floating 3D Amber Token Badge */}
+      <group ref={bseRef} position={[3.5, 1.8, -2]}>
+        <mesh>
+          <cylinderGeometry args={[0.8, 0.8, 0.2, 32]} />
+          <meshStandardMaterial color="#18181b" metalness={0.95} roughness={0.1} emissive="#d97706" emissiveIntensity={0.3} />
+        </mesh>
+        <mesh position={[0, 0, 0.11]}>
+          <ringGeometry args={[0.5, 0.7, 32]} />
+          <meshStandardMaterial color="#f59e0b" metalness={0.9} roughness={0.1} emissive="#d97706" emissiveIntensity={0.8} />
+        </mesh>
+      </group>
+
+      {/* Animated Light Wave Ring */}
+      <group ref={waveRef} position={[0, -1, -4]} rotation={[Math.PI / 2.5, 0, 0]}>
+        <mesh>
+          <torusGeometry args={[7, 0.04, 16, 100]} />
+          <meshBasicMaterial color="#f59e0b" transparent opacity={0.35} />
+        </mesh>
+        <mesh rotation={[0, 0, Math.PI / 4]}>
+          <torusGeometry args={[8.5, 0.03, 16, 100]} />
+          <meshBasicMaterial color="#10b981" transparent opacity={0.25} />
+        </mesh>
+      </group>
     </group>
   );
 }
@@ -278,13 +406,15 @@ function SceneContent({ mousePos, scrollProgress }) {
       <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 7]} fov={50} />
 
       {/* Atmospheric Cinematic Lights */}
-      <ambientLight intensity={0.4} />
+      <ambientLight intensity={0.5} />
       <directionalLight position={[6, 10, 6]} intensity={3.0} color="#ffffff" />
       <directionalLight position={[-6, -5, -3]} intensity={1.5} color="#d97706" />
       <pointLight position={[0, 2, 1]} intensity={3.5} color="#10b981" />
 
-      {/* Story 3D Objects */}
-      <MetallicFoxHead scrollProgress={scrollProgress} />
+      {/* Story 3D Objects: Bull & Bear Momentum + NSE/BSE Tokens */}
+      <MetallicBull scrollProgress={scrollProgress} />
+      <MetallicBear scrollProgress={scrollProgress} />
+      <ExchangeTokens3D scrollProgress={scrollProgress} />
       <FloatingCandlesticks scrollProgress={scrollProgress} />
       <Infinite3DGrid scrollProgress={scrollProgress} />
       <ParticleField scrollProgress={scrollProgress} />

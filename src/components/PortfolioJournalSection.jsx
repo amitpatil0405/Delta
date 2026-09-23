@@ -1,11 +1,8 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
 import { BookOpen, Calendar } from 'lucide-react';
-import MountainClimbersOverlay from './MountainClimbersOverlay';
-import portfolioBg from '../assets/portfolio_bg.jpg';
-import { getISTMarketStatus } from '../services/marketData';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
 const TRADES_STORAGE_KEY = 'deltafox_portfolio_trades_v5';
@@ -171,18 +168,6 @@ function parseCSVRows(csvText) {
 }
 
 export default function PortfolioJournalSection() {
-  // Container ref and dimensions state for overlay rendering
-  const chartContainerRef = useRef(null);
-  const [chartDims, setChartDims] = useState({ width: 0, height: 0 });
-  const [marketStatusInfo, setMarketStatusInfo] = useState(() => getISTMarketStatus());
-
-  useEffect(() => {
-    const statusTimer = setInterval(() => {
-      setMarketStatusInfo(getISTMarketStatus());
-    }, 10000);
-    return () => clearInterval(statusTimer);
-  }, []);
-
   // Responsive mobile state tracking
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -194,35 +179,9 @@ export default function PortfolioJournalSection() {
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
-      if (chartContainerRef.current) {
-        setChartDims({
-          width: chartContainerRef.current.clientWidth || chartContainerRef.current.getBoundingClientRect().width,
-          height: chartContainerRef.current.clientHeight || chartContainerRef.current.getBoundingClientRect().height || 280
-        });
-      }
     };
-    handleResize();
     window.addEventListener('resize', handleResize);
-
-    let observer;
-    if (chartContainerRef.current && typeof ResizeObserver !== 'undefined') {
-      observer = new ResizeObserver((entries) => {
-        for (const entry of entries) {
-          if (entry.contentRect) {
-            setChartDims({
-              width: entry.contentRect.width,
-              height: entry.contentRect.height || 280
-            });
-          }
-        }
-      });
-      observer.observe(chartContainerRef.current);
-    }
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      if (observer) observer.disconnect();
-    };
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Trades state initialized from local cache
@@ -344,9 +303,9 @@ export default function PortfolioJournalSection() {
     ? Math.abs(losingTrades.reduce((acc, t) => acc + t.manualPnl, 0) / losingTrades.length)
     : 0;
 
-  // Cumulative P&L curve dataset starting from Origin (Tent Basecamp at index 0, PnL = 0)
+  // Cumulative P&L curve dataset
   let runningPnl = 0;
-  const rawPnlCurveData = closedTrades.map((t, idx) => {
+  const pnlCurveData = closedTrades.map((t, idx) => {
     runningPnl += t.manualPnl;
     return {
       trade: `Trade ${idx + 1}`,
@@ -355,83 +314,41 @@ export default function PortfolioJournalSection() {
       tradePnl: t.manualPnl,
       symbol: t.symbol,
       strategy: t.strategy,
-      date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date,
-      isOrigin: false
+      date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date
     };
   });
-
-  const pnlCurveData = [
-    {
-      trade: '',
-      tradeNum: '#0',
-      pnl: 0,
-      tradePnl: 0,
-      symbol: 'BASECAMP',
-      strategy: 'ORIGIN',
-      date: 'START',
-      isOrigin: true
-    },
-    ...rawPnlCurveData
-  ];
 
   // Calculate sampled ticks for mobile viewport so only selected ticks/vertical lines show on mobile
   const mobileTicks = useMemo(() => {
     if (!pnlCurveData.length) return [];
-    const tradedItems = pnlCurveData.filter(d => !d.isOrigin);
-    if (tradedItems.length <= 5) {
+    if (pnlCurveData.length <= 5) {
       return pnlCurveData.map(d => d.trade);
     }
-    const ticks = ['']; // Include origin tick
-    const step = Math.ceil(tradedItems.length / 5);
-    for (let i = 0; i < tradedItems.length; i += step) {
-      ticks.push(tradedItems[i].trade);
+    const ticks = [];
+    const step = Math.ceil(pnlCurveData.length / 5);
+    for (let i = 0; i < pnlCurveData.length; i += step) {
+      ticks.push(pnlCurveData[i].trade);
     }
-    const lastTrade = tradedItems[tradedItems.length - 1].trade;
+    const lastTrade = pnlCurveData[pnlCurveData.length - 1].trade;
     if (!ticks.includes(lastTrade)) {
       ticks.push(lastTrade);
     }
     return ticks;
   }, [pnlCurveData]);
 
-  // Calculate explicit Y-axis domain boundaries shared with MountainClimbersOverlay
-  const { chartMinPnl, chartMaxPnl } = useMemo(() => {
-    if (pnlCurveData.length === 0) return { chartMinPnl: 0, chartMaxPnl: 1000 };
-    const pnlVals = pnlCurveData.map(d => d.pnl);
-    const min = Math.min(...pnlVals, 0);
-    const max = Math.max(...pnlVals, 0);
-
-    // Choose nice tick step matching getNiceDomain
-    let minP = Math.min(min, 0);
-    let maxP = Math.max(max, 0);
-    if (minP === maxP) {
-      minP = minP < 0 ? minP * 1.1 : -1000;
-      maxP = maxP > 0 ? maxP * 1.1 : 1000;
-    }
-    const range = maxP - minP;
-    const rawStep = range / 3;
-    const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
-    const residual = rawStep / mag;
-    let step;
-    if (residual < 1.5) step = 1 * mag;
-    else if (residual < 3) step = 2 * mag;
-    else if (residual < 7) step = 5 * mag;
-    else step = 10 * mag;
-
-    const niceMin = Math.floor(minP / step) * step;
-    const niceMax = Math.ceil(maxP / step) * step;
-    return { chartMinPnl: niceMin, chartMaxPnl: niceMax };
-  }, [pnlCurveData]);
-
   // Calculate dynamic zero-baseline gradient offset for smooth Red/Green transition
   const pnlGradientStats = useMemo(() => {
     if (pnlCurveData.length === 0) return { offset: 0, isAllPos: true, isAllNeg: false };
+    const pnlVals = pnlCurveData.map(d => d.pnl);
+    const maxPnl = Math.max(...pnlVals, 0);
+    const minPnl = Math.min(...pnlVals, 0);
 
-    if (chartMaxPnl <= 0) return { offset: 0, isAllPos: false, isAllNeg: true };
-    if (chartMinPnl >= 0) return { offset: 1, isAllPos: true, isAllNeg: false };
+    if (maxPnl <= 0) return { offset: 0, isAllPos: false, isAllNeg: true };
+    if (minPnl >= 0) return { offset: 1, isAllPos: true, isAllNeg: false };
 
-    const offset = chartMaxPnl / (chartMaxPnl - chartMinPnl);
+    const offset = maxPnl / (maxPnl - minPnl);
     return { offset, isAllPos: false, isAllNeg: false };
-  }, [pnlCurveData, chartMinPnl, chartMaxPnl]);
+  }, [pnlCurveData]);
 
   // Pagination State for Journal Records Table (20 records per page)
   const ITEMS_PER_PAGE = 20;
@@ -547,13 +464,6 @@ export default function PortfolioJournalSection() {
 
   return (
     <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid border-t border-white/5 relative overflow-hidden">
-      {/* Darkened Mountain Peak Background Layer */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 pointer-events-none"
-        style={{ backgroundImage: `url(${portfolioBg})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/90 via-black/75 to-[#050505]/95 pointer-events-none" />
-
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber top-10 right-10" />
       <div className="ambient-glow-emerald bottom-10 left-10" />
@@ -587,8 +497,7 @@ export default function PortfolioJournalSection() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <div
             onClick={() => toggleGlowBox('stat-1')}
-            onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-1'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -602,8 +511,7 @@ export default function PortfolioJournalSection() {
 
           <div
             onClick={() => toggleGlowBox('stat-2')}
-            onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-2'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -620,8 +528,7 @@ export default function PortfolioJournalSection() {
 
           <div
             onClick={() => toggleGlowBox('stat-3')}
-            onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-3'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -636,8 +543,7 @@ export default function PortfolioJournalSection() {
 
           <div
             onClick={() => toggleGlowBox('stat-4')}
-            onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-4'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -659,8 +565,7 @@ export default function PortfolioJournalSection() {
             if (e.target.closest('.heatmap-box') || e.target.closest('button')) return;
             toggleGlowBox('heatmap-container');
           }}
-          onMouseLeave={() => setActiveGlowBox(null)}
-          className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
+          className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
             activeGlowBox === 'heatmap-container'
               ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
               : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -852,8 +757,7 @@ export default function PortfolioJournalSection() {
         {pnlCurveData.length > 0 && (
           <div
             onClick={() => toggleGlowBox('graph-container')}
-            onMouseLeave={() => setActiveGlowBox(null)}
-            className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-4 sm:p-6 border transition-all duration-300 relative space-y-4 ${
+            className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
               activeGlowBox === 'graph-container'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -863,27 +767,12 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <div ref={chartContainerRef} className="h-[280px] sm:h-[320px] w-full relative">
-              <MountainClimbersOverlay
-                pnlData={pnlCurveData}
-                containerWidth={chartDims.width}
-                containerHeight={chartDims.height}
-                marketStatus={marketStatusInfo.status}
-                minPnlProp={chartMinPnl}
-                maxPnlProp={chartMaxPnl}
-              />
+            <div className="h-[280px] w-full pt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={pnlCurveData} margin={{ top: isMobile ? 15 : 65, right: isMobile ? 10 : 25, left: isMobile ? 0 : 10, bottom: 5 }}>
+                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 0 }}>
                   <defs>
-                    {/* UserSpaceOnUse Stroke Gradient: Smooth transition across zero baseline */}
-                    <linearGradient
-                      id="pnlStrokeGradient"
-                      gradientUnits="userSpaceOnUse"
-                      x1="0"
-                      y1={isMobile ? 15 : 65}
-                      x2="0"
-                      y2={(isMobile ? 15 : 65) + Math.max(10, chartDims.height - (isMobile ? 30 : 100))}
-                    >
+                    {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
+                    <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
                       {pnlGradientStats.isAllPos ? (
                         <>
                           <stop offset="0%" stopColor="#10b981" />
@@ -897,39 +786,31 @@ export default function PortfolioJournalSection() {
                       ) : (
                         <>
                           <stop offset="0%" stopColor="#10b981" />
-                          <stop offset={`${Math.max(0, pnlGradientStats.offset * 100 - 4)}%`} stopColor="#10b981" />
-                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#10b981" />
-                          <stop offset={`${Math.min(100, pnlGradientStats.offset * 100 + 4)}%`} stopColor="#f43f5e" />
+                          <stop offset={`${Math.max(0, pnlGradientStats.offset * 100 - 6)}%`} stopColor="#10b981" />
+                          <stop offset={`${Math.min(100, pnlGradientStats.offset * 100 + 6)}%`} stopColor="#f43f5e" />
                           <stop offset="100%" stopColor="#f43f5e" />
                         </>
                       )}
                     </linearGradient>
 
-                    {/* UserSpaceOnUse Area Gradient: Pure green above 0 baseline, pure red below 0 baseline */}
-                    <linearGradient
-                      id="pnlAreaGradient"
-                      gradientUnits="userSpaceOnUse"
-                      x1="0"
-                      y1={65}
-                      x2="0"
-                      y2={65 + Math.max(10, chartDims.height - 100)}
-                    >
+                    {/* Dynamic Fill Area Gradient */}
+                    <linearGradient id="pnlAreaGradient" x1="0" y1="0" x2="0" y2="1">
                       {pnlGradientStats.isAllPos ? (
                         <>
-                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
-                          <stop offset="100%" stopColor="#10b981" stopOpacity={0.05} />
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
+                          <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
                         </>
                       ) : pnlGradientStats.isAllNeg ? (
                         <>
-                          <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.05} />
-                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.4} />
+                          <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.02} />
+                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.35} />
                         </>
                       ) : (
                         <>
-                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.4} />
-                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#10b981" stopOpacity={0.05} />
-                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#f43f5e" stopOpacity={0.05} />
-                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.4} />
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
+                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#10b981" stopOpacity={0.03} />
+                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#f43f5e" stopOpacity={0.03} />
+                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.35} />
                         </>
                       )}
                     </linearGradient>
@@ -944,23 +825,13 @@ export default function PortfolioJournalSection() {
                     ticks={isMobile ? mobileTicks : undefined}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
-                    height={30}
                   />
-                  <YAxis
-                    domain={[chartMinPnl, chartMaxPnl]}
-                    width={60}
-                    stroke="#666"
-                    tick={{ fontSize: 11, fill: '#888' }}
-                    axisLine={{ stroke: '#333' }}
-                    tickLine={false}
-                    tickFormatter={(value) => (value === 0 ? '' : value)}
-                  />
+                  <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} axisLine={{ stroke: '#333' }} tickLine={false} />
 
                   <RechartsTooltip
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
-                        if (data.isOrigin) return null;
                         const val = data.pnl;
                         const tradePnlVal = data.tradePnl;
                         const isNeg = val < 0;
@@ -1003,20 +874,18 @@ export default function PortfolioJournalSection() {
                   <Area
                     type="monotone"
                     dataKey="pnl"
-                    baseValue={0}
                     stroke="url(#pnlStrokeGradient)"
-                    strokeWidth={2.5}
-                    dot={false}
+                    strokeWidth={3}
                     fillOpacity={1}
                     fill="url(#pnlAreaGradient)"
                     activeDot={({ cx, cy, payload }) => {
-                      if (!cx || !cy || !payload || payload.isOrigin) return null;
+                      if (!cx || !cy || !payload) return null;
                       const isNeg = payload.pnl < 0;
                       const dotColor = isNeg ? '#f43f5e' : '#10b981';
                       return (
                         <g key={`dot_${cx}_${cy}`}>
-                          <circle cx={cx} cy={cy} r={6} fill={dotColor} fillOpacity={0.4} />
-                          <circle cx={cx} cy={cy} r={4} fill={dotColor} stroke="#ffffff" strokeWidth={1.5} />
+                          <circle cx={cx} cy={cy} r={7} fill={dotColor} fillOpacity={0.3} />
+                          <circle cx={cx} cy={cy} r={4.5} fill={dotColor} stroke="#ffffff" strokeWidth={2} />
                         </g>
                       );
                     }}
@@ -1033,8 +902,7 @@ export default function PortfolioJournalSection() {
             if (e.target.closest('button') || e.target.closest('tr')) return;
             toggleGlowBox('table-container');
           }}
-          onMouseLeave={() => setActiveGlowBox(null)}
-          className={`bg-[#0a0a0c]/65 backdrop-blur-xl rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
+          className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
             activeGlowBox === 'table-container'
               ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
               : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
