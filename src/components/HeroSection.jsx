@@ -10,7 +10,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
   }, []);
 
   return (
-    <section id="home" className="relative min-h-fit sm:min-h-screen pt-24 sm:pt-36 pb-8 sm:pb-20 flex flex-col justify-center items-center overflow-hidden bg-transparent">
+    <section id="home" className="relative min-h-[100dvh] sm:min-h-screen pt-24 sm:pt-36 pb-12 sm:pb-20 flex flex-col justify-center items-center overflow-hidden bg-transparent">
 
       {/* Hero Lighting Gradients */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
