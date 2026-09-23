@@ -32,6 +32,7 @@ export default function MountainClimbersOverlay({
   const [climbProgress, setClimbProgress] = useState(0.0);
   const [isDescending, setIsDescending] = useState(false);
   const [isResting, setIsResting] = useState(false);
+  const [tentTagline, setTentTagline] = useState('Taking rest');
   const [pathLength, setPathLength] = useState(0);
   const [walkPhase, setWalkPhase] = useState(0);
 
@@ -103,39 +104,62 @@ export default function MountainClimbersOverlay({
 
       const isWeekend = istDate.getDay() === 0 || istDate.getDay() === 6;
 
-      const startAscent = 9 * 60 + 30;  // 09:30 AM IST
-      const reachPeak   = 12 * 60 + 30; // 12:30 PM IST
-      const leavePeak   = 12 * 60 + 35; // 12:35 PM IST
-      const reachTent   = 15 * 60 + 40; // 03:40 PM IST
-      const restTime    = 15 * 60 + 45; // 03:45 PM IST
+      const preOpenStart  = 9 * 60;        // 09:00 AM IST
+      const startAscent   = 9 * 60 + 30;   // 09:30 AM IST
+      const journey5Min   = 9 * 60 + 35;   // 09:35 AM IST (5 mins after ascent)
+      const reachPeak     = 12 * 60 + 30;  // 12:30 PM IST
+      const leavePeak     = 12 * 60 + 35;  // 12:35 PM IST
+      const reachTent     = 15 * 60 + 40;  // 03:40 PM IST
+      const restTime      = 15 * 60 + 45;  // 03:45 PM IST
 
       let progress = 0;
       let descending = false;
       let isMoving = false;
       let resting = false;
+      let tagline = null;
 
-      if (!isWeekend && istMinutes >= startAscent && istMinutes < restTime) {
-        if (istMinutes < reachPeak) {
+      const isPreMarketProp = typeof marketStatus === 'string' && (marketStatus.includes('PRE') || marketStatus.includes('Pre'));
+
+      if (!isWeekend && ((istMinutes >= preOpenStart && istMinutes < restTime) || isPreMarketProp)) {
+        if (isPreMarketProp || istMinutes < startAscent) {
+          // Pre-Open session (09:00 AM - 09:30 AM IST): Both climbers visible at start point, tagline "Preparing" in yellow
+          progress = 0;
+          descending = false;
+          isMoving = false;
+          resting = false;
+          tagline = 'Preparing';
+        } else if (istMinutes < reachPeak) {
+          // Ascent (09:30 AM - 12:30 PM IST)
           progress = (istMinutes - startAscent) / (reachPeak - startAscent);
           descending = false;
           isMoving = true;
           resting = false;
+
+          // "Journey started" in green for 5 mins after journey start
+          if (istMinutes < journey5Min) {
+            tagline = 'Journey started';
+          } else {
+            tagline = null;
+          }
         } else if (istMinutes <= leavePeak) {
           progress = 1.0;
           descending = false;
           isMoving = false;
           resting = false;
+          tagline = null;
         } else if (istMinutes <= reachTent) {
           progress = 1.0 - (istMinutes - leavePeak) / (reachTent - leavePeak);
           descending = true;
           isMoving = true;
           resting = false;
+          tagline = null;
         } else {
           // Between 3:40 PM and 3:45 PM: At tent
           progress = 0;
           descending = true;
           isMoving = false;
           resting = false;
+          tagline = null;
         }
       } else {
         // At 3:45 PM and onwards or off-market hours: Hide climbers & show "Taking rest"
@@ -143,11 +167,13 @@ export default function MountainClimbersOverlay({
         descending = false;
         isMoving = false;
         resting = true;
+        tagline = 'Taking rest';
       }
 
       setClimbProgress(Math.max(0, Math.min(1, progress)));
       setIsDescending(descending);
       setIsResting(resting);
+      setTentTagline(tagline);
 
       if (isMoving) {
         setWalkPhase((prev) => (prev + 0.15) % (Math.PI * 2));
@@ -160,7 +186,7 @@ export default function MountainClimbersOverlay({
 
     animFrameId = requestAnimationFrame(updateScheduleAndWalk);
     return () => cancelAnimationFrame(animFrameId);
-  }, []);
+  }, [marketStatus]);
 
   if (pnlData.length === 0 || points.length === 0) {
     return null;
@@ -296,8 +322,26 @@ export default function MountainClimbersOverlay({
             height="36"
             preserveAspectRatio="xMidYMid meet"
           />
-          {/* Taking Rest Tagline displayed when climbers are resting (after 3:45 PM IST / off-market) */}
-          {isResting && (
+          {/* Dynamic Tent Tagline */}
+          {tentTagline === 'Preparing' && (
+            <foreignObject x="-25" y="-22" width="90" height="20">
+              <div className="flex items-center justify-center">
+                <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
+                  Preparing
+                </span>
+              </div>
+            </foreignObject>
+          )}
+          {tentTagline === 'Journey started' && (
+            <foreignObject x="-35" y="-22" width="110" height="20">
+              <div className="flex items-center justify-center">
+                <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.4)] whitespace-nowrap animate-pulse">
+                  Journey started
+                </span>
+              </div>
+            </foreignObject>
+          )}
+          {tentTagline === 'Taking rest' && (
             <foreignObject x="-25" y="-22" width="90" height="20">
               <div className="flex items-center justify-center">
                 <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
