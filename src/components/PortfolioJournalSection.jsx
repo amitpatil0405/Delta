@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
 import { BookOpen, Calendar } from 'lucide-react';
+import MountainClimbersOverlay from './MountainClimbersOverlay';
+import { useMarket } from '../context/MarketContext';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
 const TRADES_STORAGE_KEY = 'deltafox_portfolio_trades_v5';
@@ -168,6 +170,10 @@ function parseCSVRows(csvText) {
 }
 
 export default function PortfolioJournalSection() {
+  const { marketStatus } = useMarket();
+  const graphContainerRef = useRef(null);
+  const [graphDimensions, setGraphDimensions] = useState({ width: 0, height: 280 });
+
   // Responsive mobile state tracking
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -182,6 +188,23 @@ export default function PortfolioJournalSection() {
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Measure graph container dimensions dynamically for MountainClimbersOverlay
+  useEffect(() => {
+    if (!graphContainerRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        if (entry.contentRect) {
+          setGraphDimensions({
+            width: entry.contentRect.width,
+            height: entry.contentRect.height
+          });
+        }
+      }
+    });
+    observer.observe(graphContainerRef.current);
+    return () => observer.disconnect();
   }, []);
 
   // Trades state initialized from local cache
@@ -767,7 +790,15 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <div className="h-[280px] w-full pt-2">
+            <div ref={graphContainerRef} className="h-[280px] w-full pt-2 relative">
+              <MountainClimbersOverlay
+                pnlData={pnlCurveData}
+                containerWidth={graphDimensions.width}
+                containerHeight={graphDimensions.height}
+                marketStatus={marketStatus}
+                minPnlProp={Math.min(...pnlCurveData.map(d => d.pnl), 0)}
+                maxPnlProp={Math.max(...pnlCurveData.map(d => d.pnl), 0)}
+              />
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 0 }}>
                   <defs>
