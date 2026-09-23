@@ -121,7 +121,7 @@ export default function MountainClimbersOverlay({
         statusStr = marketStatus.message.toUpperCase();
       }
 
-      const isHolidayToday = !isWeekend && (statusStr.includes('HOLIDAY') || statusStr.includes('CLOSED'));
+      const isScheduledHoliday = statusStr.includes('HOLIDAY') || (statusStr.includes('CLOSED') && !statusStr.includes('MARKET CLOSED'));
 
       const preOpenStart  = 9 * 60;        // 09:00 AM IST
       const startAscent   = 9 * 60 + 15;   // 09:15 AM IST
@@ -138,8 +138,8 @@ export default function MountainClimbersOverlay({
       let holiday = false;
       let tagline = null;
 
-      if (isHolidayToday) {
-        // Weekday Market Closed / Holiday: Show "Holiday today" near tent
+      if (isScheduledHoliday && !isWeekend && (istMinutes < preOpenStart || istMinutes >= restTime)) {
+        // Scheduled Holiday: Show "Holiday today" near tent
         progress = 0;
         descending = false;
         isMoving = false;
@@ -400,14 +400,16 @@ export default function MountainClimbersOverlay({
 
         {/* Pine Trees at every 5th trade (5, 10, 15, 20...) touching the curve */}
         {points.map((pt, idx) => {
-          const tradeNum = idx + 1;
-          if (tradeNum % 5 === 0) {
+          if (pt.isOrigin) return null;
+          // Actual trade index is idx since idx 0 is origin
+          const tradeNum = idx;
+          if (tradeNum > 0 && tradeNum % 5 === 0) {
             return (
               <g key={`tree_${tradeNum}`} transform={`translate(${pt.x}, ${pt.y})`}>
-                {/* Base anchor dot directly on curve */}
-                <circle cx="0" cy="0" r="2.5" fill="#10b981" />
+                {/* Base anchor dot directly on curve line */}
+                <circle cx="0" cy="0" r="2" fill="#10b981" />
                 {/* Clean Pine Tree vector sitting directly on top of curve */}
-                <g transform="translate(-8, -20)">
+                <g transform="translate(-8, -19.5)">
                   <rect x="7.2" y="14" width="1.6" height="6" fill="#78350f" />
                   <polygon points="8,1 2,7 14,7" fill="#059669" />
                   <polygon points="8,5 1,12 15,12" fill="#10b981" />
