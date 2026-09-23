@@ -10,7 +10,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen pt-20 sm:pt-36 pb-12 sm:pb-20 flex flex-col justify-center items-center overflow-hidden bg-transparent">
+    <section id="home" className="relative min-h-fit sm:min-h-screen pt-24 sm:pt-36 pb-8 sm:pb-20 flex flex-col justify-center items-center overflow-hidden bg-transparent">
 
       {/* Hero Lighting Gradients */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none" />
@@ -21,7 +21,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
 
         {/* Animated Brand Badge in Premium Golden/Amber Theme */}
         <div
-          className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase mb-4 sm:mb-8 shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all duration-700 ${
+          className={`inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase mb-6 sm:mb-8 shadow-[0_0_15px_rgba(245,158,11,0.2)] transition-all duration-700 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
