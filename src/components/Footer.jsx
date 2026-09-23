@@ -18,16 +18,16 @@ export default function Footer({ onNavigate }) {
     <footer className="bg-transparent border-t border-white/10 text-gray-400 font-sans relative overflow-hidden">
 
       {/* Pre-Footer Final Brand Scene with Enhanced Ambient Glow & Particle Canvas */}
-      <div className="py-8 sm:py-10 border-b border-white/10 text-center relative overflow-hidden bg-transparent">
+      <div className="pt-4 pb-8 sm:pt-6 sm:pb-10 border-b border-white/10 text-center relative overflow-hidden bg-transparent">
 
         {/* Animated Glowing Background Sphere */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse" />
         <div className="absolute inset-0 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:20px_20px] opacity-10 pointer-events-none" />
 
-        <div className="max-w-4xl mx-auto px-4 space-y-3 sm:space-y-4 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 relative z-10 flex flex-col items-center">
 
-          {/* Enlarged DeltaFox Emblem */}
-          <div className="w-60 h-60 sm:w-80 sm:h-80 md:w-[380px] md:h-[380px] mx-auto relative group cursor-pointer" onClick={() => handleLinkClick('home')}>
+          {/* Compact DeltaFox Emblem with Reduced Bottom Margin */}
+          <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-[280px] md:h-[280px] mx-auto relative group cursor-pointer -mb-4 sm:-mb-6 md:-mb-8" onClick={() => handleLinkClick('home')}>
             <img
               src={logoImg}
               alt="DELTAFOX Emblem"
@@ -35,16 +35,18 @@ export default function Footer({ onNavigate }) {
             />
           </div>
 
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-white font-mono tracking-tight uppercase leading-tight">
-            TRADE WITH LOGIC.{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic font-serif">
-              MOVE WITH THE MARKET.
-            </span>
-          </h2>
+          <div className="space-y-2 sm:space-y-3">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white font-mono tracking-tight uppercase leading-tight">
+              TRADE WITH LOGIC.{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic font-serif">
+                MOVE WITH THE MARKET.
+              </span>
+            </h2>
 
-          <p className="text-sm text-gray-300 max-w-lg mx-auto font-mono tracking-wide">
-            Systematic Options Trading • Market Intelligence • Risk Management
-          </p>
+            <p className="text-xs sm:text-sm text-gray-300 max-w-lg mx-auto font-mono tracking-wide">
+              Systematic Options Trading • Market Intelligence • Risk Management
+            </p>
+          </div>
 
         </div>
       </div>
