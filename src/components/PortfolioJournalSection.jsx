@@ -546,7 +546,7 @@ export default function PortfolioJournalSection() {
   const endMonthName = `${MONTH_NAMES[fyConfig.endMonth]} ${fyConfig.endYear}`;
 
   return (
-    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid border-t border-white/5 relative overflow-hidden">
       {/* Darkened Mountain Peak Background Layer */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 pointer-events-none"

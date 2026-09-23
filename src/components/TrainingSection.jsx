@@ -82,7 +82,7 @@ export default function TrainingSection() {
   };
 
   return (
-    <section id="training" className="relative pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 overflow-hidden">
+    <section id="training" className="relative pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid border-t border-white/5 overflow-hidden">
 
       {/* Ambient Radial Glow Lighting */}
       <div className="ambient-glow-amber top-10 left-10" />
