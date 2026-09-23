@@ -18,13 +18,13 @@ export default function Footer({ onNavigate }) {
     <footer className="bg-[#030304] border-t border-white/10 text-gray-400 font-sans relative overflow-hidden">
 
       {/* Pre-Footer Final Brand Scene with Enhanced Ambient Glow & Particle Canvas */}
-      <div className="py-24 border-b border-white/10 text-center relative overflow-hidden bg-gradient-to-b from-[#050505] via-[#09090d] to-[#030304]">
+      <div className="py-8 sm:py-10 border-b border-white/10 text-center relative overflow-hidden bg-gradient-to-b from-[#050505] via-[#09090d] to-[#030304]">
 
         {/* Animated Glowing Background Sphere */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse" />
         <div className="absolute inset-0 bg-[radial-gradient(#d97706_1px,transparent_1px)] [background-size:20px_20px] opacity-10 pointer-events-none" />
 
-        <div className="max-w-4xl mx-auto px-4 space-y-8 relative z-10">
+        <div className="max-w-4xl mx-auto px-4 space-y-3 sm:space-y-4 relative z-10">
 
           {/* Enlarged DeltaFox Emblem */}
           <div className="w-60 h-60 sm:w-80 sm:h-80 md:w-[380px] md:h-[380px] mx-auto relative group cursor-pointer" onClick={() => handleLinkClick('home')}>
