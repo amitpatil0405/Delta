@@ -32,6 +32,7 @@ export default function MountainClimbersOverlay({
   const [climbProgress, setClimbProgress] = useState(0.0);
   const [isDescending, setIsDescending] = useState(false);
   const [isResting, setIsResting] = useState(false);
+  const [isWalking, setIsWalking] = useState(false);
   const [tentTagline, setTentTagline] = useState('Taking rest');
   const [pathLength, setPathLength] = useState(0);
   const [walkPhase, setWalkPhase] = useState(0);
@@ -173,6 +174,7 @@ export default function MountainClimbersOverlay({
       setClimbProgress(Math.max(0, Math.min(1, progress)));
       setIsDescending(descending);
       setIsResting(resting);
+      setIsWalking(isMoving);
       setTentTagline(tagline);
 
       if (isMoving) {
@@ -487,35 +489,37 @@ export default function MountainClimbersOverlay({
                 </div>
               </foreignObject>
             ) : (
-              <>
-                {/* FOLLOWER Badge directly above Follower with clear head clearance */}
-                <foreignObject
-                  x={followerPos.x - 35}
-                  y={followerPos.y - 48}
-                  width="70"
-                  height="20"
-                >
-                  <div className="flex justify-center items-center h-full">
-                    <span className="bg-[#0c0c0e]/95 text-sky-400 border border-sky-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
-                      FOLLOWER
-                    </span>
-                  </div>
-                </foreignObject>
+              isWalking && (
+                <>
+                  {/* FOLLOWER Badge directly above Follower with clear head clearance */}
+                  <foreignObject
+                    x={followerPos.x - 35}
+                    y={followerPos.y - 48}
+                    width="70"
+                    height="20"
+                  >
+                    <div className="flex justify-center items-center h-full">
+                      <span className="bg-[#0c0c0e]/95 text-sky-400 border border-sky-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
+                        FOLLOWER
+                      </span>
+                    </div>
+                  </foreignObject>
 
-                {/* LEADER Badge directly above Leader with clear head clearance */}
-                <foreignObject
-                  x={leadPos.x - 30}
-                  y={leadPos.y - 48}
-                  width="60"
-                  height="20"
-                >
-                  <div className="flex justify-center items-center h-full">
-                    <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
-                      LEADER
-                    </span>
-                  </div>
-                </foreignObject>
-              </>
+                  {/* LEADER Badge directly above Leader with clear head clearance */}
+                  <foreignObject
+                    x={leadPos.x - 30}
+                    y={leadPos.y - 48}
+                    width="60"
+                    height="20"
+                  >
+                    <div className="flex justify-center items-center h-full">
+                      <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
+                        LEADER
+                      </span>
+                    </div>
+                  </foreignObject>
+                </>
+              )
             )}
           </g>
         )}
