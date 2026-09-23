@@ -26,56 +26,76 @@ class ThreeErrorBoundary extends Component {
   }
 }
 
-// 3D Floating Candlesticks & Delta Symbols (Phase 2 & 3)
-function FloatingCandlesticks({ scrollProgress }) {
+// 3D Floating Candlesticks with Randomized Refresh Spawns & Parallax
+function FloatingCandlesticks({ mousePos, scrollProgress }) {
   const groupRef = useRef();
 
+  // Randomized positions, rotations, heights, and scales generated on page refresh
   const candles = useMemo(() => {
     const items = [];
-    const count = 18;
+    const count = 22;
     for (let i = 0; i < count; i++) {
       const isGreen = i % 2 === 0;
       items.push({
         id: i,
         isGreen,
-        x: (Math.random() - 0.5) * 14,
-        y: (Math.random() - 0.5) * 12 - i * 0.8,
-        z: -Math.random() * 10 - 2,
-        height: 0.8 + Math.random() * 1.5,
-        rotSpeed: (Math.random() - 0.5) * 0.02,
-        scale: 0.3 + Math.random() * 0.4
+        x: (Math.random() - 0.5) * 16,
+        y: (Math.random() - 0.5) * 14 - (i - count / 2) * 0.4,
+        z: -Math.random() * 12 - 1,
+        rotX: (Math.random() - 0.5) * 0.6,
+        rotY: (Math.random() - 0.5) * 0.6,
+        rotZ: (Math.random() - 0.5) * 0.4,
+        height: 0.9 + Math.random() * 1.8,
+        scale: 0.35 + Math.random() * 0.45
       });
     }
     return items;
   }, []);
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!groupRef.current) return;
     const sp = scrollProgress.current || 0;
+    const mx = mousePos.current?.x || 0;
+    const my = mousePos.current?.y || 0;
 
-    groupRef.current.rotation.y = state.clock.elapsedTime * 0.15 + sp * Math.PI;
-    groupRef.current.position.z = -sp * 6;
-    groupRef.current.position.y = sp * 4;
+    // Target positions and rotations based purely on Scroll & Mouse Cursor Parallax (NO auto-spin time loops)
+    const targetRotY = sp * Math.PI * 0.8 + mx * 0.25;
+    const targetRotX = my * 0.2;
+    const targetPosZ = -sp * 5;
+    const targetPosY = sp * 3.5;
+    const targetPosX = mx * 0.5;
+
+    // Smooth lerp to targets; when idle, stays completely static
+    groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetRotY, 0.08);
+    groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetRotX, 0.08);
+    groupRef.current.position.z = THREE.MathUtils.lerp(groupRef.current.position.z, targetPosZ, 0.08);
+    groupRef.current.position.y = THREE.MathUtils.lerp(groupRef.current.position.y, targetPosY, 0.08);
+    groupRef.current.position.x = THREE.MathUtils.lerp(groupRef.current.position.x, targetPosX, 0.08);
   });
 
   return (
     <group ref={groupRef}>
       {candles.map((c) => (
-        <group key={c.id} position={[c.x, c.y, c.z]} scale={c.scale}>
+        <group
+          key={c.id}
+          position={[c.x, c.y, c.z]}
+          rotation={[c.rotX, c.rotY, c.rotZ]}
+          scale={c.scale}
+        >
           {/* Wick */}
           <mesh position={[0, 0, 0]}>
             <cylinderGeometry args={[0.02, 0.02, c.height * 1.8, 8]} />
-            <meshBasicMaterial color={c.isGreen ? "#10b981" : "#f43f5e"} transparent opacity={0.8} />
+            <meshBasicMaterial color={c.isGreen ? "#10b981" : "#f43f5e"} transparent opacity={0.85} />
           </mesh>
           {/* Candle Body */}
           <mesh position={[0, 0, 0]}>
-            <boxGeometry args={[0.35, c.height, 0.35]} />
+            <boxGeometry args={[0.38, c.height, 0.38]} />
             <meshStandardMaterial
               color={c.isGreen ? "#10b981" : "#f43f5e"}
               roughness={0.2}
               metalness={0.8}
               emissive={c.isGreen ? "#059669" : "#e11d48"}
-              emissiveIntensity={0.6}
+              emissiveIntensity={0.65}
             />
           </mesh>
         </group>
@@ -84,30 +104,12 @@ function FloatingCandlesticks({ scrollProgress }) {
   );
 }
 
-// 3D Perspective Trading Floor Grid (Phase 3 & 4)
-function Infinite3DGrid({ scrollProgress }) {
-  const gridRef = useRef();
-
-  useFrame((state) => {
-    if (!gridRef.current) return;
-    const sp = scrollProgress.current || 0;
-    gridRef.current.position.z = (state.clock.elapsedTime * 2 + sp * 20) % 4 - 2;
-    gridRef.current.rotation.x = Math.PI / 2.3 + Math.sin(sp * Math.PI) * 0.1;
-  });
-
-  return (
-    <group ref={gridRef} position={[0, -4, -5]}>
-      <gridHelper args={[60, 40, "#d97706", "#27272a"]} />
-    </group>
-  );
-}
-
-// 3D Particles & Financial Waves (Phase 3, 4, 5, 6)
-function ParticleField({ scrollProgress }) {
+// 3D Particles & Financial Field (Grid-free)
+function ParticleField({ mousePos, scrollProgress }) {
   const pointsRef = useRef();
 
   const { positions, colors } = useMemo(() => {
-    const count = 350;
+    const count = 400;
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
 
@@ -116,9 +118,9 @@ function ParticleField({ scrollProgress }) {
     const color3 = new THREE.Color("#38bdf8"); // Sky
 
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 20;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 25;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 15 - 3;
+      pos[i * 3] = (Math.random() - 0.5) * 22;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 26;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 16 - 2;
 
       let chosenColor = color1;
       if (i % 3 === 1) chosenColor = color2;
@@ -132,11 +134,19 @@ function ParticleField({ scrollProgress }) {
     return { positions: pos, colors: col };
   }, []);
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!pointsRef.current) return;
     const sp = scrollProgress.current || 0;
-    pointsRef.current.rotation.y = state.clock.elapsedTime * 0.05 + sp * 0.5;
-    pointsRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.5) * 0.5 - sp * 3;
+    const mx = mousePos.current?.x || 0;
+    const my = mousePos.current?.y || 0;
+
+    const targetRotY = sp * 0.4 + mx * 0.15;
+    const targetRotX = my * 0.15;
+    const targetPosY = -sp * 2.5;
+
+    pointsRef.current.rotation.y = THREE.MathUtils.lerp(pointsRef.current.rotation.y, targetRotY, 0.08);
+    pointsRef.current.rotation.x = THREE.MathUtils.lerp(pointsRef.current.rotation.x, targetRotX, 0.08);
+    pointsRef.current.position.y = THREE.MathUtils.lerp(pointsRef.current.position.y, targetPosY, 0.08);
   });
 
   return (
@@ -152,10 +162,10 @@ function ParticleField({ scrollProgress }) {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.08}
+        size={0.085}
         vertexColors
         transparent
-        opacity={0.65}
+        opacity={0.7}
         sizeAttenuation
       />
     </points>
@@ -166,36 +176,37 @@ function ParticleField({ scrollProgress }) {
 function SceneContent({ mousePos, scrollProgress }) {
   const cameraRef = useRef();
 
-  useFrame((state) => {
+  useFrame(() => {
     if (!cameraRef.current) return;
     const sp = scrollProgress.current || 0;
+    const mx = mousePos.current?.x || 0;
+    const my = mousePos.current?.y || 0;
 
-    // Smooth camera glide driving the 3D story scroll
-    const camX = (mousePos.current?.x || 0) * 0.8 + Math.sin(sp * Math.PI * 2) * 1.2;
-    const camY = (mousePos.current?.y || 0) * 0.6 - sp * 2.5;
-    const camZ = 7 - Math.sin(sp * Math.PI) * 1.5;
+    // Camera movement strictly driven by scroll progress and cursor parallax
+    const camX = mx * 1.2 + Math.sin(sp * Math.PI * 2) * 0.8;
+    const camY = my * 0.9 - sp * 2.2;
+    const camZ = 7.5 - Math.sin(sp * Math.PI) * 1.2;
 
     cameraRef.current.position.x = THREE.MathUtils.lerp(cameraRef.current.position.x, camX, 0.08);
     cameraRef.current.position.y = THREE.MathUtils.lerp(cameraRef.current.position.y, camY, 0.08);
     cameraRef.current.position.z = THREE.MathUtils.lerp(cameraRef.current.position.z, camZ, 0.08);
 
-    cameraRef.current.lookAt(0, -sp * 2.2, -2);
+    cameraRef.current.lookAt(mx * 0.3, -sp * 2.0 + my * 0.2, -2);
   });
 
   return (
     <>
-      <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 7]} fov={50} />
+      <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 7.5]} fov={50} />
 
       {/* Atmospheric Cinematic Lights */}
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[6, 10, 6]} intensity={3.0} color="#ffffff" />
-      <directionalLight position={[-6, -5, -3]} intensity={1.5} color="#d97706" />
-      <pointLight position={[0, 2, 1]} intensity={3.5} color="#10b981" />
+      <ambientLight intensity={0.65} />
+      <directionalLight position={[6, 10, 6]} intensity={3.2} color="#ffffff" />
+      <directionalLight position={[-6, -5, -3]} intensity={1.8} color="#d97706" />
+      <pointLight position={[0, 2, 1]} intensity={3.8} color="#10b981" />
 
-      {/* Floating Candlesticks, Trading Grid & Particle Field */}
-      <FloatingCandlesticks scrollProgress={scrollProgress} />
-      <Infinite3DGrid scrollProgress={scrollProgress} />
-      <ParticleField scrollProgress={scrollProgress} />
+      {/* Floating Candlesticks & Particle Field (Grid helper purged completely) */}
+      <FloatingCandlesticks mousePos={mousePos} scrollProgress={scrollProgress} />
+      <ParticleField mousePos={mousePos} scrollProgress={scrollProgress} />
     </>
   );
 }
@@ -224,7 +235,7 @@ export default function DeltaFox3DScene() {
     if (!hasWebGL) return;
 
     // Fast load deferral
-    const timer = setTimeout(() => setShouldRenderCanvas(true), 150);
+    const timer = setTimeout(() => setShouldRenderCanvas(true), 100);
     return () => clearTimeout(timer);
   }, [hasWebGL]);
 
