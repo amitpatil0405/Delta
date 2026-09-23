@@ -326,20 +326,33 @@ export default function PortfolioJournalSection() {
     ? Math.abs(losingTrades.reduce((acc, t) => acc + t.manualPnl, 0) / losingTrades.length)
     : 0;
 
-  // Cumulative P&L curve dataset
+  // Cumulative P&L curve dataset with initial Basecamp origin at index 0 (PnL = 0)
   let runningPnl = 0;
-  const pnlCurveData = closedTrades.map((t, idx) => {
-    runningPnl += t.manualPnl;
-    return {
-      trade: `Trade ${idx + 1}`,
-      tradeNum: `#${idx + 1}`,
-      pnl: runningPnl,
-      tradePnl: t.manualPnl,
-      symbol: t.symbol,
-      strategy: t.strategy,
-      date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date
-    };
-  });
+  const pnlCurveData = [
+    {
+      trade: '',
+      tradeNum: 'Basecamp',
+      pnl: 0,
+      tradePnl: 0,
+      symbol: 'BASECAMP',
+      strategy: 'Basecamp Origin',
+      date: '',
+      isOrigin: true
+    },
+    ...closedTrades.map((t, idx) => {
+      runningPnl += t.manualPnl;
+      return {
+        trade: `Trade ${idx + 1}`,
+        tradeNum: `#${idx + 1}`,
+        pnl: runningPnl,
+        tradePnl: t.manualPnl,
+        symbol: t.symbol,
+        strategy: t.strategy,
+        date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date,
+        isOrigin: false
+      };
+    })
+  ];
 
   // Calculate explicit Y domain to ensure 100% pixel-perfect alignment with Overlay
   const chartYDomain = useMemo(() => {
@@ -869,6 +882,7 @@ export default function PortfolioJournalSection() {
                     ticks={isMobile ? mobileTicks : undefined}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
+                    padding={{ left: 0, right: 0 }}
                   />
                   <YAxis
                     stroke="#666"
@@ -877,7 +891,7 @@ export default function PortfolioJournalSection() {
                     tickLine={false}
                     domain={chartYDomain}
                     width={60}
-                    tickFormatter={(val) => (val === 0 ? '' : val)}
+                    tickFormatter={(val) => (Math.abs(val) < 10000 ? '' : val)}
                   />
 
                   <RechartsTooltip
