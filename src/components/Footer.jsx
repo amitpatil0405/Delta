@@ -69,20 +69,20 @@ export default function Footer({ onNavigate }) {
             <div className="space-y-3">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-mono">PLATFORM</span>
               <ul className="space-y-2">
-                <li><button onClick={() => handleLinkClick('home')} className="font-mono hover:text-amber-400 transition-colors">Home</button></li>
-                <li><button onClick={() => handleLinkClick('technical-analysis')} className="font-mono hover:text-amber-400 transition-colors">Technical Analysis</button></li>
-                <li><button onClick={() => handleLinkClick('portfolio')} className="font-mono hover:text-amber-400 transition-colors">Trading Portfolio</button></li>
-                <li><button onClick={() => handleLinkClick('intelligence')} className="font-mono hover:text-amber-400 transition-colors">Holiday calendar</button></li>
+                <li><button onClick={() => handleLinkClick('home')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Home</button></li>
+                <li><button onClick={() => handleLinkClick('technical-analysis')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Technical Analysis</button></li>
+                <li><button onClick={() => handleLinkClick('portfolio')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Trading Portfolio</button></li>
+                <li><button onClick={() => handleLinkClick('intelligence')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Holiday calendar</button></li>
               </ul>
             </div>
 
             <div className="space-y-3">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-mono">RESOURCES</span>
               <ul className="space-y-2">
-                <li><button onClick={() => handleLinkClick('strategies')} className="font-mono hover:text-amber-400 transition-colors">Strategies</button></li>
-                <li><button onClick={() => handleLinkClick('training')} className="font-mono hover:text-amber-400 transition-colors">Training</button></li>
-                <li><button onClick={() => handleLinkClick('about')} className="font-mono hover:text-amber-400 transition-colors">About DeltaFox</button></li>
-                <li><button onClick={() => handleLinkClick('contact')} className="font-mono hover:text-amber-400 transition-colors">Contact</button></li>
+                <li><button onClick={() => handleLinkClick('strategies')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Strategies</button></li>
+                <li><button onClick={() => handleLinkClick('training')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Training</button></li>
+                <li><button onClick={() => handleLinkClick('about')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">About DeltaFox</button></li>
+                <li><button onClick={() => handleLinkClick('contact')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Contact</button></li>
               </ul>
             </div>
 
