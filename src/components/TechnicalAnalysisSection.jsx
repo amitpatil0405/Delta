@@ -351,7 +351,7 @@ export default function TechnicalAnalysisSection() {
                 {filteredIndexData.map((item) => (
                   <div
                     key={item.id}
-                    className="group bg-[#0a0a0c]/65 backdrop-blur-xl border border-amber-500/30 hover:border-amber-400/70 rounded-2xl p-6 space-y-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.25)] relative overflow-hidden flex flex-col justify-between"
+                    className="group bg-[#0a0a0f]/45 backdrop-blur-md border border-amber-500/30 hover:border-amber-400/70 rounded-2xl p-6 space-y-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.25)] relative overflow-hidden flex flex-col justify-between"
                   >
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700" />
 
@@ -489,7 +489,7 @@ export default function TechnicalAnalysisSection() {
                     {filteredStockData.map((item) => (
                       <div
                         key={item.id}
-                        className="group bg-[#0a0a0c]/65 backdrop-blur-xl border border-amber-500/30 hover:border-amber-400/70 rounded-2xl p-6 space-y-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.25)] relative overflow-hidden"
+                        className="group bg-[#0a0a0f]/45 backdrop-blur-md border border-amber-500/30 hover:border-amber-400/70 rounded-2xl p-6 space-y-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(245,158,11,0.25)] relative overflow-hidden"
                       >
                         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-amber-700" />
 
