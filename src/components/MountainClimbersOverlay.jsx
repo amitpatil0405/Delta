@@ -50,6 +50,10 @@ export default function MountainClimbersOverlay({
   const minPnl = minPnlProp !== null ? minPnlProp : -20000;
   const maxPnl = maxPnlProp !== null ? maxPnlProp : 60000;
 
+  // Calculate exact Y coordinate for P&L = 0 level
+  const zeroRatio = (maxPnl - minPnl) > 0 ? (0 - minPnl) / (maxPnl - minPnl) : 0;
+  const zeroY = margin.top + (1 - zeroRatio) * chartH;
+
   // Points mapped exactly to Recharts coordinates
   const points = useMemo(() => {
     if (pnlData.length === 0) return [];
@@ -62,7 +66,7 @@ export default function MountainClimbersOverlay({
     });
   }, [pnlData, chartW, chartH, minPnl, maxPnl]);
 
-  const originPoint = points[0] || { x: margin.left, y: margin.top + chartH / 2 };
+  const originPoint = points[0] || { x: margin.left, y: zeroY };
 
   const dPath = useMemo(() => {
     return getMonotonePath(points);
@@ -344,8 +348,8 @@ export default function MountainClimbersOverlay({
           ))}
         </g>
 
-        {/* Basecamp Tent Graphic placed at Left Side Y-Axis Line */}
-        <g transform={`translate(${originPoint.x - 42}, ${originPoint.y - 32})`}>
+        {/* Basecamp Tent Graphic placed at Exact 0 P&L Y-Axis Line */}
+        <g transform={`translate(${margin.left - 42}, ${zeroY - 32})`}>
           <image
             href={tentImg}
             x="0"
@@ -383,6 +387,32 @@ export default function MountainClimbersOverlay({
             </foreignObject>
           )}
         </g>
+
+        {/* Pine Trees at every 5th trade (5, 10, 15, 20...) touching the curve */}
+        {points.map((pt, idx) => {
+          const tradeNum = idx + 1;
+          if (tradeNum % 5 === 0) {
+            return (
+              <g key={`tree_${tradeNum}`} transform={`translate(${pt.x}, ${pt.y})`}>
+                {/* Base anchor dot on curve */}
+                <circle cx="0" cy="0" r="2.5" fill="#10b981" />
+                {/* Pine Tree SVG placed on top of curve */}
+                <g transform="translate(-8, -22)">
+                  {/* Trunk */}
+                  <rect x="7" y="15" width="2" height="7" fill="#78350f" />
+                  {/* Leaves layers */}
+                  <polygon points="8,1 2,8 14,8" fill="#059669" />
+                  <polygon points="8,6 1,13 15,13" fill="#10b981" />
+                  <polygon points="8,10 0,17 16,17" fill="#047857" />
+                </g>
+                <text x="0" y="-24" textAnchor="middle" fill="#10b981" fontSize="7" fontWeight="extrabold" fontFamily="monospace">
+                  🌲
+                </text>
+              </g>
+            );
+          }
+          return null;
+        })}
 
         {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) connected directly to curve line */}
         {highestTradePoint && highestTradePoint.pnl > 0 && (
@@ -431,7 +461,7 @@ export default function MountainClimbersOverlay({
         {points.length > 0 && !isResting && (
           <g className="climber-team">
             {/* Follower Mountaineer */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            <g transform={`translate(${followerPos.x}, ${followerPos.y - 12.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
               <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
               {/* Torso */}
@@ -465,7 +495,7 @@ export default function MountainClimbersOverlay({
             </g>
 
             {/* Lead Mountaineer */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            <g transform={`translate(${leadPos.x}, ${leadPos.y - 12.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
               {/* Head */}
               <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
               {/* Torso */}

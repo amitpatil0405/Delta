@@ -857,7 +857,13 @@ export default function PortfolioJournalSection() {
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                   />
-                  <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} axisLine={{ stroke: '#333' }} tickLine={false} />
+                  <YAxis
+                    stroke="#666"
+                    tick={{ fontSize: 11, fill: '#888' }}
+                    axisLine={{ stroke: '#333' }}
+                    tickLine={false}
+                    tickFormatter={(val) => (val === 0 ? '' : val)}
+                  />
 
                   <RechartsTooltip
                     content={({ active, payload }) => {
