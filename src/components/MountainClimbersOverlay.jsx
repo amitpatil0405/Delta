@@ -208,6 +208,8 @@ export default function MountainClimbersOverlay({
 
   let leadPos = points[0];
   let followerPos = points[0];
+  let isLeaderMoving = false;
+  let isFollowerMoving = false;
 
   if (pathRef.current && pathLength > 0) {
     try {
@@ -222,12 +224,18 @@ export default function MountainClimbersOverlay({
         const followerLen = Math.max(0, Math.min(pathLength, currentLen - separation));
         ptLead = pathRef.current.getPointAtLength(leadLen);
         ptFollower = pathRef.current.getPointAtLength(followerLen);
+
+        isLeaderMoving = isWalking && currentLen > 0 && leadLen < pathLength;
+        isFollowerMoving = isWalking && currentLen >= separation && followerLen < pathLength;
       } else {
-        // Return Journey (Descent): Leader leads in front facing left towards Tent (smaller path length), Follower behind Leader (larger path length)
-        const leadLen = Math.max(0, Math.min(pathLength, currentLen - separation));
-        const followerLen = Math.max(0, Math.min(pathLength, currentLen));
+        // Return Journey (Descent): Leader leaves endpoint first moving towards Tent, Follower stays at endpoint until Leader gains separation distance
+        const leadLen = Math.max(0, Math.min(pathLength, currentLen));
+        const followerLen = Math.min(pathLength, currentLen + separation);
         ptLead = pathRef.current.getPointAtLength(leadLen);
         ptFollower = pathRef.current.getPointAtLength(followerLen);
+
+        isLeaderMoving = isWalking && currentLen < pathLength && leadLen > 0;
+        isFollowerMoving = isWalking && currentLen <= pathLength - separation && followerLen > 0;
       }
 
       const activeIdx = Math.min(
@@ -254,16 +262,22 @@ export default function MountainClimbersOverlay({
   }
 
   const isRedZone = leadPos.pnl < 0;
-  const isMoving = walkPhase !== 0;
 
-  // Realistic jointed 2-segment leg walking cycle angles
-  const thighAngle1 = isMoving ? Math.sin(walkPhase) * 22 : 0;
-  const shinAngle1  = isMoving ? Math.max(0, Math.sin(walkPhase + 0.5) * 20) : 0;
-  const thighAngle2 = isMoving ? -Math.sin(walkPhase) * 22 : 0;
-  const shinAngle2  = isMoving ? Math.max(0, -Math.sin(walkPhase + 0.5) * 20) : 0;
+  // Realistic jointed 2-segment leg walking cycle angles for Leader
+  const leaderThigh1 = isLeaderMoving ? Math.sin(walkPhase) * 22 : 0;
+  const leaderShin1  = isLeaderMoving ? Math.max(0, Math.sin(walkPhase + 0.5) * 20) : 0;
+  const leaderThigh2 = isLeaderMoving ? -Math.sin(walkPhase) * 22 : 0;
+  const leaderShin2  = isLeaderMoving ? Math.max(0, -Math.sin(walkPhase + 0.5) * 20) : 0;
+  const leaderArm1   = isLeaderMoving ? -Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? -135 : -15);
+  const leaderArm2   = isLeaderMoving ? Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? 135 : 15);
 
-  const armAngle1 = isMoving ? -Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? -135 : -15);
-  const armAngle2 = isMoving ? Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? 135 : 15);
+  // Realistic jointed 2-segment leg walking cycle angles for Follower
+  const followerThigh1 = isFollowerMoving ? Math.sin(walkPhase) * 22 : 0;
+  const followerShin1  = isFollowerMoving ? Math.max(0, Math.sin(walkPhase + 0.5) * 20) : 0;
+  const followerThigh2 = isFollowerMoving ? -Math.sin(walkPhase) * 22 : 0;
+  const followerShin2  = isFollowerMoving ? Math.max(0, -Math.sin(walkPhase + 0.5) * 20) : 0;
+  const followerArm1   = isFollowerMoving ? -Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? -135 : -15);
+  const followerArm2   = isFollowerMoving ? Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? 135 : 15);
 
   return (
     <div className="absolute inset-0 pointer-events-none z-10 hidden md:block overflow-hidden">
@@ -408,28 +422,28 @@ export default function MountainClimbersOverlay({
               <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" />
 
               {/* Leg 1 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${thighAngle1}, 0, 4)`}>
+              <g transform={`rotate(${followerThigh1}, 0, 4)`}>
                 <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
-                <g transform={`rotate(${shinAngle1}, -2, 8)`}>
+                <g transform={`rotate(${followerShin1}, -2, 8)`}>
                   <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
                 </g>
               </g>
 
               {/* Leg 2 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${thighAngle2}, 0, 4)`}>
+              <g transform={`rotate(${followerThigh2}, 0, 4)`}>
                 <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
-                <g transform={`rotate(${shinAngle2}, 2, 8)`}>
+                <g transform={`rotate(${followerShin2}, 2, 8)`}>
                   <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
                 </g>
               </g>
 
               {/* Arm 1 */}
-              <g transform={`rotate(${armAngle1}, 0, -2)`}>
+              <g transform={`rotate(${followerArm1}, 0, -2)`}>
                 <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
               </g>
 
               {/* Arm 2 */}
-              <g transform={`rotate(${armAngle2}, 0, -2)`}>
+              <g transform={`rotate(${followerArm2}, 0, -2)`}>
                 <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
               </g>
             </g>
@@ -442,28 +456,28 @@ export default function MountainClimbersOverlay({
               <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" />
 
               {/* Leg 1 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${thighAngle1}, 0, 4)`}>
+              <g transform={`rotate(${leaderThigh1}, 0, 4)`}>
                 <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" />
-                <g transform={`rotate(${shinAngle1}, -2, 8)`}>
+                <g transform={`rotate(${leaderShin1}, -2, 8)`}>
                   <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" />
                 </g>
               </g>
 
               {/* Leg 2 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${thighAngle2}, 0, 4)`}>
+              <g transform={`rotate(${leaderThigh2}, 0, 4)`}>
                 <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" />
-                <g transform={`rotate(${shinAngle2}, 2, 8)`}>
+                <g transform={`rotate(${leaderShin2}, 2, 8)`}>
                   <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" />
                 </g>
               </g>
 
               {/* Arm 1 */}
-              <g transform={`rotate(${armAngle1}, 0, -2)`}>
+              <g transform={`rotate(${leaderArm1}, 0, -2)`}>
                 <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
               </g>
 
               {/* Arm 2 */}
-              <g transform={`rotate(${armAngle2}, 0, -2)`}>
+              <g transform={`rotate(${leaderArm2}, 0, -2)`}>
                 <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
               </g>
             </g>
@@ -489,9 +503,9 @@ export default function MountainClimbersOverlay({
                 </div>
               </foreignObject>
             ) : (
-              isWalking && (
-                <>
-                  {/* FOLLOWER Badge directly above Follower with clear head clearance */}
+              <>
+                {/* FOLLOWER Badge directly above Follower when Follower is walking */}
+                {isFollowerMoving && (
                   <foreignObject
                     x={followerPos.x - 35}
                     y={followerPos.y - 48}
@@ -504,8 +518,10 @@ export default function MountainClimbersOverlay({
                       </span>
                     </div>
                   </foreignObject>
+                )}
 
-                  {/* LEADER Badge directly above Leader with clear head clearance */}
+                {/* LEADER Badge directly above Leader when Leader is walking */}
+                {isLeaderMoving && (
                   <foreignObject
                     x={leadPos.x - 30}
                     y={leadPos.y - 48}
@@ -518,8 +534,8 @@ export default function MountainClimbersOverlay({
                       </span>
                     </div>
                   </foreignObject>
-                </>
-              )
+                )}
+              </>
             )}
           </g>
         )}
