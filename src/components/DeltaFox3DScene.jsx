@@ -58,7 +58,7 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
     const mx = mousePos.current?.x || 0;
     const my = mousePos.current?.y || 0;
 
-    // Target positions and rotations based purely on Scroll & Mouse Cursor Parallax (NO auto-spin time loops)
+    // Target positions and rotations based purely on Scroll & Mouse Cursor Parallax
     const targetRotY = sp * Math.PI * 0.8 + mx * 0.25;
     const targetRotX = my * 0.2;
     const targetPosZ = -sp * 5;
@@ -85,17 +85,17 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
           {/* Wick */}
           <mesh position={[0, 0, 0]}>
             <cylinderGeometry args={[0.02, 0.02, c.height * 1.8, 8]} />
-            <meshBasicMaterial color={c.isGreen ? "#10b981" : "#f43f5e"} transparent opacity={0.85} />
+            <meshBasicMaterial color={c.isGreen ? "#10b981" : "#f43f5e"} transparent opacity={0.65} />
           </mesh>
           {/* Candle Body */}
           <mesh position={[0, 0, 0]}>
             <boxGeometry args={[0.38, c.height, 0.38]} />
             <meshStandardMaterial
               color={c.isGreen ? "#10b981" : "#f43f5e"}
-              roughness={0.2}
-              metalness={0.8}
+              roughness={0.4}
+              metalness={0.6}
               emissive={c.isGreen ? "#059669" : "#e11d48"}
-              emissiveIntensity={0.65}
+              emissiveIntensity={0.35}
             />
           </mesh>
         </group>
@@ -104,12 +104,12 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
   );
 }
 
-// 3D Particles & Financial Field (Grid-free)
+// 3D Particles & Financial Field
 function ParticleField({ mousePos, scrollProgress }) {
   const pointsRef = useRef();
 
   const { positions, colors } = useMemo(() => {
-    const count = 400;
+    const count = 350;
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
 
@@ -162,10 +162,10 @@ function ParticleField({ mousePos, scrollProgress }) {
         />
       </bufferGeometry>
       <pointsMaterial
-        size={0.085}
+        size={0.075}
         vertexColors
         transparent
-        opacity={0.7}
+        opacity={0.45}
         sizeAttenuation
       />
     </points>
@@ -182,7 +182,6 @@ function SceneContent({ mousePos, scrollProgress }) {
     const mx = mousePos.current?.x || 0;
     const my = mousePos.current?.y || 0;
 
-    // Camera movement strictly driven by scroll progress and cursor parallax
     const camX = mx * 1.2 + Math.sin(sp * Math.PI * 2) * 0.8;
     const camY = my * 0.9 - sp * 2.2;
     const camZ = 7.5 - Math.sin(sp * Math.PI) * 1.2;
@@ -198,13 +197,13 @@ function SceneContent({ mousePos, scrollProgress }) {
     <>
       <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 7.5]} fov={50} />
 
-      {/* Atmospheric Cinematic Lights */}
-      <ambientLight intensity={0.65} />
-      <directionalLight position={[6, 10, 6]} intensity={3.2} color="#ffffff" />
-      <directionalLight position={[-6, -5, -3]} intensity={1.8} color="#d97706" />
-      <pointLight position={[0, 2, 1]} intensity={3.8} color="#10b981" />
+      {/* Atmospheric Soft Cinematic Lights */}
+      <ambientLight intensity={0.45} />
+      <directionalLight position={[6, 10, 6]} intensity={2.0} color="#ffffff" />
+      <directionalLight position={[-6, -5, -3]} intensity={1.2} color="#d97706" />
+      <pointLight position={[0, 2, 1]} intensity={2.2} color="#10b981" />
 
-      {/* Floating Candlesticks & Particle Field (Grid helper purged completely) */}
+      {/* Floating Candlesticks & Particle Field */}
       <FloatingCandlesticks mousePos={mousePos} scrollProgress={scrollProgress} />
       <ParticleField mousePos={mousePos} scrollProgress={scrollProgress} />
     </>
@@ -285,7 +284,9 @@ export default function DeltaFox3DScene() {
   if (!hasWebGL) return null;
 
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-700 opacity-90">
+    <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-700 opacity-80">
+      {/* Dark Tint & Vignette Overlay to prevent 3D background from over-highlighting */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70 z-10 pointer-events-none" />
       <ThreeErrorBoundary>
         {shouldRenderCanvas && (
           <Canvas
