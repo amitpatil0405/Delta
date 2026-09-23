@@ -12,6 +12,10 @@
     overflow-x: hidden;
     scroll-behavior: smooth;
   }
+
+  .font-roboto-mono {
+    font-family: 'Roboto Mono', monospace;
+  }
 }
 
 /* Custom Scrollbar */

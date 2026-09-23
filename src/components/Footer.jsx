@@ -64,25 +64,25 @@ export default function Footer({ onNavigate }) {
           </div>
 
           {/* Quick Links */}
-          <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-6 font-mono text-xs">
+          <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-6 text-xs">
 
             <div className="space-y-3">
-              <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-mono">PLATFORM</span>
+              <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">PLATFORM</span>
               <ul className="space-y-2">
-                <li><button onClick={() => handleLinkClick('home')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Home</button></li>
-                <li><button onClick={() => handleLinkClick('technical-analysis')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Technical Analysis</button></li>
-                <li><button onClick={() => handleLinkClick('portfolio')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Trading Portfolio</button></li>
-                <li><button onClick={() => handleLinkClick('intelligence')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Holiday calendar</button></li>
+                <li><button onClick={() => handleLinkClick('home')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Home</button></li>
+                <li><button onClick={() => handleLinkClick('technical-analysis')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Technical Analysis</button></li>
+                <li><button onClick={() => handleLinkClick('portfolio')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Trading Portfolio</button></li>
+                <li><button onClick={() => handleLinkClick('intelligence')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Holiday calendar</button></li>
               </ul>
             </div>
 
             <div className="space-y-3">
-              <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-mono">RESOURCES</span>
+              <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">RESOURCES</span>
               <ul className="space-y-2">
-                <li><button onClick={() => handleLinkClick('strategies')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Strategies</button></li>
-                <li><button onClick={() => handleLinkClick('training')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Training</button></li>
-                <li><button onClick={() => handleLinkClick('about')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">About DeltaFox</button></li>
-                <li><button onClick={() => handleLinkClick('contact')} className="font-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Contact</button></li>
+                <li><button onClick={() => handleLinkClick('strategies')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Strategies</button></li>
+                <li><button onClick={() => handleLinkClick('training')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Training</button></li>
+                <li><button onClick={() => handleLinkClick('about')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">About DeltaFox</button></li>
+                <li><button onClick={() => handleLinkClick('contact')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Contact</button></li>
               </ul>
             </div>
 
