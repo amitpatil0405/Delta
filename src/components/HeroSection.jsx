@@ -19,17 +19,17 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies, o
       {/* Main Viewport Content */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
 
-        {/* Dynamic Tagline Banner with Alternating Candle Colors */}
+        {/* Metallic Golden Glassmorphic Tagline Banner */}
         <div
-          className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full bg-black/60 backdrop-blur-xl border border-amber-500/30 text-xs sm:text-sm font-mono tracking-widest uppercase mb-4 sm:mb-6 shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all duration-700 ${
+          className={`relative overflow-hidden inline-flex items-center px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-950/80 via-amber-900/60 to-amber-950/80 backdrop-blur-xl border border-amber-500/50 text-xs sm:text-sm font-mono tracking-widest uppercase mb-4 sm:mb-6 shadow-[0_0_25px_rgba(245,158,11,0.3)] transition-all duration-700 group ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-          <span className="inline-block w-2.5 h-3 bg-white border border-rose-500 rounded-sm shadow-[0_0_6px_rgba(244,63,94,0.6)]" />
-          <span className="font-bold tracking-wider text-white">TRADE WITH LOGIC.</span>
-          <span className="text-amber-400/80 mx-1">•</span>
-          <span className="font-bold tracking-wider text-white">MOVE WITH THE MARKET.</span>
-          <span className="inline-block w-2.5 h-3 bg-emerald-500 border border-white rounded-sm shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
+          {/* Shimmer Sweep Beam Effect */}
+          <div className="absolute inset-0 -translate-x-full animate-[shimmer_3s_infinite] bg-gradient-to-r from-transparent via-amber-300/30 to-transparent pointer-events-none" />
+          <span className="relative z-10 font-black tracking-wider text-amber-300 drop-shadow-[0_0_8px_rgba(245,158,11,0.8)]">
+            DELTAFOX: PROBABILITY OVER PREDICTION
+          </span>
         </div>
 
         {/* Main Brand Title & Headings */}
