@@ -26,7 +26,9 @@ export default function MountainClimbersOverlay({
   containerHeight = 0,
   marketStatus = null,
   minPnlProp = null,
-  maxPnlProp = null
+  maxPnlProp = null,
+  isChartHovered = false,
+  hoveredX = null
 }) {
   const pathRef = useRef(null);
   const [climbProgress, setClimbProgress] = useState(0.0);
@@ -442,134 +444,144 @@ export default function MountainClimbersOverlay({
           </g>
         )}
 
-        {/* Expedition Team (Follower & Lead Mountaineers) - Hidden when resting or holiday */}
-        {points.length > 0 && !isResting && (
-          <g className="climber-team">
-            {/* Follower Mountaineer */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 12.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-              {/* Head */}
-              <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
-              {/* Torso */}
-              <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" />
+        {/* Expedition Team (Follower & Lead Mountaineers) - Hidden when resting, holiday, or hovered by position details banner */}
+        {points.length > 0 && !isResting && (() => {
+          // Check if user cursor is hovering near follower or leader
+          const isFollowerNearHover = isChartHovered && (hoveredX === null || Math.abs(followerPos.x - hoveredX) < 110);
+          const isLeaderNearHover = isChartHovered && (hoveredX === null || Math.abs(leadPos.x - hoveredX) < 110);
 
-              {/* Leg 1 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${followerThigh1}, 0, 4)`}>
-                <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
-                <g transform={`rotate(${followerShin1}, -2, 8)`}>
-                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
+          return (
+            <g className="climber-team">
+              {/* Follower Mountaineer */}
+              {!isFollowerNearHover && (
+                <g transform={`translate(${followerPos.x}, ${followerPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+                  {/* Head */}
+                  <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
+                  {/* Torso */}
+                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" />
+
+                  {/* Leg 1 (Jointed Thigh + Shin) */}
+                  <g transform={`rotate(${followerThigh1}, 0, 4)`}>
+                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
+                    <g transform={`rotate(${followerShin1}, -2, 8)`}>
+                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
+                    </g>
+                  </g>
+
+                  {/* Leg 2 (Jointed Thigh + Shin) */}
+                  <g transform={`rotate(${followerThigh2}, 0, 4)`}>
+                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
+                    <g transform={`rotate(${followerShin2}, 2, 8)`}>
+                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
+                    </g>
+                  </g>
+
+                  {/* Arm 1 */}
+                  <g transform={`rotate(${followerArm1}, 0, -2)`}>
+                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
+                  </g>
+
+                  {/* Arm 2 */}
+                  <g transform={`rotate(${followerArm2}, 0, -2)`}>
+                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
+                  </g>
                 </g>
-              </g>
+              )}
 
-              {/* Leg 2 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${followerThigh2}, 0, 4)`}>
-                <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
-                <g transform={`rotate(${followerShin2}, 2, 8)`}>
-                  <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
+              {/* Lead Mountaineer */}
+              {!isLeaderNearHover && (
+                <g transform={`translate(${leadPos.x}, ${leadPos.y - 13}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+                  {/* Head */}
+                  <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
+                  {/* Torso */}
+                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" />
+
+                  {/* Leg 1 (Jointed Thigh + Shin) */}
+                  <g transform={`rotate(${leaderThigh1}, 0, 4)`}>
+                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" />
+                    <g transform={`rotate(${leaderShin1}, -2, 8)`}>
+                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" />
+                    </g>
+                  </g>
+
+                  {/* Leg 2 (Jointed Thigh + Shin) */}
+                  <g transform={`rotate(${leaderThigh2}, 0, 4)`}>
+                    <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" />
+                    <g transform={`rotate(${leaderShin2}, 2, 8)`}>
+                      <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" />
+                    </g>
+                  </g>
+
+                  {/* Arm 1 */}
+                  <g transform={`rotate(${leaderArm1}, 0, -2)`}>
+                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
+                  </g>
+
+                  {/* Arm 2 */}
+                  <g transform={`rotate(${leaderArm2}, 0, -2)`}>
+                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
+                  </g>
                 </g>
-              </g>
+              )}
 
-              {/* Arm 1 */}
-              <g transform={`rotate(${followerArm1}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
-              </g>
-
-              {/* Arm 2 */}
-              <g transform={`rotate(${followerArm2}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
-              </g>
-            </g>
-
-            {/* Lead Mountaineer */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 12.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-              {/* Head */}
-              <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
-              {/* Torso */}
-              <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" />
-
-              {/* Leg 1 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${leaderThigh1}, 0, 4)`}>
-                <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" />
-                <g transform={`rotate(${leaderShin1}, -2, 8)`}>
-                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" />
-                </g>
-              </g>
-
-              {/* Leg 2 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${leaderThigh2}, 0, 4)`}>
-                <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" />
-                <g transform={`rotate(${leaderShin2}, 2, 8)`}>
-                  <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" />
-                </g>
-              </g>
-
-              {/* Arm 1 */}
-              <g transform={`rotate(${leaderArm1}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
-              </g>
-
-              {/* Arm 2 */}
-              <g transform={`rotate(${leaderArm2}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
-              </g>
-            </g>
-
-            {/* Individual Badges & Summit Celebration Text */}
-            {isAtEndpointCelebrating ? (
-              <foreignObject
-                x={Math.max(10, Math.min(width - 210, (leadPos.x + followerPos.x) / 2 - 95))}
-                y={Math.min(leadPos.y, followerPos.y) - 60}
-                width="190"
-                height="32"
-              >
-                <div className="flex items-center justify-center h-full">
-                  {isEndpointATH ? (
-                    <span className="bg-emerald-500 text-black text-[8.5px] font-mono font-extrabold px-3 py-1 rounded-full shadow-[0_0_18px_rgba(16,185,129,0.95)] animate-bounce whitespace-nowrap">
-                      🏔️ PEAK SUMMIT CELEBRATION! 🎉
-                    </span>
-                  ) : (
-                    <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
-                      🙌 We will go high next time
-                    </span>
+              {/* Individual Badges & Summit Celebration Text */}
+              {isAtEndpointCelebrating ? (
+                <foreignObject
+                  x={Math.max(10, Math.min(width - 210, (leadPos.x + followerPos.x) / 2 - 95))}
+                  y={Math.min(leadPos.y, followerPos.y) - 60}
+                  width="190"
+                  height="32"
+                >
+                  <div className="flex items-center justify-center h-full">
+                    {isEndpointATH ? (
+                      <span className="bg-emerald-500 text-black text-[8.5px] font-mono font-extrabold px-3 py-1 rounded-full shadow-[0_0_18px_rgba(16,185,129,0.95)] animate-bounce whitespace-nowrap">
+                        🏔️ PEAK SUMMIT CELEBRATION! 🎉
+                      </span>
+                    ) : (
+                      <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
+                        🙌 We will go high next time
+                      </span>
+                    )}
+                  </div>
+                </foreignObject>
+              ) : (
+                <>
+                  {/* FOLLOWER Badge elevated well above Follower head when Follower is walking */}
+                  {isFollowerMoving && !isFollowerNearHover && (
+                    <foreignObject
+                      x={followerPos.x - 35}
+                      y={followerPos.y - 54}
+                      width="70"
+                      height="20"
+                    >
+                      <div className="flex justify-center items-center h-full">
+                        <span className="bg-[#0c0c0e]/95 text-sky-400 border border-sky-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
+                          FOLLOWER
+                        </span>
+                      </div>
+                    </foreignObject>
                   )}
-                </div>
-              </foreignObject>
-            ) : (
-              <>
-                {/* FOLLOWER Badge elevated well above Follower head when Follower is walking */}
-                {isFollowerMoving && (
-                  <foreignObject
-                    x={followerPos.x - 35}
-                    y={followerPos.y - 54}
-                    width="70"
-                    height="20"
-                  >
-                    <div className="flex justify-center items-center h-full">
-                      <span className="bg-[#0c0c0e]/95 text-sky-400 border border-sky-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
-                        FOLLOWER
-                      </span>
-                    </div>
-                  </foreignObject>
-                )}
 
-                {/* LEADER Badge elevated well above Leader head when Leader is walking */}
-                {isLeaderMoving && (
-                  <foreignObject
-                    x={leadPos.x - 30}
-                    y={leadPos.y - 54}
-                    width="60"
-                    height="20"
-                  >
-                    <div className="flex justify-center items-center h-full">
-                      <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
-                        LEADER
-                      </span>
-                    </div>
-                  </foreignObject>
-                )}
-              </>
-            )}
-          </g>
-        )}
+                  {/* LEADER Badge elevated well above Leader head when Leader is walking */}
+                  {isLeaderMoving && !isLeaderNearHover && (
+                    <foreignObject
+                      x={leadPos.x - 30}
+                      y={leadPos.y - 54}
+                      width="60"
+                      height="20"
+                    >
+                      <div className="flex justify-center items-center h-full">
+                        <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
+                          LEADER
+                        </span>
+                      </div>
+                    </foreignObject>
+                  )}
+                </>
+              )}
+            </g>
+          );
+        })()}
       </svg>
     </div>
   );
