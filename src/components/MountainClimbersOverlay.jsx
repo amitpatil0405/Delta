@@ -303,7 +303,7 @@ export default function MountainClimbersOverlay({
   const followerArm2   = isFollowerMoving ? Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? 135 : 15);
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-10 hidden md:block overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none z-20 hidden md:block overflow-hidden">
       <svg
         width={width}
         height={height}
@@ -421,26 +421,6 @@ export default function MountainClimbersOverlay({
             <text x="2" y="-21" fill="#ffffff" fontSize="7" fontWeight="bold" fontFamily="monospace">
               ATH
             </text>
-
-            {/* Top Badge: Horizontally adjusted so it never clips off screen border */}
-            {(() => {
-              const bannerWidth = 150;
-              let bannerOffsetX = -75; // Default center
-              if (highestTradePoint.x + 75 > width - 15) {
-                bannerOffsetX = -135; // Shift left if near right edge
-              } else if (highestTradePoint.x - 75 < 15) {
-                bannerOffsetX = -10; // Shift right if near left edge
-              }
-              return (
-                <foreignObject x={bannerOffsetX} y="-60" width={bannerWidth} height="26">
-                  <div className="flex items-center justify-center">
-                    <span className="bg-emerald-500 text-black border border-emerald-300 text-[8px] font-mono font-extrabold px-2.5 py-0.5 rounded shadow-[0_0_12px_rgba(16,185,129,0.9)] whitespace-nowrap">
-                      🏆 ALL-TIME HIGH SUMMIT
-                    </span>
-                  </div>
-                </foreignObject>
-              );
-            })()}
           </g>
         )}
 
