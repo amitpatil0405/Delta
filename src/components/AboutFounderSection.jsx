@@ -39,7 +39,7 @@ export default function AboutFounderSection() {
           />
 
           {/* Dark Tint Overlay with high contrast */}
-          <div className="absolute inset-0 bg-black/75 sm:bg-black/70 backdrop-blur-[1px] pointer-events-none z-[1]" />
+          <div className="absolute inset-0 bg-black/88 sm:bg-black/88 backdrop-blur-[2px] pointer-events-none z-[1]" />
 
           <div className="relative z-10">
             <div className="text-center mb-10">
