@@ -818,7 +818,7 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <div ref={graphContainerRef} className="h-[280px] w-full pt-2 relative">
+            <div ref={graphContainerRef} className="h-[280px] w-full relative">
               <MountainClimbersOverlay
                 pnlData={pnlCurveData}
                 containerWidth={graphDimensions.width}
