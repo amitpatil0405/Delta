@@ -18,7 +18,7 @@ export default function Footer({ onNavigate }) {
     <footer className="bg-transparent border-t border-white/10 text-gray-400 font-sans relative overflow-hidden">
 
       {/* Pre-Footer Final Brand Scene with Enhanced Ambient Glow & Particle Canvas */}
-      <div className="py-10 sm:py-14 md:py-16 border-b border-white/10 text-center relative overflow-hidden bg-transparent">
+      <div className="pt-10 sm:pt-14 md:pt-16 pb-16 sm:pb-22 md:pb-28 border-b border-white/10 text-center relative overflow-hidden bg-transparent">
 
         {/* Animated Glowing Background Sphere */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse" />
