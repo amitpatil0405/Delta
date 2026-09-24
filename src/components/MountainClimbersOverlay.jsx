@@ -448,7 +448,7 @@ export default function MountainClimbersOverlay({
         {points.length > 0 && !isResting && (
           <g className="climber-team">
             {/* Follower Mountaineer */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 16.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            <g transform={`translate(${followerPos.x}, ${followerPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
                   {/* Head */}
                   <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
                   {/* Torso */}
@@ -482,7 +482,7 @@ export default function MountainClimbersOverlay({
                 </g>
 
             {/* Lead Mountaineer */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 16.5}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+            <g transform={`translate(${leadPos.x}, ${leadPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
                   {/* Head */}
                   <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
                   {/* Torso */}
