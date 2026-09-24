@@ -137,12 +137,11 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 overflow-hidden ${
         scrolled
-          ? 'bg-[#050505]/90 backdrop-blur-md border-b border-amber-500/30 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(245,158,11,0.15)]'
-          : 'bg-transparent py-5 border-b border-amber-500/20'
+          ? 'bg-[#050505]/90 backdrop-blur-md py-3 shadow-[0_10px_30px_rgba(0,0,0,0.8),0_0_20px_rgba(245,158,11,0.15)]'
+          : 'bg-transparent py-5'
       }`}
     >
-      {/* Top Ambient Glow & Shimmer Sweep Beam */}
-      <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-80" />
+      {/* Ambient Shimmer Sweep Beam */}
       <div className="absolute inset-0 -translate-x-full animate-[shimmer_5s_infinite] bg-gradient-to-r from-transparent via-amber-400/10 to-transparent pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">

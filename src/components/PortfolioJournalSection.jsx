@@ -173,6 +173,8 @@ export default function PortfolioJournalSection() {
   const { marketStatus } = useMarket();
   const graphContainerRef = useRef(null);
   const [graphDimensions, setGraphDimensions] = useState({ width: 0, height: 280 });
+  const [isChartHovered, setIsChartHovered] = useState(false);
+  const [chartHoverX, setChartHoverX] = useState(null);
 
   // Responsive mobile state tracking
   const [isMobile, setIsMobile] = useState(() => {
@@ -824,9 +826,27 @@ export default function PortfolioJournalSection() {
                 marketStatus={marketStatus}
                 minPnlProp={chartYDomain[0]}
                 maxPnlProp={chartYDomain[1]}
+                isChartHovered={isChartHovered}
+                hoveredX={chartHoverX}
               />
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 25 }}>
+                <AreaChart
+                  data={pnlCurveData}
+                  margin={{ top: 10, right: 25, left: 10, bottom: 25 }}
+                  onMouseMove={(state) => {
+                    if (state && state.isTooltipActive) {
+                      setIsChartHovered(true);
+                      setChartHoverX(state.chartX ?? null);
+                    } else {
+                      setIsChartHovered(false);
+                      setChartHoverX(null);
+                    }
+                  }}
+                  onMouseLeave={() => {
+                    setIsChartHovered(false);
+                    setChartHoverX(null);
+                  }}
+                >
                   <defs>
                     {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
                     <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
