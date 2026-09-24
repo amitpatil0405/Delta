@@ -18,7 +18,7 @@ export default function Footer({ onNavigate }) {
     <footer className="bg-transparent border-t border-white/10 text-gray-400 font-sans relative overflow-hidden">
 
       {/* Pre-Footer Final Brand Scene with Enhanced Ambient Glow & Particle Canvas */}
-      <div className="pt-4 pb-8 sm:pt-6 sm:pb-10 border-b border-white/10 text-center relative overflow-hidden bg-transparent">
+      <div className="py-10 sm:py-14 md:py-16 border-b border-white/10 text-center relative overflow-hidden bg-transparent">
 
         {/* Animated Glowing Background Sphere */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[140px] pointer-events-none animate-pulse" />
@@ -26,8 +26,8 @@ export default function Footer({ onNavigate }) {
 
         <div className="max-w-4xl mx-auto px-4 relative z-10 flex flex-col items-center">
 
-          {/* Compact DeltaFox Emblem with Reduced Bottom Margin */}
-          <div className="w-48 h-48 sm:w-64 sm:h-64 md:w-[280px] md:h-[280px] mx-auto relative group cursor-pointer -mb-4 sm:-mb-6 md:-mb-8" onClick={() => handleLinkClick('home')}>
+          {/* DeltaFox Emblem */}
+          <div className="w-44 h-44 sm:w-56 sm:h-56 md:w-[240px] md:h-[240px] mx-auto relative group cursor-pointer mb-2 sm:mb-3" onClick={() => handleLinkClick('home')}>
             <img
               src={logoImg}
               alt="DELTAFOX Emblem"

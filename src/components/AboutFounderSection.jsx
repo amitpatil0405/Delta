@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShieldCheck, Target, Compass, Cpu } from 'lucide-react';
 import myPic from '../assets/my_pic.jpg';
-import StockMarketCanvasBg from './StockMarketCanvasBg';
+import founderBack from '../assets/founder_back.png';
 
 export default function AboutFounderSection() {
   return (
@@ -29,14 +29,17 @@ export default function AboutFounderSection() {
           </p>
         </div>
 
-        {/* Founder Presentation Card with Stock Market Canvas Background Animation */}
-        <div className="rounded-3xl p-8 sm:p-12 border border-amber-500/30 relative overflow-hidden bg-[#0a0a0c]/75 backdrop-blur-2xl">
+        {/* Founder Presentation Card with Background Image */}
+        <div className="rounded-3xl p-8 sm:p-12 border border-amber-500/30 relative overflow-hidden bg-[#0a0a0c]">
 
-          {/* Stock Market Canvas Animation Background */}
-          <StockMarketCanvasBg />
+          {/* Background Image */}
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+            style={{ backgroundImage: `url(${founderBack})` }}
+          />
 
-          {/* Vignette Overlay to ensure high text contrast */}
-          <div className="absolute inset-0 bg-radial-vignette pointer-events-none z-[1] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/40 to-black/80" />
+          {/* 35% Dark Tint Overlay */}
+          <div className="absolute inset-0 bg-black/35 pointer-events-none z-[1]" />
 
           <div className="relative z-10">
             <div className="text-center mb-10">
