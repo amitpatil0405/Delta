@@ -405,12 +405,10 @@ export default function MountainClimbersOverlay({
         {highestTradePoint && highestTradePoint.pnl > 0 && (
           <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y})`}>
             {/* Anchor dot directly on curve line */}
-            <circle cx="0" cy="0" r="4.5" fill="#0a0a0c" />
             <circle cx="0" cy="0" r="3.5" fill="#10b981" stroke="#ffffff" strokeWidth="1.2" className="drop-shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
 
-            {/* Flagpole connected directly to anchor dot with dark backing stroke */}
-            <line x1="0" y1="0" x2="0" y2="-32" stroke="#0a0a0c" strokeWidth="5" strokeLinecap="round" />
-            <line x1="0" y1="0" x2="0" y2="-32" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" />
+            {/* Flagpole connected directly to anchor dot */}
+            <line x1="0" y1="0" x2="0" y2="-32" stroke="#f59e0b" strokeWidth="2" />
 
             {/* Flag Banner */}
             <polygon
@@ -431,87 +429,69 @@ export default function MountainClimbersOverlay({
           <g className="climber-team">
             {/* Follower Mountaineer */}
             <g transform={`translate(${followerPos.x}, ${followerPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-                  {/* Head Backing & Head */}
-                  <circle cx="0" cy="-7" r="4.2" fill="#0a0a0c" />
+                  {/* Head */}
                   <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
-
-                  {/* Torso Backing & Torso */}
-                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0a0a0c" strokeWidth="5.5" strokeLinecap="round" />
-                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" strokeLinecap="round" />
+                  {/* Torso */}
+                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" />
 
                   {/* Leg 1 (Jointed Thigh + Shin) */}
                   <g transform={`rotate(${followerThigh1}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0a0a0c" strokeWidth="4.8" strokeLinecap="round" />
-                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" strokeLinecap="round" />
+                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
                     <g transform={`rotate(${followerShin1}, -2, 8)`}>
-                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
-                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" strokeLinecap="round" />
+                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
                     </g>
                   </g>
 
                   {/* Leg 2 (Jointed Thigh + Shin) */}
                   <g transform={`rotate(${followerThigh2}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0a0a0c" strokeWidth="4.8" strokeLinecap="round" />
-                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" strokeLinecap="round" />
+                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
                     <g transform={`rotate(${followerShin2}, 2, 8)`}>
-                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
-                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" strokeLinecap="round" />
+                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
                     </g>
                   </g>
 
                   {/* Arm 1 */}
                   <g transform={`rotate(${followerArm1}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
-                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
                   </g>
 
                   {/* Arm 2 */}
                   <g transform={`rotate(${followerArm2}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
-                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
                   </g>
                 </g>
 
             {/* Lead Mountaineer */}
             <g transform={`translate(${leadPos.x}, ${leadPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-                  {/* Head Backing & Head */}
-                  <circle cx="0" cy="-7" r="4.2" fill="#0a0a0c" />
+                  {/* Head */}
                   <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
-
-                  {/* Torso Backing & Torso */}
-                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0a0a0c" strokeWidth="5.5" strokeLinecap="round" />
-                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round" />
+                  {/* Torso */}
+                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" />
 
                   {/* Leg 1 (Jointed Thigh + Shin) */}
                   <g transform={`rotate(${leaderThigh1}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0a0a0c" strokeWidth="4.8" strokeLinecap="round" />
-                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" strokeLinecap="round" />
+                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" />
                     <g transform={`rotate(${leaderShin1}, -2, 8)`}>
-                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
-                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" strokeLinecap="round" />
+                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" />
                     </g>
                   </g>
 
                   {/* Leg 2 (Jointed Thigh + Shin) */}
                   <g transform={`rotate(${leaderThigh2}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0a0a0c" strokeWidth="4.8" strokeLinecap="round" />
-                    <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" strokeLinecap="round" />
+                    <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" />
                     <g transform={`rotate(${leaderShin2}, 2, 8)`}>
-                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
-                      <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" strokeLinecap="round" />
+                      <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" />
                     </g>
                   </g>
 
                   {/* Arm 1 */}
                   <g transform={`rotate(${leaderArm1}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
-                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
                   </g>
 
                   {/* Arm 2 */}
                   <g transform={`rotate(${leaderArm2}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
-                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
                   </g>
                 </g>
 
