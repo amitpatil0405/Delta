@@ -303,7 +303,7 @@ export default function MountainClimbersOverlay({
   const followerArm2   = isFollowerMoving ? Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? 135 : 15);
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-10 hidden md:block overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none z-20 hidden md:block overflow-hidden">
       <svg
         width={width}
         height={height}
@@ -365,7 +365,7 @@ export default function MountainClimbersOverlay({
           {tentTagline === 'Preparing' && (
             <foreignObject x="-25" y="-22" width="90" height="20">
               <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
+                <span className="bg-[#0a0a0c] text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
                   Preparing
                 </span>
               </div>
@@ -374,7 +374,7 @@ export default function MountainClimbersOverlay({
           {tentTagline === 'Journey started' && (
             <foreignObject x="-30" y="-22" width="100" height="20">
               <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.4)] whitespace-nowrap animate-pulse">
+                <span className="bg-[#0a0a0c] text-emerald-400 border border-emerald-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.4)] whitespace-nowrap animate-pulse">
                   Journey started
                 </span>
               </div>
@@ -383,7 +383,7 @@ export default function MountainClimbersOverlay({
           {tentTagline === 'Taking rest' && (
             <foreignObject x="-25" y="-22" width="90" height="20">
               <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
+                <span className="bg-[#0a0a0c] text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
                   Taking rest
                 </span>
               </div>
@@ -392,7 +392,7 @@ export default function MountainClimbersOverlay({
           {tentTagline === 'Holiday today' && (
             <foreignObject x="-30" y="-22" width="100" height="20">
               <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-rose-400 border border-rose-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(244,63,94,0.4)] whitespace-nowrap animate-pulse">
+                <span className="bg-[#0a0a0c] text-rose-400 border border-rose-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(244,63,94,0.4)] whitespace-nowrap animate-pulse">
                   Holiday today
                 </span>
               </div>
@@ -405,10 +405,12 @@ export default function MountainClimbersOverlay({
         {highestTradePoint && highestTradePoint.pnl > 0 && (
           <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y})`}>
             {/* Anchor dot directly on curve line */}
+            <circle cx="0" cy="0" r="4.5" fill="#0a0a0c" />
             <circle cx="0" cy="0" r="3.5" fill="#10b981" stroke="#ffffff" strokeWidth="1.2" className="drop-shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
 
-            {/* Flagpole connected directly to anchor dot */}
-            <line x1="0" y1="0" x2="0" y2="-32" stroke="#f59e0b" strokeWidth="2" />
+            {/* Flagpole connected directly to anchor dot with dark backing stroke */}
+            <line x1="0" y1="0" x2="0" y2="-32" stroke="#0a0a0c" strokeWidth="5" strokeLinecap="round" />
+            <line x1="0" y1="0" x2="0" y2="-32" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" />
 
             {/* Flag Banner */}
             <polygon
@@ -429,69 +431,87 @@ export default function MountainClimbersOverlay({
           <g className="climber-team">
             {/* Follower Mountaineer */}
             <g transform={`translate(${followerPos.x}, ${followerPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-                  {/* Head */}
+                  {/* Head Backing & Head */}
+                  <circle cx="0" cy="-7" r="4.2" fill="#0a0a0c" />
                   <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
-                  {/* Torso */}
-                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" />
+
+                  {/* Torso Backing & Torso */}
+                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0a0a0c" strokeWidth="5.5" strokeLinecap="round" />
+                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" strokeLinecap="round" />
 
                   {/* Leg 1 (Jointed Thigh + Shin) */}
                   <g transform={`rotate(${followerThigh1}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
+                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0a0a0c" strokeWidth="4.8" strokeLinecap="round" />
+                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" strokeLinecap="round" />
                     <g transform={`rotate(${followerShin1}, -2, 8)`}>
-                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
+                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
+                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" strokeLinecap="round" />
                     </g>
                   </g>
 
                   {/* Leg 2 (Jointed Thigh + Shin) */}
                   <g transform={`rotate(${followerThigh2}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
+                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0a0a0c" strokeWidth="4.8" strokeLinecap="round" />
+                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" strokeLinecap="round" />
                     <g transform={`rotate(${followerShin2}, 2, 8)`}>
-                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
+                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
+                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" strokeLinecap="round" />
                     </g>
                   </g>
 
                   {/* Arm 1 */}
                   <g transform={`rotate(${followerArm1}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
+                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
+                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" />
                   </g>
 
                   {/* Arm 2 */}
                   <g transform={`rotate(${followerArm2}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
+                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
+                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" strokeLinecap="round" />
                   </g>
                 </g>
 
             {/* Lead Mountaineer */}
             <g transform={`translate(${leadPos.x}, ${leadPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-                  {/* Head */}
+                  {/* Head Backing & Head */}
+                  <circle cx="0" cy="-7" r="4.2" fill="#0a0a0c" />
                   <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
-                  {/* Torso */}
-                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" />
+
+                  {/* Torso Backing & Torso */}
+                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0a0a0c" strokeWidth="5.5" strokeLinecap="round" />
+                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" strokeLinecap="round" />
 
                   {/* Leg 1 (Jointed Thigh + Shin) */}
                   <g transform={`rotate(${leaderThigh1}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" />
+                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0a0a0c" strokeWidth="4.8" strokeLinecap="round" />
+                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" strokeLinecap="round" />
                     <g transform={`rotate(${leaderShin1}, -2, 8)`}>
-                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" />
+                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
+                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" strokeLinecap="round" />
                     </g>
                   </g>
 
                   {/* Leg 2 (Jointed Thigh + Shin) */}
                   <g transform={`rotate(${leaderThigh2}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" />
+                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0a0a0c" strokeWidth="4.8" strokeLinecap="round" />
+                    <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" strokeLinecap="round" />
                     <g transform={`rotate(${leaderShin2}, 2, 8)`}>
-                      <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" />
+                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
+                      <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" strokeLinecap="round" />
                     </g>
                   </g>
 
                   {/* Arm 1 */}
                   <g transform={`rotate(${leaderArm1}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
+                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
+                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" />
                   </g>
 
                   {/* Arm 2 */}
                   <g transform={`rotate(${leaderArm2}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
+                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#0a0a0c" strokeWidth="4.5" strokeLinecap="round" />
+                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" />
                   </g>
                 </g>
 
@@ -509,7 +529,7 @@ export default function MountainClimbersOverlay({
                       🏔️ PEAK SUMMIT CELEBRATION! 🎉
                     </span>
                   ) : (
-                    <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
+                    <span className="bg-[#0a0a0c] text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
                       🙌 We will go high next time
                     </span>
                   )}
@@ -526,7 +546,7 @@ export default function MountainClimbersOverlay({
                     height="20"
                   >
                     <div className="flex justify-center items-center h-full">
-                      <span className="bg-[#0c0c0e]/95 text-sky-400 border border-sky-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
+                      <span className="bg-[#0a0a0c] text-sky-400 border border-sky-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
                         FOLLOWER
                       </span>
                     </div>
@@ -542,7 +562,7 @@ export default function MountainClimbersOverlay({
                     height="20"
                   >
                     <div className="flex justify-center items-center h-full">
-                      <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
+                      <span className="bg-[#0a0a0c] text-amber-400 border border-amber-500/50 text-[7.5px] font-mono font-bold px-1.5 py-0.5 rounded shadow">
                         LEADER
                       </span>
                     </div>
