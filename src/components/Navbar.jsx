@@ -135,12 +135,14 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 relative border-b border-amber-500/30 shadow-[0_0_35px_rgba(255,102,0,0.35)] ${
         scrolled
-          ? 'bg-[#050505]/85 backdrop-blur-md border-b border-white/10 py-3 shadow-2xl'
-          : 'bg-transparent py-5'
+          ? 'bg-[#050505]/90 backdrop-blur-md py-3'
+          : 'bg-[#050505]/75 backdrop-blur-md py-4'
       }`}
     >
+      {/* Continuous Glowing Background Layer */}
+      <div className="absolute inset-0 bg-amber-500/10 shadow-[0_0_50px_rgba(255,102,0,0.5)] animate-pulse pointer-events-none -z-10" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
 
