@@ -324,20 +324,46 @@ export default function PortfolioJournalSection() {
     ? Math.abs(losingTrades.reduce((acc, t) => acc + t.manualPnl, 0) / losingTrades.length)
     : 0;
 
-  // Cumulative P&L curve dataset
+  // Cumulative P&L curve dataset with initial Basecamp origin at index 0 (PnL = 0)
   let runningPnl = 0;
-  const pnlCurveData = closedTrades.map((t, idx) => {
-    runningPnl += t.manualPnl;
-    return {
-      trade: `Trade ${idx + 1}`,
-      tradeNum: `#${idx + 1}`,
-      pnl: runningPnl,
-      tradePnl: t.manualPnl,
-      symbol: t.symbol,
-      strategy: t.strategy,
-      date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date
-    };
-  });
+  const pnlCurveData = [
+    {
+      trade: '',
+      tradeNum: 'Basecamp',
+      pnl: 0,
+      tradePnl: 0,
+      symbol: 'BASECAMP',
+      strategy: 'Basecamp Origin',
+      date: '',
+      isOrigin: true
+    },
+    ...closedTrades.map((t, idx) => {
+      runningPnl += t.manualPnl;
+      return {
+        trade: `Trade ${idx + 1}`,
+        tradeNum: `#${idx + 1}`,
+        pnl: runningPnl,
+        tradePnl: t.manualPnl,
+        symbol: t.symbol,
+        strategy: t.strategy,
+        date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date,
+        isOrigin: false
+      };
+    })
+  ];
+
+  // Calculate explicit Y domain to ensure 100% pixel-perfect alignment with Overlay
+  const chartYDomain = useMemo(() => {
+    if (pnlCurveData.length === 0) return [-15000, 45000];
+    const vals = pnlCurveData.map(d => d.pnl);
+    const rawMin = Math.min(...vals, 0);
+    const rawMax = Math.max(...vals, 0);
+
+    const step = 15000;
+    const yMin = Math.floor((rawMin - 5000) / step) * step;
+    const yMax = Math.ceil((rawMax + 5000) / step) * step;
+    return [yMin, yMax > yMin ? yMax : yMin + 30000];
+  }, [pnlCurveData]);
 
   // Calculate sampled ticks for mobile viewport so only selected ticks/vertical lines show on mobile
   const mobileTicks = useMemo(() => {
@@ -788,15 +814,9 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <div ref={chartContainerRef} className="h-[280px] w-full pt-2 relative">
-              <MountainClimbersOverlay
-                pnlData={pnlCurveData}
-                containerWidth={chartDims.width}
-                containerHeight={chartDims.height}
-                marketStatus={marketStatusInfo.status}
-              />
+            <div ref={chartContainerRef} className="h-[280px] w-full relative">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 0 }}>
+                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 25 }}>
                   <defs>
                     {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
                     <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
@@ -853,7 +873,15 @@ export default function PortfolioJournalSection() {
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                   />
-                  <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} axisLine={{ stroke: '#333' }} tickLine={false} />
+                  <YAxis
+                    stroke="#666"
+                    tick={{ fontSize: 11, fill: '#888' }}
+                    axisLine={{ stroke: '#333' }}
+                    tickLine={false}
+                    domain={chartYDomain}
+                    width={60}
+                    tickFormatter={(val) => (Math.abs(val) < 10000 ? '' : val)}
+                  />
 
                   <RechartsTooltip
                     content={({ active, payload }) => {
@@ -919,6 +947,14 @@ export default function PortfolioJournalSection() {
                   />
                 </AreaChart>
               </ResponsiveContainer>
+              <MountainClimbersOverlay
+                pnlData={pnlCurveData}
+                containerWidth={chartDims.width}
+                containerHeight={chartDims.height}
+                marketStatus={marketStatusInfo.status}
+                minPnlProp={chartYDomain[0]}
+                maxPnlProp={chartYDomain[1]}
+              />
             </div>
           </div>
         )}

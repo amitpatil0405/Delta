@@ -239,12 +239,11 @@ export default function MountainClimbersOverlay({
   if (pathRef.current && pathLength > 0) {
     try {
       const currentLen = pathLength * climbProgress;
-      const separation = isAtEndpointCelebrating ? 14 : 45;
-
       let ptLead, ptFollower;
 
       if (!isDescending) {
         // Morning Ascent (Left to Right): Leader ahead, Follower behind
+        const separation = isAtEndpointCelebrating ? 14 : 45;
         const leadLen = Math.max(0, Math.min(pathLength, currentLen));
         const followerLen = Math.max(0, Math.min(pathLength, currentLen - separation));
         ptLead = pathRef.current.getPointAtLength(leadLen);
@@ -253,14 +252,16 @@ export default function MountainClimbersOverlay({
         isLeaderMoving = isWalking && currentLen > 0 && leadLen < pathLength;
         isFollowerMoving = isWalking && currentLen >= separation && followerLen < pathLength;
       } else {
-        // Return Journey (Right to Left): Leader leaves endpoint first moving back towards Tent
+        // Return Journey (Right to Left): Leader leaves endpoint first moving back towards Tent.
+        // Dynamic separation shrinks smoothly as progress -> 0 so BOTH Leader AND Follower arrive at Tent (location 0) at 3:40 PM!
+        const dynamicSeparation = Math.min(45, pathLength * climbProgress);
         const leadLen = Math.max(0, Math.min(pathLength, currentLen));
-        const followerLen = Math.min(pathLength, currentLen + separation);
+        const followerLen = Math.max(0, Math.min(pathLength, currentLen + dynamicSeparation));
         ptLead = pathRef.current.getPointAtLength(leadLen);
         ptFollower = pathRef.current.getPointAtLength(followerLen);
 
         isLeaderMoving = isWalking && currentLen < pathLength && leadLen > 0;
-        isFollowerMoving = isWalking && currentLen <= pathLength - separation && followerLen > 0;
+        isFollowerMoving = isWalking && currentLen <= pathLength - dynamicSeparation && followerLen > 0;
       }
 
       const activeIdx = Math.min(
