@@ -819,17 +819,7 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
             <div ref={graphContainerRef} className="h-[280px] w-full relative">
-              <MountainClimbersOverlay
-                pnlData={pnlCurveData}
-                containerWidth={graphDimensions.width}
-                containerHeight={graphDimensions.height}
-                marketStatus={marketStatus}
-                minPnlProp={chartYDomain[0]}
-                maxPnlProp={chartYDomain[1]}
-                isChartHovered={isChartHovered}
-                hoveredX={chartHoverX}
-              />
-              <ResponsiveContainer width="100%" height="100%" className="relative z-20">
+              <ResponsiveContainer width="100%" height="100%">
                 <AreaChart
                   data={pnlCurveData}
                   margin={{ top: 10, right: 25, left: 10, bottom: 25 }}
@@ -979,6 +969,16 @@ export default function PortfolioJournalSection() {
                   />
                 </AreaChart>
               </ResponsiveContainer>
+              <MountainClimbersOverlay
+                pnlData={pnlCurveData}
+                containerWidth={graphDimensions.width}
+                containerHeight={graphDimensions.height}
+                marketStatus={marketStatus}
+                minPnlProp={chartYDomain[0]}
+                maxPnlProp={chartYDomain[1]}
+                isChartHovered={isChartHovered}
+                hoveredX={chartHoverX}
+              />
             </div>
           </div>
         )}
