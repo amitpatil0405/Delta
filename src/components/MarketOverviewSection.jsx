@@ -276,10 +276,10 @@ export default function MarketOverviewSection() {
           </div>
 
           {/* Desktop & Mobile Table View */}
-          <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#0a0a0c]/65 backdrop-blur-xl">
+          <div className="overflow-x-auto rounded-xl border border-white/5 bg-transparent">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-neutral-900/90 text-amber-400 font-mono text-xs uppercase tracking-wider border-b border-white/10">
+                <tr className="bg-transparent text-amber-400 font-mono text-xs uppercase tracking-wider border-b border-white/10">
                   <th className="py-3.5 px-4 font-bold text-center w-16">SR. NO.</th>
                   <th className="py-3.5 px-4 font-bold">DATE</th>
                   <th className="py-3.5 px-4 font-bold">DAY</th>
