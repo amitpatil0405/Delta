@@ -510,7 +510,7 @@ export default function PortfolioJournalSection() {
   const endMonthName = `${MONTH_NAMES[fyConfig.endMonth]} ${fyConfig.endYear}`;
 
   return (
-    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid border-t border-white/5 relative overflow-hidden">
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber top-10 right-10" />
       <div className="ambient-glow-emerald bottom-10 left-10" />
@@ -544,7 +544,7 @@ export default function PortfolioJournalSection() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <div
             onClick={() => toggleGlowBox('stat-1')}
-            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-1'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -612,7 +612,7 @@ export default function PortfolioJournalSection() {
             if (e.target.closest('.heatmap-box') || e.target.closest('button')) return;
             toggleGlowBox('heatmap-container');
           }}
-          className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
+          className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
             activeGlowBox === 'heatmap-container'
               ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
               : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -804,7 +804,7 @@ export default function PortfolioJournalSection() {
         {pnlCurveData.length > 0 && (
           <div
             onClick={() => toggleGlowBox('graph-container')}
-            className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
+            className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
               activeGlowBox === 'graph-container'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -965,7 +965,7 @@ export default function PortfolioJournalSection() {
             if (e.target.closest('button') || e.target.closest('tr')) return;
             toggleGlowBox('table-container');
           }}
-          className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
+          className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
             activeGlowBox === 'table-container'
               ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
               : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
