@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Clock } from 'lucide-react';
+import { Menu, X, Clock, Sun, Moon } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { useMarket } from '../context/MarketContext';
 
-export default function Navbar({ activePage = 'home', onNavigate }) {
+export default function Navbar({ activePage = 'home', onNavigate, theme = 'dark', onToggleTheme }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState(activePage);
@@ -173,8 +173,24 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             ))}
           </div>
 
-          {/* Right Top Corner: Market Status Indicator & Live Date/Time Display */}
+          {/* Right Top Corner: Theme Toggle, Market Status Indicator & Live Date/Time Display */}
           <div className="hidden xl:flex items-center space-x-3">
+            {/* Sun / Moon Theme Toggle Button */}
+            {onToggleTheme && (
+              <button
+                onClick={onToggleTheme}
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                aria-label="Toggle Light/Dark Theme"
+                className="flex items-center justify-center p-2 rounded-lg bg-neutral-900/90 border border-amber-500/30 text-amber-400 hover:text-amber-300 hover:bg-neutral-800 transition-all duration-200 shadow-[0_0_12px_rgba(217,119,6,0.15)] active:scale-95 cursor-pointer"
+              >
+                {theme === 'dark' ? (
+                  <Sun className="w-4 h-4 transition-transform duration-300 hover:rotate-45" />
+                ) : (
+                  <Moon className="w-4 h-4 text-amber-500 transition-transform duration-300 hover:-rotate-12" />
+                )}
+              </button>
+            )}
+
             <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
               <span className="relative flex h-2.5 w-2.5">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusBadge.dotBg}`}></span>
@@ -194,6 +210,18 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
           </div>
 
           <div className="hidden sm:flex xl:hidden items-center space-x-2">
+            {/* Sun / Moon Theme Toggle Button for Medium Screens */}
+            {onToggleTheme && (
+              <button
+                onClick={onToggleTheme}
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                aria-label="Toggle Light/Dark Theme"
+                className="flex items-center justify-center p-1.5 rounded-lg bg-neutral-900/90 border border-amber-500/30 text-amber-400 hover:text-amber-300 transition-all active:scale-95 cursor-pointer"
+              >
+                {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5 text-amber-500" />}
+              </button>
+            )}
+
             <div className="flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-neutral-900/90 border border-white/10 text-xs font-mono shadow-inner">
               <span className="relative flex h-2.5 w-2.5">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusBadge.dotBg}`}></span>
@@ -211,8 +239,19 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
             </div>
           </div>
 
-          {/* Mobile Hamburger Toggle */}
-          <div className="lg:hidden flex items-center space-x-3">
+          {/* Mobile Hamburger Toggle & Theme Button */}
+          <div className="lg:hidden flex items-center space-x-2">
+            {onToggleTheme && (
+              <button
+                onClick={onToggleTheme}
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                aria-label="Toggle Light/Dark Theme"
+                className="flex items-center justify-center p-2 rounded-lg bg-neutral-900 text-amber-400 border border-white/10 focus:outline-none active:scale-95 cursor-pointer"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4 text-amber-500" />}
+              </button>
+            )}
+
             <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-neutral-900 border border-white/10 text-[10px] font-mono">
               <span className="relative flex h-2 w-2">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusBadge.dotBg}`}></span>
