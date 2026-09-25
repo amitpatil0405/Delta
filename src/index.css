@@ -225,3 +225,65 @@
   background-size: 200% 100%;
   animation: rainbowGradientShift 14s linear infinite;
 }
+
+/* Light Mode Overrides (Keeps WebGL 3D Canvas visible behind light glass panels) */
+.light-mode {
+  color-scheme: light;
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.light-mode ::-webkit-scrollbar-track {
+  background: #cbd5e1;
+}
+
+.light-mode ::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+}
+
+.light-mode .glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+.light-mode .glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+}
+
+.light-mode .bg-\[\#050505\] {
+  background-color: rgba(241, 245, 249, 0.82) !important;
+}
+
+.light-mode .bg-\[\#0a0a0c\] {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.light-mode .bg-\[\#0c0c0e\] {
+  background-color: rgba(255, 255, 255, 0.88) !important;
+}
+
+.light-mode .bg-\[\#0a0a0f\]\/45 {
+  background-color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.light-mode .text-gray-100,
+.light-mode .text-gray-200,
+.light-mode .text-gray-300,
+.light-mode [class*="text-gray-100"],
+.light-mode [class*="text-gray-200"],
+.light-mode [class*="text-gray-300"] {
+  color: #1e293b !important;
+}
+
+.light-mode .text-gray-400,
+.light-mode [class*="text-gray-400"] {
+  color: #334155 !important;
+}
+
+.light-mode .border-white\/5,
+.light-mode .border-white\/10,
+.light-mode .border-white\/20 {
+  border-color: rgba(0, 0, 0, 0.12) !important;
+}
