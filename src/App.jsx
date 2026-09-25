@@ -15,23 +15,6 @@ import Footer from './components/Footer';
 
 export default function App() {
   const [activePage, setActivePage] = useState('home');
-  const [theme, setTheme] = useState(() => {
-    try {
-      return localStorage.getItem('deltafox_theme') || 'dark';
-    } catch {
-      return 'dark';
-    }
-  });
-
-  const toggleTheme = () => {
-    const nextTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(nextTheme);
-    try {
-      localStorage.setItem('deltafox_theme', nextTheme);
-    } catch (e) {
-      console.warn('Unable to save theme preference to localStorage', e);
-    }
-  };
 
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -53,15 +36,13 @@ export default function App() {
 
   return (
     <MarketProvider>
-      <div className={`min-h-screen flex flex-col selection:bg-amber-500/30 selection:text-amber-200 relative transition-colors duration-300 ${
-        theme === 'light' ? 'light-mode bg-[#f1f3f6]/85 text-slate-900' : 'bg-[#050505] text-gray-100'
-      }`}>
+      <div className="min-h-screen bg-[#050505] text-gray-100 flex flex-col selection:bg-amber-500/30 selection:text-amber-200 relative">
 
         {/* Persistent 3D Metallic DeltaFox Background across entire website */}
         <DeltaFox3DScene />
 
         {/* Transparent Glass Navigation */}
-        <Navbar activePage={activePage} onNavigate={handleNavigate} theme={theme} onToggleTheme={toggleTheme} />
+        <Navbar activePage={activePage} onNavigate={handleNavigate} />
 
         {/* Main Content Sections with relative z-10 stacking */}
         <main className="flex-1 relative z-10">
@@ -69,7 +50,6 @@ export default function App() {
           <HeroSection
             onExplorePortfolio={() => handleNavigate('portfolio')}
             onExploreStrategies={() => handleNavigate('strategies')}
-            onNavigate={handleNavigate}
           />
 
           {/* 2. Technical Analysis Page (Synced from Google Sheet) */}
