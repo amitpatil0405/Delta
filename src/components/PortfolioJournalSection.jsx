@@ -4,7 +4,7 @@ import {
 } from 'recharts';
 import { BookOpen, Calendar } from 'lucide-react';
 import MountainClimbersOverlay from './MountainClimbersOverlay';
-import { useMarket } from '../context/MarketContext';
+import { getISTMarketStatus } from '../services/marketData';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
 const TRADES_STORAGE_KEY = 'deltafox_portfolio_trades_v5';
@@ -170,11 +170,17 @@ function parseCSVRows(csvText) {
 }
 
 export default function PortfolioJournalSection() {
-  const { marketStatus } = useMarket();
-  const graphContainerRef = useRef(null);
-  const [graphDimensions, setGraphDimensions] = useState({ width: 0, height: 280 });
-  const [isChartHovered, setIsChartHovered] = useState(false);
-  const [chartHoverX, setChartHoverX] = useState(null);
+  // Container ref and dimensions state for overlay rendering
+  const chartContainerRef = useRef(null);
+  const [chartDims, setChartDims] = useState({ width: 0, height: 0 });
+  const [marketStatusInfo, setMarketStatusInfo] = useState(() => getISTMarketStatus());
+
+  useEffect(() => {
+    const statusTimer = setInterval(() => {
+      setMarketStatusInfo(getISTMarketStatus());
+    }, 10000);
+    return () => clearInterval(statusTimer);
+  }, []);
 
   // Responsive mobile state tracking
   const [isMobile, setIsMobile] = useState(() => {
@@ -187,26 +193,16 @@ export default function PortfolioJournalSection() {
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
+      if (chartContainerRef.current) {
+        setChartDims({
+          width: chartContainerRef.current.clientWidth,
+          height: chartContainerRef.current.clientHeight
+        });
+      }
     };
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Measure graph container dimensions dynamically for MountainClimbersOverlay
-  useEffect(() => {
-    if (!graphContainerRef.current) return;
-    const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) {
-        if (entry.contentRect) {
-          setGraphDimensions({
-            width: entry.contentRect.width,
-            height: entry.contentRect.height
-          });
-        }
-      }
-    });
-    observer.observe(graphContainerRef.current);
-    return () => observer.disconnect();
   }, []);
 
   // Trades state initialized from local cache
@@ -328,46 +324,20 @@ export default function PortfolioJournalSection() {
     ? Math.abs(losingTrades.reduce((acc, t) => acc + t.manualPnl, 0) / losingTrades.length)
     : 0;
 
-  // Cumulative P&L curve dataset with initial Basecamp origin at index 0 (PnL = 0)
+  // Cumulative P&L curve dataset
   let runningPnl = 0;
-  const pnlCurveData = [
-    {
-      trade: '',
-      tradeNum: 'Basecamp',
-      pnl: 0,
-      tradePnl: 0,
-      symbol: 'BASECAMP',
-      strategy: 'Basecamp Origin',
-      date: '',
-      isOrigin: true
-    },
-    ...closedTrades.map((t, idx) => {
-      runningPnl += t.manualPnl;
-      return {
-        trade: `Trade ${idx + 1}`,
-        tradeNum: `#${idx + 1}`,
-        pnl: runningPnl,
-        tradePnl: t.manualPnl,
-        symbol: t.symbol,
-        strategy: t.strategy,
-        date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date,
-        isOrigin: false
-      };
-    })
-  ];
-
-  // Calculate explicit Y domain to ensure 100% pixel-perfect alignment with Overlay
-  const chartYDomain = useMemo(() => {
-    if (pnlCurveData.length === 0) return [-15000, 45000];
-    const vals = pnlCurveData.map(d => d.pnl);
-    const rawMin = Math.min(...vals, 0);
-    const rawMax = Math.max(...vals, 0);
-
-    const step = 15000;
-    const yMin = Math.floor((rawMin - 5000) / step) * step;
-    const yMax = Math.ceil((rawMax + 5000) / step) * step;
-    return [yMin, yMax > yMin ? yMax : yMin + 30000];
-  }, [pnlCurveData]);
+  const pnlCurveData = closedTrades.map((t, idx) => {
+    runningPnl += t.manualPnl;
+    return {
+      trade: `Trade ${idx + 1}`,
+      tradeNum: `#${idx + 1}`,
+      pnl: runningPnl,
+      tradePnl: t.manualPnl,
+      symbol: t.symbol,
+      strategy: t.strategy,
+      date: t.tradeCloseDate !== '-' ? t.tradeCloseDate : t.date
+    };
+  });
 
   // Calculate sampled ticks for mobile viewport so only selected ticks/vertical lines show on mobile
   const mobileTicks = useMemo(() => {
@@ -514,7 +484,7 @@ export default function PortfolioJournalSection() {
   const endMonthName = `${MONTH_NAMES[fyConfig.endMonth]} ${fyConfig.endYear}`;
 
   return (
-    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-[#050505] bg-subpage-grid border-t border-white/5 relative overflow-hidden">
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber top-10 right-10" />
       <div className="ambient-glow-emerald bottom-10 left-10" />
@@ -548,7 +518,7 @@ export default function PortfolioJournalSection() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <div
             onClick={() => toggleGlowBox('stat-1')}
-            className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
+            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
               activeGlowBox === 'stat-1'
                 ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
                 : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -616,7 +586,7 @@ export default function PortfolioJournalSection() {
             if (e.target.closest('.heatmap-box') || e.target.closest('button')) return;
             toggleGlowBox('heatmap-container');
           }}
-          className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
+          className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
             activeGlowBox === 'heatmap-container'
               ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
               : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
@@ -818,25 +788,15 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
-            <div ref={graphContainerRef} className="h-[280px] w-full relative">
+            <div ref={chartContainerRef} className="h-[280px] w-full pt-2 relative">
+              <MountainClimbersOverlay
+                pnlData={pnlCurveData}
+                containerWidth={chartDims.width}
+                containerHeight={chartDims.height}
+                marketStatus={marketStatusInfo.status}
+              />
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={pnlCurveData}
-                  margin={{ top: 10, right: 25, left: 10, bottom: 25 }}
-                  onMouseMove={(state) => {
-                    if (state && state.isTooltipActive) {
-                      setIsChartHovered(true);
-                      setChartHoverX(state.chartX ?? null);
-                    } else {
-                      setIsChartHovered(false);
-                      setChartHoverX(null);
-                    }
-                  }}
-                  onMouseLeave={() => {
-                    setIsChartHovered(false);
-                    setChartHoverX(null);
-                  }}
-                >
+                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 0 }}>
                   <defs>
                     {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
                     <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
@@ -892,20 +852,10 @@ export default function PortfolioJournalSection() {
                     ticks={isMobile ? mobileTicks : undefined}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
-                    padding={{ left: 0, right: 0 }}
                   />
-                  <YAxis
-                    stroke="#666"
-                    tick={{ fontSize: 11, fill: '#888' }}
-                    axisLine={{ stroke: '#333' }}
-                    tickLine={false}
-                    domain={chartYDomain}
-                    width={60}
-                    tickFormatter={(val) => (Math.abs(val) < 10000 ? '' : val)}
-                  />
+                  <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} axisLine={{ stroke: '#333' }} tickLine={false} />
 
                   <RechartsTooltip
-                    wrapperStyle={{ zIndex: 50 }}
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
@@ -969,16 +919,6 @@ export default function PortfolioJournalSection() {
                   />
                 </AreaChart>
               </ResponsiveContainer>
-              <MountainClimbersOverlay
-                pnlData={pnlCurveData}
-                containerWidth={graphDimensions.width}
-                containerHeight={graphDimensions.height}
-                marketStatus={marketStatus}
-                minPnlProp={chartYDomain[0]}
-                maxPnlProp={chartYDomain[1]}
-                isChartHovered={isChartHovered}
-                hoveredX={chartHoverX}
-              />
             </div>
           </div>
         )}
@@ -989,7 +929,7 @@ export default function PortfolioJournalSection() {
             if (e.target.closest('button') || e.target.closest('tr')) return;
             toggleGlowBox('table-container');
           }}
-          className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
+          className={`bg-[#0a0a0c] rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
             activeGlowBox === 'table-container'
               ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
               : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
