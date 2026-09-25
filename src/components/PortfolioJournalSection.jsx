@@ -829,7 +829,7 @@ export default function PortfolioJournalSection() {
                 isChartHovered={isChartHovered}
                 hoveredX={chartHoverX}
               />
-              <ResponsiveContainer width="100%" height="100%" className="relative z-10">
+              <ResponsiveContainer width="100%" height="100%" className="relative z-20">
                 <AreaChart
                   data={pnlCurveData}
                   margin={{ top: 10, right: 25, left: 10, bottom: 25 }}
@@ -915,6 +915,7 @@ export default function PortfolioJournalSection() {
                   />
 
                   <RechartsTooltip
+                    wrapperStyle={{ zIndex: 50 }}
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;

@@ -303,7 +303,7 @@ export default function MountainClimbersOverlay({
   const followerArm2   = isFollowerMoving ? Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? 135 : 15);
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-20 hidden md:block overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none z-10 hidden md:block overflow-hidden">
       <svg
         width={width}
         height={height}
