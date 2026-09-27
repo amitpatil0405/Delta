@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 
 // Reusable CountUp Number Component for Odometer Effect on Scroll
-function CountUpNumber({ value, decimals = 0, prefix = '', suffix = '', duration = 2.2, isCurrency = false, isSigned = false }) {
+function CountUpNumber({ value, decimals = 0, prefix = '', suffix = '', duration = 2.0, isCurrency = false, isSigned = false }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { amount: 0.2, once: false });
   const [displayValue, setDisplayValue] = useState(0);
@@ -16,8 +16,8 @@ function CountUpNumber({ value, decimals = 0, prefix = '', suffix = '', duration
       const step = (timestamp) => {
         if (!startTime) startTime = timestamp;
         const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
-        // Smooth easeOutCubic easing for realistic odometer feel
-        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        // Smooth easeOutExpo easing for graceful, slow-ending digit rollup
+        const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
         const current = easeProgress * targetValue;
         setDisplayValue(current);
 
@@ -609,11 +609,10 @@ export default function PortfolioJournalSection() {
           {/* Card 1: Total Trades */}
           <motion.div
             variants={{
-              hidden: { y: 20, opacity: 0, scale: 0.95 },
+              hidden: { opacity: 0, y: 15 },
               show: {
-                y: 0,
                 opacity: 1,
-                scale: 1,
+                y: 0,
                 transition: { duration: 0.5, ease: 'easeOut' }
               }
             }}
@@ -624,7 +623,7 @@ export default function PortfolioJournalSection() {
 
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">TOTAL TRADES</span>
             <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">
-              <CountUpNumber value={totalTradesCount} decimals={0} duration={2.2} />
+              <CountUpNumber value={totalTradesCount} decimals={0} duration={2.0} />
             </div>
             <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 block truncate w-full mt-0.5">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full mt-0.5">{startMonthName} – {endMonthName}</span>
@@ -633,11 +632,10 @@ export default function PortfolioJournalSection() {
           {/* Card 2: Win Rate */}
           <motion.div
             variants={{
-              hidden: { y: 20, opacity: 0, scale: 0.95 },
+              hidden: { opacity: 0, y: 15 },
               show: {
-                y: 0,
                 opacity: 1,
-                scale: 1,
+                y: 0,
                 transition: { duration: 0.5, ease: 'easeOut' }
               }
             }}
@@ -648,7 +646,7 @@ export default function PortfolioJournalSection() {
 
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">WIN RATE</span>
             <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">
-              <CountUpNumber value={winRate} decimals={2} suffix="%" duration={2.2} />
+              <CountUpNumber value={winRate} decimals={2} suffix="%" duration={2.0} />
             </div>
             <span className="text-[9px] sm:text-[10px] font-mono block truncate w-full">
               <span className="text-emerald-400 font-bold">{winningTrades.length} Wins</span>
@@ -660,11 +658,10 @@ export default function PortfolioJournalSection() {
           {/* Card 3: Gross Cumulative P&L */}
           <motion.div
             variants={{
-              hidden: { y: 20, opacity: 0, scale: 0.95 },
+              hidden: { opacity: 0, y: 15 },
               show: {
-                y: 0,
                 opacity: 1,
-                scale: 1,
+                y: 0,
                 transition: { duration: 0.5, ease: 'easeOut' }
               }
             }}
@@ -679,7 +676,7 @@ export default function PortfolioJournalSection() {
 
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">GROSS CUMULATIVE P&L</span>
             <div className={`text-base sm:text-xl md:text-2xl font-extrabold font-mono mt-1 tracking-tight truncate w-full ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              <CountUpNumber value={totalPnl} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.2} />
+              <CountUpNumber value={totalPnl} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.0} />
             </div>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full">{startMonthName} – {endMonthName}</span>
           </motion.div>
@@ -687,11 +684,10 @@ export default function PortfolioJournalSection() {
           {/* Card 4: Avg Profit / Loss */}
           <motion.div
             variants={{
-              hidden: { y: 20, opacity: 0, scale: 0.95 },
+              hidden: { opacity: 0, y: 15 },
               show: {
-                y: 0,
                 opacity: 1,
-                scale: 1,
+                y: 0,
                 transition: { duration: 0.5, ease: 'easeOut' }
               }
             }}
@@ -703,11 +699,11 @@ export default function PortfolioJournalSection() {
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">AVG PROFIT / LOSS</span>
             <div className="text-xs sm:text-sm md:text-base xl:text-lg font-extrabold font-mono mt-1 flex flex-col sm:flex-row sm:items-center justify-center gap-0.5 sm:gap-1 tracking-tight w-full min-w-0">
               <span className="text-emerald-400 truncate">
-                <CountUpNumber value={avgProfit} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.2} />
+                <CountUpNumber value={avgProfit} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.0} />
               </span>
               <span className="text-gray-400 hidden sm:inline">/</span>
               <span className="text-rose-400 truncate">
-                <CountUpNumber value={-avgLoss} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.2} />
+                <CountUpNumber value={-avgLoss} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.0} />
               </span>
             </div>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full mt-0.5">Risk-Reward Ratio</span>
