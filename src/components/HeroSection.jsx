@@ -17,7 +17,7 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
       <div className="absolute top-1/3 left-1/4 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Main Viewport Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
+      <div className="relative z-10 w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col justify-center items-center">
 
         {/* Animated Brand Badge in Premium Golden/Amber Theme */}
         <div

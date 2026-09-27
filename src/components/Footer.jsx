@@ -52,7 +52,7 @@ export default function Footer({ onNavigate }) {
       </div>
 
       {/* Main Footer Links & Compliance */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
 
           {/* Brand Info (Left) */}

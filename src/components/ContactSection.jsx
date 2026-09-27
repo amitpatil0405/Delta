@@ -158,7 +158,7 @@ export default function ContactSection() {
       {/* Ambient Radial Glow Lighting */}
       <div className="ambient-glow-amber top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Header & Admin Controls */}
         <div className="text-center space-y-4 mb-12">
