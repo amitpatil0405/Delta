@@ -179,15 +179,35 @@ export default function CelestialBackground({
       { x: 0.70, y: 0.48, r: 1.6, dur: 2.5, delay: 0.3 }
     ];
 
-    return organicCoords.map((c, i) => ({
-      id: i,
-      cx: margin.left + c.x * chartW,
-      cy: margin.top + c.y * chartH,
-      r: c.r,
-      opacity: 0.25 + (i % 4) * 0.12,
-      dur: c.dur,
-      delay: c.delay
-    }));
+    return organicCoords.map((c, i) => {
+      // Calculate dynamic curve Y position at star's X location so Y is strictly above curve
+      const xRatio = c.x;
+      const ptIdxFloat = xRatio * (pnlData.length > 1 ? pnlData.length - 1 : 1);
+      const idx0 = Math.floor(ptIdxFloat);
+      const idx1 = Math.min(pnlData.length - 1, idx0 + 1);
+      const frac = ptIdxFloat - idx0;
+
+      const pnl0 = pnlData[idx0]?.pnl ?? 0;
+      const pnl1 = pnlData[idx1]?.pnl ?? pnl0;
+      const interpPnl = pnl0 + (pnl1 - pnl0) * frac;
+
+      const pnlRatio = (maxPnl - minPnl) > 0 ? (interpPnl - minPnl) / (maxPnl - minPnl) : 0.5;
+      const curveYAtX = margin.top + (1 - pnlRatio) * chartH;
+
+      // Scale Y relative to distance above curve line (target sky area)
+      const maxSkyH = Math.max(20, curveYAtX - margin.top - 12);
+      const starY = margin.top + Math.min(c.y * chartH, maxSkyH * 0.95);
+
+      return {
+        id: i,
+        cx: margin.left + c.x * chartW,
+        cy: Math.min(starY, curveYAtX - 12),
+        r: c.r,
+        opacity: 0.25 + (i % 4) * 0.12,
+        dur: c.dur,
+        delay: c.delay
+      };
+    });
   }, [margin.left, margin.top, chartW, chartH]);
 
   return (
@@ -230,9 +250,9 @@ export default function CelestialBackground({
           stroke="none"
         />
 
-        {/* Night Cycle Twinkling Stars (Smooth Reveal 7:00 PM onwards & Fade Out at Dawn) */}
+        {/* Night Cycle Twinkling Stars (Clipped above P&L curve line with Sky Clip Mask) */}
         {!isDay && (
-          <g className="stars-layer transition-opacity duration-1000" style={{ opacity: timeInfo.nightFade }}>
+          <g clipPath="url(#skyClip)" className="stars-layer transition-opacity duration-1000" style={{ opacity: timeInfo.nightFade }}>
             {stars.map((s) => {
               const maxOp = Math.min(0.8, s.opacity * 2.5) * timeInfo.nightFade;
               const minOp = 0.2 * timeInfo.nightFade;
