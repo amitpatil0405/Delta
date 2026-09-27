@@ -379,16 +379,79 @@ export default function MountainClimbersOverlay({
           ))}
         </g>
 
-        {/* Basecamp Tent Graphic placed at Exact 0 P&L Y-Axis Line */}
+        {/* Basecamp Tent Graphic / Night Shekoti Campfire Scene at Exact 0 P&L Y-Axis Line */}
         <g transform={`translate(${margin.left - 42}, ${zeroY - 32})`}>
-          <image
-            href={tentImg}
-            x="0"
-            y="0"
-            width="38"
-            height="36"
-            preserveAspectRatio="xMidYMid meet"
-          />
+          {isResting && (new Date().getHours() >= 19 || new Date().getHours() < 6) ? (
+            /* Night Hours (7:00 PM - 6:00 AM) Shekoti Campfire Scene */
+            <g className="shekoti-scene">
+              {/* Tent in background */}
+              <image
+                href={tentImg}
+                x="-12"
+                y="2"
+                width="32"
+                height="30"
+                opacity="0.75"
+                preserveAspectRatio="xMidYMid meet"
+              />
+
+              {/* Seated Trader Figure 1 (Left) */}
+              <g transform="translate(14, 20)">
+                {/* Head */}
+                <circle cx="0" cy="-6" r="2.5" fill="#f59e0b" />
+                {/* Torso/Jacket */}
+                <path d="M -3 0 Q 0 -4 3 0 L 2 7 L -2 7 Z" fill="#d97706" />
+                {/* Seated legs */}
+                <path d="M -2 7 L -6 10 L -1 10" stroke="#b45309" strokeWidth="1.5" fill="none" />
+              </g>
+
+              {/* Seated Trader Figure 2 (Right) */}
+              <g transform="translate(38, 20)">
+                {/* Head */}
+                <circle cx="0" cy="-6" r="2.5" fill="#38bdf8" />
+                {/* Torso/Jacket */}
+                <path d="M -3 0 Q 0 -4 3 0 L 2 7 L -2 7 Z" fill="#0284c7" />
+                {/* Seated legs */}
+                <path d="M 2 7 L 6 10 L 1 10" stroke="#0369a1" strokeWidth="1.5" fill="none" />
+              </g>
+
+              {/* Animated Shekoti Campfire (Center) */}
+              <g transform="translate(26, 22)">
+                {/* Campfire Glow Halo */}
+                <circle cx="0" cy="2" r="14" fill="rgba(245, 158, 11, 0.25)" className="animate-pulse" style={{ animationDuration: '1.2s' }} />
+                {/* Wood Logs */}
+                <line x1="-5" y1="5" x2="5" y2="1" stroke="#78350f" strokeWidth="2" strokeLinecap="round" />
+                <line x1="-5" y1="1" x2="5" y2="5" stroke="#78350f" strokeWidth="2" strokeLinecap="round" />
+                {/* Outer Flame (Orange) */}
+                <path
+                  d="M -4 3 Q -2 -6 0 -10 Q 2 -6 4 3 Z"
+                  fill="#f97316"
+                  className="animate-pulse"
+                  style={{ animationDuration: '0.8s' }}
+                />
+                {/* Inner Flame (Yellow/Gold) */}
+                <path
+                  d="M -2.5 3 Q -1 -3 0 -7 Q 1 -3 2.5 3 Z"
+                  fill="#fbbf24"
+                  className="animate-pulse"
+                  style={{ animationDuration: '0.5s' }}
+                />
+                {/* Spark Particles */}
+                <circle cx="-2" cy="-9" r="0.8" fill="#fef08a" className="animate-ping" style={{ animationDuration: '1.5s' }} />
+                <circle cx="2" cy="-11" r="0.7" fill="#fef08a" className="animate-ping" style={{ animationDuration: '1.8s' }} />
+              </g>
+            </g>
+          ) : (
+            /* Day Hours Standard Tent */
+            <image
+              href={tentImg}
+              x="0"
+              y="0"
+              width="38"
+              height="36"
+              preserveAspectRatio="xMidYMid meet"
+            />
+          )}
           {/* Dynamic Tent Tagline */}
           {tentTagline === 'Preparing' && (
             <foreignObject x="-25" y="-22" width="90" height="20">
