@@ -60,6 +60,7 @@ import {
 } from 'recharts';
 import { BookOpen, Calendar } from 'lucide-react';
 import MountainClimbersOverlay from './MountainClimbersOverlay';
+import CelestialBackground from './CelestialBackground';
 import { getISTMarketStatus } from '../services/marketData';
 
 const GOOGLE_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
@@ -892,6 +893,13 @@ export default function PortfolioJournalSection() {
               <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
             </h3>
             <div ref={chartContainerRef} className="h-[280px] w-full relative">
+              <CelestialBackground
+                pnlData={pnlCurveData}
+                containerWidth={chartDims.width}
+                containerHeight={chartDims.height}
+                minPnlProp={chartYDomain[0]}
+                maxPnlProp={chartYDomain[1]}
+              />
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 25 }}>
                   <defs>
