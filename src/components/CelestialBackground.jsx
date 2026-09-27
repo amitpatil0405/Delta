@@ -86,7 +86,16 @@ export default function CelestialBackground({
 
   return (
     <div className="absolute inset-0 z-0 pointer-events-none hidden md:block overflow-hidden">
-      <svg width={width} height={height} className="w-full h-full overflow-visible">
+      {/* Ambient Time-of-Day Radial Background Glow Layer */}
+      <div
+        className="absolute inset-0 transition-opacity duration-1000 pointer-events-none"
+        style={{
+          background: isDay
+            ? 'radial-gradient(ellipse at 50% 30%, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.02) 45%, transparent 70%)'
+            : 'radial-gradient(ellipse at 50% 30%, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0.02) 45%, transparent 70%)'
+        }}
+      />
+      <svg width={width} height={height} className="w-full h-full overflow-visible relative z-10">
         <defs>
           {/* Sun Radial Glow */}
           <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
@@ -115,23 +124,27 @@ export default function CelestialBackground({
         {/* Night Cycle Twinkling Stars */}
         {!isDay && (
           <g className="stars-layer">
-            {stars.map((s) => (
-              <circle
-                key={s.id}
-                cx={s.cx}
-                cy={s.cy}
-                r={s.r}
-                fill="#e0f2fe"
-                opacity={s.opacity}
-              >
-                <animate
-                  attributeName="opacity"
-                  values={`${s.opacity};${s.opacity * 0.2};${s.opacity}`}
-                  dur={`${s.dur}s`}
-                  repeatCount="indefinite"
-                />
-              </circle>
-            ))}
+            {stars.map((s) => {
+              const maxOp = Math.min(0.8, s.opacity * 2.5);
+              const minOp = 0.2;
+              return (
+                <circle
+                  key={s.id}
+                  cx={s.cx}
+                  cy={s.cy}
+                  r={s.r}
+                  fill="#e0f2fe"
+                  opacity={minOp}
+                >
+                  <animate
+                    attributeName="opacity"
+                    values={`${minOp};${maxOp};${minOp}`}
+                    dur={`${s.dur}s`}
+                    repeatCount="indefinite"
+                  />
+                </circle>
+              );
+            })}
           </g>
         )}
 
@@ -140,8 +153,8 @@ export default function CelestialBackground({
           {isDay ? (
             /* Day Cycle: Golden Glowing Sun */
             <g>
-              {/* Outer Glow Halo */}
-              <circle cx="0" cy="0" r="22" fill="url(#sunGlow)" />
+              {/* Outer Pulsing Glow Halo */}
+              <circle cx="0" cy="0" r="22" fill="url(#sunGlow)" className="animate-pulse" style={{ animationDuration: '3s' }} />
               {/* Sun Core */}
               <circle cx="0" cy="0" r="8" fill="#f59e0b" stroke="#fef08a" strokeWidth="1.5" className="drop-shadow-[0_0_12px_rgba(245,158,11,0.9)]" />
               {/* Rotating Sun Rays */}
