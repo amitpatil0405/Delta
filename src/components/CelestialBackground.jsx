@@ -61,7 +61,8 @@ export default function CelestialBackground({
 
   // Parabolic Trajectory
   // t = 0 -> (x0, y0), t = 0.5 -> (midX, apexY), t = 1 -> (x1, y1)
-  const apexY = Math.min(y0, y1) > 80 ? 18 : 10; // Top center apex point
+  // Cap apex height with top boundary padding (~48px) so Sun/Moon remains inside chart box below title
+  const apexY = 48; // Top center apex point with boundary padding
   const yApexCtrl = 2 * apexY - 0.5 * y0 - 0.5 * y1;
 
   const t = Math.max(0, Math.min(1, progress));
