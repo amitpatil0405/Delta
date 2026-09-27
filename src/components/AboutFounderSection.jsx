@@ -1,7 +1,149 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useInView } from 'framer-motion';
 import { ShieldCheck, Target, Compass, Cpu } from 'lucide-react';
 import myPic from '../assets/my_pic.jpg';
 import founderBack from '../assets/founder_back.png';
+
+const BIO_PARAGRAPHS = [
+  {
+    type: 'plain',
+    text: "Backed by a Bachelor's degree in Computer Science engineering and deep-rooted expertise in financial markets, Amit leads DeltaFox with an engineering-driven, systematic approach."
+  },
+  {
+    type: 'plain',
+    text: "By blending technical precision with quantitative trading, the platform brings complete transparency by showcasing data and real-time portfolio details directly on the website."
+  },
+  {
+    type: 'plain',
+    text: "Specializing in advanced options trading strategies particularly non-directional frameworks, credit spreads, and volatility based execution. The focus remains on building resilient portfolios where data and math take absolute precedence over emotion."
+  },
+  {
+    type: 'compound',
+    parts: [
+      { text: "In addition to systematic trading, DeltaFox offers specialized training programs designed to educate aspiring traders. " },
+      { text: "[Enrollment is subject to strict terms and conditions, risk disclosures, and eligibility criteria.]", isHighlight: true },
+      { text: " The core philosophy revolves around uncompromised capital preservation, strict rule execution, and navigating changing market regimes with complete discipline." }
+    ]
+  }
+];
+
+function TypewriterBio() {
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { amount: 0.2, once: false });
+  const [typedChars, setTypedChars] = useState(0);
+
+  // Calculate total character count across all paragraphs
+  const totalChars = useMemo(() => {
+    let count = 0;
+    BIO_PARAGRAPHS.forEach(p => {
+      if (p.type === 'plain') {
+        count += p.text.length;
+      } else {
+        p.parts.forEach(pt => { count += pt.text.length; });
+      }
+    });
+    return count;
+  }, []);
+
+  useEffect(() => {
+    let timer;
+    if (isInView) {
+      setTypedChars(0);
+      const intervalMs = 32; // ~32ms per character for readable, deliberate pace
+      timer = setInterval(() => {
+        setTypedChars(prev => {
+          if (prev < totalChars) {
+            return prev + 1;
+          }
+          clearInterval(timer);
+          return totalChars;
+        });
+      }, intervalMs);
+    } else {
+      setTypedChars(0);
+    }
+
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isInView, totalChars]);
+
+  const isTypingFinished = typedChars >= totalChars;
+
+  // Render paragraphs up to typedChars limit
+  let charTracker = 0;
+
+  return (
+    <div ref={containerRef} className="space-y-4 text-sm sm:text-base text-gray-200 leading-relaxed font-sans min-h-[280px]">
+      {BIO_PARAGRAPHS.map((p, pIdx) => {
+        if (p.type === 'plain') {
+          const startIdx = charTracker;
+          const endIdx = startIdx + p.text.length;
+          charTracker = endIdx;
+
+          if (typedChars <= startIdx) {
+            return null;
+          }
+
+          const visibleLength = Math.max(0, Math.min(p.text.length, typedChars - startIdx));
+          const visibleText = p.text.slice(0, visibleLength);
+          const isCurrentTypingP = typedChars > startIdx && typedChars <= endIdx;
+
+          return (
+            <p key={pIdx}>
+              {visibleText}
+              {isCurrentTypingP && !isTypingFinished && (
+                <span className="inline-block w-2 h-4 ml-0.5 bg-amber-400 animate-pulse align-middle" />
+              )}
+            </p>
+          );
+        } else {
+          // Compound paragraph
+          const pStartIdx = charTracker;
+          let pLength = 0;
+          p.parts.forEach(pt => { pLength += pt.text.length; });
+          const pEndIdx = pStartIdx + pLength;
+          charTracker = pEndIdx;
+
+          if (typedChars <= pStartIdx) {
+            return null;
+          }
+
+          let localTracker = pStartIdx;
+          const isCurrentTypingP = typedChars > pStartIdx && typedChars <= pEndIdx;
+
+          return (
+            <p key={pIdx}>
+              {p.parts.map((pt, ptIdx) => {
+                const partStart = localTracker;
+                const partEnd = partStart + pt.text.length;
+                localTracker = partEnd;
+
+                if (typedChars <= partStart) return null;
+
+                const visLen = Math.max(0, Math.min(pt.text.length, typedChars - partStart));
+                const visText = pt.text.slice(0, visLen);
+
+                if (pt.isHighlight) {
+                  return (
+                    <span key={ptIdx} className="text-amber-400 font-mono text-xs font-semibold">
+                      {visText}
+                    </span>
+                  );
+                }
+
+                return <React.Fragment key={ptIdx}>{visText}</React.Fragment>;
+              })}
+              {isCurrentTypingP && !isTypingFinished && (
+                <span className="inline-block w-2 h-4 ml-0.5 bg-amber-400 animate-pulse align-middle" />
+              )}
+            </p>
+          );
+        }
+      })}
+    </div>
+  );
+}
 
 export default function AboutFounderSection() {
   return (
@@ -77,20 +219,7 @@ export default function AboutFounderSection() {
                   <span>Bachelor Of Engineering ( Computer-Science ) & Quantitative Intelligence</span>
                 </div>
 
-                <div className="space-y-4 text-sm sm:text-base text-gray-200 leading-relaxed font-sans">
-                  <p>
-                    Backed by a Bachelor's degree in Computer Science engineering and deep-rooted expertise in financial markets, Amit leads DeltaFox with an engineering-driven, systematic approach.
-                  </p>
-                  <p>
-                    By blending technical precision with quantitative trading, the platform brings complete transparency by showcasing data and real-time portfolio details directly on the website.
-                  </p>
-                  <p>
-                    Specializing in advanced options trading strategies particularly non-directional frameworks, credit spreads, and volatility based execution. The focus remains on building resilient portfolios where data and math take absolute precedence over emotion.
-                  </p>
-                  <p>
-                    In addition to systematic trading, DeltaFox offers specialized training programs designed to educate aspiring traders. <span className="text-amber-400 font-mono text-xs font-semibold">[Enrollment is subject to strict terms and conditions, risk disclosures, and eligibility criteria.]</span> The core philosophy revolves around uncompromised capital preservation, strict rule execution, and navigating changing market regimes with complete discipline.
-                  </p>
-                </div>
+                <TypewriterBio />
 
                 {/* Core Values */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
