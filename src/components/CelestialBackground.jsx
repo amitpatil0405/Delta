@@ -71,6 +71,21 @@ export default function CelestialBackground({
   const cx = (1 - t) * x0 + t * x1;
   const cy = (1 - t) * (1 - t) * y0 + 2 * (1 - t) * t * yApexCtrl + t * t * y1;
 
+  // Sunrise/Sunset & Moonrise/Moonset Edge Fade-In/Out (0% to 5% & 95% to 100%)
+  // Horizon Dip Y-offset (+18px -> 0px) for smooth emergence behind horizon/node
+  let edgeOpacity = 1.0;
+  let yHorizonOffset = 0;
+
+  if (t < 0.05) {
+    const fadeRatio = t / 0.05; // [0, 1]
+    edgeOpacity = fadeRatio;
+    yHorizonOffset = (1 - fadeRatio) * 18;
+  } else if (t > 0.95) {
+    const fadeRatio = (1 - t) / 0.05; // [1, 0]
+    edgeOpacity = fadeRatio;
+    yHorizonOffset = (1 - fadeRatio) * 18;
+  }
+
   // SVG Arc Path for subtle dotted guide line
   const arcPath = `M ${x0} ${y0} Q ${(x0 + x1) / 2} ${yApexCtrl} ${x1} ${y1}`;
 
@@ -196,8 +211,8 @@ export default function CelestialBackground({
           </g>
         )}
 
-        {/* Celestial Body: Sun or Moon (100% Transparent Container with Standard Drop-Shadow Glow) */}
-        <g transform={`translate(${cx}, ${cy})`}>
+        {/* Celestial Body: Sun or Moon (100% Transparent Container with Edge Fade & Horizon Dip) */}
+        <g transform={`translate(${cx}, ${cy + yHorizonOffset})`} style={{ opacity: edgeOpacity }}>
           {isDay ? (
             /* Day Cycle: Clean Transparent Sun Vector with Drop-Shadow Glow */
             <g style={{ filter: 'drop-shadow(0px 0px 18px rgba(251, 191, 36, 0.6))' }}>
