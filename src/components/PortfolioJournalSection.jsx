@@ -592,32 +592,9 @@ export default function PortfolioJournalSection() {
         </div>
 
         {/* Portfolio Performance Dashboard */}
-        <motion.div
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: false, amount: 0.2 }}
-          variants={{
-            hidden: {},
-            show: {
-              transition: {
-                staggerChildren: 0.1
-              }
-            }
-          }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4"
-        >
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {/* Card 1: Total Trades */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 15 },
-              show: {
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.5, ease: 'easeOut' }
-              }
-            }}
-            className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden"
-          >
+          <div className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden">
             {/* Border Sweep Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
 
@@ -627,20 +604,10 @@ export default function PortfolioJournalSection() {
             </div>
             <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 block truncate w-full mt-0.5">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full mt-0.5">{startMonthName} – {endMonthName}</span>
-          </motion.div>
+          </div>
 
           {/* Card 2: Win Rate */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 15 },
-              show: {
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.5, ease: 'easeOut' }
-              }
-            }}
-            className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden"
-          >
+          <div className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden">
             {/* Border Sweep Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
 
@@ -653,24 +620,14 @@ export default function PortfolioJournalSection() {
               <span className="text-gray-400"> / </span>
               <span className="text-rose-400 font-bold">{losingTrades.length} Losses</span>
             </span>
-          </motion.div>
+          </div>
 
           {/* Card 3: Gross Cumulative P&L */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 15 },
-              show: {
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.5, ease: 'easeOut' }
-              }
-            }}
-            className={`group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden ${
-              totalPnl >= 0
-                ? 'border-emerald-500/30 hover:border-emerald-400 hover:shadow-[0_0_25px_rgba(16,185,129,0.35)]'
-                : 'border-rose-500/30 hover:border-rose-400 hover:shadow-[0_0_25px_rgba(244,63,94,0.35)]'
-            }`}
-          >
+          <div className={`group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden ${
+            totalPnl >= 0
+              ? 'border-emerald-500/30 hover:border-emerald-400 hover:shadow-[0_0_25px_rgba(16,185,129,0.35)]'
+              : 'border-rose-500/30 hover:border-rose-400 hover:shadow-[0_0_25px_rgba(244,63,94,0.35)]'
+          }`}>
             {/* Border Sweep Effect */}
             <div className={`absolute inset-0 bg-gradient-to-r from-transparent ${totalPnl >= 0 ? 'via-emerald-500/10' : 'via-rose-500/10'} to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none`} />
 
@@ -679,20 +636,10 @@ export default function PortfolioJournalSection() {
               <CountUpNumber value={totalPnl} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.0} />
             </div>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full">{startMonthName} – {endMonthName}</span>
-          </motion.div>
+          </div>
 
           {/* Card 4: Avg Profit / Loss */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 15 },
-              show: {
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.5, ease: 'easeOut' }
-              }
-            }}
-            className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden"
-          >
+          <div className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden">
             {/* Border Sweep Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
 
@@ -707,8 +654,8 @@ export default function PortfolioJournalSection() {
               </span>
             </div>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full mt-0.5">Risk-Reward Ratio</span>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* P&L Contribution Heatmap Grid */}
         <div
