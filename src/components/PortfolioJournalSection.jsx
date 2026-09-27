@@ -649,12 +649,12 @@ export default function PortfolioJournalSection() {
             <motion.div
               initial="hidden"
               whileInView="show"
-              viewport={{ once: true, amount: 0.2 }}
+              viewport={{ once: false, amount: 0.2 }}
               variants={{
                 hidden: {},
                 show: {
                   transition: {
-                    staggerChildren: 0.08
+                    staggerChildren: 0.12
                   }
                 }
               }}
@@ -669,9 +669,9 @@ export default function PortfolioJournalSection() {
                       y: 0,
                       opacity: 1,
                       transition: {
-                        duration: 0.3,
+                        duration: 0.5,
                         ease: 'easeOut',
-                        staggerChildren: 0.015
+                        staggerChildren: 0.03
                       }
                     }
                   }}
@@ -763,7 +763,7 @@ export default function PortfolioJournalSection() {
                               scale: 1,
                               opacity: 1,
                               transition: {
-                                duration: 0.15,
+                                duration: 0.3,
                                 ease: 'easeOut'
                               }
                             }
