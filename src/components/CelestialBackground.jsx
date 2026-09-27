@@ -86,13 +86,13 @@ export default function CelestialBackground({
 
   return (
     <div className="absolute inset-0 z-0 pointer-events-none hidden md:block overflow-hidden">
-      {/* Ambient Time-of-Day Radial Background Glow Layer */}
+      {/* Ambient Time-of-Day Radial Background Glow Layer with Heavy Alpha Feathering */}
       <div
-        className="absolute inset-0 transition-opacity duration-1000 pointer-events-none"
+        className="absolute inset-0 transition-opacity duration-1000 pointer-events-none blur-2xl"
         style={{
           background: isDay
-            ? 'radial-gradient(ellipse at 50% 30%, rgba(245, 158, 11, 0.08) 0%, rgba(245, 158, 11, 0.02) 45%, transparent 70%)'
-            : 'radial-gradient(ellipse at 50% 30%, rgba(14, 165, 233, 0.08) 0%, rgba(14, 165, 233, 0.02) 45%, transparent 70%)'
+            ? 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(245, 158, 11, 0.07) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 100%)'
+            : 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(14, 165, 233, 0.07) 0%, rgba(14, 165, 233, 0.02) 50%, transparent 100%)'
         }}
       />
       <svg width={width} height={height} className="w-full h-full overflow-visible relative z-10">
