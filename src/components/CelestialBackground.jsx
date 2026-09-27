@@ -175,6 +175,11 @@ export default function CelestialBackground({
             <stop offset="40%" stopColor="#0284c7" stopOpacity="0.35" />
             <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
           </radialGradient>
+
+          {/* Sky Clip Mask: Clips any element below the P&L curve line horizon so Sun/Moon never bleeds through area fill */}
+          <clipPath id="skyClip">
+            <path d={`M ${x0} ${y0} Q ${(x0 + x1) / 2} ${yApexCtrl} ${x1} ${y1} L ${x1 + 100} 0 L ${x0 - 100} 0 Z`} />
+          </clipPath>
         </defs>
 
         {/* Invisible Parabolic Orbital Track (Dotted path line completely removed) */}
@@ -211,8 +216,9 @@ export default function CelestialBackground({
           </g>
         )}
 
-        {/* Celestial Body: Sun or Moon (100% Transparent Container with Edge Fade & Horizon Dip) */}
-        <g transform={`translate(${cx}, ${cy + yHorizonOffset})`} style={{ opacity: edgeOpacity }}>
+        {/* Celestial Body: Sun or Moon (Clipped above P&L curve line with Sky Clip Mask) */}
+        <g clipPath="url(#skyClip)">
+          <g transform={`translate(${cx}, ${cy + yHorizonOffset})`} style={{ opacity: edgeOpacity }}>
           {isDay ? (
             /* Day Cycle: Clean Transparent Sun Vector with Drop-Shadow Glow */
             <g style={{ filter: 'drop-shadow(0px 0px 18px rgba(251, 191, 36, 0.6))' }}>
@@ -270,6 +276,7 @@ export default function CelestialBackground({
               )}
             </g>
           )}
+          </g>
         </g>
       </svg>
     </div>
