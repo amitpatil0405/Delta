@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Menu, X, Clock } from 'lucide-react';
 import logoImg from '../assets/logo.png';
 import { useMarket } from '../context/MarketContext';
@@ -7,6 +8,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentSection, setCurrentSection] = useState(activePage);
+  const [hoveredSection, setHoveredSection] = useState(null);
   const [liveTime, setLiveTime] = useState({ dateLine: '', timeLine: '' });
   const { marketStatus } = useMarket();
 
@@ -157,20 +159,37 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
           </div>
 
           {/* Center Navigation Links */}
-          <div className="hidden lg:flex items-center space-x-1 bg-neutral-900/60 p-1.5 rounded-full border border-white/5 backdrop-blur-md">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNavClick(item.id)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-200 ${
-                  currentSection === item.id
-                    ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40 shadow-[0_0_10px_rgba(217,119,6,0.3)] font-bold'
-                    : 'text-gray-300 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+          <div
+            className="hidden lg:flex items-center space-x-1 bg-neutral-900/60 p-1.5 rounded-full border border-white/5 backdrop-blur-md relative"
+            onMouseLeave={() => setHoveredSection(null)}
+          >
+            {navItems.map((item) => {
+              const activeTabId = hoveredSection || currentSection;
+              const isHighlighted = activeTabId === item.id;
+              const isSelected = currentSection === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNavClick(item.id)}
+                  onMouseEnter={() => setHoveredSection(item.id)}
+                  className={`relative px-3.5 py-1.5 rounded-full text-xs font-medium tracking-wide transition-colors duration-200 focus:outline-none ${
+                    isHighlighted || isSelected
+                      ? 'text-amber-400 font-bold'
+                      : 'text-gray-300 hover:text-white'
+                  }`}
+                >
+                  {isHighlighted && (
+                    <motion.div
+                      layoutId="hoverTab"
+                      className="absolute inset-0 bg-amber-500/20 border border-amber-500/40 rounded-full shadow-[0_0_12px_rgba(245,158,11,0.25)]"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
+                </button>
+              );
+            })}
           </div>
 
           {/* Right Top Corner: Market Status Indicator & Live Date/Time Display */}
