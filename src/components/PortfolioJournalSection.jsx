@@ -925,30 +925,32 @@ export default function PortfolioJournalSection() {
                       )}
                     </linearGradient>
 
-                    {/* Dynamic Fill Area Gradient */}
+                    {/* Dynamic Fill Area Gradient - Feathered Smooth Transitions without Sharp Line Cutoffs */}
                     <linearGradient id="pnlAreaGradient" x1="0" y1="0" x2="0" y2="1">
                       {pnlGradientStats.isAllPos ? (
                         <>
-                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
-                          <stop offset="100%" stopColor="#10b981" stopOpacity={0.02} />
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.25} />
+                          <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
                         </>
                       ) : pnlGradientStats.isAllNeg ? (
                         <>
-                          <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.02} />
-                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.35} />
+                          <stop offset="0%" stopColor="#ef4444" stopOpacity={0} />
+                          <stop offset="100%" stopColor="#ef4444" stopOpacity={0.25} />
                         </>
                       ) : (
                         <>
-                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
-                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#10b981" stopOpacity={0.03} />
-                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#f43f5e" stopOpacity={0.03} />
-                          <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.35} />
+                          <stop offset="0%" stopColor="#10b981" stopOpacity={0.25} />
+                          <stop offset={`${Math.max(0, pnlGradientStats.offset * 100 - 2)}%`} stopColor="#10b981" stopOpacity={0} />
+                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#10b981" stopOpacity={0} />
+                          <stop offset={`${pnlGradientStats.offset * 100}%`} stopColor="#ef4444" stopOpacity={0} />
+                          <stop offset={`${Math.min(100, pnlGradientStats.offset * 100 + 2)}%`} stopColor="#ef4444" stopOpacity={0} />
+                          <stop offset="100%" stopColor="#ef4444" stopOpacity={0.25} />
                         </>
                       )}
                     </linearGradient>
                   </defs>
 
-                  <CartesianGrid strokeDasharray="3 3" stroke="#222222" vertical={true} horizontal={true} />
+                  <CartesianGrid stroke="none" vertical={false} horizontal={false} />
                   <XAxis
                     dataKey="trade"
                     stroke="#666"
