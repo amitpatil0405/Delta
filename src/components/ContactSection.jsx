@@ -235,8 +235,8 @@ export default function ContactSection() {
           </div>
         )}
 
-        {/* Form Container with Pulsing Neon Aura Layer */}
-        <div className="relative rounded-3xl">
+        {/* Form Container with Pulsing Neon Aura Layer (Centered Compact Layout) */}
+        <div className="relative rounded-3xl max-w-3xl mx-auto w-full">
           {/* Dedicated Pulsing Neon Background Aura Layer */}
           <div className="absolute -inset-1 rounded-3xl bg-amber-500/10 shadow-[0_0_50px_rgba(255,102,0,0.6),0_0_100px_rgba(255,102,0,0.3)] animate-pulse pointer-events-none" />
 
