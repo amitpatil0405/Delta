@@ -198,15 +198,13 @@ export default function CelestialBackground({
           </g>
         )}
 
-        {/* Celestial Body: Sun or Moon */}
+        {/* Celestial Body: Sun or Moon (100% Transparent Container with Standard Drop-Shadow Glow) */}
         <g transform={`translate(${cx}, ${cy})`}>
           {isDay ? (
-            /* Day Cycle: Dynamic Color-Shifting Sun */
-            <g>
-              {/* Dynamic Outer Glow Halo */}
-              <circle cx="0" cy="0" r="22" fill={dayColors.glow} opacity="0.35" className="animate-pulse" style={{ animationDuration: '3s' }} />
-              {/* Dynamic Sun Core */}
-              <circle cx="0" cy="0" r="8" fill={dayColors.core} stroke={dayColors.glow} strokeWidth="1.5" style={{ filter: `drop-shadow(0 0 12px ${dayColors.core})` }} />
+            /* Day Cycle: Clean Transparent Sun Vector with Drop-Shadow Glow */
+            <g style={{ filter: 'drop-shadow(0px 0px 18px rgba(251, 191, 36, 0.6))' }}>
+              {/* Sun Core */}
+              <circle cx="0" cy="0" r="8" fill={dayColors.core} stroke={dayColors.glow} strokeWidth="1.5" />
               {/* Rotating Sun Rays */}
               <g className="animate-spin" style={{ animationDuration: '20s' }}>
                 {Array.from({ length: 8 }).map((_, idx) => {
@@ -231,10 +229,8 @@ export default function CelestialBackground({
               </g>
             </g>
           ) : (
-            /* Night Cycle: Dynamic Color-Shifting Moon (Full or Half-Crescent) */
-            <g>
-              {/* Dynamic Outer Glow Halo */}
-              <circle cx="0" cy="0" r="20" fill={nightColors.glow} opacity="0.3" />
+            /* Night Cycle: Clean Transparent Moon Vector with Drop-Shadow Glow */
+            <g style={{ filter: 'drop-shadow(0px 0px 18px rgba(56, 189, 248, 0.6))' }}>
               {moonType === 'full' ? (
                 /* Full Moon: Clean Full Circle with texture details */
                 <g>
@@ -245,7 +241,6 @@ export default function CelestialBackground({
                     fill={nightColors.core}
                     stroke={nightColors.glow}
                     strokeWidth="1"
-                    style={{ filter: `drop-shadow(0 0 10px ${nightColors.core})` }}
                   />
                   {/* Subtle Moon Craters */}
                   <circle cx="-2.5" cy="-2" r="1.8" fill="rgba(0,0,0,0.12)" />
@@ -258,7 +253,6 @@ export default function CelestialBackground({
                   d="M -3 -8 A 8 8 0 1 0 7 6 A 6.5 6.5 0 1 1 -3 -8 Z"
                   fill={nightColors.core}
                   stroke="none"
-                  style={{ filter: `drop-shadow(0 0 10px ${nightColors.core})` }}
                 />
               )}
             </g>
