@@ -1,5 +1,60 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+
+// Reusable CountUp Number Component for Odometer Effect on Scroll
+function CountUpNumber({ value, decimals = 0, prefix = '', suffix = '', duration = 2.2, isCurrency = false, isSigned = false }) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { amount: 0.2, once: false });
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    let animationFrameId;
+    let startTime = null;
+    const targetValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+
+    if (isInView) {
+      const step = (timestamp) => {
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+        // Smooth easeOutCubic easing for realistic odometer feel
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        const current = easeProgress * targetValue;
+        setDisplayValue(current);
+
+        if (progress < 1) {
+          animationFrameId = requestAnimationFrame(step);
+        }
+      };
+      animationFrameId = requestAnimationFrame(step);
+    } else {
+      setDisplayValue(0);
+    }
+
+    return () => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+    };
+  }, [isInView, value, duration]);
+
+  const rawTarget = typeof value === 'number' ? value : parseFloat(value) || 0;
+  const absVal = Math.abs(displayValue);
+  const formattedNumber = isCurrency
+    ? absVal.toLocaleString('en-IN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+    : absVal.toFixed(decimals);
+
+  let sign = '';
+  if (isSigned) {
+    if (rawTarget < 0) sign = '-';
+    else if (rawTarget > 0) sign = '+';
+  } else if (rawTarget < 0) {
+    sign = '-';
+  }
+
+  return (
+    <span ref={ref} className="inline-block">
+      {sign}{prefix}{formattedNumber}{suffix}
+    </span>
+  );
+}
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
@@ -238,11 +293,6 @@ export default function PortfolioJournalSection() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredDay, setHoveredDay] = useState(null);
-  const [activeGlowBox, setActiveGlowBox] = useState(null);
-
-  const toggleGlowBox = (boxId) => {
-    setActiveGlowBox(prev => prev === boxId ? null : boxId);
-  };
 
   // Fetch Global Trades on mount & Periodic Sync (every 10s) from Google Sheet CSV
   useEffect(() => {
@@ -542,82 +592,131 @@ export default function PortfolioJournalSection() {
         </div>
 
         {/* Portfolio Performance Dashboard */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-          <div
-            onClick={() => toggleGlowBox('stat-1')}
-            className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
-              activeGlowBox === 'stat-1'
-                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-            }`}
+        <motion.div
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: false, amount: 0.2 }}
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: 0.1
+              }
+            }
+          }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4"
+        >
+          {/* Card 1: Total Trades */}
+          <motion.div
+            variants={{
+              hidden: { y: 20, opacity: 0, scale: 0.95 },
+              show: {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                transition: { duration: 0.5, ease: 'easeOut' }
+              }
+            }}
+            className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden"
           >
+            {/* Border Sweep Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
+
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">TOTAL TRADES</span>
-            <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{totalTradesCount}</div>
+            <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">
+              <CountUpNumber value={totalTradesCount} decimals={0} duration={2.2} />
+            </div>
             <span className="text-[9px] sm:text-[10px] font-mono text-amber-400 block truncate w-full mt-0.5">{closedTrades.length} Closed / {fyTrades.length - closedTrades.length} Open</span>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full mt-0.5">{startMonthName} – {endMonthName}</span>
-          </div>
+          </motion.div>
 
-          <div
-            onClick={() => toggleGlowBox('stat-2')}
-            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
-              activeGlowBox === 'stat-2'
-                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-            }`}
+          {/* Card 2: Win Rate */}
+          <motion.div
+            variants={{
+              hidden: { y: 20, opacity: 0, scale: 0.95 },
+              show: {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                transition: { duration: 0.5, ease: 'easeOut' }
+              }
+            }}
+            className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden"
           >
+            {/* Border Sweep Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
+
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">WIN RATE</span>
-            <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">{winRate}%</div>
+            <div className="text-xl sm:text-2xl font-extrabold font-mono text-white mt-1">
+              <CountUpNumber value={winRate} decimals={2} suffix="%" duration={2.2} />
+            </div>
             <span className="text-[9px] sm:text-[10px] font-mono block truncate w-full">
               <span className="text-emerald-400 font-bold">{winningTrades.length} Wins</span>
               <span className="text-gray-400"> / </span>
               <span className="text-rose-400 font-bold">{losingTrades.length} Losses</span>
             </span>
-          </div>
+          </motion.div>
 
-          <div
-            onClick={() => toggleGlowBox('stat-3')}
-            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
-              activeGlowBox === 'stat-3'
-                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
+          {/* Card 3: Gross Cumulative P&L */}
+          <motion.div
+            variants={{
+              hidden: { y: 20, opacity: 0, scale: 0.95 },
+              show: {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                transition: { duration: 0.5, ease: 'easeOut' }
+              }
+            }}
+            className={`group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden ${
+              totalPnl >= 0
+                ? 'border-emerald-500/30 hover:border-emerald-400 hover:shadow-[0_0_25px_rgba(16,185,129,0.35)]'
+                : 'border-rose-500/30 hover:border-rose-400 hover:shadow-[0_0_25px_rgba(244,63,94,0.35)]'
             }`}
           >
+            {/* Border Sweep Effect */}
+            <div className={`absolute inset-0 bg-gradient-to-r from-transparent ${totalPnl >= 0 ? 'via-emerald-500/10' : 'via-rose-500/10'} to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none`} />
+
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">GROSS CUMULATIVE P&L</span>
             <div className={`text-base sm:text-xl md:text-2xl font-extrabold font-mono mt-1 tracking-tight truncate w-full ${totalPnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {totalPnl < 0 ? '-' : totalPnl > 0 ? '+' : ''}₹{Math.abs(totalPnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <CountUpNumber value={totalPnl} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.2} />
             </div>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full">{startMonthName} – {endMonthName}</span>
-          </div>
+          </motion.div>
 
-          <div
-            onClick={() => toggleGlowBox('stat-4')}
-            className={`bg-[#0a0a0c] rounded-2xl p-3.5 sm:p-5 border transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center cursor-pointer select-none ${
-              activeGlowBox === 'stat-4'
-                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-            }`}
+          {/* Card 4: Avg Profit / Loss */}
+          <motion.div
+            variants={{
+              hidden: { y: 20, opacity: 0, scale: 0.95 },
+              show: {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                transition: { duration: 0.5, ease: 'easeOut' }
+              }
+            }}
+            className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden"
           >
+            {/* Border Sweep Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
+
             <span className="text-[10px] sm:text-[11px] font-mono text-gray-400 uppercase truncate w-full block">AVG PROFIT / LOSS</span>
             <div className="text-xs sm:text-sm md:text-base xl:text-lg font-extrabold font-mono mt-1 flex flex-col sm:flex-row sm:items-center justify-center gap-0.5 sm:gap-1 tracking-tight w-full min-w-0">
-              <span className="text-emerald-400 truncate">+₹{avgProfit.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="text-emerald-400 truncate">
+                <CountUpNumber value={avgProfit} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.2} />
+              </span>
               <span className="text-gray-400 hidden sm:inline">/</span>
-              <span className="text-rose-400 truncate">-₹{avgLoss.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <span className="text-rose-400 truncate">
+                <CountUpNumber value={-avgLoss} decimals={2} isCurrency={true} isSigned={true} prefix="₹" duration={2.2} />
+              </span>
             </div>
             <span className="text-[9px] sm:text-[10px] font-mono text-gray-400 block truncate w-full mt-0.5">Risk-Reward Ratio</span>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* P&L Contribution Heatmap Grid */}
         <div
-          onClick={(e) => {
-            if (e.target.closest('.heatmap-box') || e.target.closest('button')) return;
-            toggleGlowBox('heatmap-container');
-          }}
-          className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
-            activeGlowBox === 'heatmap-container'
-              ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-              : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-          }`}
+          className="bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative space-y-4"
         >
           <div className="relative space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
@@ -843,12 +942,7 @@ export default function PortfolioJournalSection() {
         {/* P&L Cumulative Performance Graph */}
         {pnlCurveData.length > 0 && (
           <div
-            onClick={() => toggleGlowBox('graph-container')}
-            className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative space-y-4 ${
-              activeGlowBox === 'graph-container'
-                ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-                : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-            }`}
+            className="bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative space-y-4"
           >
             <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
@@ -1001,15 +1095,7 @@ export default function PortfolioJournalSection() {
 
         {/* Trade Journal Table */}
         <div
-          onClick={(e) => {
-            if (e.target.closest('button') || e.target.closest('tr')) return;
-            toggleGlowBox('table-container');
-          }}
-          className={`bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border transition-all duration-300 relative overflow-hidden space-y-4 ${
-            activeGlowBox === 'table-container'
-              ? 'border-amber-400 shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-              : 'border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)]'
-          }`}
+          className="bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative overflow-hidden space-y-4"
         >
           <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
             <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
@@ -1106,7 +1192,21 @@ export default function PortfolioJournalSection() {
                   <th className="py-3 px-3 text-right">P&L</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <motion.tbody
+                key={`page_${currentPage}`}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: false, amount: 0.1 }}
+                variants={{
+                  hidden: {},
+                  show: {
+                    transition: {
+                      staggerChildren: 0.05
+                    }
+                  }
+                }}
+                className="divide-y divide-white/5"
+              >
                 {displayTrades.length === 0 ? (
                   <tr>
                     <td colSpan={11} className="py-12 text-center text-gray-500 font-mono text-sm">
@@ -1132,10 +1232,10 @@ export default function PortfolioJournalSection() {
                     let statusText = t.status;
 
                     if (isOpen) {
-                      statusBadgeClass = 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40';
+                      statusBadgeClass = 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 animate-pulse shadow-[0_0_12px_rgba(234,179,8,0.35)]';
                       statusText = t.status;
                     } else if (isClosedProfit) {
-                      statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+                      statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.35)]';
                       statusText = 'CLOSED PROFIT';
                     } else if (isClosedLoss) {
                       statusBadgeClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
@@ -1145,7 +1245,21 @@ export default function PortfolioJournalSection() {
                     const formattedPnlStr = Math.abs(pnlVal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
                     return (
-                      <tr key={t.id} className="hover:bg-white/5 transition-colors">
+                      <motion.tr
+                        key={t.id}
+                        variants={{
+                          hidden: { x: -30, opacity: 0 },
+                          show: {
+                            x: 0,
+                            opacity: 1,
+                            transition: {
+                              duration: 0.35,
+                              ease: 'easeOut'
+                            }
+                          }
+                        }}
+                        className="hover:bg-white/5 transition-colors"
+                      >
                         <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.date || '-'}</td>
                         <td className="py-3 px-3 text-amber-400 font-bold whitespace-nowrap">{t.day || '-'}</td>
                         <td className="py-3 px-3 font-bold text-white whitespace-nowrap">{t.symbol || '-'}</td>
@@ -1158,7 +1272,7 @@ export default function PortfolioJournalSection() {
                           {t.holdTime !== '-' ? `${t.holdTime} Days` : '-'}
                         </td>
                         <td className="py-3 px-3 text-center whitespace-nowrap">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${statusBadgeClass}`}>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold inline-block transition-shadow ${statusBadgeClass}`}>
                             {statusText}
                           </span>
                         </td>
@@ -1167,11 +1281,11 @@ export default function PortfolioJournalSection() {
                         }`}>
                           {isOpen ? '₹0.00' : `${isNeg ? '-' : isPos ? '+' : ''}₹${formattedPnlStr}`}
                         </td>
-                      </tr>
+                      </motion.tr>
                     );
                   })
                 )}
-              </tbody>
+              </motion.tbody>
             </table>
           </div>
 
