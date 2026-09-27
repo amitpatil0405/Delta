@@ -162,21 +162,19 @@ export default function CelestialBackground({
           </radialGradient>
         </defs>
 
-        {/* Faint Dotted Parabolic Orbital Track */}
+        {/* Invisible Parabolic Orbital Track (Dotted path line completely removed) */}
         <path
           d={arcPath}
           fill="none"
-          stroke={isDay ? "rgba(245, 158, 11, 0.12)" : "rgba(56, 189, 248, 0.12)"}
-          strokeWidth="1.5"
-          strokeDasharray="4 4"
+          stroke="none"
         />
 
-        {/* Night Cycle Twinkling Stars */}
+        {/* Night Cycle Twinkling Stars (Smooth Reveal 7:00 PM onwards & Fade Out at Dawn) */}
         {!isDay && (
-          <g className="stars-layer">
+          <g className="stars-layer transition-opacity duration-1000" style={{ opacity: timeInfo.nightFade }}>
             {stars.map((s) => {
-              const maxOp = Math.min(0.8, s.opacity * 2.5);
-              const minOp = 0.2;
+              const maxOp = Math.min(0.8, s.opacity * 2.5) * timeInfo.nightFade;
+              const minOp = 0.2 * timeInfo.nightFade;
               return (
                 <circle
                   key={s.id}
@@ -305,8 +303,26 @@ function calculateCelestialState() {
     }
   }
 
+  // Calculate Night Fade factor (0.0 during Day, smoothly fades in between 18:00–19:00 and fades out between 06:00–07:00)
+  let nightFade = 0;
+  if (!isDay) {
+    const duskStart = 18 * 60;     // 18:00 (6:00 PM)
+    const duskEnd   = 19 * 60;     // 19:00 (7:00 PM)
+    const dawnStart = 6 * 60;      // 06:00 AM
+    const dawnEnd   = 7 * 60;      // 07:00 AM
+
+    if (minutes >= duskStart && minutes < duskEnd) {
+      nightFade = (minutes - duskStart) / (duskEnd - duskStart);
+    } else if (minutes >= dawnStart && minutes < dawnEnd) {
+      nightFade = 1 - (minutes - dawnStart) / (dawnEnd - dawnStart);
+    } else {
+      nightFade = 1.0;
+    }
+  }
+
   return {
     isDay,
-    progress: Math.max(0, Math.min(1, progress))
+    progress: Math.max(0, Math.min(1, progress)),
+    nightFade: Math.max(0, Math.min(1, nightFade))
   };
 }

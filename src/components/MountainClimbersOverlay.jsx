@@ -74,17 +74,44 @@ export default function MountainClimbersOverlay({
     return getMonotonePath(points);
   }, [points]);
 
+  // Calculate dynamic snowfall opacity based on current IST time:
+  // Daytime (07:00 AM - 06:00 PM): 1.0
+  // Sunset (06:00 PM - 07:00 PM): Smoothly fades out 1.0 -> 0.0
+  // Night (07:00 PM - 06:00 AM): 0.0 (Stopped/hidden)
+  // Sunrise (06:00 AM - 07:00 AM): Smoothly fades in 0.0 -> 1.0
+  const snowOpacity = useMemo(() => {
+    const now = new Date();
+    const utcTime = now.getTime() + now.getTimezoneOffset() * 60000;
+    const istDate = new Date(utcTime + 3600000 * 5.5);
+    const mins = istDate.getHours() * 60 + istDate.getMinutes();
+
+    const dayStart = 7 * 60;      // 07:00 AM
+    const duskStart = 18 * 60;    // 06:00 PM
+    const nightStart = 19 * 60;   // 07:00 PM
+    const dawnStart = 6 * 60;     // 06:00 AM
+
+    if (mins >= dayStart && mins < duskStart) {
+      return 1.0;
+    } else if (mins >= duskStart && mins < nightStart) {
+      return 1 - (mins - duskStart) / (nightStart - duskStart);
+    } else if (mins >= dawnStart && mins < dayStart) {
+      return (mins - dawnStart) / (dayStart - dawnStart);
+    } else {
+      return 0.0;
+    }
+  }, []);
+
   const snowflakes = useMemo(() => {
     return Array.from({ length: 32 }, (_, i) => ({
       id: i,
       cx: margin.left + ((i * 37) % chartW),
       cy: margin.top + ((i * 23) % chartH),
       r: (i % 3) + 1.2,
-      opacity: 0.3 + (i % 5) * 0.12,
+      opacity: (0.3 + (i % 5) * 0.12) * snowOpacity,
       dur: 4 + (i % 4) * 2,
       delay: (i % 7) * 0.5
     }));
-  }, [margin.left, margin.top, chartW, chartH]);
+  }, [margin.left, margin.top, chartW, chartH, snowOpacity]);
 
   useEffect(() => {
     if (pathRef.current && dPath) {
