@@ -79,42 +79,46 @@ export default function CelestialBackground({
   const distFromApex = Math.abs(t - 0.5) * 2; // [0, 1]
 
   // Dynamic Day Color Interpolation:
-  // Horizon (t=0/1): Warm Orange/Pink (#f97316 / #ec4899)
-  // Apex (t=0.5): Golden Yellow (#f59e0b / #fef08a)
+  // Horizon (t=0/1, ~7:00 AM / 6:30 PM): Warm Orange-to-Pink gradient (#FF7E5F / #FEB47B => RGB: 255,126,95 / 254,180,123)
+  // Apex (t=0.5, ~12:00 PM): Bright Yellow-to-Golden hue (#FDBB2D / #FFE066 => RGB: 253,187,45 / 255,224,102)
   const dayColors = useMemo(() => {
-    // Core color
-    const r1 = Math.round(245 * (1 - distFromApex) + 249 * distFromApex);
-    const g1 = Math.round(158 * (1 - distFromApex) + 115 * distFromApex);
-    const b1 = Math.round(11 * (1 - distFromApex) + 22 * distFromApex);
-    // Glow color
-    const r2 = Math.round(254 * (1 - distFromApex) + 236 * distFromApex);
-    const g2 = Math.round(240 * (1 - distFromApex) + 72 * distFromApex);
-    const b2 = Math.round(138 * (1 - distFromApex) + 153 * distFromApex);
+    // Core color: Apex #FDBB2D (253,187,45) -> Horizon #FF7E5F (255,126,95)
+    const r1 = Math.round(253 * (1 - distFromApex) + 255 * distFromApex);
+    const g1 = Math.round(187 * (1 - distFromApex) + 126 * distFromApex);
+    const b1 = Math.round(45 * (1 - distFromApex) + 95 * distFromApex);
+
+    // Glow color: Apex #FFE066 (255,224,102) -> Horizon #FEB47B (254,180,123)
+    const r2 = Math.round(255 * (1 - distFromApex) + 254 * distFromApex);
+    const g2 = Math.round(224 * (1 - distFromApex) + 180 * distFromApex);
+    const b2 = Math.round(102 * (1 - distFromApex) + 123 * distFromApex);
 
     return {
       core: `rgb(${r1}, ${g1}, ${b1})`,
       glow: `rgb(${r2}, ${g2}, ${b2})`,
-      stroke: `rgba(${r1}, ${g1}, ${b1}, 0.25)`
+      stroke: `rgba(${r1}, ${g1}, ${b1}, 0.25)`,
+      rawR: r1, rawG: g1, rawB: b1
     };
   }, [distFromApex]);
 
   // Dynamic Night Color Interpolation:
-  // Horizon (t=0/1): Neon Blue (#0ea5e9 / #38bdf8)
-  // Apex (t=0.5): Cream White (#f8fafc / #fffbeb)
+  // Horizon (t=0/1, ~6:30 PM / 7:00 AM): Distinct Neon Blue tint (#00F2FE / #4FACFE => RGB: 0,242,254 / 79,172,254)
+  // Apex (t=0.5, ~12:00 AM): Brilliant White-to-Cream color (#FFFDE4 / #F8F9FA => RGB: 255,253,228 / 248,249,250)
   const nightColors = useMemo(() => {
-    // Core color
-    const r1 = Math.round(248 * (1 - distFromApex) + 14 * distFromApex);
-    const g1 = Math.round(250 * (1 - distFromApex) + 165 * distFromApex);
-    const b1 = Math.round(252 * (1 - distFromApex) + 233 * distFromApex);
-    // Glow color
-    const r2 = Math.round(255 * (1 - distFromApex) + 56 * distFromApex);
-    const g2 = Math.round(251 * (1 - distFromApex) + 189 * distFromApex);
-    const b2 = Math.round(235 * (1 - distFromApex) + 248 * distFromApex);
+    // Core color: Apex #FFFDE4 (255,253,228) -> Horizon #00F2FE (0,242,254)
+    const r1 = Math.round(255 * (1 - distFromApex) + 0 * distFromApex);
+    const g1 = Math.round(253 * (1 - distFromApex) + 242 * distFromApex);
+    const b1 = Math.round(228 * (1 - distFromApex) + 254 * distFromApex);
+
+    // Glow color: Apex #F8F9FA (248,249,250) -> Horizon #4FACFE (79,172,254)
+    const r2 = Math.round(248 * (1 - distFromApex) + 79 * distFromApex);
+    const g2 = Math.round(249 * (1 - distFromApex) + 172 * distFromApex);
+    const b2 = Math.round(250 * (1 - distFromApex) + 254 * distFromApex);
 
     return {
       core: `rgb(${r1}, ${g1}, ${b1})`,
       glow: `rgb(${r2}, ${g2}, ${b2})`,
-      stroke: `rgba(${r1}, ${g1}, ${b1}, 0.25)`
+      stroke: `rgba(${r1}, ${g1}, ${b1}, 0.25)`,
+      rawR: r1, rawG: g1, rawB: b1
     };
   }, [distFromApex]);
 
@@ -132,13 +136,13 @@ export default function CelestialBackground({
 
   return (
     <div className="absolute inset-0 z-0 pointer-events-none hidden md:block overflow-hidden">
-      {/* Ambient Time-of-Day Radial Background Glow Layer with Heavy Alpha Feathering */}
+      {/* Dynamic Top Atmospheric Sky Glow Layer with Heavy Alpha Feathering */}
       <div
-        className="absolute inset-0 transition-opacity duration-1000 pointer-events-none blur-2xl"
+        className="absolute inset-0 transition-all duration-1000 pointer-events-none blur-2xl"
         style={{
           background: isDay
-            ? 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(245, 158, 11, 0.07) 0%, rgba(245, 158, 11, 0.02) 50%, transparent 100%)'
-            : 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(14, 165, 233, 0.07) 0%, rgba(14, 165, 233, 0.02) 50%, transparent 100%)'
+            ? `radial-gradient(ellipse 80% 55% at 50% 0%, rgba(${dayColors.rawR}, ${dayColors.rawG}, ${dayColors.rawB}, 0.12) 0%, rgba(${dayColors.rawR}, ${dayColors.rawG}, ${dayColors.rawB}, 0.03) 50%, transparent 100%)`
+            : `radial-gradient(ellipse 80% 55% at 50% 0%, rgba(${nightColors.rawR}, ${nightColors.rawG}, ${nightColors.rawB}, 0.12) 0%, rgba(${nightColors.rawR}, ${nightColors.rawG}, ${nightColors.rawB}, 0.03) 50%, transparent 100%)`
         }}
       />
       <svg width={width} height={height} className="w-full h-full overflow-visible relative z-10">
