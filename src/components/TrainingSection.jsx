@@ -88,7 +88,7 @@ export default function TrainingSection() {
       <div className="ambient-glow-amber top-10 left-10" />
       <div className="ambient-glow-emerald bottom-10 right-10" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
