@@ -16,8 +16,8 @@ export default function CelestialBackground({
   maxPnlProp = null
 }) {
   const [timeInfo, setTimeInfo] = useState(() => calculateCelestialState());
-  // Randomize Moon Type on render: 'half' (Crescent) or 'full'
-  const [moonType] = useState(() => (Math.random() > 0.5 ? 'half' : 'full'));
+  // Always render 100% Full Moon sphere as requested
+  const moonType = 'full';
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -277,66 +277,54 @@ export default function CelestialBackground({
           </g>
         )}
 
-        {/* Celestial Body: Sun or Moon (Clipped above P&L curve line with Sky Clip Mask) */}
-        <g clipPath="url(#skyClip)">
+        {/* Celestial Body: Sun or Moon (Full 100% sphere visible above horizon with edge clipping strictly at horizon bounds) */}
+        <g clipPath={t < 0.05 || t > 0.95 ? "url(#skyClip)" : undefined}>
           <g transform={`translate(${cx}, ${cy + yHorizonOffset})`} style={{ opacity: edgeOpacity }}>
-          {isDay ? (
-            /* Day Cycle: Clean Transparent Sun Vector with Drop-Shadow Glow */
-            <g style={{ filter: 'drop-shadow(0px 0px 18px rgba(251, 191, 36, 0.6))' }}>
-              {/* Sun Core */}
-              <circle cx="0" cy="0" r="8" fill={dayColors.core} stroke={dayColors.glow} strokeWidth="1.5" />
-              {/* Rotating Sun Rays */}
-              <g className="animate-spin" style={{ animationDuration: '20s' }}>
-                {Array.from({ length: 8 }).map((_, idx) => {
-                  const angle = (idx * 45 * Math.PI) / 180;
-                  const rx1 = Math.cos(angle) * 11;
-                  const ry1 = Math.sin(angle) * 11;
-                  const rx2 = Math.cos(angle) * 15;
-                  const ry2 = Math.sin(angle) * 15;
-                  return (
-                    <line
-                      key={idx}
-                      x1={rx1}
-                      y1={ry1}
-                      x2={rx2}
-                      y2={ry2}
-                      stroke={dayColors.glow}
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                    />
-                  );
-                })}
-              </g>
-            </g>
-          ) : (
-            /* Night Cycle: Clean Transparent Moon Vector with Drop-Shadow Glow */
-            <g style={{ filter: 'drop-shadow(0px 0px 18px rgba(56, 189, 248, 0.6))' }}>
-              {moonType === 'full' ? (
-                /* Full Moon: Clean Full Circle with texture details */
-                <g>
-                  <circle
-                    cx="0"
-                    cy="0"
-                    r="8"
-                    fill={nightColors.core}
-                    stroke={nightColors.glow}
-                    strokeWidth="1"
-                  />
-                  {/* Subtle Moon Craters */}
-                  <circle cx="-2.5" cy="-2" r="1.8" fill="rgba(0,0,0,0.12)" />
-                  <circle cx="2" cy="2" r="2.2" fill="rgba(0,0,0,0.10)" />
-                  <circle cx="3" cy="-3" r="1.2" fill="rgba(0,0,0,0.08)" />
+            {isDay ? (
+              /* Day Cycle: Clean Transparent Sun Vector with Drop-Shadow Glow */
+              <g style={{ filter: 'drop-shadow(0px 0px 18px rgba(251, 191, 36, 0.6))' }}>
+                {/* Sun Core */}
+                <circle cx="0" cy="0" r="8" fill={dayColors.core} stroke={dayColors.glow} strokeWidth="1.5" />
+                {/* Rotating Sun Rays */}
+                <g className="animate-spin" style={{ animationDuration: '20s' }}>
+                  {Array.from({ length: 8 }).map((_, idx) => {
+                    const angle = (idx * 45 * Math.PI) / 180;
+                    const rx1 = Math.cos(angle) * 11;
+                    const ry1 = Math.sin(angle) * 11;
+                    const rx2 = Math.cos(angle) * 15;
+                    const ry2 = Math.sin(angle) * 15;
+                    return (
+                      <line
+                        key={idx}
+                        x1={rx1}
+                        y1={ry1}
+                        x2={rx2}
+                        y2={ry2}
+                        stroke={dayColors.glow}
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                      />
+                    );
+                  })}
                 </g>
-              ) : (
-                /* Half-Moon: Strictly Crescent Geometry (Unlit half 100% invisible, stroke="none") */
-                <path
-                  d="M -3 -8 A 8 8 0 1 0 7 6 A 6.5 6.5 0 1 1 -3 -8 Z"
+              </g>
+            ) : (
+              /* Night Cycle: 100% Full Circular Moon Sphere with Crater Details */
+              <g style={{ filter: 'drop-shadow(0px 0px 20px rgba(224, 242, 254, 0.8))' }}>
+                <circle
+                  cx="0"
+                  cy="0"
+                  r="8.5"
                   fill={nightColors.core}
-                  stroke="none"
+                  stroke={nightColors.glow}
+                  strokeWidth="1.2"
                 />
-              )}
-            </g>
-          )}
+                {/* Subtle Moon Crater Texture Details */}
+                <circle cx="-2.5" cy="-2.2" r="1.8" fill="rgba(0,0,0,0.12)" />
+                <circle cx="2.2" cy="2.2" r="2.2" fill="rgba(0,0,0,0.10)" />
+                <circle cx="3.2" cy="-3.2" r="1.2" fill="rgba(0,0,0,0.08)" />
+              </g>
+            )}
           </g>
         </g>
       </svg>
