@@ -16,6 +16,8 @@ export default function CelestialBackground({
   maxPnlProp = null
 }) {
   const [timeInfo, setTimeInfo] = useState(() => calculateCelestialState());
+  // Randomize Moon Type on render: 'half' (Crescent) or 'full'
+  const [moonType] = useState(() => (Math.random() > 0.5 ? 'half' : 'full'));
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -71,6 +73,50 @@ export default function CelestialBackground({
 
   // SVG Arc Path for subtle dotted guide line
   const arcPath = `M ${x0} ${y0} Q ${(x0 + x1) / 2} ${yApexCtrl} ${x1} ${y1}`;
+
+  // Calculate dynamic colors based on trajectory progress t (0.0 to 1.0)
+  // distFromApex: 0 at apex (t = 0.5), 1 at horizon (t = 0 or t = 1)
+  const distFromApex = Math.abs(t - 0.5) * 2; // [0, 1]
+
+  // Dynamic Day Color Interpolation:
+  // Horizon (t=0/1): Warm Orange/Pink (#f97316 / #ec4899)
+  // Apex (t=0.5): Golden Yellow (#f59e0b / #fef08a)
+  const dayColors = useMemo(() => {
+    // Core color
+    const r1 = Math.round(245 * (1 - distFromApex) + 249 * distFromApex);
+    const g1 = Math.round(158 * (1 - distFromApex) + 115 * distFromApex);
+    const b1 = Math.round(11 * (1 - distFromApex) + 22 * distFromApex);
+    // Glow color
+    const r2 = Math.round(254 * (1 - distFromApex) + 236 * distFromApex);
+    const g2 = Math.round(240 * (1 - distFromApex) + 72 * distFromApex);
+    const b2 = Math.round(138 * (1 - distFromApex) + 153 * distFromApex);
+
+    return {
+      core: `rgb(${r1}, ${g1}, ${b1})`,
+      glow: `rgb(${r2}, ${g2}, ${b2})`,
+      stroke: `rgba(${r1}, ${g1}, ${b1}, 0.25)`
+    };
+  }, [distFromApex]);
+
+  // Dynamic Night Color Interpolation:
+  // Horizon (t=0/1): Neon Blue (#0ea5e9 / #38bdf8)
+  // Apex (t=0.5): Cream White (#f8fafc / #fffbeb)
+  const nightColors = useMemo(() => {
+    // Core color
+    const r1 = Math.round(248 * (1 - distFromApex) + 14 * distFromApex);
+    const g1 = Math.round(250 * (1 - distFromApex) + 165 * distFromApex);
+    const b1 = Math.round(252 * (1 - distFromApex) + 233 * distFromApex);
+    // Glow color
+    const r2 = Math.round(255 * (1 - distFromApex) + 56 * distFromApex);
+    const g2 = Math.round(251 * (1 - distFromApex) + 189 * distFromApex);
+    const b2 = Math.round(235 * (1 - distFromApex) + 248 * distFromApex);
+
+    return {
+      core: `rgb(${r1}, ${g1}, ${b1})`,
+      glow: `rgb(${r2}, ${g2}, ${b2})`,
+      stroke: `rgba(${r1}, ${g1}, ${b1}, 0.25)`
+    };
+  }, [distFromApex]);
 
   // Twinkling Stars generated for Night Cycle
   const stars = useMemo(() => {
@@ -151,28 +197,28 @@ export default function CelestialBackground({
         {/* Celestial Body: Sun or Moon */}
         <g transform={`translate(${cx}, ${cy})`}>
           {isDay ? (
-            /* Day Cycle: Golden Glowing Sun */
+            /* Day Cycle: Dynamic Color-Shifting Sun */
             <g>
-              {/* Outer Pulsing Glow Halo */}
-              <circle cx="0" cy="0" r="22" fill="url(#sunGlow)" className="animate-pulse" style={{ animationDuration: '3s' }} />
-              {/* Sun Core */}
-              <circle cx="0" cy="0" r="8" fill="#f59e0b" stroke="#fef08a" strokeWidth="1.5" className="drop-shadow-[0_0_12px_rgba(245,158,11,0.9)]" />
+              {/* Dynamic Outer Glow Halo */}
+              <circle cx="0" cy="0" r="22" fill={dayColors.glow} opacity="0.35" className="animate-pulse" style={{ animationDuration: '3s' }} />
+              {/* Dynamic Sun Core */}
+              <circle cx="0" cy="0" r="8" fill={dayColors.core} stroke={dayColors.glow} strokeWidth="1.5" style={{ filter: `drop-shadow(0 0 12px ${dayColors.core})` }} />
               {/* Rotating Sun Rays */}
               <g className="animate-spin" style={{ animationDuration: '20s' }}>
                 {Array.from({ length: 8 }).map((_, idx) => {
                   const angle = (idx * 45 * Math.PI) / 180;
-                  const x1 = Math.cos(angle) * 11;
-                  const y1 = Math.sin(angle) * 11;
-                  const x2 = Math.cos(angle) * 15;
-                  const y2 = Math.sin(angle) * 15;
+                  const rx1 = Math.cos(angle) * 11;
+                  const ry1 = Math.sin(angle) * 11;
+                  const rx2 = Math.cos(angle) * 15;
+                  const ry2 = Math.sin(angle) * 15;
                   return (
                     <line
                       key={idx}
-                      x1={x1}
-                      y1={y1}
-                      x2={x2}
-                      y2={y2}
-                      stroke="#fbbf24"
+                      x1={rx1}
+                      y1={ry1}
+                      x2={rx2}
+                      y2={ry2}
+                      stroke={dayColors.glow}
                       strokeWidth="1.8"
                       strokeLinecap="round"
                     />
@@ -181,18 +227,36 @@ export default function CelestialBackground({
               </g>
             </g>
           ) : (
-            /* Night Cycle: Glowing Crescent Moon */
+            /* Night Cycle: Dynamic Color-Shifting Moon (Full or Half-Crescent) */
             <g>
-              {/* Outer Glow Halo */}
-              <circle cx="0" cy="0" r="20" fill="url(#moonGlow)" />
-              {/* Crescent Moon Path */}
-              <path
-                d="M -3 -8 A 8 8 0 1 0 7 6 A 6.5 6.5 0 1 1 -3 -8 Z"
-                fill="#bae6fd"
-                stroke="#38bdf8"
-                strokeWidth="1"
-                className="drop-shadow-[0_0_10px_rgba(56,189,248,0.8)]"
-              />
+              {/* Dynamic Outer Glow Halo */}
+              <circle cx="0" cy="0" r="20" fill={nightColors.glow} opacity="0.3" />
+              {moonType === 'full' ? (
+                /* Full Moon: Clean Full Circle with texture details */
+                <g>
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="8"
+                    fill={nightColors.core}
+                    stroke={nightColors.glow}
+                    strokeWidth="1"
+                    style={{ filter: `drop-shadow(0 0 10px ${nightColors.core})` }}
+                  />
+                  {/* Subtle Moon Craters */}
+                  <circle cx="-2.5" cy="-2" r="1.8" fill="rgba(0,0,0,0.12)" />
+                  <circle cx="2" cy="2" r="2.2" fill="rgba(0,0,0,0.10)" />
+                  <circle cx="3" cy="-3" r="1.2" fill="rgba(0,0,0,0.08)" />
+                </g>
+              ) : (
+                /* Half-Moon: Strictly Crescent Geometry (Unlit half 100% invisible, stroke="none") */
+                <path
+                  d="M -3 -8 A 8 8 0 1 0 7 6 A 6.5 6.5 0 1 1 -3 -8 Z"
+                  fill={nightColors.core}
+                  stroke="none"
+                  style={{ filter: `drop-shadow(0 0 10px ${nightColors.core})` }}
+                />
+              )}
             </g>
           )}
         </g>
