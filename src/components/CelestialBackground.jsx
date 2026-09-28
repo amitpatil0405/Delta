@@ -211,11 +211,13 @@ export default function CelestialBackground({
   }, [margin.left, margin.top, chartW, chartH]);
 
   return (
-    <div className="absolute inset-0 z-0 pointer-events-none hidden md:block overflow-hidden">
-      {/* Dynamic Top Atmospheric Sky Glow Layer with Heavy Alpha Feathering */}
+    <div className="absolute inset-0 z-0 pointer-events-none hidden md:block overflow-hidden" style={{ willChange: 'transform, opacity', transform: 'translateZ(0)', contain: 'layout style paint' }}>
+      {/* Dynamic Top Atmospheric Sky Glow Layer - Optimized blur-lg for GPU hardware acceleration */}
       <div
-        className="absolute inset-0 transition-all duration-1000 pointer-events-none blur-2xl"
+        className="absolute inset-0 transition-all duration-1000 pointer-events-none blur-lg"
         style={{
+          willChange: 'opacity',
+          transform: 'translateZ(0)',
           background: isDay
             ? `radial-gradient(ellipse 80% 55% at 50% 0%, rgba(${dayColors.rawR}, ${dayColors.rawG}, ${dayColors.rawB}, 0.12) 0%, rgba(${dayColors.rawR}, ${dayColors.rawG}, ${dayColors.rawB}, 0.03) 50%, transparent 100%)`
             : `radial-gradient(ellipse 80% 55% at 50% 0%, rgba(${nightColors.rawR}, ${nightColors.rawG}, ${nightColors.rawB}, 0.12) 0%, rgba(${nightColors.rawR}, ${nightColors.rawG}, ${nightColors.rawB}, 0.03) 50%, transparent 100%)`
@@ -277,12 +279,12 @@ export default function CelestialBackground({
           </g>
         )}
 
-        {/* Celestial Body: Sun or Moon (Full 100% sphere visible above horizon with edge clipping strictly at horizon bounds) */}
+        {/* Celestial Body: Sun or Moon (Full 100% sphere with GPU Composite Layer Isolation) */}
         <g clipPath={t < 0.05 || t > 0.95 ? "url(#skyClip)" : undefined}>
-          <g transform={`translate(${cx}, ${cy + yHorizonOffset})`} style={{ opacity: edgeOpacity }}>
+          <g transform={`translate(${cx}, ${cy + yHorizonOffset})`} style={{ opacity: edgeOpacity, willChange: 'transform, opacity', transform: `translate3d(${cx}px, ${cy + yHorizonOffset}px, 0)` }}>
             {isDay ? (
-              /* Day Cycle: Clean Transparent Sun Vector with Drop-Shadow Glow */
-              <g style={{ filter: 'drop-shadow(0px 0px 18px rgba(251, 191, 36, 0.6))' }}>
+              /* Day Cycle: Clean Transparent Sun Vector with Streamlined Drop-Shadow Glow */
+              <g style={{ filter: 'drop-shadow(0px 0px 10px rgba(251, 191, 36, 0.6))' }}>
                 {/* Sun Core */}
                 <circle cx="0" cy="0" r="8" fill={dayColors.core} stroke={dayColors.glow} strokeWidth="1.5" />
                 {/* Rotating Sun Rays */}
@@ -309,8 +311,8 @@ export default function CelestialBackground({
                 </g>
               </g>
             ) : (
-              /* Night Cycle: 100% Full Circular Moon Sphere with Crater Details */
-              <g style={{ filter: 'drop-shadow(0px 0px 20px rgba(224, 242, 254, 0.8))' }}>
+              /* Night Cycle: 100% Full Circular Moon Sphere with Streamlined Drop-Shadow Glow */
+              <g style={{ filter: 'drop-shadow(0px 0px 10px rgba(224, 242, 254, 0.8))' }}>
                 <circle
                   cx="0"
                   cy="0"

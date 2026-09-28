@@ -1212,6 +1212,7 @@ export default function PortfolioJournalSection() {
                             }
                           }
                         }}
+                        style={{ willChange: 'transform, opacity', transform: 'translate3d(0,0,0)' }}
                         className="hover:bg-white/5 transition-colors"
                       >
                         <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.date || '-'}</td>
