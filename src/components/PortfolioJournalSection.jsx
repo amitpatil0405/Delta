@@ -1148,13 +1148,14 @@ export default function PortfolioJournalSection() {
               <motion.tbody
                 key={`page_${currentPage}`}
                 initial="hidden"
+                animate="show"
                 whileInView="show"
-                viewport={{ once: false, amount: 0.1 }}
+                viewport={{ once: false, amount: 0.05 }}
                 variants={{
                   hidden: {},
                   show: {
                     transition: {
-                      staggerChildren: 0.05
+                      staggerChildren: 0.04
                     }
                   }
                 }}
@@ -1201,12 +1202,12 @@ export default function PortfolioJournalSection() {
                       <motion.tr
                         key={t.id}
                         variants={{
-                          hidden: { x: -30, opacity: 0 },
+                          hidden: { x: -20, opacity: 0 },
                           show: {
                             x: 0,
                             opacity: 1,
                             transition: {
-                              duration: 0.35,
+                              duration: 0.25,
                               ease: 'easeOut'
                             }
                           }
