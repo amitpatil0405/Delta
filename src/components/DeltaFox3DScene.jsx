@@ -48,10 +48,11 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
 
     const isMobile = window.innerWidth < 768;
     const targetX = isMobile ? mx * 0.25 : 2.4 + mx * 0.45;
-    const targetY = isMobile ? 0.7 + my * 0.25 : 0.15 + my * 0.35;
+    // Track camera Y motion (-sp * 2.2) so Fox remains perfectly framed throughout the entire website
+    const targetY = (isMobile ? 0.7 + my * 0.25 : 0.15 + my * 0.35) - sp * 2.2;
     const targetZ = 0; // Middle depth plane (behind foreground candles, in front of background candles)
 
-    const targetRotY = mx * 0.35 + Math.sin(sp * Math.PI) * 0.15;
+    const targetRotY = mx * 0.35 + Math.sin(sp * Math.PI * 2) * 0.15;
     const targetRotX = -my * 0.25;
     const targetRotZ = -mx * 0.08;
 
@@ -63,11 +64,10 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
     meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
     meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
 
-    // Fade out strictly when scrolling past the Home page hero section (sp > 0.15)
-    const fadeOpacity = Math.max(0, Math.min(1, 1 - (sp - 0.08) * 7));
+    // Persist Fox mascot throughout the entire website
     if (meshRef.current.material) {
-      meshRef.current.material.opacity = fadeOpacity;
-      meshRef.current.visible = fadeOpacity > 0.01;
+      meshRef.current.material.opacity = 1.0;
+      meshRef.current.visible = true;
     }
   });
 
