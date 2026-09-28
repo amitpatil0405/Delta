@@ -47,14 +47,16 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
     const my = mousePos.current?.y || 0;
 
     const isMobile = window.innerWidth < 768;
-    const targetX = isMobile ? mx * 0.25 : 2.4 + mx * 0.45;
+    // Center position: targetX = 0 for mobile, mx * 0.45 for desktop centered
+    const targetX = isMobile ? 0 : mx * 0.45;
     // Track camera Y motion (-sp * 2.2) so Fox remains perfectly framed throughout the entire website
-    const targetY = (isMobile ? 0.7 + my * 0.25 : 0.15 + my * 0.35) - sp * 2.2;
+    const targetY = (isMobile ? 0.4 : 0.15 + my * 0.35) - sp * 2.2;
     const targetZ = 0; // Middle depth plane (behind foreground candles, in front of background candles)
 
-    const targetRotY = mx * 0.35 + Math.sin(sp * Math.PI * 2) * 0.15;
-    const targetRotX = -my * 0.25;
-    const targetRotZ = -mx * 0.08;
+    // On mobile devices, Fox remains stationary at center without pointer tilt reaction
+    const targetRotY = isMobile ? 0 : mx * 0.35 + Math.sin(sp * Math.PI * 2) * 0.15;
+    const targetRotX = isMobile ? 0 : -my * 0.25;
+    const targetRotZ = isMobile ? 0 : -mx * 0.08;
 
     meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
     meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.08);
@@ -79,7 +81,7 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
   const width = height * aspect;
 
   return (
-    <mesh ref={meshRef} position={[2.4, 0.15, 0]}>
+    <mesh ref={meshRef} position={[0, 0.15, 0]}>
       <planeGeometry args={[width, height]} />
       <meshStandardMaterial
         map={texture}
