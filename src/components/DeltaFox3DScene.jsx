@@ -53,9 +53,7 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
     const targetY = (isMobile ? 0.3 : 0.1 + my * 0.35) - sp * 2.2;
     const targetZ = 0; // Middle depth plane (behind foreground candles, in front of background candles)
 
-    // Dynamic scroll-driven scale factor: smooth pulse/expansion and contraction as user scrolls up and down
-    const dynamicScrollScale = 1.0 + Math.sin(sp * Math.PI * 3.5) * 0.32;
-    const targetScale = dynamicScrollScale;
+    const targetScale = 1.0;
 
     // On mobile devices, Fox remains stationary at center without pointer tilt reaction
     const targetRotY = isMobile ? 0 : mx * 0.35 + Math.sin(sp * Math.PI * 2) * 0.15;
