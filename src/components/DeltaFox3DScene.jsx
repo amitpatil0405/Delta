@@ -50,8 +50,12 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
     // Center position: targetX = 0 for mobile, mx * 0.45 for desktop centered
     const targetX = isMobile ? 0 : mx * 0.45;
     // Track camera Y motion (-sp * 2.2) so Fox remains perfectly framed throughout the entire website
-    const targetY = (isMobile ? 0.4 : 0.15 + my * 0.35) - sp * 2.2;
+    const targetY = (isMobile ? 0.3 : 0.1 + my * 0.35) - sp * 2.2;
     const targetZ = 0; // Middle depth plane (behind foreground candles, in front of background candles)
+
+    // Dynamic scroll-driven scale factor: smooth pulse/expansion and contraction as user scrolls up and down
+    const dynamicScrollScale = 1.0 + Math.sin(sp * Math.PI * 3.5) * 0.32;
+    const targetScale = dynamicScrollScale;
 
     // On mobile devices, Fox remains stationary at center without pointer tilt reaction
     const targetRotY = isMobile ? 0 : mx * 0.35 + Math.sin(sp * Math.PI * 2) * 0.15;
@@ -61,6 +65,10 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
     meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
     meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.08);
     meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.08);
+
+    meshRef.current.scale.x = THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.08);
+    meshRef.current.scale.y = THREE.MathUtils.lerp(meshRef.current.scale.y, targetScale, 0.08);
+    meshRef.current.scale.z = THREE.MathUtils.lerp(meshRef.current.scale.z, targetScale, 0.08);
 
     meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
     meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
@@ -77,7 +85,7 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
   const aspect = 451 / 578;
-  const height = isMobile ? 2.4 : 3.5;
+  const height = isMobile ? 3.6 : 5.2;
   const width = height * aspect;
 
   return (
