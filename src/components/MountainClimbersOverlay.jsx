@@ -20,7 +20,7 @@ function getMonotonePath(points) {
  * MountainClimbersOverlay
  * Renders an interactive Mount Everest expedition animation layer on top of the Cumulative P&L Chart.
  */
-export default function MountainClimbersOverlay({
+function MountainClimbersOverlay({
   pnlData = [],
   containerWidth = 0,
   containerHeight = 0,
@@ -583,3 +583,5 @@ export default function MountainClimbersOverlay({
     </div>
   );
 }
+
+export default React.memo(MountainClimbersOverlay);

@@ -47,7 +47,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     const sectionIds = [
       'home',
@@ -139,7 +139,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? 'bg-[#050505]/85 backdrop-blur-md border-b border-white/10 py-3 shadow-2xl'
+          ? 'bg-[#050505]/95 border-b border-white/10 py-3 shadow-2xl'
           : 'bg-transparent py-5'
       }`}
     >
@@ -160,7 +160,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
           {/* Center Navigation Links */}
           <div
-            className="hidden lg:flex items-center space-x-1 bg-neutral-900/60 p-1.5 rounded-full border border-white/5 backdrop-blur-md relative"
+            className="hidden lg:flex items-center space-x-1 bg-neutral-900/90 p-1.5 rounded-full border border-white/5 relative"
             onMouseLeave={() => setHoveredSection(null)}
           >
             {navItems.map((item) => {

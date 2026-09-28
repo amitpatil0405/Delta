@@ -258,7 +258,7 @@ export default function PortfolioJournalSection() {
       }
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -595,7 +595,7 @@ export default function PortfolioJournalSection() {
         {/* Portfolio Performance Dashboard */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {/* Card 1: Total Trades */}
-          <div className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden">
+          <div className="group bg-[#0a0a0f]/90 rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden">
             {/* Border Sweep Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
 
@@ -608,7 +608,7 @@ export default function PortfolioJournalSection() {
           </div>
 
           {/* Card 2: Win Rate */}
-          <div className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden">
+          <div className="group bg-[#0a0a0f]/90 rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden">
             {/* Border Sweep Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
 
@@ -624,7 +624,7 @@ export default function PortfolioJournalSection() {
           </div>
 
           {/* Card 3: Gross Cumulative P&L */}
-          <div className={`group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden ${
+          <div className={`group bg-[#0a0a0f]/90 rounded-2xl p-3.5 sm:p-5 border focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden ${
             totalPnl >= 0
               ? 'border-emerald-500/30 hover:border-emerald-400 hover:shadow-[0_0_25px_rgba(16,185,129,0.35)]'
               : 'border-rose-500/30 hover:border-rose-400 hover:shadow-[0_0_25px_rgba(244,63,94,0.35)]'
@@ -640,7 +640,7 @@ export default function PortfolioJournalSection() {
           </div>
 
           {/* Card 4: Avg Profit / Loss */}
-          <div className="group bg-[#0a0a0f]/60 backdrop-blur-md rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden">
+          <div className="group bg-[#0a0a0f]/90 rounded-2xl p-3.5 sm:p-5 border border-amber-500/30 hover:border-amber-400 hover:shadow-[0_0_25px_rgba(245,158,11,0.35)] focus:outline-none transition-all duration-300 relative min-w-0 flex flex-col items-center justify-center text-center select-none overflow-hidden">
             {/* Border Sweep Effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 pointer-events-none" />
 
@@ -659,234 +659,18 @@ export default function PortfolioJournalSection() {
         </div>
 
         {/* P&L Contribution Heatmap Grid */}
-        <div
-          className="bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative space-y-4"
-        >
-          <div className="relative space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
-            <div className="flex items-start sm:items-center space-x-2">
-              <Calendar className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5 sm:mt-0" />
-              <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
-                <span className="block sm:inline">DAILY P&L PERFORMANCE HEATMAP</span>{' '}
-                <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
-              </h3>
-            </div>
-            <div className="flex items-center space-x-4 text-[10px] font-mono text-gray-400">
-              <div className="flex items-center space-x-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-white/10 border border-white/10"></span>
-                <span>No Trades</span>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-emerald-500 shadow-sm shadow-emerald-500/50"></span>
-                <span>Profit Day</span>
-              </div>
-              <div className="flex items-center space-x-1.5">
-                <span className="w-2.5 h-2.5 rounded bg-rose-500 shadow-sm shadow-rose-500/50"></span>
-                <span>Loss Day</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Month Columns Grid */}
-          <div className="overflow-x-auto md:overflow-x-visible pt-2 pb-1 touch-pan-x scrollbar-thin scrollbar-thumb-white/10">
-            <motion.div
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: false, amount: 0.2 }}
-              variants={{
-                hidden: {},
-                show: {
-                  transition: {
-                    staggerChildren: 0.12
-                  }
-                }
-              }}
-              className="flex max-md:min-w-max max-md:space-x-3.5 md:justify-between md:space-x-1 lg:space-x-2 pb-1"
-            >
-              {heatmapMonths.map((m) => (
-                <motion.div
-                  key={`${m.year}_${m.monthIdx}`}
-                  variants={{
-                    hidden: { y: 20, opacity: 0 },
-                    show: {
-                      y: 0,
-                      opacity: 1,
-                      transition: {
-                        duration: 0.5,
-                        ease: 'easeOut',
-                        staggerChildren: 0.03
-                      }
-                    }
-                  }}
-                  className="flex flex-col items-center space-y-1.5 flex-shrink-0 md:flex-1 md:min-w-0"
-                >
-                  {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
-                  <div className="relative grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
-                    {/* SVG 5-Dot Animated Border Beam Overlay for Overall Monthly Profit/Loss */}
-                    {m.monthTotalPnl !== 0 && (
-                      <svg
-                        className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
-                        viewBox="0 0 100 100"
-                        preserveAspectRatio="none"
-                      >
-                        {/* Faint Background Border Line */}
-                        <rect
-                          x="0.5"
-                          y="0.5"
-                          width="99"
-                          height="99"
-                          rx="8"
-                          ry="8"
-                          fill="none"
-                          stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
-                          strokeWidth="1"
-                          strokeOpacity="0.12"
-                        />
-                        {/* 5 Distinct Green/Red Round Dots Moving in Formation */}
-                        <rect
-                          x="0.5"
-                          y="0.5"
-                          width="99"
-                          height="99"
-                          rx="8"
-                          ry="8"
-                          fill="none"
-                          stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          pathLength="100"
-                          strokeDasharray="0.01 4 0.01 4 0.01 4 0.01 4 0.01 83.95"
-                          className={m.monthTotalPnl > 0 ? 'animate-border-beam-green' : 'animate-border-beam-red'}
-                        />
-                      </svg>
-                    )}
-
-                    {m.days.map((d) => {
-                      if (d.isPadding) {
-                        return (
-                          <div
-                            key={d.key}
-                            className="w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border border-transparent opacity-0 pointer-events-none"
-                          />
-                        );
-                      }
-
-                      const isTraded = d.count > 0;
-                      const isProfit = isTraded && d.pnl > 0;
-                      const isLoss = isTraded && d.pnl < 0;
-                      const isHovered = hoveredDay && hoveredDay.key === d.key;
-
-                      let boxClass = 'bg-white/5 border-white/5 text-transparent';
-                      if (isProfit) {
-                        boxClass = 'bg-emerald-500 border border-black/90';
-                      } else if (isLoss) {
-                        boxClass = 'bg-rose-500 border border-black/90';
-                      }
-
-                      if (isHovered) {
-                        if (isProfit) {
-                          boxClass = 'bg-emerald-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
-                        } else if (isLoss) {
-                          boxClass = 'bg-rose-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
-                        } else {
-                          boxClass = 'bg-white/15 border border-white/10 scale-125 z-20 shadow-lg shadow-black/80';
-                        }
-                      }
-
-                      const totalM = heatmapMonths.length || 12;
-                      const isRightHalf = (d.monthOrder ?? 0) >= Math.floor(totalM / 2);
-                      const popupSideClass = isRightHalf ? "right-full mr-3" : "left-full ml-3";
-
-                      return (
-                        <motion.div
-                          key={d.key}
-                          variants={{
-                            hidden: { scale: 0.8, opacity: 0 },
-                            show: {
-                              scale: 1,
-                              opacity: 1,
-                              transition: {
-                                duration: 0.3,
-                                ease: 'easeOut'
-                              }
-                            }
-                          }}
-                          onMouseEnter={() => setHoveredDay(d)}
-                          onMouseLeave={() => setHoveredDay(null)}
-                          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
-                        >
-                          {/* Hover Popup positioned directly next to the highlighted box (dynamically sized for large P&L amounts) */}
-                          {isHovered && (
-                            <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-white/20 rounded-md p-2 text-[9.5px] font-mono shadow-2xl z-50 w-auto min-w-[220px] max-w-[320px] whitespace-nowrap backdrop-blur-md animate-fadeIn space-y-1.5 text-left pointer-events-none`}>
-                              {/* Header */}
-                              <div className="flex items-center justify-between border-b border-white/10 pb-1.5 gap-4">
-                                <div>
-                                  <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">DATE</div>
-                                  <div className="text-white font-bold text-[9.5px]">
-                                    {d.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                  </div>
-                                </div>
-                                <div className="text-right shrink-0">
-                                  <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">TOTAL</div>
-                                  {d.count === 0 ? (
-                                    <span className="text-gray-400 font-bold text-[9.5px]">₹0</span>
-                                  ) : (
-                                    <span className={`text-[9.5px] font-extrabold ${d.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                                      {d.pnl < 0 ? '-' : '+'}₹{Math.abs(d.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Simple List of Stocks and Profits */}
-                              {d.count === 0 ? (
-                                <div className="text-[8.5px] text-gray-500 py-0.5 italic">
-                                  No closed trades.
-                                </div>
-                              ) : (
-                                <div className="space-y-1 max-h-[140px] overflow-y-auto pr-0.5 scrollbar-thin scrollbar-thumb-white/10">
-                                  {d.trades.map((item, idx) => {
-                                    const isPos = item.pnl > 0;
-                                    const isNeg = item.pnl < 0;
-                                    return (
-                                      <div key={idx} className="flex items-center justify-between py-0.5 border-b border-white/5 last:border-0 leading-tight gap-4">
-                                        <span className="font-extrabold text-white text-[9px] truncate max-w-[130px]">{item.symbol}</span>
-                                        <span className={`font-bold text-[9px] text-right shrink-0 ${isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'}`}>
-                                          {isNeg ? '-' : isPos ? '+' : ''}₹{Math.abs(item.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                        </span>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Month Label */}
-                  <span className={`text-[9px] sm:text-[10px] font-mono font-extrabold uppercase tracking-tight text-center truncate w-full ${
-                    m.monthTotalPnl > 0 ? 'text-emerald-400 drop-shadow-[0_0_6px_rgba(16,185,129,0.4)]' : m.monthTotalPnl < 0 ? 'text-rose-400 drop-shadow-[0_0_6px_rgba(244,63,94,0.4)]' : 'text-gray-400'
-                  }`}>
-                    {m.label}
-                  </span>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-
-            <div className="flex items-center justify-end text-[10px] font-mono text-gray-500 md:hidden">
-              <span>Scroll horizontally for full financial year →</span>
-            </div>
-          </div>
-        </div>
+        <DailyHeatmap
+          heatmapMonths={heatmapMonths}
+          startMonthName={startMonthName}
+          endMonthName={endMonthName}
+          hoveredDay={hoveredDay}
+          setHoveredDay={setHoveredDay}
+        />
 
         {/* P&L Cumulative Performance Graph */}
         {pnlCurveData.length > 0 && (
           <div
-            className="bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative space-y-4"
+            className="bg-[#0a0a0f]/90 rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative space-y-4"
           >
             <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
               <span className="block sm:inline">CUMULATIVE P&L CURVE — FINANCIAL YEAR</span>{' '}
@@ -979,7 +763,7 @@ export default function PortfolioJournalSection() {
                         const isNeg = val < 0;
                         const isTradePnlNeg = tradePnlVal < 0;
                         return (
-                          <div className="bg-[#0c0c0e]/95 border border-white/20 rounded-xl p-3 shadow-2xl font-mono text-xs backdrop-blur-md space-y-1.5 min-w-[200px]">
+                          <div className="bg-[#0c0c0e]/95 border border-white/20 rounded-xl p-3 shadow-2xl font-mono text-xs space-y-1.5 min-w-[200px]">
                             <div className="flex items-center justify-between border-b border-white/10 pb-1 gap-2">
                               <span className="text-white font-bold text-sm">{data.trade}</span>
                               <span className="text-amber-400 font-bold text-[10px]">{data.symbol}</span>
@@ -1047,260 +831,17 @@ export default function PortfolioJournalSection() {
         )}
 
         {/* Trade Journal Table */}
-        <div
-          className="bg-[#0a0a0f]/45 backdrop-blur-md rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative overflow-hidden space-y-4"
-        >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
-            <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
-              <span className="block sm:inline">JOURNAL RECORDS ({displayTrades.length})</span>{' '}
-              <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
-            </h3>
-
-            {/* Top Pagination Controls */}
-            {displayTrades.length > 0 && (
-              <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 text-xs font-mono">
-                <span className="text-[10px] sm:text-xs text-gray-400 mr-1">
-                  Showing <span className="text-amber-400 font-bold">{Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, displayTrades.length)}</span>–<span className="text-amber-400 font-bold">{Math.min(currentPage * ITEMS_PER_PAGE, displayTrades.length)}</span> of <span className="text-white font-bold">{displayTrades.length}</span>
-                </span>
-                <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
-                  <button
-                    onClick={() => setCurrentPage(1)}
-                    disabled={currentPage === 1}
-                    className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
-                    title="First Page"
-                  >
-                    First
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
-                    className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
-                    title="Previous Page"
-                  >
-                    Prev
-                  </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                    <button
-                      key={pageNum}
-                      onClick={() => setCurrentPage(pageNum)}
-                      className={`px-2.5 py-1 rounded text-[10px] sm:text-xs font-bold transition-all border ${
-                        pageNum === currentPage
-                          ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
-                          : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages}
-                    className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
-                    title="Next Page"
-                  >
-                    Next
-                  </button>
-                  <button
-                    onClick={() => setCurrentPage(totalPages)}
-                    disabled={currentPage === totalPages}
-                    className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
-                    title="Last Page"
-                  >
-                    Last
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile Horizontal Scroll Hint */}
-          <div className="sm:hidden flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 text-[10px] font-mono text-amber-300">
-            <span className="flex items-center space-x-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-              <span>Scroll horizontally to view full trade records</span>
-            </span>
-            <span className="font-bold text-amber-400">→</span>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left font-mono text-xs">
-              <thead>
-                <tr className="text-gray-400 border-b border-white/10 text-[10px] uppercase">
-                  <th className="py-3 px-3">DATE</th>
-                  <th className="py-3 px-3">DAY</th>
-                  <th className="py-3 px-3">SYMBOL</th>
-                  <th className="py-3 px-3">STRATEGY</th>
-                  <th className="py-3 px-3">EXPIRY</th>
-                  <th className="py-3 px-3 text-right">QUANTITY</th>
-                  <th className="py-3 px-3 text-center">
-                    <div>PROBABILITY OF</div>
-                    <div>PROFIT</div>
-                  </th>
-                  <th className="py-3 px-3 text-center">TRADE CLOSE DATE</th>
-                  <th className="py-3 px-3 text-center">
-                    <div>HOLD TIME</div>
-                    <div>( DAYS )</div>
-                  </th>
-                  <th className="py-3 px-3 text-center">STATUS</th>
-                  <th className="py-3 px-3 text-right">P&L</th>
-                </tr>
-              </thead>
-              <motion.tbody
-                key={`page_${currentPage}`}
-                initial="hidden"
-                animate="show"
-                whileInView="show"
-                viewport={{ once: false, amount: 0.05 }}
-                variants={{
-                  hidden: {},
-                  show: {
-                    transition: {
-                      staggerChildren: 0.04
-                    }
-                  }
-                }}
-                className="divide-y divide-white/5"
-              >
-                {displayTrades.length === 0 ? (
-                  <tr>
-                    <td colSpan={11} className="py-12 text-center text-gray-500 font-mono text-sm">
-                      {isLoading ? 'SYNCING GOOGLE SHEET RECORDS...' : 'NO TRADES RECORDED IN THIS FINANCIAL YEAR.'}
-                    </td>
-                  </tr>
-                ) : (
-                  paginatedTrades.map((t) => {
-                    const statusUpper = (t.status || '').toUpperCase();
-                    const isOpen = statusUpper.includes('OPEN') || statusUpper.includes('RUNNING');
-                    const isClosedProfit = statusUpper === 'CLOSED PROFIT' || (statusUpper === 'CLOSED' && t.manualPnl >= 0);
-                    const isClosedLoss = statusUpper === 'CLOSED LOSS' || statusUpper.includes('LOSS') || (statusUpper === 'CLOSED' && t.manualPnl < 0);
-
-                    let pnlVal = t.manualPnl;
-                    if (isClosedLoss && pnlVal > 0) {
-                      pnlVal = -pnlVal;
-                    }
-
-                    const isPos = pnlVal > 0;
-                    const isNeg = pnlVal < 0;
-
-                    let statusBadgeClass = 'bg-neutral-800 text-gray-300';
-                    let statusText = t.status;
-
-                    if (isOpen) {
-                      statusBadgeClass = 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 animate-pulse shadow-[0_0_12px_rgba(234,179,8,0.35)]';
-                      statusText = t.status;
-                    } else if (isClosedProfit) {
-                      statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.35)]';
-                      statusText = 'CLOSED PROFIT';
-                    } else if (isClosedLoss) {
-                      statusBadgeClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
-                      statusText = 'CLOSED LOSS';
-                    }
-
-                    const formattedPnlStr = Math.abs(pnlVal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-                    return (
-                      <motion.tr
-                        key={t.id}
-                        variants={{
-                          hidden: { x: -20, opacity: 0 },
-                          show: {
-                            x: 0,
-                            opacity: 1,
-                            transition: {
-                              duration: 0.25,
-                              ease: 'easeOut'
-                            }
-                          }
-                        }}
-                        style={{ willChange: 'transform, opacity', transform: 'translate3d(0,0,0)' }}
-                        className="hover:bg-white/5 transition-colors"
-                      >
-                        <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.date || '-'}</td>
-                        <td className="py-3 px-3 text-amber-400 font-bold whitespace-nowrap">{t.day || '-'}</td>
-                        <td className="py-3 px-3 font-bold text-white whitespace-nowrap">{t.symbol || '-'}</td>
-                        <td className="py-3 px-3 text-amber-400 whitespace-nowrap">{t.strategy || '-'}</td>
-                        <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.expiry || '-'}</td>
-                        <td className="py-3 px-3 text-right text-gray-300 font-bold">{t.qty || 0}</td>
-                        <td className="py-3 px-3 text-center text-emerald-400 font-bold">{Number(t.pop || 70).toFixed(1)}%</td>
-                        <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.tradeCloseDate || '-'}</td>
-                        <td className="py-3 px-3 text-center text-gray-300 font-bold whitespace-nowrap">
-                          {t.holdTime !== '-' ? `${t.holdTime} Days` : '-'}
-                        </td>
-                        <td className="py-3 px-3 text-center whitespace-nowrap">
-                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold inline-block transition-shadow ${statusBadgeClass}`}>
-                            {statusText}
-                          </span>
-                        </td>
-                        <td className={`py-3 px-3 text-right font-bold text-sm whitespace-nowrap ${
-                          isOpen ? 'text-gray-500' : isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'
-                        }`}>
-                          {isOpen ? '₹0.00' : `${isNeg ? '-' : isPos ? '+' : ''}₹${formattedPnlStr}`}
-                        </td>
-                      </motion.tr>
-                    );
-                  })
-                )}
-              </motion.tbody>
-            </table>
-          </div>
-
-          {/* Bottom Pagination Controls */}
-          {displayTrades.length > 0 && (
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10 font-mono text-xs">
-              <span className="text-[10px] sm:text-xs text-gray-400">
-                Showing <span className="text-amber-400 font-bold">{Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, displayTrades.length)}</span>–<span className="text-amber-400 font-bold">{Math.min(currentPage * ITEMS_PER_PAGE, displayTrades.length)}</span> of <span className="text-white font-bold">{displayTrades.length}</span> trade records
-              </span>
-
-              <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
-                <button
-                  onClick={() => setCurrentPage(1)}
-                  disabled={currentPage === 1}
-                  className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
-                  title="First Page"
-                >
-                  First
-                </button>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
-                  title="Previous Page"
-                >
-                  Prev
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                  <button
-                    key={pageNum}
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`px-2.5 py-1 rounded text-[10px] sm:text-xs font-bold transition-all border ${
-                      pageNum === currentPage
-                        ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
-                        : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
-                  title="Next Page"
-                >
-                  Next
-                </button>
-                <button
-                  onClick={() => setCurrentPage(totalPages)}
-                  disabled={currentPage === totalPages}
-                  className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
-                  title="Last Page"
-                >
-                  Last
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+        <JournalRecordsTable
+          displayTrades={displayTrades}
+          paginatedTrades={paginatedTrades}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalPages={totalPages}
+          ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+          startMonthName={startMonthName}
+          endMonthName={endMonthName}
+          isLoading={isLoading}
+        />
 
       </div>
 
@@ -1308,3 +849,507 @@ export default function PortfolioJournalSection() {
     </section>
   );
 }
+
+// Memoized Daily P&L Performance Heatmap Component
+const DailyHeatmap = React.memo(function DailyHeatmap({
+  heatmapMonths,
+  startMonthName,
+  endMonthName,
+  hoveredDay,
+  setHoveredDay
+}) {
+  return (
+    <div
+      className="bg-[#0a0a0f]/90 rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative space-y-4"
+    >
+      <div className="relative space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+          <div className="flex items-start sm:items-center space-x-2">
+            <Calendar className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5 sm:mt-0" />
+            <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
+              <span className="block sm:inline">DAILY P&L PERFORMANCE HEATMAP</span>{' '}
+              <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
+            </h3>
+          </div>
+          <div className="flex items-center space-x-4 text-[10px] font-mono text-gray-400">
+            <div className="flex items-center space-x-1.5">
+              <span className="w-2.5 h-2.5 rounded bg-white/10 border border-white/10"></span>
+              <span>No Trades</span>
+            </div>
+            <div className="flex items-center space-x-1.5">
+              <span className="w-2.5 h-2.5 rounded bg-emerald-500 shadow-sm shadow-emerald-500/50"></span>
+              <span>Profit Day</span>
+            </div>
+            <div className="flex items-center space-x-1.5">
+              <span className="w-2.5 h-2.5 rounded bg-rose-500 shadow-sm shadow-rose-500/50"></span>
+              <span>Loss Day</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Month Columns Grid */}
+        <div className="overflow-x-auto md:overflow-x-visible pt-2 pb-1 touch-pan-x scrollbar-thin scrollbar-thumb-white/10">
+          <motion.div
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: false, amount: 0.2 }}
+            variants={{
+              hidden: {},
+              show: {
+                transition: {
+                  staggerChildren: 0.12
+                }
+              }
+            }}
+            className="flex max-md:min-w-max max-md:space-x-3.5 md:justify-between md:space-x-1 lg:space-x-2 pb-1"
+          >
+            {heatmapMonths.map((m) => (
+              <motion.div
+                key={`${m.year}_${m.monthIdx}`}
+                variants={{
+                  hidden: { y: 20, opacity: 0 },
+                  show: {
+                    y: 0,
+                    opacity: 1,
+                    transition: {
+                      duration: 0.5,
+                      ease: 'easeOut',
+                      staggerChildren: 0.03
+                    }
+                  }
+                }}
+                className="flex flex-col items-center space-y-1.5 flex-shrink-0 md:flex-1 md:min-w-0"
+              >
+                {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
+                <div className="relative grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
+                  {/* SVG 5-Dot Animated Border Beam Overlay for Overall Monthly Profit/Loss */}
+                  {m.monthTotalPnl !== 0 && (
+                    <svg
+                      className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                    >
+                      {/* Faint Background Border Line */}
+                      <rect
+                        x="0.5"
+                        y="0.5"
+                        width="99"
+                        height="99"
+                        rx="8"
+                        ry="8"
+                        fill="none"
+                        stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
+                        strokeWidth="1"
+                        strokeOpacity="0.12"
+                      />
+                      {/* 5 Distinct Green/Red Round Dots Moving in Formation */}
+                      <rect
+                        x="0.5"
+                        y="0.5"
+                        width="99"
+                        height="99"
+                        rx="8"
+                        ry="8"
+                        fill="none"
+                        stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        pathLength="100"
+                        strokeDasharray="0.01 4 0.01 4 0.01 4 0.01 4 0.01 83.95"
+                        className={m.monthTotalPnl > 0 ? 'animate-border-beam-green' : 'animate-border-beam-red'}
+                      />
+                    </svg>
+                  )}
+
+                  {m.days.map((d) => {
+                    if (d.isPadding) {
+                      return (
+                        <div
+                          key={d.key}
+                          className="w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border border-transparent opacity-0 pointer-events-none"
+                        />
+                      );
+                    }
+
+                    const isTraded = d.count > 0;
+                    const isProfit = isTraded && d.pnl > 0;
+                    const isLoss = isTraded && d.pnl < 0;
+                    const isHovered = hoveredDay && hoveredDay.key === d.key;
+
+                    let boxClass = 'bg-white/5 border-white/5 text-transparent';
+                    if (isProfit) {
+                      boxClass = 'bg-emerald-500 border border-black/90';
+                    } else if (isLoss) {
+                      boxClass = 'bg-rose-500 border border-black/90';
+                    }
+
+                    if (isHovered) {
+                      if (isProfit) {
+                        boxClass = 'bg-emerald-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
+                      } else if (isLoss) {
+                        boxClass = 'bg-rose-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
+                      } else {
+                        boxClass = 'bg-white/15 border border-white/10 scale-125 z-20 shadow-lg shadow-black/80';
+                      }
+                    }
+
+                    const totalM = heatmapMonths.length || 12;
+                    const isRightHalf = (d.monthOrder ?? 0) >= Math.floor(totalM / 2);
+                    const popupSideClass = isRightHalf ? "right-full mr-3" : "left-full ml-3";
+
+                    return (
+                      <motion.div
+                        key={d.key}
+                        variants={{
+                          hidden: { scale: 0.8, opacity: 0 },
+                          show: {
+                            scale: 1,
+                            opacity: 1,
+                            transition: {
+                              duration: 0.3,
+                              ease: 'easeOut'
+                            }
+                          }
+                        }}
+                        onMouseEnter={() => setHoveredDay(d)}
+                        onMouseLeave={() => setHoveredDay(null)}
+                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
+                      >
+                        {/* Hover Popup positioned directly next to the highlighted box (dynamically sized for large P&L amounts) */}
+                        {isHovered && (
+                          <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-white/20 rounded-md p-2 text-[9.5px] font-mono shadow-2xl z-50 w-auto min-w-[220px] max-w-[320px] whitespace-nowrap animate-fadeIn space-y-1.5 text-left pointer-events-none`}>
+                            {/* Header */}
+                            <div className="flex items-center justify-between border-b border-white/10 pb-1.5 gap-4">
+                              <div>
+                                <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">DATE</div>
+                                <div className="text-white font-bold text-[9.5px]">
+                                  {d.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">TOTAL</div>
+                                {d.count === 0 ? (
+                                  <span className="text-gray-400 font-bold text-[9.5px]">₹0</span>
+                                ) : (
+                                  <span className={`text-[9.5px] font-extrabold ${d.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                    {d.pnl < 0 ? '-' : '+'}₹{Math.abs(d.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Simple List of Stocks and Profits */}
+                            {d.count === 0 ? (
+                              <div className="text-[8.5px] text-gray-500 py-0.5 italic">
+                                No closed trades.
+                              </div>
+                            ) : (
+                              <div className="space-y-1 max-h-[140px] overflow-y-auto pr-0.5 scrollbar-thin scrollbar-thumb-white/10">
+                                {d.trades.map((item, idx) => {
+                                  const isPos = item.pnl > 0;
+                                  const isNeg = item.pnl < 0;
+                                  return (
+                                    <div key={idx} className="flex items-center justify-between py-0.5 border-b border-white/5 last:border-0 leading-tight gap-4">
+                                      <span className="font-extrabold text-white text-[9px] truncate max-w-[130px]">{item.symbol}</span>
+                                      <span className={`font-bold text-[9px] text-right shrink-0 ${isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'}`}>
+                                        {isNeg ? '-' : isPos ? '+' : ''}₹{Math.abs(item.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* Month Label */}
+                <span className={`text-[9px] sm:text-[10px] font-mono font-extrabold uppercase tracking-tight text-center truncate w-full ${
+                  m.monthTotalPnl > 0 ? 'text-emerald-400 drop-shadow-[0_0_6px_rgba(16,185,129,0.4)]' : m.monthTotalPnl < 0 ? 'text-rose-400 drop-shadow-[0_0_6px_rgba(244,63,94,0.4)]' : 'text-gray-400'
+                }`}>
+                  {m.label}
+                </span>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+
+        <div className="flex items-center justify-end text-[10px] font-mono text-gray-500 md:hidden">
+          <span>Scroll horizontally for full financial year →</span>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// Memoized Journal Records Table Component
+const JournalRecordsTable = React.memo(function JournalRecordsTable({
+  displayTrades,
+  paginatedTrades,
+  currentPage,
+  setCurrentPage,
+  totalPages,
+  ITEMS_PER_PAGE,
+  startMonthName,
+  endMonthName,
+  isLoading
+}) {
+  return (
+    <div
+      className="bg-[#0a0a0f]/90 rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative overflow-hidden space-y-4"
+    >
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-white/10 pb-4 gap-3">
+        <h3 className="text-xs font-extrabold font-mono text-white uppercase tracking-wider">
+          <span className="block sm:inline">JOURNAL RECORDS ({displayTrades.length})</span>{' '}
+          <span className="block sm:inline whitespace-nowrap text-white">({startMonthName} – {endMonthName})</span>
+        </h3>
+
+        {/* Top Pagination Controls */}
+        {displayTrades.length > 0 && (
+          <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 text-xs font-mono">
+            <span className="text-[10px] sm:text-xs text-gray-400 mr-1">
+              Showing <span className="text-amber-400 font-bold">{Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, displayTrades.length)}</span>–<span className="text-amber-400 font-bold">{Math.min(currentPage * ITEMS_PER_PAGE, displayTrades.length)}</span> of <span className="text-white font-bold">{displayTrades.length}</span>
+            </span>
+            <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+              <button
+                onClick={() => setCurrentPage(1)}
+                disabled={currentPage === 1}
+                className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                title="First Page"
+              >
+                First
+              </button>
+              <button
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                title="Previous Page"
+              >
+                Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`px-2.5 py-1 rounded text-[10px] sm:text-xs font-bold transition-all border ${
+                    pageNum === currentPage
+                      ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                      : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                disabled={currentPage === totalPages}
+                className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                title="Next Page"
+              >
+                Next
+              </button>
+              <button
+                onClick={() => setCurrentPage(totalPages)}
+                disabled={currentPage === totalPages}
+                className="px-2 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+                title="Last Page"
+              >
+                Last
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Horizontal Scroll Hint */}
+      <div className="sm:hidden flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 text-[10px] font-mono text-amber-300">
+        <span className="flex items-center space-x-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+          <span>Scroll horizontally to view full trade records</span>
+        </span>
+        <span className="font-bold text-amber-400">→</span>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-left font-mono text-xs">
+          <thead>
+            <tr className="text-gray-400 border-b border-white/10 text-[10px] uppercase">
+              <th className="py-3 px-3">DATE</th>
+              <th className="py-3 px-3">DAY</th>
+              <th className="py-3 px-3">SYMBOL</th>
+              <th className="py-3 px-3">STRATEGY</th>
+              <th className="py-3 px-3">EXPIRY</th>
+              <th className="py-3 px-3 text-right">QUANTITY</th>
+              <th className="py-3 px-3 text-center">
+                <div>PROBABILITY OF</div>
+                <div>PROFIT</div>
+              </th>
+              <th className="py-3 px-3 text-center">TRADE CLOSE DATE</th>
+              <th className="py-3 px-3 text-center">
+                <div>HOLD TIME</div>
+                <div>( DAYS )</div>
+              </th>
+              <th className="py-3 px-3 text-center">STATUS</th>
+              <th className="py-3 px-3 text-right">P&L</th>
+            </tr>
+          </thead>
+          <motion.tbody
+            key={`page_${currentPage}`}
+            initial="hidden"
+            animate="show"
+            whileInView="show"
+            viewport={{ once: false, amount: 0.05 }}
+            variants={{
+              hidden: {},
+              show: {
+                transition: {
+                  staggerChildren: 0.04
+                }
+              }
+            }}
+            className="divide-y divide-white/5"
+          >
+            {displayTrades.length === 0 ? (
+              <tr>
+                <td colSpan={11} className="py-12 text-center text-gray-500 font-mono text-sm">
+                  {isLoading ? 'SYNCING GOOGLE SHEET RECORDS...' : 'NO TRADES RECORDED IN THIS FINANCIAL YEAR.'}
+                </td>
+              </tr>
+            ) : (
+              paginatedTrades.map((t) => {
+                const statusUpper = (t.status || '').toUpperCase();
+                const isOpen = statusUpper.includes('OPEN') || statusUpper.includes('RUNNING');
+                const isClosedProfit = statusUpper === 'CLOSED PROFIT' || (statusUpper === 'CLOSED' && t.manualPnl >= 0);
+                const isClosedLoss = statusUpper === 'CLOSED LOSS' || statusUpper.includes('LOSS') || (statusUpper === 'CLOSED' && t.manualPnl < 0);
+
+                let pnlVal = t.manualPnl;
+                if (isClosedLoss && pnlVal > 0) {
+                  pnlVal = -pnlVal;
+                }
+
+                const isPos = pnlVal > 0;
+                const isNeg = pnlVal < 0;
+
+                let statusBadgeClass = 'bg-neutral-800 text-gray-300';
+                let statusText = t.status;
+
+                if (isOpen) {
+                  statusBadgeClass = 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 animate-pulse shadow-[0_0_12px_rgba(234,179,8,0.35)]';
+                  statusText = t.status;
+                } else if (isClosedProfit) {
+                  statusBadgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.35)]';
+                  statusText = 'CLOSED PROFIT';
+                } else if (isClosedLoss) {
+                  statusBadgeClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
+                  statusText = 'CLOSED LOSS';
+                }
+
+                const formattedPnlStr = Math.abs(pnlVal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+                return (
+                  <motion.tr
+                    key={t.id}
+                    variants={{
+                      hidden: { x: -20, opacity: 0 },
+                      show: {
+                        x: 0,
+                        opacity: 1,
+                        transition: {
+                          duration: 0.25,
+                          ease: 'easeOut'
+                        }
+                      }
+                    }}
+                    className="hover:bg-white/5 transition-colors"
+                  >
+                    <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.date || '-'}</td>
+                    <td className="py-3 px-3 text-amber-400 font-bold whitespace-nowrap">{t.day || '-'}</td>
+                    <td className="py-3 px-3 font-bold text-white whitespace-nowrap">{t.symbol || '-'}</td>
+                    <td className="py-3 px-3 text-amber-400 whitespace-nowrap">{t.strategy || '-'}</td>
+                    <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.expiry || '-'}</td>
+                    <td className="py-3 px-3 text-right text-gray-300 font-bold">{t.qty || 0}</td>
+                    <td className="py-3 px-3 text-center text-emerald-400 font-bold">{Number(t.pop || 70).toFixed(1)}%</td>
+                    <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.tradeCloseDate || '-'}</td>
+                    <td className="py-3 px-3 text-center text-gray-300 font-bold whitespace-nowrap">
+                      {t.holdTime !== '-' ? `${t.holdTime} Days` : '-'}
+                    </td>
+                    <td className="py-3 px-3 text-center whitespace-nowrap">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold inline-block transition-shadow ${statusBadgeClass}`}>
+                        {statusText}
+                      </span>
+                    </td>
+                    <td className={`py-3 px-3 text-right font-bold text-sm whitespace-nowrap ${
+                      isOpen ? 'text-gray-500' : isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'
+                    }`}>
+                      {isOpen ? '₹0.00' : `${isNeg ? '-' : isPos ? '+' : ''}₹${formattedPnlStr}`}
+                    </td>
+                  </motion.tr>
+                );
+              })
+            )}
+          </motion.tbody>
+        </table>
+      </div>
+
+      {/* Bottom Pagination Controls */}
+      {displayTrades.length > 0 && (
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/10 font-mono text-xs">
+          <span className="text-[10px] sm:text-xs text-gray-400">
+            Showing <span className="text-amber-400 font-bold">{Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, displayTrades.length)}</span>–<span className="text-amber-400 font-bold">{Math.min(currentPage * ITEMS_PER_PAGE, displayTrades.length)}</span> of <span className="text-white font-bold">{displayTrades.length}</span> trade records
+          </span>
+
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap">
+            <button
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+              className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+              title="First Page"
+            >
+              First
+            </button>
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+              title="Previous Page"
+            >
+              Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+              <button
+                key={pageNum}
+                onClick={() => setCurrentPage(pageNum)}
+                className={`px-2.5 py-1 rounded text-[10px] sm:text-xs font-bold transition-all border ${
+                  pageNum === currentPage
+                    ? 'bg-amber-500 text-black border-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                    : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'
+                }`}
+              >
+                {pageNum}
+              </button>
+            ))}
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+              title="Next Page"
+            >
+              Next
+            </button>
+            <button
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+              className="px-2.5 py-1 rounded bg-white/5 border border-white/10 text-gray-300 text-[10px] sm:text-xs font-bold hover:bg-amber-500/20 hover:text-amber-400 hover:border-amber-500/40 disabled:opacity-30 disabled:pointer-events-none transition-all"
+              title="Last Page"
+            >
+              Last
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+});
