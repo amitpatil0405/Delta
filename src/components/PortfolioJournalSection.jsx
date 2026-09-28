@@ -687,37 +687,14 @@ export default function PortfolioJournalSection() {
             </div>
           </div>
 
-          {/* Month Columns Grid */}
+          {/* Month Columns Grid (Instant Static Rendering - Zero Scroll Reveal Lag) */}
           <div className="overflow-x-auto md:overflow-x-visible pt-2 pb-1 touch-pan-x scrollbar-thin scrollbar-thumb-white/10">
-            <motion.div
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: false, amount: 0.2 }}
-              variants={{
-                hidden: {},
-                show: {
-                  transition: {
-                    staggerChildren: 0.12
-                  }
-                }
-              }}
+            <div
               className="flex max-md:min-w-max max-md:space-x-3.5 md:justify-between md:space-x-1 lg:space-x-2 pb-1"
             >
               {heatmapMonths.map((m) => (
-                <motion.div
+                <div
                   key={`${m.year}_${m.monthIdx}`}
-                  variants={{
-                    hidden: { y: 20, opacity: 0 },
-                    show: {
-                      y: 0,
-                      opacity: 1,
-                      transition: {
-                        duration: 0.5,
-                        ease: 'easeOut',
-                        staggerChildren: 0.03
-                      }
-                    }
-                  }}
                   className="flex flex-col items-center space-y-1.5 flex-shrink-0 md:flex-1 md:min-w-0"
                 >
                   {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
@@ -798,19 +775,8 @@ export default function PortfolioJournalSection() {
                       const popupSideClass = isRightHalf ? "right-full mr-3" : "left-full ml-3";
 
                       return (
-                        <motion.div
+                        <div
                           key={d.key}
-                          variants={{
-                            hidden: { scale: 0.8, opacity: 0 },
-                            show: {
-                              scale: 1,
-                              opacity: 1,
-                              transition: {
-                                duration: 0.3,
-                                ease: 'easeOut'
-                              }
-                            }
-                          }}
                           onMouseEnter={() => setHoveredDay(d)}
                           onMouseLeave={() => setHoveredDay(null)}
                           className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
@@ -861,7 +827,7 @@ export default function PortfolioJournalSection() {
                               )}
                             </div>
                           )}
-                        </motion.div>
+                        </div>
                       );
                     })}
                   </div>
@@ -872,9 +838,9 @@ export default function PortfolioJournalSection() {
                   }`}>
                     {m.label}
                   </span>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
           </div>
 
             <div className="flex items-center justify-end text-[10px] font-mono text-gray-500 md:hidden">
