@@ -241,7 +241,7 @@ export default function ContactSection() {
           <div className="absolute -inset-1 rounded-3xl bg-amber-500/10 shadow-[0_0_50px_rgba(255,102,0,0.6),0_0_100px_rgba(255,102,0,0.3)] animate-pulse pointer-events-none" />
 
           {/* Borderless Form Container */}
-          <div className="relative bg-[#0a0a0c]/80 backdrop-blur-2xl rounded-3xl p-8 sm:p-10 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
+          <div className="relative bg-[#0a0a0c]/95 rounded-3xl p-8 sm:p-10 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
 
           {submitted ? (
             <div className="py-12 text-center space-y-4 font-mono">
