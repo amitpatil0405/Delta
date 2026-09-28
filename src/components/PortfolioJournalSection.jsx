@@ -697,47 +697,10 @@ export default function PortfolioJournalSection() {
                   key={`${m.year}_${m.monthIdx}`}
                   className="flex flex-col items-center space-y-1.5 flex-shrink-0 md:flex-1 md:min-w-0"
                 >
-                  {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
-                  <div className="relative grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
-                    {/* SVG 5-Dot Animated Border Beam Overlay for Overall Monthly Profit/Loss */}
-                    {m.monthTotalPnl !== 0 && (
-                      <svg
-                        className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
-                        viewBox="0 0 100 100"
-                        preserveAspectRatio="none"
-                      >
-                        {/* Faint Background Border Line */}
-                        <rect
-                          x="0.5"
-                          y="0.5"
-                          width="99"
-                          height="99"
-                          rx="8"
-                          ry="8"
-                          fill="none"
-                          stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
-                          strokeWidth="1"
-                          strokeOpacity="0.12"
-                        />
-                        {/* 5 Distinct Green/Red Round Dots Moving in Formation */}
-                        <rect
-                          x="0.5"
-                          y="0.5"
-                          width="99"
-                          height="99"
-                          rx="8"
-                          ry="8"
-                          fill="none"
-                          stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
-                          strokeWidth="2.5"
-                          strokeLinecap="round"
-                          pathLength="100"
-                          strokeDasharray="0.01 4 0.01 4 0.01 4 0.01 4 0.01 83.95"
-                          className={m.monthTotalPnl > 0 ? 'animate-border-beam-green' : 'animate-border-beam-red'}
-                        />
-                      </svg>
-                    )}
-
+                  {/* Daily Boxes Block (5 cols x 7 rows grid layout) - Clean Static Rendering */}
+                  <div className={`relative grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] rounded-lg xl:rounded-xl border ${
+                    m.monthTotalPnl > 0 ? 'border-emerald-500/20' : m.monthTotalPnl < 0 ? 'border-rose-500/20' : 'border-white/5'
+                  }`}>
                     {m.days.map((d) => {
                       if (d.isPadding) {
                         return (
@@ -762,11 +725,11 @@ export default function PortfolioJournalSection() {
 
                       if (isHovered) {
                         if (isProfit) {
-                          boxClass = 'bg-emerald-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
+                          boxClass = 'bg-emerald-600 border border-black/90 z-20 shadow-lg shadow-black/80';
                         } else if (isLoss) {
-                          boxClass = 'bg-rose-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
+                          boxClass = 'bg-rose-600 border border-black/90 z-20 shadow-lg shadow-black/80';
                         } else {
-                          boxClass = 'bg-white/15 border border-white/10 scale-125 z-20 shadow-lg shadow-black/80';
+                          boxClass = 'bg-white/15 border border-white/10 z-20 shadow-lg shadow-black/80';
                         }
                       }
 
@@ -779,7 +742,7 @@ export default function PortfolioJournalSection() {
                           key={d.key}
                           onMouseEnter={() => setHoveredDay(d)}
                           onMouseLeave={() => setHoveredDay(null)}
-                          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
+                          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border cursor-pointer relative ${boxClass}`}
                         >
                           {/* Hover Popup positioned directly next to the highlighted box (dynamically sized for large P&L amounts) */}
                           {isHovered && (
