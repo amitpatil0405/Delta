@@ -136,8 +136,8 @@ export default function TrainingSection() {
           {/* Dedicated Schedule Badge Grid */}
           <div className="pt-5 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-            {/* Core Lectures Box */}
-            <div className="relative p-4 rounded-xl bg-[#0a0a0c]/90 border border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.2)] flex items-start space-x-3 overflow-hidden">
+            {/* Core Lectures Box (Golden Accent, Dark Blue Moving Border Light) */}
+            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-blue-600/40 shadow-[0_0_20px_rgba(37,99,235,0.25)] flex items-start space-x-3 overflow-hidden">
               <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
                 <rect
                   x="1"
@@ -146,27 +146,27 @@ export default function TrainingSection() {
                   height="calc(100% - 2px)"
                   rx="11"
                   fill="none"
-                  stroke="#00f0ff"
+                  stroke="#2563eb"
                   strokeWidth="2"
                   strokeDasharray="6 6"
                   className="animate-neon-blue-dash"
                 />
               </svg>
-              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shrink-0 relative z-10">
-                <Clock className="w-4 h-4" />
+              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5">
+                <Clock className="w-5 h-5" />
               </div>
               <div className="relative z-10">
-                <span className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-wider block">
+                <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
                   CORE LECTURES
                 </span>
-                <span className="text-xs font-mono font-semibold text-white block mt-0.5">
+                <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
                   Tuesday, Wednesday, Thursday (7:30 PM to 8:30 PM)
                 </span>
               </div>
             </div>
 
-            {/* Live Session Box */}
-            <div className="relative p-4 rounded-xl bg-[#0a0a0c]/90 border border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.2)] flex items-start space-x-3 overflow-hidden">
+            {/* Live Session Box (Green Accent, Dark Blue Moving Border Light) */}
+            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-blue-600/40 shadow-[0_0_20px_rgba(37,99,235,0.25)] flex items-start space-x-3 overflow-hidden">
               <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
                 <rect
                   x="1"
@@ -175,30 +175,30 @@ export default function TrainingSection() {
                   height="calc(100% - 2px)"
                   rx="11"
                   fill="none"
-                  stroke="#00f0ff"
+                  stroke="#2563eb"
                   strokeWidth="2"
                   strokeDasharray="6 6"
                   className="animate-neon-blue-dash"
                 />
               </svg>
-              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shrink-0 relative z-10">
-                <Video className="w-4 h-4" />
+              <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0 relative z-10 mt-0.5">
+                <Video className="w-5 h-5" />
               </div>
               <div className="relative z-10">
-                <span className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-wider block">
+                <span className="text-xs sm:text-sm font-mono font-extrabold text-emerald-400 uppercase tracking-wider block">
                   LIVE SESSION
                 </span>
-                <span className="text-xs font-mono font-semibold text-white block mt-0.5">
+                <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
                   Friday (11:00 AM to 12:00 PM)
                 </span>
-                <span className="text-[11px] font-mono text-cyan-200/80 block mt-0.5">
+                <span className="text-xs font-mono text-gray-400 block mt-0.5">
                   Live positions analysis and discussion
                 </span>
               </div>
             </div>
 
-            {/* Program Duration Box */}
-            <div className="relative p-4 rounded-xl bg-[#0a0a0c]/90 border border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.2)] flex items-start space-x-3 md:col-span-2 lg:col-span-1 overflow-hidden">
+            {/* Program Duration Box (Golden Accent, Dark Blue Moving Border Light) */}
+            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-blue-600/40 shadow-[0_0_20px_rgba(37,99,235,0.25)] flex items-start space-x-3 md:col-span-2 lg:col-span-1 overflow-hidden">
               <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
                 <rect
                   x="1"
@@ -207,20 +207,20 @@ export default function TrainingSection() {
                   height="calc(100% - 2px)"
                   rx="11"
                   fill="none"
-                  stroke="#00f0ff"
+                  stroke="#2563eb"
                   strokeWidth="2"
                   strokeDasharray="6 6"
                   className="animate-neon-blue-dash"
                 />
               </svg>
-              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shrink-0 relative z-10">
-                <Calendar className="w-4 h-4" />
+              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5">
+                <Calendar className="w-5 h-5" />
               </div>
               <div className="relative z-10">
-                <span className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-wider block">
+                <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
                   PROGRAM DURATION
                 </span>
-                <span className="text-xs font-mono font-semibold text-white block mt-0.5">
+                <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
                   Total Course Duration: 2 Months
                 </span>
               </div>
