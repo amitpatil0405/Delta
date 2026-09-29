@@ -2,6 +2,96 @@ import React, { useState } from 'react';
 import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio, QrCode, Smartphone, CreditCard, Calendar, Clock, Video } from 'lucide-react';
 import paymentQrImg from '../assets/payment_qr.jpg';
 
+function MovingGoldenDotBorder() {
+  return (
+    <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="goldenGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+      </defs>
+      {/* Background static subtle track */}
+      <rect
+        x="1"
+        y="1"
+        width="calc(100% - 2px)"
+        height="calc(100% - 2px)"
+        rx="11"
+        fill="none"
+        stroke="#f59e0b"
+        strokeWidth="1"
+        strokeOpacity="0.15"
+      />
+      {/* Tail - faint trailing shadow */}
+      <rect
+        x="1"
+        y="1"
+        width="calc(100% - 2px)"
+        height="calc(100% - 2px)"
+        rx="11"
+        fill="none"
+        pathLength="100"
+        stroke="#d97706"
+        strokeWidth="1.5"
+        strokeOpacity="0.4"
+        strokeDasharray="16 84"
+        className="animate-golden-move"
+        style={{ '--dash-start': '0', '--dash-end': '-100' }}
+      />
+      {/* Tail - brighter middle shadow */}
+      <rect
+        x="1"
+        y="1"
+        width="calc(100% - 2px)"
+        height="calc(100% - 2px)"
+        rx="11"
+        fill="none"
+        pathLength="100"
+        stroke="#f59e0b"
+        strokeWidth="2"
+        strokeOpacity="0.85"
+        strokeDasharray="10 90"
+        className="animate-golden-move"
+        style={{ '--dash-start': '-6', '--dash-end': '-106' }}
+      />
+      {/* Leading Golden Dot with intense glow */}
+      <rect
+        x="1"
+        y="1"
+        width="calc(100% - 2px)"
+        height="calc(100% - 2px)"
+        rx="11"
+        fill="none"
+        pathLength="100"
+        stroke="#fbbf24"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        strokeDasharray="2 98"
+        filter="url(#goldenGlow)"
+        className="animate-golden-move"
+        style={{ '--dash-start': '-14', '--dash-end': '-114' }}
+      />
+      {/* Center White Core Dot */}
+      <rect
+        x="1"
+        y="1"
+        width="calc(100% - 2px)"
+        height="calc(100% - 2px)"
+        rx="11"
+        fill="none"
+        pathLength="100"
+        stroke="#ffffff"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeDasharray="1 99"
+        className="animate-golden-move"
+        style={{ '--dash-start': '-14.5', '--dash-end': '-114.5' }}
+      />
+    </svg>
+  );
+}
+
 export default function TrainingSection() {
   const [selectedModule, setSelectedModule] = useState(0);
 
@@ -136,22 +226,9 @@ export default function TrainingSection() {
           {/* Dedicated Schedule Badge Grid */}
           <div className="pt-5 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-            {/* Core Lectures Box (Golden Accent, Dark Blue Moving Border Light) */}
-            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-blue-600/40 shadow-[0_0_20px_rgba(37,99,235,0.25)] flex items-start space-x-3 overflow-hidden">
-              <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
-                <rect
-                  x="1"
-                  y="1"
-                  width="calc(100% - 2px)"
-                  height="calc(100% - 2px)"
-                  rx="11"
-                  fill="none"
-                  stroke="#2563eb"
-                  strokeWidth="2"
-                  strokeDasharray="6 6"
-                  className="animate-neon-blue-dash"
-                />
-              </svg>
+            {/* Core Lectures Box (Golden Accent, Moving Golden Dot Border) */}
+            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)] flex items-start space-x-3 overflow-hidden">
+              <MovingGoldenDotBorder />
               <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5">
                 <Clock className="w-5 h-5" />
               </div>
@@ -165,22 +242,9 @@ export default function TrainingSection() {
               </div>
             </div>
 
-            {/* Live Session Box (Green Accent, Dark Blue Moving Border Light) */}
-            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-blue-600/40 shadow-[0_0_20px_rgba(37,99,235,0.25)] flex items-start space-x-3 overflow-hidden">
-              <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
-                <rect
-                  x="1"
-                  y="1"
-                  width="calc(100% - 2px)"
-                  height="calc(100% - 2px)"
-                  rx="11"
-                  fill="none"
-                  stroke="#2563eb"
-                  strokeWidth="2"
-                  strokeDasharray="6 6"
-                  className="animate-neon-blue-dash"
-                />
-              </svg>
+            {/* Live Session Box (Green Accent, Moving Golden Dot Border) */}
+            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)] flex items-start space-x-3 overflow-hidden">
+              <MovingGoldenDotBorder />
               <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0 relative z-10 mt-0.5">
                 <Video className="w-5 h-5" />
               </div>
@@ -197,22 +261,9 @@ export default function TrainingSection() {
               </div>
             </div>
 
-            {/* Program Duration Box (Golden Accent, Dark Blue Moving Border Light) */}
-            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-blue-600/40 shadow-[0_0_20px_rgba(37,99,235,0.25)] flex items-start space-x-3 md:col-span-2 lg:col-span-1 overflow-hidden">
-              <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
-                <rect
-                  x="1"
-                  y="1"
-                  width="calc(100% - 2px)"
-                  height="calc(100% - 2px)"
-                  rx="11"
-                  fill="none"
-                  stroke="#2563eb"
-                  strokeWidth="2"
-                  strokeDasharray="6 6"
-                  className="animate-neon-blue-dash"
-                />
-              </svg>
+            {/* Program Duration Box (Golden Accent, Moving Golden Dot Border) */}
+            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.15)] flex items-start space-x-3 md:col-span-2 lg:col-span-1 overflow-hidden">
+              <MovingGoldenDotBorder />
               <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5">
                 <Calendar className="w-5 h-5" />
               </div>
