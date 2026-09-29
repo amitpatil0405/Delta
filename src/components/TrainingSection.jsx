@@ -135,13 +135,29 @@ export default function TrainingSection() {
 
           {/* Dedicated Schedule Badge Grid */}
           <div className="pt-5 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-neutral-900/80 border border-white/10 flex items-start space-x-3">
-              <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
+
+            {/* Core Lectures Box */}
+            <div className="relative p-4 rounded-xl bg-[#0a0a0c]/90 border border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.2)] flex items-start space-x-3 overflow-hidden">
+              <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
+                <rect
+                  x="1"
+                  y="1"
+                  width="calc(100% - 2px)"
+                  height="calc(100% - 2px)"
+                  rx="11"
+                  fill="none"
+                  stroke="#00f0ff"
+                  strokeWidth="2"
+                  strokeDasharray="6 6"
+                  className="animate-neon-blue-dash"
+                />
+              </svg>
+              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shrink-0 relative z-10">
                 <Clock className="w-4 h-4" />
               </div>
-              <div>
-                <span className="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
-                  Core Lectures
+              <div className="relative z-10">
+                <span className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-wider block">
+                  CORE LECTURES
                 </span>
                 <span className="text-xs font-mono font-semibold text-white block mt-0.5">
                   Tuesday, Wednesday, Thursday (7:30 PM to 8:30 PM)
@@ -149,36 +165,67 @@ export default function TrainingSection() {
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-neutral-900/80 border border-white/10 flex items-start space-x-3">
-              <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
+            {/* Live Session Box */}
+            <div className="relative p-4 rounded-xl bg-[#0a0a0c]/90 border border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.2)] flex items-start space-x-3 overflow-hidden">
+              <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
+                <rect
+                  x="1"
+                  y="1"
+                  width="calc(100% - 2px)"
+                  height="calc(100% - 2px)"
+                  rx="11"
+                  fill="none"
+                  stroke="#00f0ff"
+                  strokeWidth="2"
+                  strokeDasharray="6 6"
+                  className="animate-neon-blue-dash"
+                />
+              </svg>
+              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shrink-0 relative z-10">
                 <Video className="w-4 h-4" />
               </div>
-              <div>
-                <span className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-wider block">
-                  Live Session
+              <div className="relative z-10">
+                <span className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-wider block">
+                  LIVE SESSION
                 </span>
                 <span className="text-xs font-mono font-semibold text-white block mt-0.5">
                   Friday (11:00 AM to 12:00 PM)
                 </span>
-                <span className="text-[11px] font-mono text-gray-300 block mt-0.5">
+                <span className="text-[11px] font-mono text-cyan-200/80 block mt-0.5">
                   Live positions analysis and discussion
                 </span>
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-neutral-900/80 border border-amber-500/30 flex items-start space-x-3 md:col-span-2 lg:col-span-1">
-              <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
+            {/* Program Duration Box */}
+            <div className="relative p-4 rounded-xl bg-[#0a0a0c]/90 border border-cyan-500/40 shadow-[0_0_20px_rgba(6,182,212,0.2)] flex items-start space-x-3 md:col-span-2 lg:col-span-1 overflow-hidden">
+              <svg className="absolute inset-0 w-full h-full pointer-events-none rounded-xl" xmlns="http://www.w3.org/2000/svg">
+                <rect
+                  x="1"
+                  y="1"
+                  width="calc(100% - 2px)"
+                  height="calc(100% - 2px)"
+                  rx="11"
+                  fill="none"
+                  stroke="#00f0ff"
+                  strokeWidth="2"
+                  strokeDasharray="6 6"
+                  className="animate-neon-blue-dash"
+                />
+              </svg>
+              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 shrink-0 relative z-10">
                 <Calendar className="w-4 h-4" />
               </div>
-              <div>
-                <span className="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
-                  Program Duration
+              <div className="relative z-10">
+                <span className="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-wider block">
+                  PROGRAM DURATION
                 </span>
                 <span className="text-xs font-mono font-semibold text-white block mt-0.5">
                   Total Course Duration: 2 Months
                 </span>
               </div>
             </div>
+
           </div>
         </div>
 
