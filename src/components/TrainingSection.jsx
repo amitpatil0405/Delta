@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio, QrCode, Smartphone, CreditCard } from 'lucide-react';
+import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio, QrCode, Smartphone, CreditCard, Calendar, Clock, Video } from 'lucide-react';
 import paymentQrImg from '../assets/payment_qr.jpg';
 
 export default function TrainingSection() {
@@ -104,25 +104,80 @@ export default function TrainingSection() {
           </p>
         </div>
 
-        {/* Banner Callout: Live Market Training Provided */}
-        <div className="mb-12 rounded-2xl p-6 sm:p-8 border border-amber-500/40 bg-[#0a0a0c]/90 flex flex-col lg:flex-row items-center justify-between gap-6 shadow-[0_0_35px_rgba(217,119,6,0.15)]">
-          <div className="flex items-center space-x-4">
-            <div className="p-3.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 shrink-0">
-              <Radio className="w-6 h-6 animate-pulse" />
+        {/* Banner Callout: Live Market Training Provided & Class Schedule */}
+        <div className="mb-12 rounded-2xl p-6 sm:p-8 border border-amber-500/40 bg-[#0a0a0c]/90 shadow-[0_0_35px_rgba(217,119,6,0.15)] space-y-6">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="flex items-start sm:items-center space-x-4">
+              <div className="p-3.5 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 shrink-0">
+                <Radio className="w-6 h-6 animate-pulse" />
+              </div>
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                  <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
+                    Live Market Training Included
+                  </span>
+                </div>
+                <h3 className="text-xl font-bold text-white mt-1">
+                  We Provide Hands-On Training with Live Market Orders & Real-Time Data
+                </h3>
+                <p className="text-xs text-gray-300 mt-1">
+                  Learn options trading directly in live market conditions with practical strike selection, risk adjustments, and real-time open interest dynamics.
+                </p>
+              </div>
             </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                <span className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest">
-                  Live Market Training Included
+
+            <div className="shrink-0 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold flex items-center space-x-2">
+              <Calendar className="w-4 h-4 text-amber-400" />
+              <span>Total Course Duration: 2 Months</span>
+            </div>
+          </div>
+
+          {/* Dedicated Schedule Badge Grid */}
+          <div className="pt-5 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="p-4 rounded-xl bg-neutral-900/80 border border-white/10 flex items-start space-x-3">
+              <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
+                <Clock className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
+                  Core Lectures
+                </span>
+                <span className="text-xs font-mono font-semibold text-white block mt-0.5">
+                  Tuesday, Wednesday, Thursday (7:30 PM to 8:30 PM)
                 </span>
               </div>
-              <h3 className="text-xl font-bold text-white mt-1">
-                We Provide Hands-On Training with Live Market Orders & Real-Time Data
-              </h3>
-              <p className="text-xs text-gray-300 mt-1">
-                Learn options trading directly in live market conditions with practical strike selection, risk adjustments, and real-time open interest dynamics.
-              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-neutral-900/80 border border-white/10 flex items-start space-x-3">
+              <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
+                <Video className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-[11px] font-mono font-bold text-emerald-400 uppercase tracking-wider block">
+                  Live Session
+                </span>
+                <span className="text-xs font-mono font-semibold text-white block mt-0.5">
+                  Friday (11:00 AM to 12:00 PM)
+                </span>
+                <span className="text-[11px] font-mono text-gray-300 block mt-0.5">
+                  Live positions analysis and discussion
+                </span>
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-neutral-900/80 border border-amber-500/30 flex items-start space-x-3 md:col-span-2 lg:col-span-1">
+              <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
+                <Calendar className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-[11px] font-mono font-bold text-amber-400 uppercase tracking-wider block">
+                  Program Duration
+                </span>
+                <span className="text-xs font-mono font-semibold text-white block mt-0.5">
+                  Total Course Duration: 2 Months
+                </span>
+              </div>
             </div>
           </div>
         </div>
