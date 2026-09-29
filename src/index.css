@@ -208,14 +208,16 @@
   animation: rainbowGradientShift 14s linear infinite;
 }
 
-/* Moving Neon Blue Dotted Border Animation */
-@keyframes dashMove {
-  to {
-    stroke-dashoffset: -24;
+/* Moving Golden Dot & Tail Border Animation */
+@keyframes goldenMove {
+  0% {
+    stroke-dashoffset: var(--dash-start, 0);
+  }
+  100% {
+    stroke-dashoffset: var(--dash-end, -100);
   }
 }
 
-.animate-neon-blue-dash {
-  animation: dashMove 1.5s linear infinite;
-  filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.8));
+.animate-golden-move {
+  animation: goldenMove 3.5s linear infinite;
 }
