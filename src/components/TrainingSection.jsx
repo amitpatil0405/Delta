@@ -365,73 +365,75 @@ export default function TrainingSection() {
         </div>
 
         {/* Program Fee & Direct Payment QR Code Card */}
-        <div className="mt-16 rounded-3xl p-6 sm:p-10 border border-amber-500/40 bg-[#0a0a0c]/95 shadow-[0_0_50px_rgba(217,119,6,0.15)] relative overflow-hidden">
+        <div className="mt-16 rounded-3xl p-6 sm:p-10 border border-amber-500/40 bg-[#0a0a0c]/95 shadow-[0_0_50px_rgba(217,119,6,0.15)] relative overflow-hidden w-full">
 
           {/* Ambient Backlight Glow for the Payment Card */}
-          <div className="absolute top-1/2 right-10 -translate-y-1/2 w-72 h-72 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none" />
+          <div className="absolute top-1/2 right-10 -translate-y-1/2 w-96 h-96 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none" />
 
-          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center relative z-10">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch relative z-10">
 
             {/* Info & Call to Action Column */}
-            <div className="lg:col-span-7 space-y-6">
+            <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
 
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase">
-                <QrCode className="w-4 h-4" />
-                <span>Instant Enrollment Payment</span>
-              </div>
+              <div className="space-y-4">
+                <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase">
+                  <QrCode className="w-4 h-4" />
+                  <span>Instant Enrollment Payment</span>
+                </div>
 
-              <div>
-                <h3 className="text-2xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">
-                  JOIN DELTAFOX OPTIONS MASTERY
-                </h3>
-                <p className="text-sm text-gray-300 mt-2 leading-relaxed">
-                  Enroll directly in our live market options trading program. Choose specific modules or opt for the complete program. Scan the official payment QR code using any UPI App (PhonePe, Google Pay, Paytm, BHIM) to complete enrollment.
-                </p>
+                <div>
+                  <h3 className="text-2xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">
+                    JOIN DELTAFOX OPTIONS MASTERY
+                  </h3>
+                  <p className="text-sm text-gray-300 mt-2 leading-relaxed">
+                    Enroll directly in our live market options trading program. Choose specific modules or opt for the complete program. Scan the official payment QR code using any UPI App (PhonePe, Google Pay, Paytm, BHIM) to complete enrollment.
+                  </p>
+                </div>
               </div>
 
               {/* Module-Wise Pricing & Flexible Enrollment Box */}
-              <div className="p-5 rounded-2xl bg-neutral-900/80 border border-amber-500/30 w-full space-y-4">
+              <div className="p-6 rounded-2xl bg-neutral-900/90 border border-amber-500/30 w-full space-y-5">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
                   <div>
                     <span className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider block">
                       Individual Module Pricing
                     </span>
-                    <span className="text-[11px] text-gray-300 font-mono block mt-0.5">
+                    <span className="text-xs text-gray-300 font-mono block mt-0.5">
                       Traders can choose specific module(s) and pay for that only:
                     </span>
                   </div>
                   <div className="text-left sm:text-right shrink-0">
-                    <span className="text-[10px] font-mono text-emerald-400 font-semibold px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30">
+                    <span className="text-xs font-mono text-emerald-400 font-semibold px-3 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30">
                       Flexible Module Selection
                     </span>
                   </div>
                 </div>
 
                 {/* Module Price Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-mono">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
                   {modules.map((m) => (
-                    <div key={m.id} className="p-2.5 rounded-xl bg-black/50 border border-white/5 flex items-center justify-between gap-2">
-                      <span className="text-gray-200 truncate font-medium">{m.title}</span>
-                      <span className="text-amber-400 font-extrabold shrink-0">{m.price}</span>
+                    <div key={m.id} className="p-3 rounded-xl bg-black/60 border border-white/10 flex items-center justify-between gap-3 hover:border-amber-500/40 transition-colors">
+                      <span className="text-gray-200 font-medium truncate">{m.title}</span>
+                      <span className="text-amber-400 font-extrabold text-sm shrink-0">{m.price}</span>
                     </div>
                   ))}
                 </div>
 
                 {/* Full Package & CTA Row */}
-                <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
-                    <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block">
+                    <span className="text-xs font-mono text-gray-400 uppercase tracking-wider block">
                       Full Program Package (Basic to Advanced)
                     </span>
-                    <div className="flex items-baseline space-x-2 mt-0.5">
-                      <span className="text-2xl sm:text-3xl font-black font-mono text-amber-400">₹19,999</span>
-                      <span className="text-[11px] font-mono text-emerald-400 font-bold">(One-time payment for all 4 modules)</span>
+                    <div className="flex items-baseline space-x-2 mt-1">
+                      <span className="text-3xl sm:text-4xl font-black font-mono text-amber-400">₹19,999</span>
+                      <span className="text-xs font-mono text-emerald-400 font-bold">(One-time payment for all 4 modules)</span>
                     </div>
                   </div>
 
                   <button
                     onClick={scrollToContact}
-                    className="w-full sm:w-auto px-5 py-3 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] shrink-0 flex items-center justify-center space-x-2"
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] shrink-0 flex items-center justify-center space-x-2"
                   >
                     <Mail className="w-4 h-4" />
                     <span>Join Training Program</span>
@@ -440,41 +442,47 @@ export default function TrainingSection() {
               </div>
 
               {/* Payment Highlights */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <div className="flex items-center space-x-2.5 text-xs text-gray-300 font-mono">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+                <div className="flex items-center space-x-2 text-xs text-gray-300 font-mono">
                   <Smartphone className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Supports PhonePe, GPay, Paytm & UPI</span>
+                  <span>PhonePe / GPay / UPI</span>
                 </div>
-                <div className="flex items-center space-x-2.5 text-xs text-gray-300 font-mono">
+                <div className="flex items-center space-x-2 text-xs text-gray-300 font-mono">
                   <CreditCard className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Account: AMIT MAHADEV PATIL</span>
+                  <span className="truncate">AMIT MAHADEV PATIL</span>
                 </div>
-                <div className="flex items-center space-x-2.5 text-xs text-gray-300 font-mono">
+                <div className="flex items-center space-x-2 text-xs text-gray-300 font-mono">
                   <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Includes Live Market Mentorship</span>
+                  <span>Live Market Mentorship</span>
                 </div>
-                <div className="flex items-center space-x-2.5 text-xs text-gray-300 font-mono">
+                <div className="flex items-center space-x-2 text-xs text-gray-300 font-mono">
                   <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Instant Access to Training Materials</span>
+                  <span>Instant Study Material</span>
                 </div>
               </div>
 
             </div>
 
             {/* Payment QR Code Box Column */}
-            <div className="lg:col-span-5 flex flex-col items-center lg:items-end justify-center relative">
+            <div className="lg:col-span-5 flex flex-col justify-center relative w-full h-full">
               {/* Vivid Neon Green Backlight Glow */}
-              <div className="absolute inset-0 bg-emerald-500/25 rounded-full blur-[60px] pointer-events-none" />
+              <div className="absolute inset-0 bg-emerald-500/20 rounded-2xl blur-[50px] pointer-events-none" />
 
-              <div className="relative group p-5 rounded-2xl bg-neutral-900/90 border border-emerald-500/40 shadow-[0_0_35px_rgba(16,185,129,0.3)] text-center max-w-[320px] w-full">
+              <div className="relative group p-6 sm:p-8 rounded-2xl bg-neutral-900/90 border border-emerald-500/40 shadow-[0_0_35px_rgba(16,185,129,0.25)] text-center w-full h-full flex flex-col justify-between">
 
                 {/* Header Instruction */}
-                <p className="text-[11px] font-mono font-semibold text-emerald-400 leading-snug mb-3">
-                  Scan below QR from PhonePe, Google Pay, Paytm or BHIM to make transaction and book your seat
-                </p>
+                <div>
+                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold uppercase mb-3">
+                    <QrCode className="w-4 h-4" />
+                    <span>Official UPI Payment QR</span>
+                  </div>
+                  <p className="text-xs font-mono font-semibold text-emerald-300 leading-relaxed mb-4">
+                    Scan below QR from PhonePe, Google Pay, Paytm or BHIM to make transaction and book your seat
+                  </p>
+                </div>
 
-                {/* QR Code Container (Borderless Image) */}
-                <div className="p-1.5 bg-black rounded-xl overflow-hidden mb-3 shadow-2xl">
+                {/* QR Code Container (Prominent, Centered) */}
+                <div className="p-3 bg-black rounded-xl overflow-hidden my-2 shadow-2xl max-w-[280px] sm:max-w-[300px] mx-auto w-full border border-emerald-500/30">
                   <img
                     src={paymentQrImg}
                     alt="Payment QR Code - Amit Mahadev Patil"
@@ -483,17 +491,14 @@ export default function TrainingSection() {
                 </div>
 
                 {/* Account Details Footer */}
-                <div className="space-y-1">
-                  <div className="text-xs font-mono font-bold text-white tracking-wider">
+                <div className="space-y-1.5 pt-3 border-t border-white/10">
+                  <div className="text-sm font-mono font-extrabold text-white tracking-wider">
                     AMIT MAHADEV PATIL
                   </div>
-                  <div className="text-[11px] font-mono text-emerald-400 font-bold">
-                    Amount: ₹19,999
+                  <div className="text-xs font-mono text-emerald-400 font-bold">
+                    Amount: ₹19,999 <span className="text-gray-300 font-normal">(Basic to Advanced)</span>
                   </div>
-                  <div className="text-[10px] font-mono text-gray-300">
-                    (Basic to Advanced)
-                  </div>
-                  <p className="text-[10px] text-gray-400 mt-2 leading-tight">
+                  <p className="text-[11px] font-mono text-gray-400 leading-tight pt-1">
                     After completing payment, share confirmation via the contact form or email to activate your training seat.
                   </p>
                 </div>
