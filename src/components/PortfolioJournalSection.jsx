@@ -931,7 +931,7 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
                         strokeLinecap="round"
                         pathLength="100"
                         strokeDasharray="0.01 4 0.01 4 0.01 4 0.01 4 0.01 83.95"
-                        className={m.monthTotalPnl > 0 ? 'animate-border-beam-green' : 'animate-border-beam-red'}
+                        className="animate-border-beam"
                       />
                     </svg>
                   )}

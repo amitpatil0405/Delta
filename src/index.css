@@ -149,11 +149,7 @@
   }
 }
 
-.animate-border-beam-green {
-  animation: borderBeamMotion 5s linear infinite;
-}
-
-.animate-border-beam-red {
+.animate-border-beam {
   animation: borderBeamMotion 5s linear infinite;
 }
 
