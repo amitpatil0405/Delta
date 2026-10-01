@@ -373,7 +373,7 @@ export default function TrainingSection() {
           {/* Ambient Backlight Glow for the Payment Card */}
           <div className="absolute top-1/2 right-10 -translate-y-1/2 w-72 h-72 bg-emerald-500/20 rounded-full blur-[100px] pointer-events-none" />
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center relative z-10">
 
             {/* Info & Call to Action Column */}
             <div className="lg:col-span-7 space-y-6">
@@ -440,11 +440,11 @@ export default function TrainingSection() {
             </div>
 
             {/* Payment QR Code Box Column */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center relative">
+            <div className="lg:col-span-5 flex flex-col items-center lg:items-end justify-center relative">
               {/* Vivid Neon Green Backlight Glow */}
               <div className="absolute inset-0 bg-emerald-500/25 rounded-full blur-[60px] pointer-events-none" />
 
-              <div className="relative group p-5 rounded-2xl bg-neutral-900/90 border border-emerald-500/40 shadow-[0_0_35px_rgba(16,185,129,0.3)] text-center max-w-[300px] w-full">
+              <div className="relative group p-5 rounded-2xl bg-neutral-900/90 border border-emerald-500/40 shadow-[0_0_35px_rgba(16,185,129,0.3)] text-center max-w-[320px] w-full">
 
                 {/* Header Instruction */}
                 <p className="text-[11px] font-mono font-semibold text-emerald-400 leading-snug mb-3">
