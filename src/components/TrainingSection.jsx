@@ -393,7 +393,7 @@ export default function TrainingSection() {
               </div>
 
               {/* Price Details Breakdown */}
-              <div className="p-5 rounded-2xl bg-neutral-900/80 border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="p-5 rounded-2xl bg-neutral-900/80 border border-amber-500/30 w-full sm:w-fit flex flex-col sm:flex-row items-center justify-start gap-6 sm:gap-10">
                 <div className="text-center sm:text-left w-full sm:w-auto">
                   <span className="text-xs font-mono text-gray-400 uppercase tracking-wider block text-center sm:text-left">
                     Comprehensive Program Fee
