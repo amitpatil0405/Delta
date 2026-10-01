@@ -40,7 +40,7 @@ function CelestialBackground({
   // Calculate curve Start Point (X0, Y0) and End Point (X1, Y1)
   const coords = useMemo(() => {
     if (!pnlData || pnlData.length === 0) {
-      return { x0: margin.left, y0: margin.top + chartH / 2, x1: margin.left + chartW, y1: margin.top + chartH / 2 };
+      return { x0: margin.left - 12, y0: margin.top + chartH / 2, x1: margin.left + chartW + 12, y1: margin.top + chartH / 2 };
     }
 
     const firstPt = pnlData[0];
@@ -49,10 +49,11 @@ function CelestialBackground({
     const ratio0 = (maxPnl - minPnl) > 0 ? (firstPt.pnl - minPnl) / (maxPnl - minPnl) : 0.5;
     const ratio1 = (maxPnl - minPnl) > 0 ? (lastPt.pnl - minPnl) / (maxPnl - minPnl) : 0.5;
 
-    const x0 = margin.left;
+    // Start slightly behind left Y-axis (margin.left - 12) so Sun emerges cleanly from behind the vertical Y-axis line
+    const x0 = margin.left - 12;
     const y0 = margin.top + (1 - ratio0) * chartH;
 
-    const x1 = margin.left + chartW;
+    const x1 = margin.left + chartW + 12;
     const y1 = margin.top + (1 - ratio1) * chartH;
 
     return { x0, y0, x1, y1 };
@@ -71,19 +72,13 @@ function CelestialBackground({
   const cx = (1 - t) * x0 + t * x1;
   const cy = (1 - t) * (1 - t) * y0 + 2 * (1 - t) * t * yApexCtrl + t * t * y1;
 
-  // Sunrise/Sunset & Moonrise/Moonset Edge Fade-In/Out (0% to 5% & 95% to 100%)
-  // Horizon Dip Y-offset (+18px -> 0px) for smooth emergence behind horizon/node
+  // Sunrise/Sunset & Moonrise/Moonset Edge Fade-In/Out (0% to 3% & 97% to 100%)
   let edgeOpacity = 1.0;
-  let yHorizonOffset = 0;
 
-  if (t < 0.05) {
-    const fadeRatio = t / 0.05; // [0, 1]
-    edgeOpacity = fadeRatio;
-    yHorizonOffset = (1 - fadeRatio) * 18;
-  } else if (t > 0.95) {
-    const fadeRatio = (1 - t) / 0.05; // [1, 0]
-    edgeOpacity = fadeRatio;
-    yHorizonOffset = (1 - fadeRatio) * 18;
+  if (t < 0.03) {
+    edgeOpacity = t / 0.03;
+  } else if (t > 0.97) {
+    edgeOpacity = (1 - t) / 0.03;
   }
 
   // SVG Arc Path for subtle dotted guide line
@@ -237,22 +232,22 @@ function CelestialBackground({
             <stop offset="100%" stopColor="#38bdf8" stopOpacity="0" />
           </radialGradient>
 
-          {/* Sky Clip Mask: Clips any element below the P&L curve line horizon so Sun/Moon never bleeds through area fill */}
-          <clipPath id="skyClip">
-            <path d={`M ${x0} ${y0} Q ${(x0 + x1) / 2} ${yApexCtrl} ${x1} ${y1} L ${x1 + 100} 0 L ${x0 - 100} 0 Z`} />
+          {/* Y-Axis Clip Mask: Clips Sun/Moon to emerge straight out from behind the vertical Y-axis line (x = margin.left) */}
+          <clipPath id="yAxisClip">
+            <rect x={margin.left} y="0" width={chartW + 12} height={height} />
           </clipPath>
         </defs>
 
-        {/* Invisible Parabolic Orbital Track (Dotted path line completely removed) */}
+        {/* Invisible Parabolic Orbital Track */}
         <path
           d={arcPath}
           fill="none"
           stroke="none"
         />
 
-        {/* Night Cycle Twinkling Stars (Clipped above P&L curve line with Sky Clip Mask) */}
+        {/* Night Cycle Twinkling Stars (Clipped within chart region) */}
         {!isDay && (
-          <g clipPath="url(#skyClip)" className="stars-layer transition-opacity duration-1000" style={{ opacity: timeInfo.nightFade }}>
+          <g clipPath="url(#yAxisClip)" className="stars-layer transition-opacity duration-1000" style={{ opacity: timeInfo.nightFade }}>
             {stars.map((s) => {
               const maxOp = Math.min(0.8, s.opacity * 2.5) * timeInfo.nightFade;
               const minOp = 0.2 * timeInfo.nightFade;
@@ -277,9 +272,9 @@ function CelestialBackground({
           </g>
         )}
 
-        {/* Celestial Body: Sun or Moon (Full 100% sphere with GPU Composite Layer Isolation) */}
-        <g clipPath={t < 0.05 || t > 0.95 ? "url(#skyClip)" : undefined}>
-          <g transform={`translate(${cx}, ${cy + yHorizonOffset})`} style={{ opacity: edgeOpacity, willChange: 'transform' }}>
+        {/* Celestial Body: Sun or Moon (Emerges from behind Left Y-Axis Vertical Line) */}
+        <g clipPath="url(#yAxisClip)">
+          <g transform={`translate(${cx}, ${cy})`} style={{ opacity: edgeOpacity, willChange: 'transform' }}>
             {isDay ? (
               /* Day Cycle: Clean Transparent Sun Vector with Gradient Glow Aura */
               <g>
