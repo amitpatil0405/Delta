@@ -328,9 +328,6 @@ export default function TrainingSection() {
                     <BookOpen className="w-4 h-4" />
                     <span>DETAILED CURRICULUM TOPICS</span>
                   </div>
-                  <div className="text-xs font-bold text-amber-400 bg-amber-500/15 px-3 py-1 rounded-lg border border-amber-500/40">
-                    Module Fee: <span className="text-sm text-amber-300 font-extrabold">{modules[selectedModule].price}</span>
-                  </div>
                 </div>
 
                 <h3 className="text-2xl font-extrabold text-white font-mono mb-3">
@@ -388,33 +385,58 @@ export default function TrainingSection() {
                   JOIN DELTAFOX OPTIONS MASTERY
                 </h3>
                 <p className="text-sm text-gray-300 mt-2 leading-relaxed">
-                  Enroll directly in our live market options trading program. Scan the official payment QR code using any UPI App (PhonePe, Google Pay, Paytm, BHIM) to complete enrollment.
+                  Enroll directly in our live market options trading program. Choose specific modules or opt for the complete program. Scan the official payment QR code using any UPI App (PhonePe, Google Pay, Paytm, BHIM) to complete enrollment.
                 </p>
               </div>
 
-              {/* Price Details Breakdown */}
-              <div className="p-5 rounded-2xl bg-neutral-900/80 border border-amber-500/30 w-full sm:w-fit flex flex-col sm:flex-row items-center justify-start gap-6 sm:gap-10">
-                <div className="text-center sm:text-left w-full sm:w-auto">
-                  <span className="text-xs font-mono text-gray-400 uppercase tracking-wider block text-center sm:text-left">
-                    Comprehensive Program Fee
-                  </span>
-                  <div className="mt-1">
-                    <span className="text-3xl sm:text-4xl font-black font-mono text-amber-400 block">
-                      ₹19,999
+              {/* Module-Wise Pricing & Flexible Enrollment Box */}
+              <div className="p-5 rounded-2xl bg-neutral-900/80 border border-amber-500/30 w-full space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                  <div>
+                    <span className="text-xs font-mono text-amber-400 font-bold uppercase tracking-wider block">
+                      Individual Module Pricing
                     </span>
-                    <span className="text-xs font-normal text-gray-300 font-mono block mt-0.5">
-                      (Basic to Advanced)
+                    <span className="text-[11px] text-gray-300 font-mono block mt-0.5">
+                      Traders can choose specific module(s) and pay for that only:
+                    </span>
+                  </div>
+                  <div className="text-left sm:text-right shrink-0">
+                    <span className="text-[10px] font-mono text-emerald-400 font-semibold px-2.5 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30">
+                      Flexible Module Selection
                     </span>
                   </div>
                 </div>
 
-                <button
-                  onClick={scrollToContact}
-                  className="w-full sm:w-auto px-6 py-3.5 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] shrink-0 flex items-center justify-center space-x-2"
-                >
-                  <Mail className="w-4 h-4" />
-                  <span>Join Training Program</span>
-                </button>
+                {/* Module Price Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs font-mono">
+                  {modules.map((m) => (
+                    <div key={m.id} className="p-2.5 rounded-xl bg-black/50 border border-white/5 flex items-center justify-between gap-2">
+                      <span className="text-gray-200 truncate font-medium">{m.title}</span>
+                      <span className="text-amber-400 font-extrabold shrink-0">{m.price}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Full Package & CTA Row */}
+                <div className="pt-3 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div>
+                    <span className="text-[10px] font-mono text-gray-400 uppercase tracking-wider block">
+                      Full Program Package (Basic to Advanced)
+                    </span>
+                    <div className="flex items-baseline space-x-2 mt-0.5">
+                      <span className="text-2xl sm:text-3xl font-black font-mono text-amber-400">₹19,999</span>
+                      <span className="text-[11px] font-mono text-emerald-400 font-bold">(One-time payment for all 4 modules)</span>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={scrollToContact}
+                    className="w-full sm:w-auto px-5 py-3 rounded-xl text-xs font-bold font-mono uppercase tracking-wider text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(217,119,6,0.3)] shrink-0 flex items-center justify-center space-x-2"
+                  >
+                    <Mail className="w-4 h-4" />
+                    <span>Join Training Program</span>
+                  </button>
+                </div>
               </div>
 
               {/* Payment Highlights */}
