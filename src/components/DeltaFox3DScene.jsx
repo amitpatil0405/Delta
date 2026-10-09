@@ -72,10 +72,10 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
     meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
     meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
 
-    // Persist Fox mascot throughout the entire website
+    // Persist Fox mascot throughout the entire website (desktop only)
     if (meshRef.current.material) {
-      meshRef.current.material.opacity = 1.0;
-      meshRef.current.visible = true;
+      meshRef.current.material.opacity = isMobile ? 0.0 : 1.0;
+      meshRef.current.visible = !isMobile;
     }
   });
 
@@ -147,9 +147,11 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
     const sp = scrollProgress.current || 0;
     const mx = mousePos.current?.x || 0;
     const my = mousePos.current?.y || 0;
+    const isMobile = window.innerWidth < 768;
 
-    // Background Group Parallax (Subtle)
+    // Background Group Parallax (Subtle) - Always visible
     if (bgGroupRef.current) {
+      bgGroupRef.current.visible = true;
       const targetRotY = sp * Math.PI * 0.6 + mx * 0.2;
       const targetRotX = my * 0.15;
       const targetPosY = sp * 3.0;
@@ -159,17 +161,20 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
       bgGroupRef.current.position.y = THREE.MathUtils.lerp(bgGroupRef.current.position.y, targetPosY, 0.08);
     }
 
-    // Foreground Group Parallax (Pronounced depth motion across foreground plane)
+    // Foreground Group Parallax - Visible on desktop, hidden on mobile
     if (fgGroupRef.current) {
-      const targetRotY = sp * Math.PI * 0.9 + mx * 0.45;
-      const targetRotX = my * 0.35;
-      const targetPosX = mx * 0.8;
-      const targetPosY = sp * 4.2;
+      fgGroupRef.current.visible = !isMobile;
+      if (!isMobile) {
+        const targetRotY = sp * Math.PI * 0.9 + mx * 0.45;
+        const targetRotX = my * 0.35;
+        const targetPosX = mx * 0.8;
+        const targetPosY = sp * 4.2;
 
-      fgGroupRef.current.rotation.y = THREE.MathUtils.lerp(fgGroupRef.current.rotation.y, targetRotY, 0.08);
-      fgGroupRef.current.rotation.x = THREE.MathUtils.lerp(fgGroupRef.current.rotation.x, targetRotX, 0.08);
-      fgGroupRef.current.position.x = THREE.MathUtils.lerp(fgGroupRef.current.position.x, targetPosX, 0.08);
-      fgGroupRef.current.position.y = THREE.MathUtils.lerp(fgGroupRef.current.position.y, targetPosY, 0.08);
+        fgGroupRef.current.rotation.y = THREE.MathUtils.lerp(fgGroupRef.current.rotation.y, targetRotY, 0.08);
+        fgGroupRef.current.rotation.x = THREE.MathUtils.lerp(fgGroupRef.current.rotation.x, targetRotX, 0.08);
+        fgGroupRef.current.position.x = THREE.MathUtils.lerp(fgGroupRef.current.position.x, targetPosX, 0.08);
+        fgGroupRef.current.position.y = THREE.MathUtils.lerp(fgGroupRef.current.position.y, targetPosY, 0.08);
+      }
     }
   });
 
