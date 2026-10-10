@@ -74,8 +74,9 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
 
     // Persist Fox mascot throughout the entire website (desktop only)
     if (meshRef.current.material) {
-      meshRef.current.material.opacity = isMobile ? 0.0 : 1.0;
-      meshRef.current.visible = !isMobile;
+      const isMobileView = window.innerWidth < 768;
+      meshRef.current.material.opacity = isMobileView ? 0.0 : 1.0;
+      meshRef.current.visible = !isMobileView;
     }
   });
 
