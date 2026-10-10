@@ -2,7 +2,49 @@ import React, { useState, useEffect } from 'react';
 import { Mail, Send, CheckCircle2, AlertCircle, Inbox, Trash2, RefreshCw } from 'lucide-react';
 
 const ADMIN_SESSION_KEY = 'deltafox_admin_logged_in';
-const INQUIRIES_DB_URL = 'https://api.restful-api.dev/objects/ff808181a067127101a06ca4d7d11100';
+const INQUIRIES_DB_KEY = 'deltafox_inquiries_db_id';
+const LOCAL_INQUIRIES_KEY = 'deltafox_local_inquiries';
+const DEFAULT_DB_URL = 'https://api.restful-api.dev/objects/ff808181a067127101a06ca4d7d11100';
+
+const getLocalInquiries = () => {
+  try {
+    const data = localStorage.getItem(LOCAL_INQUIRIES_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+const saveLocalInquiries = (list) => {
+  try {
+    localStorage.setItem(LOCAL_INQUIRIES_KEY, JSON.stringify(list));
+  } catch (e) {}
+};
+
+const createNewCloudObject = async (inquiriesList) => {
+  try {
+    const res = await fetch('https://api.restful-api.dev/objects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'deltafox_inquiries',
+        data: { inquiries: inquiriesList }
+      })
+    });
+    if (res.ok) {
+      const json = await res.json();
+      if (json && json.id) {
+        try {
+          localStorage.setItem(INQUIRIES_DB_KEY, json.id);
+        } catch (e) {}
+        return json.id;
+      }
+    }
+  } catch (err) {
+    console.warn('Could not create new cloud inquiries object:', err);
+  }
+  return null;
+};
 
 export default function ContactSection() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
@@ -29,18 +71,38 @@ export default function ContactSection() {
   const [inquiries, setInquiries] = useState([]);
   const [showInquiriesPanel, setShowInquiriesPanel] = useState(false);
 
-  // Fetch inquiries from Cloud DB on mount or when panel opens
+  // Fetch inquiries from Cloud DB / LocalStorage on mount or when panel opens
   const fetchInquiries = async () => {
+    const localList = getLocalInquiries();
+
+    let dbUrl = DEFAULT_DB_URL;
     try {
-      const res = await fetch(INQUIRIES_DB_URL);
+      const savedId = localStorage.getItem(INQUIRIES_DB_KEY);
+      if (savedId) dbUrl = `https://api.restful-api.dev/objects/${savedId}`;
+    } catch (e) {}
+
+    try {
+      let res = await fetch(dbUrl);
+      if (res.status === 404) {
+        await createNewCloudObject(localList);
+        setInquiries(localList);
+        return;
+      }
       if (res.ok) {
         const json = await res.json();
         if (json && json.data && Array.isArray(json.data.inquiries)) {
-          setInquiries(json.data.inquiries);
+          const combined = [...json.data.inquiries, ...localList];
+          const unique = Array.from(new Map(combined.map(item => [item.id, item])).values());
+          setInquiries(unique);
+          saveLocalInquiries(unique);
+        } else {
+          setInquiries(localList);
         }
+      } else {
+        setInquiries(localList);
       }
     } catch (e) {
-      console.warn('Failed to fetch inquiries:', e);
+      setInquiries(localList);
     }
   };
 
@@ -59,10 +121,18 @@ export default function ContactSection() {
   }, []);
 
   const saveInquiryToCloud = async (newInquiry) => {
+    const updatedList = [newInquiry, ...inquiries].slice(0, 100);
+    setInquiries(updatedList);
+    saveLocalInquiries(updatedList);
+
+    let dbUrl = DEFAULT_DB_URL;
     try {
-      const updatedList = [newInquiry, ...inquiries].slice(0, 100);
-      setInquiries(updatedList);
-      await fetch(INQUIRIES_DB_URL, {
+      const savedId = localStorage.getItem(INQUIRIES_DB_KEY);
+      if (savedId) dbUrl = `https://api.restful-api.dev/objects/${savedId}`;
+    } catch (e) {}
+
+    try {
+      let res = await fetch(dbUrl, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -70,6 +140,9 @@ export default function ContactSection() {
           data: { inquiries: updatedList }
         })
       });
+      if (res.status === 404) {
+        await createNewCloudObject(updatedList);
+      }
     } catch (err) {
       console.warn('Could not save inquiry to cloud:', err);
     }
@@ -79,8 +152,16 @@ export default function ContactSection() {
     if (window.confirm('Delete this inquiry record?')) {
       const updated = inquiries.filter(i => i.id !== inquiryId);
       setInquiries(updated);
+      saveLocalInquiries(updated);
+
+      let dbUrl = DEFAULT_DB_URL;
       try {
-        await fetch(INQUIRIES_DB_URL, {
+        const savedId = localStorage.getItem(INQUIRIES_DB_KEY);
+        if (savedId) dbUrl = `https://api.restful-api.dev/objects/${savedId}`;
+      } catch (e) {}
+
+      try {
+        let res = await fetch(dbUrl, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -88,6 +169,9 @@ export default function ContactSection() {
             data: { inquiries: updated }
           })
         });
+        if (res.status === 404) {
+          await createNewCloudObject(updated);
+        }
       } catch (err) {
         console.warn('Could not update cloud inquiries:', err);
       }
@@ -117,7 +201,7 @@ export default function ContactSection() {
       message: formData.message
     };
 
-    // 1. Save to cloud database for Admin visibility
+    // 1. Save locally and to cloud database for Admin visibility
     await saveInquiryToCloud(inquiryRecord);
 
     // 2. Submit via FormSubmit API to send email directly to deltafox.options@yahoo.com
@@ -129,10 +213,14 @@ export default function ContactSection() {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject || 'DeltaFox Inquiry',
+          message: formData.message,
           'Name': formData.name,
-          'Email Address': formData.email,
+          'Email': formData.email,
           'Subject': formData.subject || 'DeltaFox Inquiry',
-          'User Message': formData.message,
+          'Message': formData.message,
           _subject: formData.subject ? `[DELTAFOX] ${formData.subject}` : `[DELTAFOX] Inquiry from ${formData.name}`,
           _replyto: formData.email,
           _template: 'table',
@@ -140,7 +228,15 @@ export default function ContactSection() {
         })
       });
       const result = await response.json().catch(() => null);
-      if (result && (result.success === 'false' || result.success === false || (result.message && (result.message.includes('Activation') || result.message.includes('web server'))))) {
+      if (result && (
+        result.success === 'false' ||
+        result.success === false ||
+        (result.message && (
+          result.message.toLowerCase().includes('activation') ||
+          result.message.toLowerCase().includes('confirm') ||
+          result.message.toLowerCase().includes('web server')
+        ))
+      )) {
         setNeedsActivation(true);
       } else {
         setNeedsActivation(false);
@@ -251,6 +347,19 @@ export default function ContactSection() {
               <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto font-sans leading-relaxed">
                 Your message has been received, and you will get a response from <strong className="text-amber-400">deltafox.options@yahoo.com</strong>
               </p>
+
+              {needsActivation && (
+                <div className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-left text-xs space-y-1 font-sans max-w-md mx-auto">
+                  <p className="font-bold font-mono text-amber-400 text-xs uppercase flex items-center gap-1.5">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    Action Required for DeltaFox Admin
+                  </p>
+                  <p className="text-gray-300 text-[11px] leading-relaxed">
+                    FormSubmit sent an initial activation link to <strong className="text-amber-400">deltafox.options@yahoo.com</strong>.
+                    Please check your Yahoo Mail inbox or Spam folder and click <strong>"Activate Form"</strong> to begin receiving user inquiries directly in your email.
+                  </p>
+                </div>
+              )}
 
               <button
                 onClick={() => {
