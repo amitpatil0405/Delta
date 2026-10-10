@@ -205,6 +205,7 @@ export default function ContactSection() {
     await saveInquiryToCloud(inquiryRecord);
 
     // 2. Submit via FormSubmit API to send email directly to deltafox.options@yahoo.com
+    // Note: Omitting _replyto header override prevents Yahoo Mail anti-spoofing filter from flagging user emails as spam
     try {
       const response = await fetch('https://formsubmit.co/ajax/deltafox.options@yahoo.com', {
         method: 'POST',
@@ -213,16 +214,11 @@ export default function ContactSection() {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          subject: formData.subject || 'DeltaFox Inquiry',
-          message: formData.message,
-          'Name': formData.name,
-          'Email': formData.email,
-          'Subject': formData.subject || 'DeltaFox Inquiry',
-          'Message': formData.message,
-          _subject: formData.subject ? `[DELTAFOX] ${formData.subject}` : `[DELTAFOX] Inquiry from ${formData.name}`,
-          _replyto: formData.email,
+          'User Name': formData.name,
+          'User Email Address': formData.email,
+          'Inquiry Subject': formData.subject || 'DeltaFox Inquiry',
+          'User Message Details': formData.message,
+          _subject: formData.subject ? `[DELTAFOX INQUIRY] ${formData.subject}` : `[DELTAFOX INQUIRY] New Message from ${formData.name}`,
           _template: 'table',
           _captcha: 'false'
         })
@@ -300,6 +296,13 @@ export default function ContactSection() {
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>REFRESH</span>
               </button>
+            </div>
+
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-sans flex items-start space-x-2">
+              <AlertCircle className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />
+              <div>
+                <strong className="font-mono text-amber-400 uppercase">Yahoo Mail Inbox Tip:</strong> To guarantee all incoming inquiries land 100% in your Inbox (and never Spam), add <strong className="text-white">notifications@formsubmit.co</strong> to your Yahoo Contacts or create a Yahoo filter: <em>"If Sender contains formsubmit.co -&gt; Move to Inbox"</em>.
+              </div>
             </div>
 
             {inquiries.length === 0 ? (
