@@ -103,44 +103,34 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
   );
 }
 
-// 3D Floating Candlesticks Layered into Background (Z < -2) & Foreground (Z > 1.2)
+// 3D Floating Candlesticks with 3D Orbital Scroll Motion around Fox Mascot
 function FloatingCandlesticks({ mousePos, scrollProgress }) {
-  const bgGroupRef = useRef();
-  const fgGroupRef = useRef();
+  const candleGroupRefs = useRef([]);
 
-  // Background Candlesticks (Z < -2)
-  const bgCandles = useMemo(() => {
-    const items = [];
-    const count = 18;
-    for (let i = 0; i < count; i++) {
-      const isGreen = i % 2 === 0;
-      items.push({
-        id: `bg-${i}`,
-        isGreen,
-        x: (Math.random() - 0.5) * 18,
-        y: (Math.random() - 0.5) * 12,
-        z: -Math.random() * 8 - 2.5, // Strictly behind Fox plane (Z = 0)
-        rotX: (Math.random() - 0.5) * 0.5,
-        rotY: (Math.random() - 0.5) * 0.5,
-        rotZ: (Math.random() - 0.5) * 0.3,
-        height: 0.8 + Math.random() * 1.6,
-        scale: 0.3 + Math.random() * 0.35
-      });
-    }
-    return items;
-  }, []);
+  // Deterministically generate candlesticks with orbital parameters around Fox center
+  const candles = useMemo(() => {
+    const list = [
+      // Primary Foreground / Orbital Candlesticks (orbiting from behind Z < 0 to front Z > 0 on scroll)
+      { id: 'c-0',  isGreen: true,  radiusX: 3.2, radiusZ: 2.8, angleOffset: -Math.PI * 0.7, orbitSpeed: Math.PI * 1.6, baseY:  1.2, height: 2.0, scale: 0.60, rotX:  0.10, rotY: -0.20, rotZ:  0.05 },
+      { id: 'c-1',  isGreen: false, radiusX: 4.2, radiusZ: 3.2, angleOffset: -Math.PI * 0.3, orbitSpeed: Math.PI * 1.8, baseY: -0.6, height: 2.4, scale: 0.65, rotX: -0.15, rotY:  0.20, rotZ: -0.10 },
+      { id: 'c-2',  isGreen: true,  radiusX: 2.8, radiusZ: 2.2, angleOffset: -Math.PI * 0.9, orbitSpeed: Math.PI * 1.5, baseY:  0.8, height: 1.8, scale: 0.52, rotX:  0.18, rotY:  0.10, rotZ:  0.08 },
+      { id: 'c-3',  isGreen: false, radiusX: 3.6, radiusZ: 2.9, angleOffset:  Math.PI * 0.2, orbitSpeed: Math.PI * 1.7, baseY: -1.2, height: 2.2, scale: 0.58, rotX: -0.12, rotY: -0.15, rotZ: -0.05 },
+      { id: 'c-4',  isGreen: true,  radiusX: 4.8, radiusZ: 3.6, angleOffset: -Math.PI * 0.5, orbitSpeed: Math.PI * 1.9, baseY:  1.5, height: 2.6, scale: 0.70, rotX:  0.15, rotY:  0.25, rotZ:  0.10 },
+      { id: 'c-5',  isGreen: true,  radiusX: 2.5, radiusZ: 2.5, angleOffset:  Math.PI * 0.6, orbitSpeed: Math.PI * 1.4, baseY: -1.8, height: 1.6, scale: 0.48, rotX:  0.05, rotY: -0.10, rotZ:  0.02 },
+      { id: 'c-6',  isGreen: false, radiusX: 3.9, radiusZ: 3.0, angleOffset: -Math.PI * 0.8, orbitSpeed: Math.PI * 1.65, baseY: 0.2, height: 2.1, scale: 0.62, rotX: -0.08, rotY:  0.15, rotZ: -0.06 },
+      { id: 'c-7',  isGreen: true,  radiusX: 4.5, radiusZ: 3.4, angleOffset: -Math.PI * 0.1, orbitSpeed: Math.PI * 1.75, baseY: -0.4, height: 2.3, scale: 0.64, rotX:  0.12, rotY: -0.18, rotZ:  0.07 },
+      { id: 'c-8',  isGreen: false, radiusX: 3.0, radiusZ: 2.6, angleOffset:  Math.PI * 0.4, orbitSpeed: Math.PI * 1.55, baseY: 1.8, height: 1.9, scale: 0.54, rotX: -0.14, rotY:  0.12, rotZ: -0.04 },
+      { id: 'c-9',  isGreen: true,  radiusX: 5.2, radiusZ: 3.8, angleOffset: -Math.PI * 0.6, orbitSpeed: Math.PI * 2.0,  baseY: -1.5, height: 2.7, scale: 0.72, rotX:  0.16, rotY:  0.22, rotZ:  0.09 },
 
-  // Foreground Candlesticks (Z > 1.2) - physically sweep IN FRONT of the Fox plane
-  const fgCandles = useMemo(() => {
-    const items = [
-      { id: 'fg-0', isGreen: true,  x: 2.1,  y: -0.6, z: 1.8, rotX: 0.1, rotY: -0.2, rotZ: 0.05, height: 1.8, scale: 0.55 },
-      { id: 'fg-1', isGreen: false, x: 3.2,  y: 0.9,  z: 2.2, rotX: -0.15, rotY: 0.2, rotZ: -0.1, height: 2.2, scale: 0.65 },
-      { id: 'fg-2', isGreen: true,  x: 1.2,  y: 0.8,  z: 1.5, rotX: 0.2, rotY: 0.1, rotZ: 0.08, height: 1.6, scale: 0.5 },
-      { id: 'fg-3', isGreen: false, x: -2.5, y: -0.5, z: 1.6, rotX: -0.1, rotY: -0.15, rotZ: -0.05, height: 2.0, scale: 0.58 },
-      { id: 'fg-4', isGreen: true,  x: -3.8, y: 1.2,  z: 2.5, rotX: 0.15, rotY: 0.25, rotZ: 0.1, height: 2.4, scale: 0.7 },
-      { id: 'fg-5', isGreen: true,  x: 0.2,  y: -1.8, z: 2.0, rotX: 0.05, rotY: -0.1, rotZ: 0.02, height: 1.5, scale: 0.48 }
+      // Deep Ambient Background Candlesticks (Strictly Z < -2.5)
+      { id: 'c-10', isGreen: true,  radiusX: 6.5, radiusZ: 1.5, angleOffset: -Math.PI * 0.4, orbitSpeed: Math.PI * 0.8, baseY:  2.5, height: 1.5, scale: 0.35, rotX: 0.05, rotY: 0.10, rotZ: 0.02, isStrictBg: true },
+      { id: 'c-11', isGreen: false, radiusX: 7.2, radiusZ: 2.0, angleOffset:  Math.PI * 0.3, orbitSpeed: Math.PI * 0.9, baseY: -2.8, height: 1.7, scale: 0.38, rotX: -0.05, rotY: -0.10, rotZ: -0.03, isStrictBg: true },
+      { id: 'c-12', isGreen: true,  radiusX: 8.0, radiusZ: 1.8, angleOffset: -Math.PI * 0.8, orbitSpeed: Math.PI * 0.7, baseY:  1.8, height: 1.4, scale: 0.32, rotX: 0.08, rotY: 0.05, rotZ: 0.01, isStrictBg: true },
+      { id: 'c-13', isGreen: false, radiusX: 6.8, radiusZ: 1.6, angleOffset:  Math.PI * 0.7, orbitSpeed: Math.PI * 0.85, baseY: -2.2, height: 1.6, scale: 0.36, rotX: -0.06, rotY: 0.08, rotZ: -0.02, isStrictBg: true },
+      { id: 'c-14', isGreen: true,  radiusX: 7.5, radiusZ: 2.2, angleOffset: -Math.PI * 0.2, orbitSpeed: Math.PI * 0.75, baseY:  3.2, height: 1.8, scale: 0.40, rotX: 0.04, rotY: -0.12, rotZ: 0.03, isStrictBg: true },
+      { id: 'c-15', isGreen: false, radiusX: 8.5, radiusZ: 1.9, angleOffset:  Math.PI * 0.1, orbitSpeed: Math.PI * 0.65, baseY: -3.5, height: 1.5, scale: 0.34, rotX: -0.07, rotY: 0.06, rotZ: -0.01, isStrictBg: true }
     ];
-    return items;
+    return list;
   }, []);
 
   useFrame(() => {
@@ -149,70 +139,80 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
     const my = mousePos.current?.y || 0;
     const isMobile = window.innerWidth < 768;
 
-    // Background Group Parallax (Subtle) - Always visible
-    if (bgGroupRef.current) {
-      bgGroupRef.current.visible = true;
-      const targetRotY = sp * Math.PI * 0.6 + mx * 0.2;
-      const targetRotX = my * 0.15;
-      const targetPosY = sp * 3.0;
+    // Center coordinates for Fox plane
+    const foxX = isMobile ? 0 : mx * 0.45;
+    const foxY = (isMobile ? 0.3 : 0.1 + my * 0.35) - sp * 2.2;
 
-      bgGroupRef.current.rotation.y = THREE.MathUtils.lerp(bgGroupRef.current.rotation.y, targetRotY, 0.08);
-      bgGroupRef.current.rotation.x = THREE.MathUtils.lerp(bgGroupRef.current.rotation.x, targetRotX, 0.08);
-      bgGroupRef.current.position.y = THREE.MathUtils.lerp(bgGroupRef.current.position.y, targetPosY, 0.08);
-    }
+    candles.forEach((c, index) => {
+      const group = candleGroupRefs.current[index];
+      if (!group) return;
 
-    // Foreground Group Parallax - Visible on desktop, hidden on mobile
-    if (fgGroupRef.current) {
-      fgGroupRef.current.visible = !isMobile;
-      if (!isMobile) {
-        const targetRotY = sp * Math.PI * 0.9 + mx * 0.45;
-        const targetRotX = my * 0.35;
-        const targetPosX = mx * 0.8;
-        const targetPosY = sp * 4.2;
+      if (c.isStrictBg) {
+        // Deep background candles: strictly behind Fox plane (Z <= -2.5)
+        const angle = c.angleOffset + sp * c.orbitSpeed + mx * 0.15;
+        const targetX = foxX + Math.cos(angle) * c.radiusX;
+        const targetY = foxY + c.baseY + Math.sin(sp * Math.PI * 2 + index) * 0.4 + my * 0.2;
+        const targetZ = -2.8 - Math.abs(Math.sin(angle)) * c.radiusZ;
 
-        fgGroupRef.current.rotation.y = THREE.MathUtils.lerp(fgGroupRef.current.rotation.y, targetRotY, 0.08);
-        fgGroupRef.current.rotation.x = THREE.MathUtils.lerp(fgGroupRef.current.rotation.x, targetRotX, 0.08);
-        fgGroupRef.current.position.x = THREE.MathUtils.lerp(fgGroupRef.current.position.x, targetPosX, 0.08);
-        fgGroupRef.current.position.y = THREE.MathUtils.lerp(fgGroupRef.current.position.y, targetPosY, 0.08);
+        group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
+        group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
+        group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
+        group.visible = true;
+      } else {
+        if (isMobile) {
+          // On mobile viewports, hide orbital foreground candles for reading clarity
+          group.visible = false;
+        } else {
+          group.visible = true;
+          // Orbital motion around Fox mascot as user scrolls down
+          const angle = c.angleOffset + sp * c.orbitSpeed;
+          const targetX = foxX + Math.cos(angle) * c.radiusX + mx * 0.35;
+          const targetY = foxY + c.baseY + Math.sin(sp * Math.PI * 2.5 + index) * 0.5 + my * 0.25;
+          // Z depth sweeps between behind (Z < 0) and front (Z > 0)
+          const targetZ = Math.sin(angle) * c.radiusZ;
+
+          group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
+          group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
+          group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
+
+          // Dynamic tilt reaction to scroll & mouse
+          group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, c.rotX + my * 0.2, 0.08);
+          group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, c.rotY + angle * 0.3 + mx * 0.3, 0.08);
+          group.rotation.z = THREE.MathUtils.lerp(group.rotation.z, c.rotZ + mx * 0.1, 0.08);
+        }
       }
-    }
+    });
   });
 
-  const renderCandleMesh = (c) => (
-    <group
-      key={c.id}
-      position={[c.x, c.y, c.z]}
-      rotation={[c.rotX, c.rotY, c.rotZ]}
-      scale={c.scale}
-    >
-      {/* Wick */}
-      <mesh position={[0, 0, 0]}>
-        <cylinderGeometry args={[0.02, 0.02, c.height * 1.8, 8]} />
-        <meshBasicMaterial color={c.isGreen ? "#10b981" : "#f43f5e"} transparent opacity={0.65} />
-      </mesh>
-      {/* Candle Body */}
-      <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[0.38, c.height, 0.38]} />
-        <meshStandardMaterial
-          color={c.isGreen ? "#10b981" : "#f43f5e"}
-          roughness={0.4}
-          metalness={0.6}
-          emissive={c.isGreen ? "#059669" : "#e11d48"}
-          emissiveIntensity={0.35}
-        />
-      </mesh>
-    </group>
-  );
-
   return (
-    <>
-      <group ref={bgGroupRef}>
-        {bgCandles.map(renderCandleMesh)}
-      </group>
-      <group ref={fgGroupRef}>
-        {fgCandles.map(renderCandleMesh)}
-      </group>
-    </>
+    <group>
+      {candles.map((c, index) => (
+        <group
+          key={c.id}
+          ref={(el) => (candleGroupRefs.current[index] = el)}
+          position={[0, 0, c.isStrictBg ? -3 : 0]}
+          rotation={[c.rotX, c.rotY, c.rotZ]}
+          scale={c.scale}
+        >
+          {/* Wick */}
+          <mesh position={[0, 0, 0]}>
+            <cylinderGeometry args={[0.02, 0.02, c.height * 1.8, 8]} />
+            <meshBasicMaterial color={c.isGreen ? "#10b981" : "#f43f5e"} transparent opacity={0.65} />
+          </mesh>
+          {/* Candle Body */}
+          <mesh position={[0, 0, 0]}>
+            <boxGeometry args={[0.38, c.height, 0.38]} />
+            <meshStandardMaterial
+              color={c.isGreen ? "#10b981" : "#f43f5e"}
+              roughness={0.4}
+              metalness={0.6}
+              emissive={c.isGreen ? "#059669" : "#e11d48"}
+              emissiveIntensity={0.35}
+            />
+          </mesh>
+        </group>
+      ))}
+    </group>
   );
 }
 
