@@ -4,6 +4,16 @@ import { PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import foxImg from '../assets/fox.png';
 
+// Preload Fox texture at module scope to eliminate loading delay on mount
+let cachedFoxTexture = null;
+if (typeof window !== 'undefined') {
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.load(foxImg, (tex) => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    cachedFoxTexture = tex;
+  });
+}
+
 // Class Error Boundary specifically for 3D Canvas WebGL rendering failures
 class ThreeErrorBoundary extends Component {
   constructor(props) {
@@ -30,15 +40,19 @@ class ThreeErrorBoundary extends Component {
 // Low-Poly 3D Fox Mascot Mesh (Positioned at Z = 0 Depth Plane)
 function FoxMascot3D({ mousePos, scrollProgress }) {
   const meshRef = useRef();
-  const [texture, setTexture] = React.useState(null);
+  const [texture, setTexture] = React.useState(() => cachedFoxTexture);
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    const loader = new THREE.TextureLoader();
-    loader.load(foxImg, (tex) => {
-      tex.colorSpace = THREE.SRGBColorSpace;
-      setTexture(tex);
-    });
-  }, []);
+    if (!texture) {
+      const loader = new THREE.TextureLoader();
+      loader.load(foxImg, (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        cachedFoxTexture = tex;
+        setTexture(tex);
+      });
+    }
+  }, [texture]);
 
   useFrame(() => {
     if (!meshRef.current) return;
@@ -60,17 +74,25 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
     const targetRotX = isMobile ? 0 : -my * 0.25;
     const targetRotZ = isMobile ? 0 : -mx * 0.08;
 
-    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
-    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.08);
-    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.08);
+    if (!isInitializedRef.current) {
+      // Set positions directly on first frame to eliminate initial load positioning delay
+      meshRef.current.position.set(targetX, targetY, targetZ);
+      meshRef.current.scale.set(targetScale, targetScale, targetScale);
+      meshRef.current.rotation.set(targetRotX, targetRotY, targetRotZ);
+      isInitializedRef.current = true;
+    } else {
+      meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
+      meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.08);
+      meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.08);
 
-    meshRef.current.scale.x = THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.08);
-    meshRef.current.scale.y = THREE.MathUtils.lerp(meshRef.current.scale.y, targetScale, 0.08);
-    meshRef.current.scale.z = THREE.MathUtils.lerp(meshRef.current.scale.z, targetScale, 0.08);
+      meshRef.current.scale.x = THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.08);
+      meshRef.current.scale.y = THREE.MathUtils.lerp(meshRef.current.scale.y, targetScale, 0.08);
+      meshRef.current.scale.z = THREE.MathUtils.lerp(meshRef.current.scale.z, targetScale, 0.08);
 
-    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
-    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
-    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
+      meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
+      meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
+      meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
+    }
 
     // Persist Fox mascot throughout the entire website (desktop only)
     if (meshRef.current.material) {
@@ -106,6 +128,7 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
 // 3D Floating Candlesticks with 3D Orbital Scroll Motion around Fox Mascot
 function FloatingCandlesticks({ mousePos, scrollProgress }) {
   const candleGroupRefs = useRef([]);
+  const isInitializedRef = useRef(false);
 
   // Deterministically generate candlesticks with orbital parameters around Fox center
   const candles = useMemo(() => {
@@ -154,9 +177,13 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
         const targetY = foxY + c.baseY + Math.sin(sp * Math.PI * 2 + index) * 0.4 + my * 0.2;
         const targetZ = -2.8 - Math.abs(Math.sin(angle)) * c.radiusZ;
 
-        group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
-        group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
-        group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
+        if (!isInitializedRef.current) {
+          group.position.set(targetX, targetY, targetZ);
+        } else {
+          group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
+          group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
+          group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
+        }
         group.visible = true;
       } else {
         if (isMobile) {
@@ -171,17 +198,30 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
           // Z depth sweeps between behind (Z < 0) and front (Z > 0)
           const targetZ = Math.sin(angle) * c.radiusZ;
 
-          group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
-          group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
-          group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
+          const targetRotX = c.rotX + my * 0.2;
+          const targetRotY = c.rotY + angle * 0.3 + mx * 0.3;
+          const targetRotZ = c.rotZ + mx * 0.1;
 
-          // Dynamic tilt reaction to scroll & mouse
-          group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, c.rotX + my * 0.2, 0.08);
-          group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, c.rotY + angle * 0.3 + mx * 0.3, 0.08);
-          group.rotation.z = THREE.MathUtils.lerp(group.rotation.z, c.rotZ + mx * 0.1, 0.08);
+          if (!isInitializedRef.current) {
+            group.position.set(targetX, targetY, targetZ);
+            group.rotation.set(targetRotX, targetRotY, targetRotZ);
+          } else {
+            group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
+            group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
+            group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
+
+            // Dynamic tilt reaction to scroll & mouse
+            group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetRotX, 0.08);
+            group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetRotY, 0.08);
+            group.rotation.z = THREE.MathUtils.lerp(group.rotation.z, targetRotZ, 0.08);
+          }
         }
       }
     });
+
+    if (!isInitializedRef.current) {
+      isInitializedRef.current = true;
+    }
   });
 
   return (
@@ -340,15 +380,12 @@ function checkWebGLSupport() {
 export default function DeltaFox3DScene() {
   const mousePos = useRef({ x: 0, y: 0 });
   const scrollProgress = useRef(0);
-  const [shouldRenderCanvas, setShouldRenderCanvas] = React.useState(false);
   const [hasWebGL] = React.useState(() => checkWebGLSupport());
+  const [shouldRenderCanvas, setShouldRenderCanvas] = React.useState(() => hasWebGL);
 
   useEffect(() => {
     if (!hasWebGL) return;
-
-    // Fast load deferral
-    const timer = setTimeout(() => setShouldRenderCanvas(true), 100);
-    return () => clearTimeout(timer);
+    setShouldRenderCanvas(true);
   }, [hasWebGL]);
 
   useEffect(() => {
