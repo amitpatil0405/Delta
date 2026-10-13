@@ -41,7 +41,6 @@ class ThreeErrorBoundary extends Component {
 function FoxMascot3D({ mousePos, scrollProgress }) {
   const meshRef = useRef();
   const [texture, setTexture] = React.useState(() => cachedFoxTexture);
-  const isInitializedRef = useRef(false);
 
   useEffect(() => {
     if (!texture) {
@@ -74,25 +73,17 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
     const targetRotX = isMobile ? 0 : -my * 0.25;
     const targetRotZ = isMobile ? 0 : -mx * 0.08;
 
-    if (!isInitializedRef.current) {
-      // Set positions directly on first frame to eliminate initial load positioning delay
-      meshRef.current.position.set(targetX, targetY, targetZ);
-      meshRef.current.scale.set(targetScale, targetScale, targetScale);
-      meshRef.current.rotation.set(targetRotX, targetRotY, targetRotZ);
-      isInitializedRef.current = true;
-    } else {
-      meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
-      meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.08);
-      meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.08);
+    meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
+    meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.08);
+    meshRef.current.position.z = THREE.MathUtils.lerp(meshRef.current.position.z, targetZ, 0.08);
 
-      meshRef.current.scale.x = THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.08);
-      meshRef.current.scale.y = THREE.MathUtils.lerp(meshRef.current.scale.y, targetScale, 0.08);
-      meshRef.current.scale.z = THREE.MathUtils.lerp(meshRef.current.scale.z, targetScale, 0.08);
+    meshRef.current.scale.x = THREE.MathUtils.lerp(meshRef.current.scale.x, targetScale, 0.08);
+    meshRef.current.scale.y = THREE.MathUtils.lerp(meshRef.current.scale.y, targetScale, 0.08);
+    meshRef.current.scale.z = THREE.MathUtils.lerp(meshRef.current.scale.z, targetScale, 0.08);
 
-      meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
-      meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
-      meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
-    }
+    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, 0.08);
+    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, targetRotX, 0.08);
+    meshRef.current.rotation.z = THREE.MathUtils.lerp(meshRef.current.rotation.z, targetRotZ, 0.08);
 
     // Persist Fox mascot throughout the entire website (desktop only)
     if (meshRef.current.material) {
@@ -128,7 +119,6 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
 // 3D Floating Candlesticks with 3D Orbital Scroll Motion around Fox Mascot
 function FloatingCandlesticks({ mousePos, scrollProgress }) {
   const candleGroupRefs = useRef([]);
-  const isInitializedRef = useRef(false);
 
   // Deterministically generate candlesticks with orbital parameters around Fox center
   const candles = useMemo(() => {
@@ -177,13 +167,9 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
         const targetY = foxY + c.baseY + Math.sin(sp * Math.PI * 2 + index) * 0.4 + my * 0.2;
         const targetZ = -2.8 - Math.abs(Math.sin(angle)) * c.radiusZ;
 
-        if (!isInitializedRef.current) {
-          group.position.set(targetX, targetY, targetZ);
-        } else {
-          group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
-          group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
-          group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
-        }
+        group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
+        group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
+        group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
         group.visible = true;
       } else {
         if (isMobile) {
@@ -202,26 +188,17 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
           const targetRotY = c.rotY + angle * 0.3 + mx * 0.3;
           const targetRotZ = c.rotZ + mx * 0.1;
 
-          if (!isInitializedRef.current) {
-            group.position.set(targetX, targetY, targetZ);
-            group.rotation.set(targetRotX, targetRotY, targetRotZ);
-          } else {
-            group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
-            group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
-            group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
+          group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
+          group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
+          group.position.z = THREE.MathUtils.lerp(group.position.z, targetZ, 0.08);
 
-            // Dynamic tilt reaction to scroll & mouse
-            group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetRotX, 0.08);
-            group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetRotY, 0.08);
-            group.rotation.z = THREE.MathUtils.lerp(group.rotation.z, targetRotZ, 0.08);
-          }
+          // Dynamic tilt reaction to scroll & mouse
+          group.rotation.x = THREE.MathUtils.lerp(group.rotation.x, targetRotX, 0.08);
+          group.rotation.y = THREE.MathUtils.lerp(group.rotation.y, targetRotY, 0.08);
+          group.rotation.z = THREE.MathUtils.lerp(group.rotation.z, targetRotZ, 0.08);
         }
       }
     });
-
-    if (!isInitializedRef.current) {
-      isInitializedRef.current = true;
-    }
   });
 
   return (
