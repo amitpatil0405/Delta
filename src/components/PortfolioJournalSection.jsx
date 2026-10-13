@@ -897,45 +897,13 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
                 className="flex flex-col items-center space-y-1.5 flex-shrink-0 md:flex-1 md:min-w-0"
               >
                 {/* Daily Boxes Block (5 cols x 7 rows grid layout) */}
-                <div className="relative grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] border border-white/5 rounded-lg xl:rounded-xl">
-                  {/* SVG 5-Dot Animated Border Beam Overlay for Overall Monthly Profit/Loss */}
-                  {m.monthTotalPnl !== 0 && (
-                    <svg
-                      className="absolute inset-0 w-full h-full pointer-events-none z-10 overflow-visible"
-                      viewBox="0 0 100 100"
-                      preserveAspectRatio="none"
-                    >
-                      {/* Faint Background Border Line */}
-                      <rect
-                        x="0.5"
-                        y="0.5"
-                        width="99"
-                        height="99"
-                        rx="8"
-                        ry="8"
-                        fill="none"
-                        stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
-                        strokeWidth="1"
-                        strokeOpacity="0.12"
-                      />
-                      {/* 5 Distinct Green/Red Round Dots Moving in Formation */}
-                      <rect
-                        x="0.5"
-                        y="0.5"
-                        width="99"
-                        height="99"
-                        rx="8"
-                        ry="8"
-                        fill="none"
-                        stroke={m.monthTotalPnl > 0 ? '#10b981' : '#f43f5e'}
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        pathLength="100"
-                        strokeDasharray="0.01 4 0.01 4 0.01 4 0.01 4 0.01 83.95"
-                        className="animate-border-beam"
-                      />
-                    </svg>
-                  )}
+                <div className={`relative grid grid-cols-5 gap-1 p-1 sm:p-1.5 bg-white/[0.02] rounded-lg xl:rounded-xl transition-all duration-300 ${
+                  m.monthTotalPnl > 0
+                    ? 'border border-emerald-500/35 shadow-[0_0_8px_rgba(16,185,129,0.15)]'
+                    : m.monthTotalPnl < 0
+                    ? 'border border-rose-500/35 shadow-[0_0_8px_rgba(244,63,94,0.15)]'
+                    : 'border border-white/5'
+                }`}>
 
                   {m.days.map((d) => {
                     if (d.isPadding) {
