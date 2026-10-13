@@ -68,10 +68,10 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
 
     const targetScale = 1.0;
 
-    // On mobile devices, Fox remains stationary at center without pointer tilt reaction
-    const targetRotY = isMobile ? 0 : mx * 0.35 + Math.sin(sp * Math.PI * 2) * 0.15;
-    const targetRotX = isMobile ? 0 : -my * 0.25;
-    const targetRotZ = isMobile ? 0 : -mx * 0.08;
+    // Subtle Fox tilt reaction: subtle left/right rotation, gentle up/down tilt
+    const targetRotY = isMobile ? 0 : mx * 0.12 + Math.sin(sp * Math.PI * 2) * 0.08;
+    const targetRotX = isMobile ? 0 : -my * 0.10;
+    const targetRotZ = isMobile ? 0 : -mx * 0.04;
 
     meshRef.current.position.x = THREE.MathUtils.lerp(meshRef.current.position.x, targetX, 0.08);
     meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.08);
@@ -162,9 +162,9 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
 
       if (c.isStrictBg) {
         // Deep background candles: strictly behind Fox plane (Z <= -2.5)
-        const angle = c.angleOffset + sp * c.orbitSpeed + mx * 0.15;
+        const angle = c.angleOffset - sp * c.orbitSpeed - mx * Math.PI * 0.5;
         const targetX = foxX + Math.cos(angle) * c.radiusX;
-        const targetY = foxY + c.baseY + Math.sin(sp * Math.PI * 2 + index) * 0.4 + my * 0.2;
+        const targetY = foxY + c.baseY + Math.sin(sp * Math.PI * 2 + index) * 0.4 + my * 0.25;
         const targetZ = -2.8 - Math.abs(Math.sin(angle)) * c.radiusZ;
 
         group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
@@ -177,16 +177,18 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
           group.visible = false;
         } else {
           group.visible = true;
-          // Orbital motion around Fox mascot as user scrolls down
-          const angle = c.angleOffset + sp * c.orbitSpeed;
-          const targetX = foxX + Math.cos(angle) * c.radiusX + mx * 0.35;
-          const targetY = foxY + c.baseY + Math.sin(sp * Math.PI * 2.5 + index) * 0.5 + my * 0.25;
-          // Z depth sweeps between behind (Z < 0) and front (Z > 0)
+          // Orbital angle: moves from right side, goes behind fox, comes in front from left side
+          // Cursor left/right (mx) rotates candles in circular manner around fox
+          const angle = c.angleOffset - sp * c.orbitSpeed + mx * Math.PI * 0.6;
+          const targetX = foxX + Math.cos(angle) * c.radiusX;
+          const targetY = foxY + c.baseY + Math.sin(sp * Math.PI * 2.5 + index) * 0.4 + my * 0.35;
+          // Z depth: positive (front) and negative (behind)
           const targetZ = Math.sin(angle) * c.radiusZ;
 
-          const targetRotX = c.rotX + my * 0.2;
-          const targetRotY = c.rotY + angle * 0.3 + mx * 0.3;
-          const targetRotZ = c.rotZ + mx * 0.1;
+          // Gentle tilt on upside/downside cursor move
+          const targetRotX = c.rotX - my * 0.15;
+          const targetRotY = c.rotY + angle * 0.3 + mx * 0.2;
+          const targetRotZ = c.rotZ + mx * 0.08;
 
           group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.08);
           group.position.y = THREE.MathUtils.lerp(group.position.y, targetY, 0.08);
