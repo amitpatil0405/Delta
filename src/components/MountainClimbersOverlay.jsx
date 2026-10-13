@@ -331,7 +331,7 @@ function MountainClimbersOverlay({
   const followerArm2   = isFollowerMoving ? Math.sin(walkPhase) * 25 : (isAtEndpointCelebrating ? 135 : 15);
 
   return (
-    <div className="absolute inset-0 pointer-events-none z-25 hidden md:block overflow-hidden">
+    <div className="absolute inset-0 pointer-events-none z-10 hidden md:block overflow-hidden">
       <svg
         width={width}
         height={height}
@@ -525,19 +525,19 @@ function MountainClimbersOverlay({
             {/* Individual Badges & Summit Celebration Text */}
             {isAtEndpointCelebrating ? (
               <foreignObject
-                x={Math.max(10, Math.min(width - 210, (leadPos.x + followerPos.x) / 2 - 95))}
+                x={Math.max(10, Math.min(leadPos.x, followerPos.x) - 195)}
                 y={Math.min(leadPos.y, followerPos.y) - 60}
                 width="190"
                 height="32"
               >
-                <div className="flex items-center justify-center h-full">
+                <div className="flex items-center justify-end h-full">
                   {isEndpointATH ? (
                     <span className="bg-emerald-500 text-black text-[8.5px] font-mono font-extrabold px-3 py-1 rounded-full shadow-[0_0_18px_rgba(16,185,129,0.95)] animate-bounce whitespace-nowrap">
                       🏔️ PEAK SUMMIT CELEBRATION! 🎉
                     </span>
                   ) : (
                     <span className="bg-[#0c0c0e]/95 text-amber-300 border border-amber-500/80 text-[8px] font-mono font-extrabold px-2.5 py-1 rounded shadow-[0_0_14px_rgba(245,158,11,0.6)] animate-pulse whitespace-nowrap">
-                      🙌 We will go high next time
+                      🙌 We will touch high again
                     </span>
                   )}
                 </div>
