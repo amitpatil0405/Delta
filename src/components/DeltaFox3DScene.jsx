@@ -120,29 +120,69 @@ function FoxMascot3D({ mousePos, scrollProgress }) {
 function FloatingCandlesticks({ mousePos, scrollProgress }) {
   const candleGroupRefs = useRef([]);
 
-  // Deterministically generate candlesticks with orbital parameters around Fox center
+  // Randomly generate orbital parameters on page refresh so positions are organic and wide
   const candles = useMemo(() => {
-    const list = [
-      // Primary Foreground / Orbital Candlesticks (orbiting from behind Z < 0 to front Z > 0 on scroll)
-      { id: 'c-0',  isGreen: true,  radiusX: 3.2, radiusZ: 2.8, angleOffset: -Math.PI * 0.7, orbitSpeed: Math.PI * 1.6, baseY:  1.2, height: 2.0, scale: 0.60, rotX:  0.10, rotY: -0.20, rotZ:  0.05 },
-      { id: 'c-1',  isGreen: false, radiusX: 4.2, radiusZ: 3.2, angleOffset: -Math.PI * 0.3, orbitSpeed: Math.PI * 1.8, baseY: -0.6, height: 2.4, scale: 0.65, rotX: -0.15, rotY:  0.20, rotZ: -0.10 },
-      { id: 'c-2',  isGreen: true,  radiusX: 2.8, radiusZ: 2.2, angleOffset: -Math.PI * 0.9, orbitSpeed: Math.PI * 1.5, baseY:  0.8, height: 1.8, scale: 0.52, rotX:  0.18, rotY:  0.10, rotZ:  0.08 },
-      { id: 'c-3',  isGreen: false, radiusX: 3.6, radiusZ: 2.9, angleOffset:  Math.PI * 0.2, orbitSpeed: Math.PI * 1.7, baseY: -1.2, height: 2.2, scale: 0.58, rotX: -0.12, rotY: -0.15, rotZ: -0.05 },
-      { id: 'c-4',  isGreen: true,  radiusX: 4.8, radiusZ: 3.6, angleOffset: -Math.PI * 0.5, orbitSpeed: Math.PI * 1.9, baseY:  1.5, height: 2.6, scale: 0.70, rotX:  0.15, rotY:  0.25, rotZ:  0.10 },
-      { id: 'c-5',  isGreen: true,  radiusX: 2.5, radiusZ: 2.5, angleOffset:  Math.PI * 0.6, orbitSpeed: Math.PI * 1.4, baseY: -1.8, height: 1.6, scale: 0.48, rotX:  0.05, rotY: -0.10, rotZ:  0.02 },
-      { id: 'c-6',  isGreen: false, radiusX: 3.9, radiusZ: 3.0, angleOffset: -Math.PI * 0.8, orbitSpeed: Math.PI * 1.65, baseY: 0.2, height: 2.1, scale: 0.62, rotX: -0.08, rotY:  0.15, rotZ: -0.06 },
-      { id: 'c-7',  isGreen: true,  radiusX: 4.5, radiusZ: 3.4, angleOffset: -Math.PI * 0.1, orbitSpeed: Math.PI * 1.75, baseY: -0.4, height: 2.3, scale: 0.64, rotX:  0.12, rotY: -0.18, rotZ:  0.07 },
-      { id: 'c-8',  isGreen: false, radiusX: 3.0, radiusZ: 2.6, angleOffset:  Math.PI * 0.4, orbitSpeed: Math.PI * 1.55, baseY: 1.8, height: 1.9, scale: 0.54, rotX: -0.14, rotY:  0.12, rotZ: -0.04 },
-      { id: 'c-9',  isGreen: true,  radiusX: 5.2, radiusZ: 3.8, angleOffset: -Math.PI * 0.6, orbitSpeed: Math.PI * 2.0,  baseY: -1.5, height: 2.7, scale: 0.72, rotX:  0.16, rotY:  0.22, rotZ:  0.09 },
+    const list = [];
+    const mainCount = 14;
 
-      // Deep Ambient Background Candlesticks (Strictly Z < -2.5)
-      { id: 'c-10', isGreen: true,  radiusX: 6.5, radiusZ: 1.5, angleOffset: -Math.PI * 0.4, orbitSpeed: Math.PI * 0.8, baseY:  2.5, height: 1.5, scale: 0.35, rotX: 0.05, rotY: 0.10, rotZ: 0.02, isStrictBg: true },
-      { id: 'c-11', isGreen: false, radiusX: 7.2, radiusZ: 2.0, angleOffset:  Math.PI * 0.3, orbitSpeed: Math.PI * 0.9, baseY: -2.8, height: 1.7, scale: 0.38, rotX: -0.05, rotY: -0.10, rotZ: -0.03, isStrictBg: true },
-      { id: 'c-12', isGreen: true,  radiusX: 8.0, radiusZ: 1.8, angleOffset: -Math.PI * 0.8, orbitSpeed: Math.PI * 0.7, baseY:  1.8, height: 1.4, scale: 0.32, rotX: 0.08, rotY: 0.05, rotZ: 0.01, isStrictBg: true },
-      { id: 'c-13', isGreen: false, radiusX: 6.8, radiusZ: 1.6, angleOffset:  Math.PI * 0.7, orbitSpeed: Math.PI * 0.85, baseY: -2.2, height: 1.6, scale: 0.36, rotX: -0.06, rotY: 0.08, rotZ: -0.02, isStrictBg: true },
-      { id: 'c-14', isGreen: true,  radiusX: 7.5, radiusZ: 2.2, angleOffset: -Math.PI * 0.2, orbitSpeed: Math.PI * 0.75, baseY:  3.2, height: 1.8, scale: 0.40, rotX: 0.04, rotY: -0.12, rotZ: 0.03, isStrictBg: true },
-      { id: 'c-15', isGreen: false, radiusX: 8.5, radiusZ: 1.9, angleOffset:  Math.PI * 0.1, orbitSpeed: Math.PI * 0.65, baseY: -3.5, height: 1.5, scale: 0.34, rotX: -0.07, rotY: 0.06, rotZ: -0.01, isStrictBg: true }
-    ];
+    for (let i = 0; i < mainCount; i++) {
+      const isGreen = i % 2 === 0 ? Math.random() > 0.35 : Math.random() < 0.35;
+      // Spread X radius wider across left and right sides (3.8 to 8.5)
+      const radiusX = 3.8 + Math.random() * 4.7;
+      const radiusZ = 2.0 + Math.random() * 2.5;
+
+      // Constrain initial angleOffset at sp = 0 so Z = sin(angle) < -0.15 (strictly behind Fox plane or wide at sides)
+      // angleOffset randomly chosen from [-0.85*PI, -0.15*PI] or [1.15*PI, 1.85*PI]
+      const sideChoice = Math.random() > 0.5;
+      const angleOffset = sideChoice
+        ? -Math.PI * (0.15 + Math.random() * 0.7)
+        : Math.PI * (1.15 + Math.random() * 0.7);
+
+      const orbitSpeed = Math.PI * (1.3 + Math.random() * 0.8);
+      const baseY = (Math.random() - 0.5) * 4.5;
+      const height = 1.6 + Math.random() * 1.2;
+      const scale = 0.48 + Math.random() * 0.28;
+
+      const rotX = (Math.random() - 0.5) * 0.35;
+      const rotY = (Math.random() - 0.5) * 0.5;
+      const rotZ = (Math.random() - 0.5) * 0.2;
+
+      list.push({
+        id: `c-main-${i}`,
+        isGreen,
+        radiusX,
+        radiusZ,
+        angleOffset,
+        orbitSpeed,
+        baseY,
+        height,
+        scale,
+        rotX,
+        rotY,
+        rotZ,
+        isStrictBg: false
+      });
+    }
+
+    // Deep Ambient Background Candlesticks (Strictly Z < -2.5)
+    for (let i = 0; i < 8; i++) {
+      list.push({
+        id: `c-bg-${i}`,
+        isGreen: i % 2 === 0,
+        radiusX: 6.5 + Math.random() * 3.0,
+        radiusZ: 1.5 + Math.random() * 1.5,
+        angleOffset: (Math.random() - 0.5) * Math.PI * 2,
+        orbitSpeed: Math.PI * (0.6 + Math.random() * 0.4),
+        baseY: (Math.random() - 0.5) * 6.0,
+        height: 1.3 + Math.random() * 0.8,
+        scale: 0.3 + Math.random() * 0.15,
+        rotX: (Math.random() - 0.5) * 0.2,
+        rotY: (Math.random() - 0.5) * 0.3,
+        rotZ: (Math.random() - 0.5) * 0.1,
+        isStrictBg: true
+      });
+    }
+
     return list;
   }, []);
 
