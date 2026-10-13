@@ -127,18 +127,14 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
 
     for (let i = 0; i < mainCount; i++) {
       const isGreen = i % 2 === 0 ? Math.random() > 0.35 : Math.random() < 0.35;
-      // Spread X radius wider across left and right sides (3.8 to 8.5)
-      const radiusX = 3.8 + Math.random() * 4.7;
-      const radiusZ = 2.0 + Math.random() * 2.5;
+      // Spread X and Z radii to create a balanced 3D orbital path around Fox
+      const radiusX = 3.4 + Math.random() * 3.2;
+      const radiusZ = 2.4 + Math.random() * 2.0;
 
-      // Constrain initial angleOffset at sp = 0 so Z = sin(angle) < -0.15 (strictly behind Fox plane or wide at sides)
-      // angleOffset randomly chosen from [-0.85*PI, -0.15*PI] or [1.15*PI, 1.85*PI]
-      const sideChoice = Math.random() > 0.5;
-      const angleOffset = sideChoice
-        ? -Math.PI * (0.15 + Math.random() * 0.7)
-        : Math.PI * (1.15 + Math.random() * 0.7);
+      // Stagger initial angleOffset evenly around 360 degrees so candles surround Fox
+      const angleOffset = (i / mainCount) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
 
-      const orbitSpeed = Math.PI * (1.3 + Math.random() * 0.8);
+      const orbitSpeed = Math.PI * (1.8 + Math.random() * 0.5);
       const baseY = (Math.random() - 0.5) * 4.5;
       const height = 1.6 + Math.random() * 1.2;
       const scale = 0.48 + Math.random() * 0.28;
@@ -217,12 +213,12 @@ function FloatingCandlesticks({ mousePos, scrollProgress }) {
           group.visible = false;
         } else {
           group.visible = true;
-          // Orbital angle: moves from right side, goes behind fox, comes in front from left side
-          // Cursor left/right (mx) rotates candles in circular manner around fox
-          const angle = c.angleOffset - sp * c.orbitSpeed + mx * Math.PI * 0.6;
+          // Orbital angle: moves around fox as user scrolls down from top to bottom
+          // Adding sp * c.orbitSpeed moves candles around to the FRONT side of fox on scroll
+          const angle = c.angleOffset + sp * c.orbitSpeed + mx * Math.PI * 0.6;
           const targetX = foxX + Math.cos(angle) * c.radiusX;
           const targetY = foxY + c.baseY + Math.sin(sp * Math.PI * 2.5 + index) * 0.4 + my * 0.35;
-          // Z depth: positive (front) and negative (behind)
+          // Z depth: positive (in front of fox Z > 0) and negative (behind fox Z < 0)
           const targetZ = Math.sin(angle) * c.radiusZ;
 
           // Gentle tilt on upside/downside cursor move
