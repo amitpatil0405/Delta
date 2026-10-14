@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio, QrCode, Smartphone, CreditCard, Calendar, Clock, Video } from 'lucide-react';
-import paymentQrImg from '../assets/payment_qr.jpg';
+import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio, Smartphone, CreditCard, Calendar, Clock, Video } from 'lucide-react';
 
 export default function TrainingSection() {
   const [selectedModule, setSelectedModule] = useState(0);
@@ -284,8 +283,8 @@ export default function TrainingSection() {
 
               <div className="space-y-4">
                 <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase">
-                  <QrCode className="w-4 h-4" />
-                  <span>Instant Enrollment Payment</span>
+                  <GraduationCap className="w-4 h-4" />
+                  <span>Instant Enrollment</span>
                 </div>
 
                 <div>
@@ -293,7 +292,7 @@ export default function TrainingSection() {
                     JOIN DELTAFOX OPTIONS MASTERY
                   </h3>
                   <p className="text-sm text-gray-300 mt-2 leading-relaxed">
-                    Enroll directly in our live market options trading program. Choose specific modules or opt for the complete program. Scan the official payment QR code using any UPI App (PhonePe, Google Pay, Paytm, BHIM) to complete enrollment.
+                    Enroll directly in our live market options trading program. Choose specific modules or opt for the complete program to master systematic options trading.
                   </p>
                 </div>
               </div>
@@ -370,44 +369,47 @@ export default function TrainingSection() {
 
             </div>
 
-            {/* Payment QR Code Box Column */}
+            {/* Core Training Features Box Column */}
             <div className="lg:col-span-5 flex flex-col justify-center relative w-full h-full">
               {/* Vivid Neon Green Backlight Glow */}
               <div className="absolute inset-0 bg-emerald-500/20 rounded-2xl blur-[50px] pointer-events-none" />
 
-              <div className="relative group p-6 sm:p-8 rounded-2xl bg-neutral-900/90 border border-emerald-500/40 shadow-[0_0_35px_rgba(16,185,129,0.25)] text-center w-full h-full flex flex-col justify-between">
+              <div className="relative group p-6 sm:p-8 rounded-2xl bg-neutral-900/90 border border-emerald-500/40 shadow-[0_0_35px_rgba(16,185,129,0.25)] w-full h-full flex flex-col justify-center space-y-4">
 
-                {/* Header Instruction */}
-                <div>
-                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold uppercase mb-3">
-                    <QrCode className="w-4 h-4" />
-                    <span>Official UPI Payment QR</span>
+                <div className="p-4 rounded-xl bg-black/50 border border-white/10 flex items-start space-x-4">
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
+                    <TrendingUp className="w-5 h-5" />
                   </div>
-                  <p className="text-xs font-mono font-semibold text-emerald-300 leading-relaxed mb-4">
-                    Scan below QR from PhonePe, Google Pay, Paytm or BHIM to make transaction and book your seat
-                  </p>
+                  <div>
+                    <h4 className="text-sm font-bold text-white font-mono mb-1">Probability & Statistical Edge</h4>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      Understand market probabilities, implied volatility skew, and theta decay to construct high-probability option trades with statistical edge.
+                    </p>
+                  </div>
                 </div>
 
-                {/* QR Code Container (Prominent, Centered) */}
-                <div className="p-3 bg-black rounded-xl overflow-hidden my-2 shadow-2xl max-w-[280px] sm:max-w-[300px] mx-auto w-full border border-emerald-500/30">
-                  <img
-                    src={paymentQrImg}
-                    alt="Payment QR Code - Amit Mahadev Patil"
-                    className="w-full h-auto object-contain rounded-lg border-0 shadow-none block"
-                  />
+                <div className="p-4 rounded-xl bg-black/50 border border-white/10 flex items-start space-x-4">
+                  <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
+                    <ShieldCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white font-mono mb-1">Live Market Execution</h4>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      Experience hands-on live market analysis, order execution, position sizing, and real-time adjustments during actual trading hours.
+                    </p>
+                  </div>
                 </div>
 
-                {/* Account Details Footer */}
-                <div className="space-y-1.5 pt-3 border-t border-white/10">
-                  <div className="text-sm font-mono font-extrabold text-white tracking-wider">
-                    AMIT MAHADEV PATIL
+                <div className="p-4 rounded-xl bg-black/50 border border-white/10 flex items-start space-x-4">
+                  <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
+                    <Layers className="w-5 h-5" />
                   </div>
-                  <div className="text-xs font-mono text-emerald-400 font-bold">
-                    Amount: ₹19,999 <span className="text-gray-300 font-normal">(Basic to Advanced)</span>
+                  <div>
+                    <h4 className="text-sm font-bold text-white font-mono mb-1">Institutional Risk Management</h4>
+                    <p className="text-xs text-gray-400 leading-relaxed">
+                      Protect trading capital using strict position sizing rules, dynamic delta hedging, and systematic drawdown limits across financial cycles.
+                    </p>
                   </div>
-                  <p className="text-[11px] font-mono text-gray-400 leading-tight pt-1">
-                    After completing payment, share confirmation via the contact form or email to activate your training seat.
-                  </p>
                 </div>
 
               </div>
@@ -415,39 +417,6 @@ export default function TrainingSection() {
 
           </div>
 
-        </div>
-
-        {/* Portfolio Growth Blueprint Cards */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="glass-card rounded-2xl p-6 border border-white/10 bg-neutral-900/50">
-            <div className="p-3 w-fit rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-4">
-              <TrendingUp className="w-6 h-6" />
-            </div>
-            <h4 className="text-lg font-bold text-white font-mono mb-2">Probability & Statistical Edge</h4>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              Understand market probabilities, implied volatility skew, and theta decay to construct high-probability option trades with statistical edge.
-            </p>
-          </div>
-
-          <div className="glass-card rounded-2xl p-6 border border-white/10 bg-neutral-900/50">
-            <div className="p-3 w-fit rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mb-4">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <h4 className="text-lg font-bold text-white font-mono mb-2">Live Market Execution</h4>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              Experience hands-on live market analysis, order execution, position sizing, and real-time adjustments during actual trading hours.
-            </p>
-          </div>
-
-          <div className="glass-card rounded-2xl p-6 border border-white/10 bg-neutral-900/50">
-            <div className="p-3 w-fit rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 mb-4">
-              <Layers className="w-6 h-6" />
-            </div>
-            <h4 className="text-lg font-bold text-white font-mono mb-2">Institutional Risk Management</h4>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              Protect trading capital using strict position sizing rules, dynamic delta hedging, and systematic drawdown limits across financial cycles.
-            </p>
-          </div>
         </div>
 
       </div>
