@@ -245,7 +245,7 @@ export default function MarketOverviewSection() {
         )}
 
         {/* Main Holiday Calendar Table & Grid View */}
-        <div className="bg-[#0a0a0c]/90 border border-amber-500/30 rounded-2xl overflow-hidden shadow-2xl space-y-6 p-6 sm:p-8">
+        <div className="bg-[#0a0a0c]/90 border border-amber-500/30 rounded-2xl overflow-hidden shadow-2xl space-y-4 sm:space-y-6 p-4 sm:p-8">
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
             <div className="flex items-center space-x-3">
@@ -275,16 +275,25 @@ export default function MarketOverviewSection() {
             </div>
           </div>
 
+          {/* Mobile Horizontal Scroll Hint */}
+          <div className="sm:hidden flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-2 text-[10px] font-mono text-amber-300">
+            <span className="flex items-center space-x-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+              <span>Scroll horizontally to view full details</span>
+            </span>
+            <span className="font-bold text-amber-400">→</span>
+          </div>
+
           {/* Desktop & Mobile Table View */}
-          <div className="overflow-x-auto rounded-xl border border-white/5 bg-transparent">
+          <div className="w-full overflow-x-auto rounded-xl border border-white/5 bg-transparent">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-transparent text-amber-400 font-mono text-xs uppercase tracking-wider border-b border-white/10">
-                  <th className="py-3.5 px-4 font-bold text-center w-16">SR. NO.</th>
-                  <th className="py-3.5 px-4 font-bold">DATE</th>
-                  <th className="py-3.5 px-4 font-bold">DAY</th>
-                  <th className="py-3.5 px-4 font-bold">HOLIDAY OCCASION</th>
-                  <th className="py-3.5 px-4 font-bold text-right">TRADING STATUS</th>
+                  <th className="py-3.5 px-4 font-bold text-center w-16 whitespace-nowrap">SR. NO.</th>
+                  <th className="py-3.5 px-4 font-bold whitespace-nowrap">DATE</th>
+                  <th className="py-3.5 px-4 font-bold whitespace-nowrap">DAY</th>
+                  <th className="py-3.5 px-4 font-bold whitespace-nowrap">HOLIDAY OCCASION</th>
+                  <th className="py-3.5 px-4 font-bold text-right whitespace-nowrap">TRADING STATUS</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 text-xs font-mono">
@@ -305,7 +314,7 @@ export default function MarketOverviewSection() {
                           : 'hover:bg-white/[0.04]'
                       }`}
                     >
-                      <td className="py-4 px-4 text-center font-bold text-gray-400">
+                      <td className="py-4 px-4 text-center font-bold text-gray-400 whitespace-nowrap">
                         {item.srNo}
                       </td>
 
@@ -313,11 +322,11 @@ export default function MarketOverviewSection() {
                         {item.dateStr}
                       </td>
 
-                      <td className="py-4 px-4 text-gray-300">
+                      <td className="py-4 px-4 text-gray-300 whitespace-nowrap">
                         {item.weekday}
                       </td>
 
-                      <td className="py-4 px-4 text-gray-100 font-sans text-sm font-semibold">
+                      <td className="py-4 px-4 text-gray-100 font-sans text-sm font-semibold whitespace-nowrap">
                         {item.holiday}
                         {isTodayHoliday ? (
                           <span className="ml-2.5 inline-block text-[10px] font-mono font-bold uppercase bg-rose-500 text-white px-2 py-0.5 rounded animate-pulse">
