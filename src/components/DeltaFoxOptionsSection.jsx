@@ -169,11 +169,11 @@ export default function DeltaFoxOptionsSection() {
                   href={SOCIAL_CONFIG.youtube.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-black font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <YoutubeIcon className="w-4 h-4 text-black" />
+                  <YoutubeIcon className="w-4 h-4 text-white" />
                   <span>SUBSCRIBE & WATCH OUR VIDEOS</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-black" />
+                  <ExternalLink className="w-3.5 h-3.5 text-white" />
                 </a>
               </div>
 
@@ -208,11 +208,11 @@ export default function DeltaFoxOptionsSection() {
                       href={SOCIAL_CONFIG.instagram.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full max-w-xs inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-black font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+                      className="w-full max-w-xs inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
                     >
-                      <InstagramIcon className="w-4 h-4 text-black" />
+                      <InstagramIcon className="w-4 h-4 text-white" />
                       <span>FOLLOW ON INSTAGRAM</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-black" />
+                      <ExternalLink className="w-3.5 h-3.5 text-white" />
                     </a>
                   </div>
 
