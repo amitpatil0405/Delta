@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, Sparkles, QrCode } from 'lucide-react';
+import { ExternalLink, Sparkles, Play, Camera } from 'lucide-react';
 import deltafoxOptionsLogo from '../assets/deltafox_options_logo.png';
 import instaQrImg from '../assets/insta_qr_cropped.png';
 import youtubeLogo from '../assets/youtube_logo.png';
@@ -44,7 +44,7 @@ export default function DeltaFoxOptionsSection() {
             {/* Left Column — Centered Brand Header & 2x2 Content Focus Grid */}
             <div className="lg:col-span-6 flex flex-col items-center justify-center text-center space-y-4 sm:space-y-5 my-auto">
 
-              {/* Centered Sub-Brand Emblem Logo (Scaled ~15% larger for prominent feel) */}
+              {/* Centered Sub-Brand Emblem Logo */}
               <div className="relative group">
                 <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/30 via-orange-500/20 to-amber-500/30 rounded-2xl blur-lg group-hover:opacity-100 transition duration-500 opacity-70" />
                 <img
@@ -127,7 +127,7 @@ export default function DeltaFoxOptionsSection() {
             {/* Right Column — Vertically Balanced Redesigned Social Media Cards */}
             <div className="lg:col-span-6 flex flex-col justify-center space-y-5 my-auto">
 
-              {/* YouTube Card — Redesigned Clean Centered Flow with Responsive Section Tag & Slow Animated Gradient Border */}
+              {/* YouTube Card — Directly Displayed Prominent Custom Logo */}
               <div className="bg-neutral-900/80 border rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col items-center text-center space-y-4 group animate-youtube-card-border transition-all duration-300">
 
                 {/* Responsive Section Tag: Center on Mobile (< md), Top-Left on Desktop (md+) */}
@@ -137,15 +137,13 @@ export default function DeltaFoxOptionsSection() {
                   </span>
                 </div>
 
-                {/* Centered Header Block: YouTube Logo Image, Channel Title, & Handle */}
+                {/* Centered Header Block: Prominent Custom YouTube Logo Image directly without box container */}
                 <div className="flex flex-col items-center space-y-2 pt-1">
-                  <div className="p-2.5 rounded-2xl bg-red-600/20 border border-red-500/40 shadow-[0_0_25px_rgba(239,68,68,0.35)] flex items-center justify-center">
-                    <img
-                      src={youtubeLogo}
-                      alt="YouTube Logo"
-                      className="w-14 h-14 object-contain drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]"
-                    />
-                  </div>
+                  <img
+                    src={youtubeLogo}
+                    alt="YouTube Logo"
+                    className="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-[0_0_20px_rgba(239,68,68,0.45)]"
+                  />
 
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">DeltaFox Options</h2>
@@ -155,20 +153,20 @@ export default function DeltaFoxOptionsSection() {
                   </div>
                 </div>
 
-                {/* Centered CTA Button directly beneath channel block */}
+                {/* Centered CTA Button with Standard Lucide Play Icon */}
                 <a
                   href={SOCIAL_CONFIG.youtube.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full max-w-sm inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <img src={youtubeLogo} alt="YouTube" className="w-5 h-5 object-contain" />
+                  <Play className="w-4 h-4 text-white fill-current" />
                   <span>SUBSCRIBE & WATCH OUR VIDEOS</span>
                   <ExternalLink className="w-3.5 h-3.5 text-white" />
                 </a>
               </div>
 
-              {/* Instagram Card — Responsive Tag, Crisp Handle, Vertically Centered QR Code & Slow Animated Gradient Border */}
+              {/* Instagram Card — Directly Displayed Prominent Custom Logo */}
               <div className="bg-neutral-900/80 border rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col justify-between space-y-4 group animate-instagram-card-border transition-all duration-300">
 
                 {/* Responsive Section Tag: Center on Mobile (< md), Top-Left on Desktop (md+) */}
@@ -184,37 +182,35 @@ export default function DeltaFoxOptionsSection() {
                   {/* Left Area: Centered Handle Block & CTA Button */}
                   <div className="flex flex-col items-center justify-center text-center space-y-3 flex-1 w-full sm:w-auto my-auto">
 
-                    {/* Handle with Icon & Crisp Font Styling */}
-                    <div className="flex items-center justify-center space-x-2.5">
-                      <div className="p-1.5 rounded-xl bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 shadow-[0_0_15px_rgba(236,72,153,0.35)] shrink-0 flex items-center justify-center">
-                        <img
-                          src={instaLogo}
-                          alt="Instagram Logo"
-                          className="w-6 h-6 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
-                        />
-                      </div>
+                    {/* Handle with Prominent Custom Instagram Logo directly without box container */}
+                    <div className="flex items-center justify-center space-x-3">
+                      <img
+                        src={instaLogo}
+                        alt="Instagram Logo"
+                        className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_0_15px_rgba(236,72,153,0.45)] shrink-0"
+                      />
                       <h2 className="text-sm sm:text-base font-semibold text-gray-300 font-sans tracking-wide">
                         {SOCIAL_CONFIG.instagram.handle}
                       </h2>
                     </div>
 
-                    {/* CTA Button directly beneath handle */}
+                    {/* CTA Button with Standard Lucide Camera Icon */}
                     <a
                       href={SOCIAL_CONFIG.instagram.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full max-w-xs inline-flex items-center justify-center space-x-2.5 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
                     >
-                      <img src={instaLogo} alt="Instagram" className="w-4 h-4 object-contain" />
+                      <Camera className="w-4 h-4 text-white" />
                       <span>FOLLOW ON INSTAGRAM</span>
                       <ExternalLink className="w-3.5 h-3.5 text-white" />
                     </a>
                   </div>
 
-                  {/* Right Area: Styled QR Code Card - Perfectly Vertically Centered */}
+                  {/* Right Area: Styled QR Code Card with Standard Lucide Camera Icon Overlay Badge */}
                   <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-36 sm:w-40 group-hover:border-amber-400 transition-colors mx-auto sm:mx-0 my-auto">
                     <div className="inline-flex items-center justify-center space-x-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[8.5px] font-mono uppercase tracking-wider">
-                      <img src={instaLogo} alt="Instagram" className="w-2.5 h-2.5 object-contain" />
+                      <Camera className="w-2.5 h-2.5 text-amber-400" />
                       <span>SCAN TO FOLLOW</span>
                     </div>
 
