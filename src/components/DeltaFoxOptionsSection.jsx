@@ -34,14 +34,17 @@ export default function DeltaFoxOptionsSection() {
         {/* Dedicated Pulsing Neon Background Aura Layer (Matching Contact Us Style) */}
         <div className="absolute -inset-1 rounded-3xl bg-amber-500/10 shadow-[0_0_50px_rgba(255,102,0,0.6),0_0_100px_rgba(255,102,0,0.3)] animate-pulse pointer-events-none" />
 
-        {/* Borderless Dark Glassmorphic Card */}
-        <div className="relative bg-[#0a0a0c]/95 rounded-3xl p-6 sm:p-8 lg:p-10 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
+        {/* Borderless Dark Glassmorphic Card (Frosted Glass with backdrop-blur) */}
+        <div className="relative bg-[#0a0a0c]/70 backdrop-blur-md rounded-3xl p-5 sm:p-7 lg:p-9 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
 
           {/* Subtle top accent bar */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-80" />
 
+          {/* Subtle bottom accent bar (Symmetrical) */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-80" />
+
           {/* Top Centered Badge */}
-          <div className="flex justify-center pb-6 sm:pb-8">
+          <div className="flex justify-center pb-4 sm:pb-6">
             <div className="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono tracking-widest uppercase">
               <Sparkles className="w-3.5 h-3.5" />
               <span>OFFICIAL MEDIA & OPTIONS HUB</span>
@@ -49,18 +52,18 @@ export default function DeltaFoxOptionsSection() {
           </div>
 
           {/* 2-Column Responsive Layout Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
 
-            {/* Left Column — Centered Brand Header & 2x2 Content Focus Grid (UNTOUCHED / EXACTLY AS IS) */}
-            <div className="lg:col-span-6 flex flex-col items-center text-center space-y-5">
+            {/* Left Column — Centered Brand Header & 2x2 Content Focus Grid */}
+            <div className="lg:col-span-6 flex flex-col items-center justify-center text-center space-y-4 sm:space-y-5 my-auto">
 
-              {/* Centered Sub-Brand Emblem Logo */}
+              {/* Centered Sub-Brand Emblem Logo (Scaled ~15% larger for prominent feel) */}
               <div className="relative group">
                 <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/30 via-orange-500/20 to-amber-500/30 rounded-2xl blur-lg group-hover:opacity-100 transition duration-500 opacity-70" />
                 <img
                   src={deltafoxOptionsLogo}
                   alt="DeltaFox Options"
-                  className="relative h-24 sm:h-28 w-auto object-contain drop-shadow-[0_0_25px_rgba(245,158,11,0.35)] mx-auto"
+                  className="relative h-28 sm:h-32 w-auto object-contain drop-shadow-[0_0_25px_rgba(245,158,11,0.35)] mx-auto"
                 />
               </div>
 
@@ -80,7 +83,7 @@ export default function DeltaFoxOptionsSection() {
               </p>
 
               {/* What We Cover On Our Channels — 2x2 Grid */}
-              <div className="w-full pt-2">
+              <div className="w-full pt-1">
                 <div className="text-amber-400 font-mono text-[11px] uppercase tracking-widest font-bold mb-3 text-center flex items-center justify-center space-x-2">
                   <span className="h-px w-8 bg-amber-500/30" />
                   <span>WHAT WE COVER ON OUR CHANNELS</span>
@@ -134,55 +137,52 @@ export default function DeltaFoxOptionsSection() {
 
             </div>
 
-            {/* Right Column — Vertically Balanced Social Media Cards */}
-            <div className="lg:col-span-6 flex flex-col justify-center space-y-5">
+            {/* Right Column — Vertically Balanced Redesigned Social Media Cards */}
+            <div className="lg:col-span-6 flex flex-col justify-center space-y-5 my-auto">
 
-              {/* YouTube Card */}
-              <div className="bg-neutral-900/80 border border-red-500/30 rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg group hover:border-red-500/60 transition-all duration-300">
-                <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-red-600" />
+              {/* YouTube Card — Redesigned Clean Centered Flow */}
+              <div className="bg-neutral-900/80 border border-red-500/30 rounded-2xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center text-center space-y-4 group hover:border-red-500/60 transition-all duration-300">
 
-                <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-5 w-full">
-                  {/* Left Side: YouTube Icon with YouTube Official badge directly below */}
-                  <div className="flex flex-col items-center shrink-0 space-y-1.5">
-                    <div className="p-3 rounded-2xl bg-red-600/20 border border-red-500/40 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.25)]">
-                      <YoutubeIcon className="w-8 h-8" />
-                    </div>
-                    <span className="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono border border-red-500/30 uppercase tracking-wider whitespace-nowrap">
-                      YouTube Official
-                    </span>
+                {/* Centered Header Block: YouTube Icon, Channel Title, Handle & Official Badge */}
+                <div className="flex flex-col items-center space-y-2">
+                  <div className="p-3.5 rounded-2xl bg-red-600/20 border border-red-500/40 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+                    <YoutubeIcon className="w-9 h-9" />
                   </div>
 
-                  {/* Right Side: Channel Name & Button Stacked Vertically */}
-                  <div className="flex-1 text-center sm:text-left space-y-3.5 w-full">
-                    <div>
-                      <h2 className="text-lg sm:text-xl font-bold text-white font-mono">Deltafox Options</h2>
-                      <p className="text-xs text-gray-400 font-mono mt-0.5">
-                        {SOCIAL_CONFIG.youtube.handle}
-                      </p>
+                  <div>
+                    <div className="flex items-center justify-center space-x-2">
+                      <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">Deltafox Options</h2>
+                      <span className="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono border border-red-500/30 uppercase tracking-wider">
+                        YouTube Official
+                      </span>
                     </div>
-
-                    <a
-                      href={SOCIAL_CONFIG.youtube.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full inline-flex items-center justify-center space-x-2 px-5 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
-                    >
-                      <YoutubeIcon className="w-4 h-4" />
-                      <span>SUBSCRIBE & WATCH OUR VIDEOS</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+                    <p className="text-xs text-gray-400 font-mono mt-1">
+                      {SOCIAL_CONFIG.youtube.handle}
+                    </p>
                   </div>
                 </div>
+
+                {/* Centered CTA Button directly beneath channel block */}
+                <a
+                  href={SOCIAL_CONFIG.youtube.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <YoutubeIcon className="w-4 h-4" />
+                  <span>SUBSCRIBE & WATCH OUR VIDEOS</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
               </div>
 
-              {/* Instagram Card & Integrated Dark QR Code */}
-              <div className="bg-neutral-900/80 border border-amber-500/30 rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col md:flex-row items-center justify-center gap-5 sm:gap-6 group hover:border-amber-500/60 transition-all duration-300">
+              {/* Instagram Card — Vertically Centered Left CTA with Right QR Code */}
+              <div className="bg-neutral-900/80 border border-amber-500/30 rounded-2xl p-6 relative overflow-hidden shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 group hover:border-amber-500/60 transition-all duration-300">
                 <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-gradient-to-b from-purple-500 via-pink-500 to-amber-500" />
 
-                {/* Instagram Text & CTA */}
-                <div className="space-y-3.5 text-center md:text-left flex-1 max-w-xs">
-                  <div className="flex items-center justify-center md:justify-start space-x-3">
-                    <div className="p-2.5 rounded-xl bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 text-white shadow-[0_0_15px_rgba(236,72,153,0.3)] shrink-0">
+                {/* Left Area: Vertically aligned Instagram Icon, Handle, Subtitle & Button */}
+                <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-3.5 flex-1 max-w-xs">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-3 rounded-xl bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 text-white shadow-[0_0_15px_rgba(236,72,153,0.3)] shrink-0">
                       <InstagramIcon className="w-6 h-6" />
                     </div>
                     <div>
@@ -207,8 +207,8 @@ export default function DeltaFoxOptionsSection() {
                   </a>
                 </div>
 
-                {/* Scanned QR Code Card */}
-                <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-40 sm:w-44 group-hover:border-amber-400 transition-colors">
+                {/* Right Area: Styled QR Code Card with Balanced Internal Padding */}
+                <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3.5 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-40 sm:w-44 group-hover:border-amber-400 transition-colors my-auto">
                   <div className="inline-flex items-center justify-center space-x-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[8.5px] font-mono uppercase tracking-wider">
                     <QrCode className="w-2.5 h-2.5" />
                     <span>SCAN TO FOLLOW</span>
