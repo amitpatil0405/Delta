@@ -157,7 +157,7 @@ export default function DeltaFoxOptionsSection() {
                   </div>
 
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">Deltafox Options</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">DeltaFox Options</h2>
                     <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide mt-1">
                       {SOCIAL_CONFIG.youtube.handle}
                     </p>
@@ -226,7 +226,7 @@ export default function DeltaFoxOptionsSection() {
                     <div className="bg-white p-1.5 rounded-lg shadow-[0_0_15px_rgba(245,158,11,0.2)] border border-amber-500/30">
                       <img
                         src={instaQrImg}
-                        alt="Instagram @DELTAFOX_OPTIONS QR Code"
+                        alt="Instagram @DeltaFox_Options QR Code"
                         className="w-full h-auto object-contain rounded"
                       />
                     </div>
