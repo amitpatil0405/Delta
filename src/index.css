@@ -217,3 +217,46 @@
 .animate-golden-move {
   animation: goldenMove 3.5s linear infinite;
 }
+
+/* YouTube & Instagram Card Slow Animated Borders */
+@keyframes instagramBorderGlow {
+  0% {
+    border-color: rgba(168, 85, 247, 0.45);
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+  }
+  33% {
+    border-color: rgba(236, 72, 153, 0.55);
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.2);
+  }
+  66% {
+    border-color: rgba(249, 115, 22, 0.55);
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.2);
+  }
+  100% {
+    border-color: rgba(168, 85, 247, 0.45);
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+  }
+}
+
+@keyframes youtubeBorderGlow {
+  0% {
+    border-color: rgba(82, 82, 91, 0.5);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+  }
+  50% {
+    border-color: rgba(255, 0, 0, 0.55);
+    box-shadow: 0 0 18px rgba(255, 0, 0, 0.2);
+  }
+  100% {
+    border-color: rgba(82, 82, 91, 0.5);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+  }
+}
+
+.animate-instagram-card-border {
+  animation: instagramBorderGlow 8s linear infinite;
+}
+
+.animate-youtube-card-border {
+  animation: youtubeBorderGlow 8s linear infinite;
+}

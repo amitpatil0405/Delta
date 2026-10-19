@@ -140,8 +140,8 @@ export default function DeltaFoxOptionsSection() {
             {/* Right Column — Vertically Balanced Redesigned Social Media Cards */}
             <div className="lg:col-span-6 flex flex-col justify-center space-y-5 my-auto">
 
-              {/* YouTube Card — Redesigned Clean Centered Flow with Responsive Section Tag */}
-              <div className="bg-neutral-900/80 border border-red-500/30 rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col items-center text-center space-y-4 group hover:border-red-500/60 transition-all duration-300">
+              {/* YouTube Card — Redesigned Clean Centered Flow with Responsive Section Tag & Slow Animated Gradient Border */}
+              <div className="bg-neutral-900/80 border rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col items-center text-center space-y-4 group animate-youtube-card-border transition-all duration-300">
 
                 {/* Responsive Section Tag: Center on Mobile (< md), Top-Left on Desktop (md+) */}
                 <div className="w-full flex justify-center md:justify-start">
@@ -177,9 +177,8 @@ export default function DeltaFoxOptionsSection() {
                 </a>
               </div>
 
-              {/* Instagram Card — Responsive Tag, Crisp Handle, Vertically Centered QR Code */}
-              <div className="bg-neutral-900/80 border border-amber-500/30 rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col justify-between space-y-4 group hover:border-amber-500/60 transition-all duration-300">
-                <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-gradient-to-b from-purple-500 via-pink-500 to-amber-500" />
+              {/* Instagram Card — Responsive Tag, Crisp Handle, Vertically Centered QR Code & Slow Animated Gradient Border */}
+              <div className="bg-neutral-900/80 border rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col justify-between space-y-4 group animate-instagram-card-border transition-all duration-300">
 
                 {/* Responsive Section Tag: Center on Mobile (< md), Top-Left on Desktop (md+) */}
                 <div className="w-full flex justify-center md:justify-start">
