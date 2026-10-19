@@ -149,7 +149,7 @@ export default function MarketOverviewSection() {
   const upcomingHoliday = processedHolidays.find(h => h.dateObj && h.dateObj >= today) || processedHolidays[processedHolidays.length - 1];
 
   return (
-    <section id="intelligence" className="relative bg-transparent bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 px-4 md:px-8 border-t border-white/5 overflow-hidden">
+    <section id="intelligence" className="relative bg-transparent bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 border-t border-white/5 overflow-hidden">
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber top-0 right-1/4" />
 
