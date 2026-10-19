@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid
 } from 'recharts';
@@ -235,6 +235,13 @@ export default function OptionsStrategiesSection() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [activeStrategyId, setActiveStrategyId] = useState('short-strangle');
 
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const filteredStrategies = selectedCategory === 'all'
     ? STRATEGIES_DATA
     : STRATEGIES_DATA.filter(s => s.category === selectedCategory);
@@ -388,7 +395,7 @@ export default function OptionsStrategiesSection() {
             {/* Payoff Chart */}
             <div className="h-[340px] w-full pt-4">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={activeStrategy.payoffData}>
+                <AreaChart data={activeStrategy.payoffData} margin={{ top: 10, right: isMobile ? 10 : 30, left: isMobile ? -15 : 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="payoffGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#d97706" stopOpacity={0.4}/>
@@ -396,8 +403,8 @@ export default function OptionsStrategiesSection() {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#222222" />
-                  <XAxis dataKey="spot" stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
-                  <YAxis stroke="#666" tick={{ fontSize: 11, fill: '#888' }} />
+                  <XAxis dataKey="spot" stroke="#666" tick={{ fontSize: isMobile ? 10 : 11, fill: '#888' }} />
+                  <YAxis stroke="#666" tick={{ fontSize: isMobile ? 10 : 11, fill: '#888' }} width={isMobile ? 40 : 60} />
                   <Tooltip
                     contentStyle={{ backgroundColor: '#0a0a0c', borderColor: '#333', borderRadius: '8px', color: '#fff' }}
                     formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, 'P&L']}

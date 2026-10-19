@@ -685,7 +685,7 @@ export default function PortfolioJournalSection() {
                 maxPnlProp={chartYDomain[1]}
               />
               <ResponsiveContainer width="100%" height="100%" className="relative">
-                <AreaChart data={pnlCurveData} margin={{ top: 10, right: 25, left: 10, bottom: 25 }}>
+                <AreaChart data={pnlCurveData} margin={{ top: 10, right: isMobile ? 12 : 25, left: isMobile ? -12 : 10, bottom: 25 }}>
                   <defs>
                     {/* Dynamic Stroke Gradient: Green above zero, smooth blend across zero, Red below zero */}
                     <linearGradient id="pnlStrokeGradient" x1="0" y1="0" x2="0" y2="1">
@@ -746,11 +746,11 @@ export default function PortfolioJournalSection() {
                   />
                   <YAxis
                     stroke="#666"
-                    tick={{ fontSize: 11, fill: '#888' }}
+                    tick={{ fontSize: isMobile ? 9 : 11, fill: '#888' }}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                     domain={chartYDomain}
-                    width={60}
+                    width={isMobile ? 42 : 60}
                     tickFormatter={(val) => (Math.abs(val) < 10000 ? '' : val)}
                   />
 
