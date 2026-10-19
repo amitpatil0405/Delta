@@ -2,22 +2,9 @@ import React from 'react';
 import { ExternalLink, Sparkles, QrCode } from 'lucide-react';
 import deltafoxOptionsLogo from '../assets/deltafox_options_logo.png';
 import instaQrImg from '../assets/insta_qr_cropped.png';
+import youtubeLogo from '../assets/youtube_logo.png';
+import instaLogo from '../assets/insta_logo.png';
 import { SOCIAL_CONFIG } from '../services/socialMediaService';
-
-// Custom inline SVG icons for social platforms
-const YoutubeIcon = ({ className = "w-5 h-5" }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-  </svg>
-);
-
-const InstagramIcon = ({ className = "w-5 h-5" }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-  </svg>
-);
 
 export default function DeltaFoxOptionsSection() {
   return (
@@ -150,10 +137,14 @@ export default function DeltaFoxOptionsSection() {
                   </span>
                 </div>
 
-                {/* Centered Header Block: YouTube Icon, Channel Title, & Handle */}
+                {/* Centered Header Block: YouTube Logo Image, Channel Title, & Handle */}
                 <div className="flex flex-col items-center space-y-2 pt-1">
-                  <div className="p-3.5 rounded-2xl bg-red-600/20 border border-red-500/40 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
-                    <YoutubeIcon className="w-9 h-9" />
+                  <div className="p-2.5 rounded-2xl bg-red-600/20 border border-red-500/40 shadow-[0_0_25px_rgba(239,68,68,0.35)] flex items-center justify-center">
+                    <img
+                      src={youtubeLogo}
+                      alt="YouTube Logo"
+                      className="w-14 h-14 object-contain drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]"
+                    />
                   </div>
 
                   <div>
@@ -169,9 +160,9 @@ export default function DeltaFoxOptionsSection() {
                   href={SOCIAL_CONFIG.youtube.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <YoutubeIcon className="w-4 h-4 text-white" />
+                  <img src={youtubeLogo} alt="YouTube" className="w-5 h-5 object-contain" />
                   <span>SUBSCRIBE & WATCH OUR VIDEOS</span>
                   <ExternalLink className="w-3.5 h-3.5 text-white" />
                 </a>
@@ -195,8 +186,12 @@ export default function DeltaFoxOptionsSection() {
 
                     {/* Handle with Icon & Crisp Font Styling */}
                     <div className="flex items-center justify-center space-x-2.5">
-                      <div className="p-2 rounded-lg bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.3)] shrink-0">
-                        <InstagramIcon className="w-5 h-5" />
+                      <div className="p-1.5 rounded-xl bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 shadow-[0_0_15px_rgba(236,72,153,0.35)] shrink-0 flex items-center justify-center">
+                        <img
+                          src={instaLogo}
+                          alt="Instagram Logo"
+                          className="w-6 h-6 object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.4)]"
+                        />
                       </div>
                       <h2 className="text-sm sm:text-base font-semibold text-gray-300 font-sans tracking-wide">
                         {SOCIAL_CONFIG.instagram.handle}
@@ -208,9 +203,9 @@ export default function DeltaFoxOptionsSection() {
                       href={SOCIAL_CONFIG.instagram.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full max-w-xs inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+                      className="w-full max-w-xs inline-flex items-center justify-center space-x-2.5 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
                     >
-                      <InstagramIcon className="w-4 h-4 text-white" />
+                      <img src={instaLogo} alt="Instagram" className="w-4 h-4 object-contain" />
                       <span>FOLLOW ON INSTAGRAM</span>
                       <ExternalLink className="w-3.5 h-3.5 text-white" />
                     </a>
@@ -218,8 +213,8 @@ export default function DeltaFoxOptionsSection() {
 
                   {/* Right Area: Styled QR Code Card - Perfectly Vertically Centered */}
                   <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-36 sm:w-40 group-hover:border-amber-400 transition-colors mx-auto sm:mx-0 my-auto">
-                    <div className="inline-flex items-center justify-center space-x-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[8.5px] font-mono uppercase tracking-wider">
-                      <QrCode className="w-2.5 h-2.5" />
+                    <div className="inline-flex items-center justify-center space-x-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[8.5px] font-mono uppercase tracking-wider">
+                      <img src={instaLogo} alt="Instagram" className="w-2.5 h-2.5 object-contain" />
                       <span>SCAN TO FOLLOW</span>
                     </div>
 
