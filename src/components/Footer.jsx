@@ -56,8 +56,8 @@ export default function Footer({ onNavigate }) {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
 
           {/* Brand Info (Left) */}
-          <div className="md:col-span-4 space-y-4">
-            <div className="flex items-center cursor-pointer" onClick={() => handleLinkClick('home')}>
+          <div className="md:col-span-4 space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-start cursor-pointer" onClick={() => handleLinkClick('home')}>
               <img src={logoImg} alt="DeltaFox" className="h-10 w-auto object-contain filter drop-shadow-[0_0_10px_rgba(217,119,6,0.3)]" />
             </div>
             <p className="text-xs text-gray-400 leading-relaxed font-sans max-w-sm">
@@ -66,10 +66,10 @@ export default function Footer({ onNavigate }) {
           </div>
 
           {/* Structured Link Columns & Founder Info (Right) */}
-          <div className="md:col-span-8 flex flex-wrap sm:flex-nowrap items-start gap-8 sm:gap-10 lg:gap-12 text-xs">
+          <div className="md:col-span-8 grid grid-cols-2 sm:grid-cols-4 md:flex md:flex-nowrap items-start gap-6 sm:gap-8 lg:gap-12 text-xs">
 
             {/* Quick Links Column */}
-            <div className="space-y-3 min-w-[140px]">
+            <div className="space-y-3">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">QUICK LINKS</span>
               <ul className="space-y-2">
                 <li><button onClick={() => handleLinkClick('home')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Home</button></li>
@@ -81,7 +81,7 @@ export default function Footer({ onNavigate }) {
             </div>
 
             {/* Resources Column */}
-            <div className="space-y-3 min-w-[110px]">
+            <div className="space-y-3">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">RESOURCES</span>
               <ul className="space-y-2">
                 <li><button onClick={() => handleLinkClick('strategies')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Strategies</button></li>
@@ -90,7 +90,7 @@ export default function Footer({ onNavigate }) {
             </div>
 
             {/* Company / Support Column */}
-            <div className="space-y-3 min-w-[130px]">
+            <div className="space-y-3">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">COMPANY / SUPPORT</span>
               <ul className="space-y-2">
                 <li><button onClick={() => handleLinkClick('about')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">About DeltaFox</button></li>
@@ -99,7 +99,7 @@ export default function Footer({ onNavigate }) {
             </div>
 
             {/* Founder Column (Far Right) */}
-            <div className="space-y-3 min-w-[180px]">
+            <div className="space-y-3 col-span-2 sm:col-span-1">
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">FOUNDER</span>
               <div className="text-gray-300 text-xs space-y-1 font-roboto-mono">
                 <span className="block font-bold text-white">Mr. Amit Patil</span>
@@ -108,7 +108,7 @@ export default function Footer({ onNavigate }) {
                   <span>Email: </span>
                   <a
                     href="mailto:deltafox.options@yahoo.com"
-                    className="text-amber-400 hover:text-amber-300 transition-colors"
+                    className="text-amber-400 hover:text-amber-300 transition-colors break-all"
                   >
                     deltafox.options@yahoo.com
                   </a>
