@@ -158,15 +158,15 @@ export default function DeltaFoxOptionsSection() {
                   href={SOCIAL_CONFIG.youtube.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
                 >
-                  <Play className="w-4 h-4 text-white fill-current" />
+                  <Play className="w-4 h-4 text-white fill-current shrink-0" />
                   <span>SUBSCRIBE & WATCH OUR VIDEOS</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-white" />
+                  <ExternalLink className="w-3.5 h-3.5 text-white shrink-0" />
                 </a>
               </div>
 
-              {/* Instagram Card — Directly Displayed Prominent Custom Logo */}
+              {/* Instagram Card — Matching Symmetrical Layout Structure */}
               <div className="bg-neutral-900/80 border rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col justify-between space-y-4 group animate-instagram-card-border transition-all duration-300">
 
                 {/* Responsive Section Tag: Center on Mobile (< md), Top-Left on Desktop (md+) */}
@@ -176,38 +176,41 @@ export default function DeltaFoxOptionsSection() {
                   </span>
                 </div>
 
-                {/* Main Content Row: Left Block (Handle & Button) & Right QR Code Vertically Centered */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-5 my-auto">
+                {/* Main Content Row: Left Vertical Block (Logo, Handle, Equalized CTA Button) & Right Scanner Card */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-5 my-auto">
 
-                  {/* Left Area: Centered Handle Block & CTA Button */}
-                  <div className="flex flex-col items-center justify-center text-center space-y-3 flex-1 w-full sm:w-auto my-auto">
+                  {/* Left Area: Vertically Rearranged Instagram Block (Top Logo, Middle Handle, Bottom Equalized CTA Button) */}
+                  <div className="flex flex-col items-center justify-center text-center space-y-3 flex-1 w-full my-auto">
 
-                    {/* Handle with Prominent Custom Instagram Logo directly without box container */}
-                    <div className="flex items-center justify-center space-x-3">
-                      <img
-                        src={instaLogo}
-                        alt="Instagram Logo"
-                        className="w-10 h-10 sm:w-12 sm:h-12 object-contain drop-shadow-[0_0_15px_rgba(236,72,153,0.45)] shrink-0"
-                      />
-                      <h2 className="text-sm sm:text-base font-semibold text-gray-300 font-sans tracking-wide">
+                    {/* Top: Custom Instagram Logo Image directly without box container */}
+                    <img
+                      src={instaLogo}
+                      alt="Instagram Logo"
+                      className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-[0_0_20px_rgba(236,72,153,0.45)] shrink-0"
+                    />
+
+                    {/* Middle: Handle Name */}
+                    <div>
+                      <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">DeltaFox Options</h2>
+                      <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide mt-1">
                         {SOCIAL_CONFIG.instagram.handle}
-                      </h2>
+                      </p>
                     </div>
 
-                    {/* CTA Button with Standard Lucide Camera Icon */}
+                    {/* Bottom: CTA Button with Equalized Height/Width/Padding matching YouTube Button */}
                     <a
                       href={SOCIAL_CONFIG.instagram.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full max-w-xs inline-flex items-center justify-center space-x-2.5 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+                      className="w-full max-w-sm inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
                     >
-                      <Camera className="w-4 h-4 text-white" />
+                      <Camera className="w-4 h-4 text-white shrink-0" />
                       <span>FOLLOW ON INSTAGRAM</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-white" />
+                      <ExternalLink className="w-3.5 h-3.5 text-white shrink-0" />
                     </a>
                   </div>
 
-                  {/* Right Area: Styled QR Code Card with Standard Lucide Camera Icon Overlay Badge */}
+                  {/* Right Area: Styled QR Code Scanner Card with Standard Lucide Camera Icon Overlay Badge */}
                   <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-36 sm:w-40 group-hover:border-amber-400 transition-colors mx-auto sm:mx-0 my-auto">
                     <div className="inline-flex items-center justify-center space-x-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[8.5px] font-mono uppercase tracking-wider">
                       <Camera className="w-2.5 h-2.5 text-amber-400" />
