@@ -180,21 +180,22 @@ export default function DeltaFoxOptionsSection() {
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-5 my-auto">
 
                   {/* Left Area: Vertically Rearranged Instagram Block (Top Logo, Middle Handle, Bottom Equalized CTA Button) */}
-                  <div className="flex flex-col items-center justify-center text-center space-y-3 flex-1 w-full my-auto">
+                  <div className="flex flex-col items-center justify-center text-center space-y-4 flex-1 w-full my-auto">
 
-                    {/* Top: Custom Instagram Logo Image directly without box container */}
-                    <img
-                      src={instaLogo}
-                      alt="Instagram Logo"
-                      className="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-[0_0_20px_rgba(236,72,153,0.45)] shrink-0"
-                    />
+                    {/* Header Block: Top Custom Instagram Logo & Middle Handle Name */}
+                    <div className="flex flex-col items-center space-y-2 pt-1">
+                      <img
+                        src={instaLogo}
+                        alt="Instagram Logo"
+                        className="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-[0_0_20px_rgba(236,72,153,0.45)] shrink-0"
+                      />
 
-                    {/* Middle: Handle Name */}
-                    <div>
-                      <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">DeltaFox Options</h2>
-                      <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide mt-1">
-                        {SOCIAL_CONFIG.instagram.handle}
-                      </p>
+                      <div>
+                        <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">DeltaFox Options</h2>
+                        <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide mt-1">
+                          {SOCIAL_CONFIG.instagram.handle}
+                        </p>
+                      </div>
                     </div>
 
                     {/* Bottom: CTA Button with Equalized Height/Width/Padding matching YouTube Button */}
