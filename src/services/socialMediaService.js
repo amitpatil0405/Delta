@@ -5,7 +5,7 @@
 
 const YOUTUBE_HANDLE = '@deltafox.trading';
 const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@deltafox.trading';
-const INSTAGRAM_HANDLE = '@DELTAFOX_OPTIONS';
+const INSTAGRAM_HANDLE = '@DeltaFox_Options';
 const INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/deltafox_options/';
 
 export const SOCIAL_CONFIG = {
