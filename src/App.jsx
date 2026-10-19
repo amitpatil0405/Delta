@@ -6,6 +6,7 @@ import DeltaFox3DScene from './components/DeltaFox3DScene';
 import MarketOverviewSection from './components/MarketOverviewSection';
 import TechnicalAnalysisSection from './components/TechnicalAnalysisSection';
 import PortfolioJournalSection from './components/PortfolioJournalSection';
+import DeltaFoxOptionsSection from './components/DeltaFoxOptionsSection';
 import OptionsStrategiesSection from './components/OptionsStrategiesSection';
 import TrainingSection from './components/TrainingSection';
 import BlueprintSection from './components/BlueprintSection';
@@ -58,7 +59,10 @@ export default function App() {
           {/* 3. Portfolio & Trading Journal */}
           <PortfolioJournalSection />
 
-          {/* 4. Holiday Calendar (Market Overview & Scheduled Closures) */}
+          {/* 4. DeltaFox Options Media Hub & Social Integration */}
+          <DeltaFoxOptionsSection />
+
+          {/* 5. Holiday Calendar (Market Overview & Scheduled Closures) */}
           <MarketOverviewSection />
 
           {/* 5. 3D Scroll-Driven Options Strategies & Payoff Diagrams */}
