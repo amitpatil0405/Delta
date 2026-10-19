@@ -140,12 +140,12 @@ export default function DeltaFoxOptionsSection() {
             {/* Right Column — Vertically Balanced Redesigned Social Media Cards */}
             <div className="lg:col-span-6 flex flex-col justify-center space-y-5 my-auto">
 
-              {/* YouTube Card — Redesigned Clean Centered Flow with Top-Left Label */}
+              {/* YouTube Card — Redesigned Clean Centered Flow with Responsive Section Tag */}
               <div className="bg-neutral-900/80 border border-red-500/30 rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col items-center text-center space-y-4 group hover:border-red-500/60 transition-all duration-300">
 
-                {/* Top-Left Section Tag */}
-                <div className="w-full flex justify-start">
-                  <span className="text-[10px] font-mono font-bold text-red-400 tracking-wider uppercase bg-red-500/10 px-2.5 py-1 rounded-md border border-red-500/20">
+                {/* Responsive Section Tag: Center on Mobile (< md), Top-Left on Desktop (md+) */}
+                <div className="w-full flex justify-center md:justify-start">
+                  <span className="text-[10px] font-mono font-bold text-red-400 tracking-wider uppercase bg-red-500/10 px-2.5 py-1 rounded-md border border-red-500/20 text-center md:text-left">
                     OFFICIAL YOUTUBE CHANNEL
                   </span>
                 </div>
@@ -158,7 +158,7 @@ export default function DeltaFoxOptionsSection() {
 
                   <div>
                     <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">Deltafox Options</h2>
-                    <p className="text-xs text-gray-400 font-mono mt-1">
+                    <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide mt-1">
                       {SOCIAL_CONFIG.youtube.handle}
                     </p>
                   </div>
@@ -177,29 +177,29 @@ export default function DeltaFoxOptionsSection() {
                 </a>
               </div>
 
-              {/* Instagram Card — Top-Left Tag, Centered Handle/CTA Block & Balanced QR Code */}
-              <div className="bg-neutral-900/80 border border-amber-500/30 rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col space-y-4 group hover:border-amber-500/60 transition-all duration-300">
+              {/* Instagram Card — Responsive Tag, Crisp Handle, Vertically Centered QR Code */}
+              <div className="bg-neutral-900/80 border border-amber-500/30 rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col justify-between space-y-4 group hover:border-amber-500/60 transition-all duration-300">
                 <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-gradient-to-b from-purple-500 via-pink-500 to-amber-500" />
 
-                {/* Top-Left Section Tag */}
-                <div className="w-full flex justify-start">
-                  <span className="text-[10px] font-mono font-bold text-pink-400 tracking-wider uppercase bg-pink-500/10 px-2.5 py-1 rounded-md border border-pink-500/20">
+                {/* Responsive Section Tag: Center on Mobile (< md), Top-Left on Desktop (md+) */}
+                <div className="w-full flex justify-center md:justify-start">
+                  <span className="text-[10px] font-mono font-bold text-pink-400 tracking-wider uppercase bg-pink-500/10 px-2.5 py-1 rounded-md border border-pink-500/20 text-center md:text-left">
                     OFFICIAL INSTAGRAM PAGE
                   </span>
                 </div>
 
-                {/* Main Content Row: Left Block (Handle & Button) & Right QR Code with Reduced Gap */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-5 pt-1">
+                {/* Main Content Row: Left Block (Handle & Button) & Right QR Code Vertically Centered */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-5 my-auto">
 
                   {/* Left Area: Centered Handle Block & CTA Button */}
-                  <div className="flex flex-col items-center justify-center text-center space-y-3 flex-1 w-full sm:w-auto">
+                  <div className="flex flex-col items-center justify-center text-center space-y-3 flex-1 w-full sm:w-auto my-auto">
 
-                    {/* Handle with Icon */}
+                    {/* Handle with Icon & Crisp Font Styling */}
                     <div className="flex items-center justify-center space-x-2.5">
                       <div className="p-2 rounded-lg bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.3)] shrink-0">
                         <InstagramIcon className="w-5 h-5" />
                       </div>
-                      <h2 className="text-base sm:text-lg font-bold text-white font-mono tracking-tight">
+                      <h2 className="text-sm sm:text-base font-semibold text-gray-300 font-sans tracking-wide">
                         {SOCIAL_CONFIG.instagram.handle}
                       </h2>
                     </div>
@@ -217,8 +217,8 @@ export default function DeltaFoxOptionsSection() {
                     </a>
                   </div>
 
-                  {/* Right Area: Styled QR Code Card with Balanced Internal Padding & Symmetrical Margin */}
-                  <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-36 sm:w-40 group-hover:border-amber-400 transition-colors mx-auto sm:mx-0">
+                  {/* Right Area: Styled QR Code Card - Perfectly Vertically Centered */}
+                  <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-36 sm:w-40 group-hover:border-amber-400 transition-colors mx-auto sm:mx-0 my-auto">
                     <div className="inline-flex items-center justify-center space-x-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[8.5px] font-mono uppercase tracking-wider">
                       <QrCode className="w-2.5 h-2.5" />
                       <span>SCAN TO FOLLOW</span>
@@ -232,7 +232,7 @@ export default function DeltaFoxOptionsSection() {
                       />
                     </div>
 
-                    <p className="text-[9px] text-gray-400 font-mono">
+                    <p className="text-[9px] text-gray-300 font-sans font-medium tracking-wide">
                       {SOCIAL_CONFIG.instagram.handle}
                     </p>
                   </div>
