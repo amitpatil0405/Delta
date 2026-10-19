@@ -140,22 +140,24 @@ export default function DeltaFoxOptionsSection() {
             {/* Right Column — Vertically Balanced Redesigned Social Media Cards */}
             <div className="lg:col-span-6 flex flex-col justify-center space-y-5 my-auto">
 
-              {/* YouTube Card — Redesigned Clean Centered Flow */}
-              <div className="bg-neutral-900/80 border border-red-500/30 rounded-2xl p-6 relative overflow-hidden shadow-lg flex flex-col items-center text-center space-y-4 group hover:border-red-500/60 transition-all duration-300">
+              {/* YouTube Card — Redesigned Clean Centered Flow with Top-Left Label */}
+              <div className="bg-neutral-900/80 border border-red-500/30 rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col items-center text-center space-y-4 group hover:border-red-500/60 transition-all duration-300">
 
-                {/* Centered Header Block: YouTube Icon, Channel Title, Handle & Official Badge */}
-                <div className="flex flex-col items-center space-y-2">
+                {/* Top-Left Section Tag */}
+                <div className="w-full flex justify-start">
+                  <span className="text-[10px] font-mono font-bold text-red-400 tracking-wider uppercase bg-red-500/10 px-2.5 py-1 rounded-md border border-red-500/20">
+                    OFFICIAL YOUTUBE CHANNEL
+                  </span>
+                </div>
+
+                {/* Centered Header Block: YouTube Icon, Channel Title, & Handle */}
+                <div className="flex flex-col items-center space-y-2 pt-1">
                   <div className="p-3.5 rounded-2xl bg-red-600/20 border border-red-500/40 text-red-500 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
                     <YoutubeIcon className="w-9 h-9" />
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-center space-x-2">
-                      <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">Deltafox Options</h2>
-                      <span className="text-[9px] bg-red-500/20 text-red-400 px-2 py-0.5 rounded font-mono border border-red-500/30 uppercase tracking-wider">
-                        YouTube Official
-                      </span>
-                    </div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">Deltafox Options</h2>
                     <p className="text-xs text-gray-400 font-mono mt-1">
                       {SOCIAL_CONFIG.youtube.handle}
                     </p>
@@ -175,56 +177,66 @@ export default function DeltaFoxOptionsSection() {
                 </a>
               </div>
 
-              {/* Instagram Card — Vertically Centered Left CTA with Right QR Code */}
-              <div className="bg-neutral-900/80 border border-amber-500/30 rounded-2xl p-6 relative overflow-hidden shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 group hover:border-amber-500/60 transition-all duration-300">
+              {/* Instagram Card — Top-Left Tag, Centered Handle/CTA Block & Balanced QR Code */}
+              <div className="bg-neutral-900/80 border border-amber-500/30 rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col space-y-4 group hover:border-amber-500/60 transition-all duration-300">
                 <div className="absolute top-0 left-0 bottom-0 w-1.5 bg-gradient-to-b from-purple-500 via-pink-500 to-amber-500" />
 
-                {/* Left Area: Vertically aligned Instagram Icon, Handle, Subtitle & Button */}
-                <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-3.5 flex-1 max-w-xs">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-3 rounded-xl bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 text-white shadow-[0_0_15px_rgba(236,72,153,0.3)] shrink-0">
-                      <InstagramIcon className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h2 className="text-base font-bold text-white font-mono">
-                        {SOCIAL_CONFIG.instagram.handle}
-                      </h2>
-                      <p className="text-[11px] text-pink-400 font-mono">
-                        Official Instagram Page
-                      </p>
-                    </div>
-                  </div>
-
-                  <a
-                    href={SOCIAL_CONFIG.instagram.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
-                  >
-                    <InstagramIcon className="w-4 h-4" />
-                    <span>FOLLOW ON INSTAGRAM</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
+                {/* Top-Left Section Tag */}
+                <div className="w-full flex justify-start">
+                  <span className="text-[10px] font-mono font-bold text-pink-400 tracking-wider uppercase bg-pink-500/10 px-2.5 py-1 rounded-md border border-pink-500/20">
+                    OFFICIAL INSTAGRAM PAGE
+                  </span>
                 </div>
 
-                {/* Right Area: Styled QR Code Card with Balanced Internal Padding */}
-                <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3.5 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-40 sm:w-44 group-hover:border-amber-400 transition-colors my-auto">
-                  <div className="inline-flex items-center justify-center space-x-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[8.5px] font-mono uppercase tracking-wider">
-                    <QrCode className="w-2.5 h-2.5" />
-                    <span>SCAN TO FOLLOW</span>
+                {/* Main Content Row: Left Block (Handle & Button) & Right QR Code with Reduced Gap */}
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-5 pt-1">
+
+                  {/* Left Area: Centered Handle Block & CTA Button */}
+                  <div className="flex flex-col items-center justify-center text-center space-y-3 flex-1 w-full sm:w-auto">
+
+                    {/* Handle with Icon */}
+                    <div className="flex items-center justify-center space-x-2.5">
+                      <div className="p-2 rounded-lg bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 text-white shadow-[0_0_12px_rgba(236,72,153,0.3)] shrink-0">
+                        <InstagramIcon className="w-5 h-5" />
+                      </div>
+                      <h2 className="text-base sm:text-lg font-bold text-white font-mono tracking-tight">
+                        {SOCIAL_CONFIG.instagram.handle}
+                      </h2>
+                    </div>
+
+                    {/* CTA Button directly beneath handle */}
+                    <a
+                      href={SOCIAL_CONFIG.instagram.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full max-w-xs inline-flex items-center justify-center space-x-2 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+                    >
+                      <InstagramIcon className="w-4 h-4" />
+                      <span>FOLLOW ON INSTAGRAM</span>
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
                   </div>
 
-                  <div className="bg-white p-1.5 rounded-lg shadow-[0_0_15px_rgba(245,158,11,0.2)] border border-amber-500/30">
-                    <img
-                      src={instaQrImg}
-                      alt="Instagram @DELTAFOX_OPTIONS QR Code"
-                      className="w-full h-auto object-contain rounded"
-                    />
+                  {/* Right Area: Styled QR Code Card with Balanced Internal Padding & Symmetrical Margin */}
+                  <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-36 sm:w-40 group-hover:border-amber-400 transition-colors mx-auto sm:mx-0">
+                    <div className="inline-flex items-center justify-center space-x-1 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[8.5px] font-mono uppercase tracking-wider">
+                      <QrCode className="w-2.5 h-2.5" />
+                      <span>SCAN TO FOLLOW</span>
+                    </div>
+
+                    <div className="bg-white p-1.5 rounded-lg shadow-[0_0_15px_rgba(245,158,11,0.2)] border border-amber-500/30">
+                      <img
+                        src={instaQrImg}
+                        alt="Instagram @DELTAFOX_OPTIONS QR Code"
+                        className="w-full h-auto object-contain rounded"
+                      />
+                    </div>
+
+                    <p className="text-[9px] text-gray-400 font-mono">
+                      {SOCIAL_CONFIG.instagram.handle}
+                    </p>
                   </div>
 
-                  <p className="text-[9.5px] text-gray-400 font-mono">
-                    {SOCIAL_CONFIG.instagram.handle}
-                  </p>
                 </div>
 
               </div>
