@@ -230,7 +230,7 @@ function MountainClimbersOverlay({
       setTentTagline(tagline);
 
       if (isMoving) {
-        setWalkPhase((prev) => (prev + 0.04) % (Math.PI * 2));
+        setWalkPhase((prev) => (prev + 0.07) % (Math.PI * 2));
       } else {
         setWalkPhase(0);
       }
