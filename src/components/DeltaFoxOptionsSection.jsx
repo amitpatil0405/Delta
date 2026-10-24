@@ -10,13 +10,13 @@ export default function DeltaFoxOptionsSection() {
   return (
     <section
       id="deltafox-options"
-      className="relative min-h-[85vh] sm:min-h-screen pt-2 sm:pt-4 md:pt-14 lg:pt-20 xl:pt-24 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-12 sm:scroll-mt-16 md:scroll-mt-24 lg:scroll-mt-28 selection:bg-amber-500/30 flex flex-col justify-center -mt-4 sm:-mt-6 md:mt-4 lg:mt-6 xl:mt-8"
+      className="relative pt-8 sm:pt-10 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-16 sm:scroll-mt-20 selection:bg-amber-500/30 overflow-hidden bg-transparent bg-subpage-grid border-t border-white/5"
     >
       {/* Background ambient glow effects nicely positioned in top gap */}
       <div className="ambient-glow-amber top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70 md:opacity-90" />
 
-      {/* Main Outer Container with Pulsing Neon Aura Layer */}
-      <div className="relative rounded-3xl max-w-[1400px] mx-auto w-full">
+      {/* Main Outer Container with Pulsing Neon Aura Layer (Strict 16px desktop top gap) */}
+      <div className="relative rounded-3xl max-w-[1400px] mx-auto w-full mt-2 lg:mt-[16px]">
 
         {/* Dedicated Pulsing Neon Background Aura Layer (Matching Contact Us Style) */}
         <div className="absolute -inset-1 rounded-3xl bg-amber-500/10 shadow-[0_0_50px_rgba(255,102,0,0.6),0_0_100px_rgba(255,102,0,0.3)] animate-pulse pointer-events-none" />
