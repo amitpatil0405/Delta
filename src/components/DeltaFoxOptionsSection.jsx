@@ -10,7 +10,7 @@ export default function DeltaFoxOptionsSection() {
   return (
     <section
       id="deltafox-options"
-      className="relative min-h-[85vh] sm:min-h-screen pt-2 sm:pt-4 md:pt-14 lg:pt-16 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-12 sm:scroll-mt-16 md:scroll-mt-24 selection:bg-amber-500/30 flex flex-col justify-center -mt-4 sm:-mt-6 md:mt-4 lg:mt-6"
+      className="relative min-h-[85vh] sm:min-h-screen pt-2 sm:pt-4 md:pt-14 lg:pt-20 xl:pt-24 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-12 sm:scroll-mt-16 md:scroll-mt-24 lg:scroll-mt-28 selection:bg-amber-500/30 flex flex-col justify-center -mt-4 sm:-mt-6 md:mt-4 lg:mt-6 xl:mt-8"
     >
       {/* Background ambient glow effects nicely positioned in top gap */}
       <div className="ambient-glow-amber top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70 md:opacity-90" />
