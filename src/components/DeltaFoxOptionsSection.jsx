@@ -10,7 +10,7 @@ export default function DeltaFoxOptionsSection() {
   return (
     <section
       id="deltafox-options"
-      className="relative pt-3 sm:pt-4 lg:pt-4 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-16 sm:scroll-mt-20 selection:bg-amber-500/30 overflow-hidden bg-transparent bg-subpage-grid border-t border-white/5"
+      className="relative pt-3 sm:pt-4 lg:pt-4 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-16 sm:scroll-mt-20 selection:bg-amber-500/30 overflow-hidden bg-transparent bg-subpage-grid"
     >
       {/* Main Outer Container */}
       <div className="relative rounded-3xl max-w-[1400px] mx-auto w-full mt-1 lg:mt-[4px]">
