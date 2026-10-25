@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid
 } from 'recharts';
-import { Shield, TrendingUp, TrendingDown, Layers, ChevronRight, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Shield, TrendingUp, TrendingDown, Layers, AlertTriangle } from 'lucide-react';
 
 const MARKET_CATEGORIES = [
   { id: 'all', name: 'ALL STRATEGIES' },
   { id: 'sideways', name: 'SIDEWAYS MARKET', icon: Layers },
-  { id: 'uptrend', name: 'UP TREND MARKET', icon: TrendingUp },
-  { id: 'downtrend', name: 'DOWN TREND MARKET', icon: TrendingDown },
+  { id: 'bullish', name: 'BULLISH MARKET', icon: TrendingUp },
+  { id: 'bearish', name: 'BEARISH MARKET', icon: TrendingDown },
   { id: 'volatile', name: 'VOLATILE / BREAKOUT', icon: AlertTriangle }
 ];
 
@@ -37,6 +37,54 @@ const STRATEGIES_DATA = [
       { spot: 22600, pnl: 250 }, // Upper Breakeven
       { spot: 22900, pnl: -200 },
       { spot: 23200, pnl: -600 }
+    ]
+  },
+  {
+    id: 'short-straddle',
+    name: 'Short Straddle',
+    category: 'sideways',
+    categoryLabel: 'Sideways Market',
+    marketView: 'Strict Neutral / High Theta Decay',
+    idealCondition: 'Expect underlying spot to stay pinned near central ATM strike until expiry.',
+    entryLogic: 'Sell 1 ATM Call Option and Sell 1 ATM Put Option simultaneously.',
+    exitLogic: 'Close both legs when 50% max premium profit is reached or stop loss at 1.5x premium.',
+    maxProfit: 'Net Premium Received (Total ATM Premium)',
+    maxRisk: 'Unlimited (Requires disciplined stop-loss execution)',
+    stopLossConcept: 'Close position if underlying spot moves beyond breakeven bounds.',
+    profitTarget: '50% of maximum collectable credit.',
+    breakeven: 'Lower: ATM Strike - Total Credit | Upper: ATM Strike + Total Credit',
+    payoffData: [
+      { spot: 21000, pnl: -1000 },
+      { spot: 21400, pnl: -500 },
+      { spot: 21700, pnl: 0 }, // Breakeven
+      { spot: 22000, pnl: 800 }, // Peak Profit at ATM
+      { spot: 22300, pnl: 0 }, // Breakeven
+      { spot: 22600, pnl: -500 },
+      { spot: 23000, pnl: -1000 }
+    ]
+  },
+  {
+    id: 'iron-butterfly',
+    name: 'Iron Butterfly',
+    category: 'sideways',
+    categoryLabel: 'Sideways Market',
+    marketView: 'Strict Neutral (Defined Risk Peak)',
+    idealCondition: 'Expect underlying spot to settle near central ATM strike with defined wing protection.',
+    entryLogic: 'Buy 1 OTM Put, Sell 1 ATM Put, Sell 1 ATM Call, Buy 1 OTM Call.',
+    exitLogic: 'Exit at 50% max profit or when underlying tests outer wing protection.',
+    maxProfit: 'Net Premium Received (Peak at ATM)',
+    maxRisk: 'Defined (Wing Width - Net Credit)',
+    stopLossConcept: 'Capped max loss defined by long wing protection.',
+    profitTarget: '50% - 60% of net credit.',
+    breakeven: 'Lower: ATM Strike - Net Credit | Upper: ATM Strike + Net Credit',
+    payoffData: [
+      { spot: 21000, pnl: -400 },
+      { spot: 21400, pnl: -400 }, // Long Put Wing
+      { spot: 21700, pnl: 100 },
+      { spot: 22000, pnl: 600 }, // Peak ATM Profit
+      { spot: 22300, pnl: 100 },
+      { spot: 22600, pnl: -400 }, // Long Call Wing
+      { spot: 23000, pnl: -400 }
     ]
   },
   {
@@ -92,10 +140,33 @@ const STRATEGIES_DATA = [
     ]
   },
   {
+    id: 'bull-call-spread',
+    name: 'Bull Call Spread',
+    category: 'bullish',
+    categoryLabel: 'Bullish Market',
+    marketView: 'Moderately Bullish (Defined Risk & Reward)',
+    idealCondition: 'Expect underlying asset to rise moderately above the long call strike.',
+    entryLogic: 'Buy 1 ITM/ATM Call Option and Sell 1 OTM Call Option.',
+    exitLogic: 'Exit when price reaches short call strike target or near expiry.',
+    maxProfit: 'Difference Between Strikes - Net Debit Paid',
+    maxRisk: 'Net Debit Paid',
+    stopLossConcept: 'Strict risk cap limited to net debit paid.',
+    profitTarget: '70% - 80% of max potential profit.',
+    breakeven: 'Long Call Strike + Net Debit Paid',
+    payoffData: [
+      { spot: 21000, pnl: -300 },
+      { spot: 21500, pnl: -300 },
+      { spot: 21800, pnl: 0 }, // Breakeven
+      { spot: 22200, pnl: 450 }, // Max Profit
+      { spot: 22600, pnl: 450 },
+      { spot: 23000, pnl: 450 }
+    ]
+  },
+  {
     id: 'bull-put-spread',
     name: 'Bull Put Spread',
-    category: 'uptrend',
-    categoryLabel: 'Up Trend Market',
+    category: 'bullish',
+    categoryLabel: 'Bullish Market',
     marketView: 'Moderately Bullish',
     idealCondition: 'Expect underlying to stay above key support level.',
     entryLogic: 'Sell 1 OTM Put Option and Buy 1 Further OTM Put Option for protection.',
@@ -115,33 +186,33 @@ const STRATEGIES_DATA = [
     ]
   },
   {
-    id: 'covered-call',
-    name: 'Covered Call',
-    category: 'uptrend',
-    categoryLabel: 'Up Trend Market',
-    marketView: 'Mildly Bullish to Neutral',
-    idealCondition: 'Own underlying stock and generate income via call writing.',
-    entryLogic: 'Hold 100 shares (or 1 futures contract) and Sell 1 OTM Call Option.',
-    exitLogic: 'If stock rallies above strike, let shares get assigned or buy back call.',
-    maxProfit: '(Call Strike - Stock Purchase Price) + Premium',
-    maxRisk: 'Stock Price - Premium (Downside risk on stock ownership)',
-    stopLossConcept: 'Trailing stop on underlying stock position.',
-    profitTarget: 'Full premium decay if stock remains under strike.',
-    breakeven: 'Stock Purchase Price - Call Premium Received',
+    id: 'bear-put-spread',
+    name: 'Bear Put Spread',
+    category: 'bearish',
+    categoryLabel: 'Bearish Market',
+    marketView: 'Moderately Bearish (Defined Risk & Reward)',
+    idealCondition: 'Expect underlying asset to fall moderately below the long put strike.',
+    entryLogic: 'Buy 1 ITM/ATM Put Option and Sell 1 OTM Put Option.',
+    exitLogic: 'Exit when price drops near short put strike target or near expiry.',
+    maxProfit: 'Difference Between Strikes - Net Debit Paid',
+    maxRisk: 'Net Debit Paid',
+    stopLossConcept: 'Strict risk cap limited to net debit paid.',
+    profitTarget: '70% - 80% of max potential profit.',
+    breakeven: 'Long Put Strike - Net Debit Paid',
     payoffData: [
-      { spot: 20000, pnl: -1500 },
-      { spot: 21000, pnl: -500 },
-      { spot: 21500, pnl: 0 },
-      { spot: 22000, pnl: 500 },
-      { spot: 22500, pnl: 800 }, // Profit capped at Call strike
-      { spot: 23500, pnl: 800 }
+      { spot: 21000, pnl: 450 }, // Max Profit
+      { spot: 21400, pnl: 450 },
+      { spot: 21800, pnl: 0 }, // Breakeven
+      { spot: 22100, pnl: -300 },
+      { spot: 22500, pnl: -300 },
+      { spot: 23000, pnl: -300 }
     ]
   },
   {
     id: 'bear-call-spread',
     name: 'Bear Call Spread',
-    category: 'downtrend',
-    categoryLabel: 'Down Trend Market',
+    category: 'bearish',
+    categoryLabel: 'Bearish Market',
     marketView: 'Moderately Bearish',
     idealCondition: 'Expect market to stay below major resistance zone.',
     entryLogic: 'Sell 1 OTM Call Option and Buy 1 Higher OTM Call Option.',
@@ -157,28 +228,6 @@ const STRATEGIES_DATA = [
       { spot: 22200, pnl: 0 }, // Breakeven
       { spot: 22500, pnl: -400 },
       { spot: 22900, pnl: -400 }
-    ]
-  },
-  {
-    id: 'cash-secured-put',
-    name: 'Cash Secured Put',
-    category: 'downtrend',
-    categoryLabel: 'Down Trend Market',
-    marketView: 'Neutral to Bullish / Accumulation',
-    idealCondition: 'Willing to buy underlying stock at lower strike or collect income.',
-    entryLogic: 'Sell 1 OTM Put Option while holding 100% cash to buy shares if assigned.',
-    exitLogic: 'Take assignment to own quality stock at discount or close at 50% profit.',
-    maxProfit: 'Put Premium Collected',
-    maxRisk: 'Put Strike - Premium Received (If stock drops to zero)',
-    stopLossConcept: 'Evaluate fundamental thesis before assignment.',
-    profitTarget: '50% - 70% of premium.',
-    breakeven: 'Put Strike - Premium Received',
-    payoffData: [
-      { spot: 20000, pnl: -1600 },
-      { spot: 21000, pnl: -600 },
-      { spot: 21600, pnl: 0 },
-      { spot: 22000, pnl: 400 },
-      { spot: 23000, pnl: 400 }
     ]
   },
   {
@@ -255,6 +304,19 @@ export default function OptionsStrategiesSection() {
       if (firstInCat) setActiveStrategyId(firstInCat.id);
     }
   };
+
+  // Compute zero baseline offset for green (profit) and red (loss) shading
+  const pnlValues = activeStrategy.payoffData.map(d => d.pnl);
+  const minPnl = Math.min(...pnlValues);
+  const maxPnl = Math.max(...pnlValues);
+
+  const getGradientOffset = () => {
+    if (maxPnl <= 0) return 0;
+    if (minPnl >= 0) return 1;
+    return maxPnl / (maxPnl - minPnl);
+  };
+
+  const off = getGradientOffset();
 
   return (
     <section id="strategies" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid relative overflow-hidden">
@@ -382,12 +444,12 @@ export default function OptionsStrategiesSection() {
               </div>
               <div className="flex items-center space-x-3 text-[10px] font-mono">
                 <span className="flex items-center space-x-1 text-emerald-400">
-                  <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+                  <span className="w-2.5 h-2.5 bg-emerald-500 rounded-sm" />
                   <span>PROFIT ZONE</span>
                 </span>
                 <span className="flex items-center space-x-1 text-rose-400">
-                  <span className="w-2 h-2 bg-rose-500 rounded-full" />
-                  <span>RISK ZONE</span>
+                  <span className="w-2.5 h-2.5 bg-rose-500 rounded-sm" />
+                  <span>RISK / LOSS ZONE</span>
                 </span>
               </div>
             </div>
@@ -397,9 +459,17 @@ export default function OptionsStrategiesSection() {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={activeStrategy.payoffData} margin={{ top: 10, right: isMobile ? 10 : 30, left: isMobile ? -15 : 0, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="payoffGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#d97706" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="#d97706" stopOpacity={0.0}/>
+                    <linearGradient id="splitPayoffGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset={0} stopColor="#10b981" stopOpacity={0.45} />
+                      <stop offset={off} stopColor="#10b981" stopOpacity={0.08} />
+                      <stop offset={off} stopColor="#f43f5e" stopOpacity={0.08} />
+                      <stop offset={1} stopColor="#f43f5e" stopOpacity={0.45} />
+                    </linearGradient>
+                    <linearGradient id="splitStrokeGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset={0} stopColor="#10b981" />
+                      <stop offset={off} stopColor="#10b981" />
+                      <stop offset={off} stopColor="#f43f5e" />
+                      <stop offset={1} stopColor="#f43f5e" />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#222222" />
@@ -410,8 +480,16 @@ export default function OptionsStrategiesSection() {
                     formatter={(value) => [`₹${Number(value).toLocaleString('en-IN')}`, 'P&L']}
                     labelFormatter={(label) => `Spot Price: ₹${label}`}
                   />
-                  <ReferenceLine y={0} stroke="#ffffff" strokeDasharray="3 3" />
-                  <Area type="monotone" dataKey="pnl" stroke="#d97706" strokeWidth={3} fillOpacity={1} fill="url(#payoffGradient)" />
+                  <ReferenceLine y={0} stroke="#ffffff" strokeWidth={1.5} strokeDasharray="3 3" />
+                  <Area
+                    type="monotone"
+                    dataKey="pnl"
+                    baseValue={0}
+                    stroke="url(#splitStrokeGradient)"
+                    strokeWidth={3}
+                    fillOpacity={1}
+                    fill="url(#splitPayoffGradient)"
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
