@@ -12,17 +12,11 @@ export default function DeltaFoxOptionsSection() {
       id="deltafox-options"
       className="relative pt-3 sm:pt-4 lg:pt-4 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-16 sm:scroll-mt-20 selection:bg-amber-500/30 overflow-hidden bg-transparent bg-subpage-grid border-t border-white/5"
     >
-      {/* Background ambient glow effects nicely positioned in top gap */}
-      <div className="ambient-glow-amber top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70 md:opacity-90" />
-
-      {/* Main Outer Container with Pulsing Neon Aura Layer */}
+      {/* Main Outer Container */}
       <div className="relative rounded-3xl max-w-[1400px] mx-auto w-full mt-1 lg:mt-[4px]">
 
-        {/* Dedicated Pulsing Neon Background Aura Layer (Matching Contact Us Style) */}
-        <div className="absolute -inset-1 rounded-3xl bg-amber-500/10 shadow-[0_0_50px_rgba(255,102,0,0.6),0_0_100px_rgba(255,102,0,0.3)] animate-pulse pointer-events-none" />
-
-        {/* Borderless Dark Glassmorphic Card (Frosted Glass with backdrop-blur) */}
-        <div className="relative bg-[#0a0a0c]/70 backdrop-blur-md rounded-3xl p-5 sm:p-7 lg:p-8 xl:p-9 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
+        {/* Dark Glassmorphic Card with Slim Glowing Orange Border */}
+        <div className="relative bg-[#0a0a0c]/85 backdrop-blur-md rounded-3xl p-5 sm:p-7 lg:p-8 xl:p-9 border border-amber-500/60 animate-orange-border-glow overflow-hidden">
 
           {/* Subtle top accent bar */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-80" />
