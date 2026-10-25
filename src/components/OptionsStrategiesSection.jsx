@@ -51,12 +51,11 @@ const STRATEGIES_DATA = [
     profitTarget: '50% of maximum collectable credit.',
     breakeven: 'Lower: ATM Strike - Total Credit | Upper: ATM Strike + Total Credit',
     payoffData: [
-      { spot: 20800, pnl: -900 },
+      { spot: 20800, pnl: -600 },
       { spot: 21400, pnl: 0 },
-      { spot: 21900, pnl: 600 },
-      { spot: 22100, pnl: 600 },
+      { spot: 22000, pnl: 600 },
       { spot: 22600, pnl: 0 },
-      { spot: 23200, pnl: -900 }
+      { spot: 23200, pnl: -600 }
     ]
   },
   {
