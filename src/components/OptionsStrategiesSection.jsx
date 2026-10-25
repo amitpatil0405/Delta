@@ -482,7 +482,7 @@ export default function OptionsStrategiesSection() {
                   />
                   <ReferenceLine y={0} stroke="#ffffff" strokeWidth={1.5} strokeDasharray="3 3" />
                   <Area
-                    type="monotone"
+                    type="linear"
                     dataKey="pnl"
                     baseValue={0}
                     stroke="url(#splitStrokeGradient)"
