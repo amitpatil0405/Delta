@@ -28,14 +28,11 @@ const STRATEGIES_DATA = [
     profitTarget: '50% of maximum collectable credit.',
     breakeven: 'Lower: Put Strike - Net Credit | Upper: Call Strike + Net Credit',
     payoffData: [
-      { spot: 21000, pnl: -600 },
-      { spot: 21400, pnl: -200 },
-      { spot: 21700, pnl: 250 }, // Lower Breakeven
-      { spot: 22000, pnl: 400 }, // Lower Strike (Put)
-      { spot: 22123, pnl: 400 }, // Current Spot
-      { spot: 22300, pnl: 400 }, // Upper Strike (Call)
-      { spot: 22600, pnl: 250 }, // Upper Breakeven
-      { spot: 22900, pnl: -200 },
+      { spot: 20800, pnl: -600 },
+      { spot: 21400, pnl: 0 },
+      { spot: 21800, pnl: 400 },
+      { spot: 22200, pnl: 400 },
+      { spot: 22600, pnl: 0 },
       { spot: 23200, pnl: -600 }
     ]
   },
@@ -54,13 +51,12 @@ const STRATEGIES_DATA = [
     profitTarget: '50% of maximum collectable credit.',
     breakeven: 'Lower: ATM Strike - Total Credit | Upper: ATM Strike + Total Credit',
     payoffData: [
-      { spot: 21000, pnl: -1000 },
-      { spot: 21400, pnl: -500 },
-      { spot: 21700, pnl: 0 }, // Breakeven
-      { spot: 22000, pnl: 800 }, // Peak Profit at ATM
-      { spot: 22300, pnl: 0 }, // Breakeven
-      { spot: 22600, pnl: -500 },
-      { spot: 23000, pnl: -1000 }
+      { spot: 20800, pnl: -900 },
+      { spot: 21400, pnl: 0 },
+      { spot: 21900, pnl: 600 },
+      { spot: 22100, pnl: 600 },
+      { spot: 22600, pnl: 0 },
+      { spot: 23200, pnl: -900 }
     ]
   },
   {
@@ -78,13 +74,13 @@ const STRATEGIES_DATA = [
     profitTarget: '50% - 60% of net credit.',
     breakeven: 'Lower: ATM Strike - Net Credit | Upper: ATM Strike + Net Credit',
     payoffData: [
-      { spot: 21000, pnl: -400 },
-      { spot: 21400, pnl: -400 }, // Long Put Wing
-      { spot: 21700, pnl: 100 },
-      { spot: 22000, pnl: 600 }, // Peak ATM Profit
-      { spot: 22300, pnl: 100 },
-      { spot: 22600, pnl: -400 }, // Long Call Wing
-      { spot: 23000, pnl: -400 }
+      { spot: 20800, pnl: -400 },
+      { spot: 21400, pnl: -400 },
+      { spot: 21600, pnl: 0 },
+      { spot: 22000, pnl: 600 },
+      { spot: 22400, pnl: 0 },
+      { spot: 22600, pnl: -400 },
+      { spot: 23200, pnl: -400 }
     ]
   },
   {
@@ -102,15 +98,14 @@ const STRATEGIES_DATA = [
     profitTarget: '50% - 60% of net premium.',
     breakeven: 'Lower: Short Put - Net Credit | Upper: Short Call + Net Credit',
     payoffData: [
-      { spot: 21000, pnl: -350 },
-      { spot: 21300, pnl: -350 }, // Long Put floor
-      { spot: 21700, pnl: 200 },
-      { spot: 22000, pnl: 300 }, // Max Profit zone
-      { spot: 22123, pnl: 300 },
-      { spot: 22300, pnl: 300 },
-      { spot: 22600, pnl: 200 },
-      { spot: 22900, pnl: -350 }, // Long Call ceiling
-      { spot: 23200, pnl: -350 }
+      { spot: 20800, pnl: -300 },
+      { spot: 21200, pnl: -300 },
+      { spot: 21500, pnl: 0 },
+      { spot: 21800, pnl: 300 },
+      { spot: 22200, pnl: 300 },
+      { spot: 22500, pnl: 0 },
+      { spot: 22800, pnl: -300 },
+      { spot: 23200, pnl: -300 }
     ]
   },
   {
@@ -128,15 +123,13 @@ const STRATEGIES_DATA = [
     profitTarget: '50% - 60% max credit.',
     breakeven: 'Lower: Short Put - Net Credit | Upper: Short Call + Net Credit',
     payoffData: [
-      { spot: 21000, pnl: -500 },
-      { spot: 21400, pnl: -200 },
-      { spot: 21700, pnl: 250 },
-      { spot: 22000, pnl: 380 },
-      { spot: 22123, pnl: 380 },
-      { spot: 22300, pnl: 380 },
-      { spot: 22600, pnl: 250 },
-      { spot: 22900, pnl: -300 }, // Protected wing floor
-      { spot: 23200, pnl: -300 }
+      { spot: 20800, pnl: -300 },
+      { spot: 21200, pnl: -300 },
+      { spot: 21500, pnl: 0 },
+      { spot: 21800, pnl: 380 },
+      { spot: 22200, pnl: 380 },
+      { spot: 22600, pnl: 0 },
+      { spot: 23000, pnl: -400 }
     ]
   },
   {
@@ -155,11 +148,10 @@ const STRATEGIES_DATA = [
     breakeven: 'Long Call Strike + Net Debit Paid',
     payoffData: [
       { spot: 21000, pnl: -300 },
-      { spot: 21500, pnl: -300 },
-      { spot: 21800, pnl: 0 }, // Breakeven
-      { spot: 22200, pnl: 450 }, // Max Profit
-      { spot: 22600, pnl: 450 },
-      { spot: 23000, pnl: 450 }
+      { spot: 21400, pnl: -300 },
+      { spot: 21750, pnl: 0 },
+      { spot: 22200, pnl: 450 },
+      { spot: 22600, pnl: 450 }
     ]
   },
   {
@@ -179,10 +171,9 @@ const STRATEGIES_DATA = [
     payoffData: [
       { spot: 21000, pnl: -400 },
       { spot: 21400, pnl: -400 },
-      { spot: 21800, pnl: 0 }, // Breakeven
-      { spot: 22000, pnl: 250 }, // Max Profit
-      { spot: 22300, pnl: 250 },
-      { spot: 22700, pnl: 250 }
+      { spot: 21700, pnl: 0 },
+      { spot: 22200, pnl: 250 },
+      { spot: 22600, pnl: 250 }
     ]
   },
   {
@@ -200,12 +191,11 @@ const STRATEGIES_DATA = [
     profitTarget: '70% - 80% of max potential profit.',
     breakeven: 'Long Put Strike - Net Debit Paid',
     payoffData: [
-      { spot: 21000, pnl: 450 }, // Max Profit
+      { spot: 21000, pnl: 450 },
       { spot: 21400, pnl: 450 },
-      { spot: 21800, pnl: 0 }, // Breakeven
-      { spot: 22100, pnl: -300 },
-      { spot: 22500, pnl: -300 },
-      { spot: 23000, pnl: -300 }
+      { spot: 21850, pnl: 0 },
+      { spot: 22200, pnl: -300 },
+      { spot: 22600, pnl: -300 }
     ]
   },
   {
@@ -223,11 +213,11 @@ const STRATEGIES_DATA = [
     profitTarget: '65% - 75% max profit.',
     breakeven: 'Short Call Strike + Net Credit',
     payoffData: [
-      { spot: 21500, pnl: 250 },
-      { spot: 21900, pnl: 250 },
-      { spot: 22200, pnl: 0 }, // Breakeven
-      { spot: 22500, pnl: -400 },
-      { spot: 22900, pnl: -400 }
+      { spot: 21000, pnl: 250 },
+      { spot: 21400, pnl: 250 },
+      { spot: 21800, pnl: 0 },
+      { spot: 22200, pnl: -400 },
+      { spot: 22600, pnl: -400 }
     ]
   },
   {
@@ -245,13 +235,13 @@ const STRATEGIES_DATA = [
     profitTarget: '50% - 100% return on total debit.',
     breakeven: 'Lower: Strike - Total Debit | Upper: Strike + Total Debit',
     payoffData: [
-      { spot: 20500, pnl: 1100 },
-      { spot: 21200, pnl: 400 },
-      { spot: 21600, pnl: 0 },
-      { spot: 22000, pnl: -500 }, // Max Risk at ATM
-      { spot: 22400, pnl: 0 },
-      { spot: 22800, pnl: 400 },
-      { spot: 23500, pnl: 1100 }
+      { spot: 20500, pnl: 1000 },
+      { spot: 21000, pnl: 500 },
+      { spot: 21500, pnl: 0 },
+      { spot: 22000, pnl: -500 },
+      { spot: 22500, pnl: 0 },
+      { spot: 23000, pnl: 500 },
+      { spot: 23500, pnl: 1000 }
     ]
   },
   {
@@ -270,11 +260,12 @@ const STRATEGIES_DATA = [
     breakeven: 'Lower: Put Strike - Total Debit | Upper: Call Strike + Total Debit',
     payoffData: [
       { spot: 20500, pnl: 900 },
-      { spot: 21200, pnl: 200 },
+      { spot: 21100, pnl: 300 },
       { spot: 21400, pnl: 0 },
-      { spot: 22000, pnl: -300 }, // Flat Max Risk between OTM strikes
-      { spot: 22400, pnl: -300 },
-      { spot: 23000, pnl: 0 },
+      { spot: 21700, pnl: -300 },
+      { spot: 22300, pnl: -300 },
+      { spot: 22600, pnl: 0 },
+      { spot: 22900, pnl: 300 },
       { spot: 23500, pnl: 900 }
     ]
   }
