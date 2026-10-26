@@ -17,10 +17,30 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "DeltaFox",
-        /* "alternateName": ["DeltaFox Options", "DeltaFox.in"], */
-        "url": "https://www.deltafox.in/"
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://www.deltafox.in/#website",
+            "url": "https://www.deltafox.in/",
+            "name": "DeltaFox",
+            "alternateName": ["Delta Fox", "DeltaFox Options", "DeltaFox.in"],
+            "publisher": {
+              "@id": "https://www.deltafox.in/#organization"
+            }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://www.deltafox.in/#organization",
+            "name": "DeltaFox",
+            "alternateName": ["Delta Fox", "DeltaFox Options"],
+            "url": "https://www.deltafox.in/",
+            "logo": "https://www.deltafox.in/logo.png",
+            "sameAs": [
+              "https://www.youtube.com/@deltafox.trading",
+              "https://www.instagram.com/deltafox_options/"
+            ]
+          }
+        ]
       }
     </script>
     <!-- Google Fonts -->
