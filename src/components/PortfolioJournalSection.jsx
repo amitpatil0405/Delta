@@ -1110,11 +1110,11 @@ const JournalRecordsTable = React.memo(function JournalRecordsTable({
         <table className="w-full text-left font-mono text-xs">
           <thead>
             <tr className="text-gray-400 border-b border-white/10 text-[10px] uppercase">
-              <th className="py-3 px-3">DATE</th>
-              <th className="py-3 px-3">DAY</th>
-              <th className="py-3 px-3">SYMBOL</th>
-              <th className="py-3 px-3">STRATEGY</th>
-              <th className="py-3 px-3">EXPIRY</th>
+              <th className="py-3 px-3 text-center">DATE</th>
+              <th className="py-3 px-3 text-center">DAY</th>
+              <th className="py-3 px-3 text-left">SYMBOL</th>
+              <th className="py-3 px-3 text-left">STRATEGY</th>
+              <th className="py-3 px-3 text-center">EXPIRY</th>
               <th className="py-3 px-3 text-right">QUANTITY</th>
               <th className="py-3 px-3 text-center">
                 <div>PROBABILITY OF</div>
@@ -1198,11 +1198,11 @@ const JournalRecordsTable = React.memo(function JournalRecordsTable({
                     }}
                     className="hover:bg-white/5 transition-colors"
                   >
-                    <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.date || '-'}</td>
-                    <td className="py-3 px-3 text-amber-400 font-bold whitespace-nowrap">{t.day || '-'}</td>
-                    <td className="py-3 px-3 font-bold text-white whitespace-nowrap">{t.symbol || '-'}</td>
-                    <td className="py-3 px-3 text-amber-400 whitespace-nowrap">{t.strategy || '-'}</td>
-                    <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.expiry || '-'}</td>
+                    <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.date || '-'}</td>
+                    <td className="py-3 px-3 text-center text-amber-400 font-bold whitespace-nowrap">{t.day || '-'}</td>
+                    <td className="py-3 px-3 text-left font-bold text-white whitespace-nowrap">{t.symbol || '-'}</td>
+                    <td className="py-3 px-3 text-left text-amber-400 whitespace-nowrap">{t.strategy || '-'}</td>
+                    <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.expiry || '-'}</td>
                     <td className="py-3 px-3 text-right text-gray-300 font-bold">{t.qty || 0}</td>
                     <td className="py-3 px-3 text-center text-emerald-400 font-bold">{Number(t.pop || 70).toFixed(1)}%</td>
                     <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.tradeCloseDate || '-'}</td>
