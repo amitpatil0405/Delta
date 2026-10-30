@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { useInView } from 'framer-motion';
+import React from 'react';
 import { ShieldCheck, Target, Compass, Cpu } from 'lucide-react';
 import myPic from '../assets/my_pic.jpg';
 import founderBack from '../assets/founder_back.png';
@@ -27,116 +26,25 @@ const BIO_PARAGRAPHS = [
   }
 ];
 
-function TypewriterBio() {
-  const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { amount: 0.2, once: false });
-  const [typedChars, setTypedChars] = useState(0);
-
-  // Calculate total character count across all paragraphs
-  const totalChars = useMemo(() => {
-    let count = 0;
-    BIO_PARAGRAPHS.forEach(p => {
-      if (p.type === 'plain') {
-        count += p.text.length;
-      } else {
-        p.parts.forEach(pt => { count += pt.text.length; });
-      }
-    });
-    return count;
-  }, []);
-
-  useEffect(() => {
-    let timer;
-    if (isInView) {
-      setTypedChars(0);
-      const intervalMs = 32; // ~32ms per character for readable, deliberate pace
-      timer = setInterval(() => {
-        setTypedChars(prev => {
-          if (prev < totalChars) {
-            return prev + 1;
-          }
-          clearInterval(timer);
-          return totalChars;
-        });
-      }, intervalMs);
-    } else {
-      setTypedChars(0);
-    }
-
-    return () => {
-      if (timer) clearInterval(timer);
-    };
-  }, [isInView, totalChars]);
-
-  const isTypingFinished = typedChars >= totalChars;
-
-  // Render paragraphs up to typedChars limit
-  let charTracker = 0;
-
+function StaticBio() {
   return (
-    <div ref={containerRef} className="space-y-4 text-sm sm:text-base text-gray-200 leading-relaxed font-sans min-h-[280px]">
+    <div className="space-y-4 text-sm sm:text-base text-gray-200 leading-relaxed font-sans">
       {BIO_PARAGRAPHS.map((p, pIdx) => {
         if (p.type === 'plain') {
-          const startIdx = charTracker;
-          const endIdx = startIdx + p.text.length;
-          charTracker = endIdx;
-
-          if (typedChars <= startIdx) {
-            return null;
-          }
-
-          const visibleLength = Math.max(0, Math.min(p.text.length, typedChars - startIdx));
-          const visibleText = p.text.slice(0, visibleLength);
-          const isCurrentTypingP = typedChars > startIdx && typedChars <= endIdx;
-
-          return (
-            <p key={pIdx}>
-              {visibleText}
-              {isCurrentTypingP && !isTypingFinished && (
-                <span className="inline-block w-2 h-4 ml-0.5 bg-amber-400 animate-pulse align-middle" />
-              )}
-            </p>
-          );
+          return <p key={pIdx}>{p.text}</p>;
         } else {
-          // Compound paragraph
-          const pStartIdx = charTracker;
-          let pLength = 0;
-          p.parts.forEach(pt => { pLength += pt.text.length; });
-          const pEndIdx = pStartIdx + pLength;
-          charTracker = pEndIdx;
-
-          if (typedChars <= pStartIdx) {
-            return null;
-          }
-
-          let localTracker = pStartIdx;
-          const isCurrentTypingP = typedChars > pStartIdx && typedChars <= pEndIdx;
-
           return (
             <p key={pIdx}>
               {p.parts.map((pt, ptIdx) => {
-                const partStart = localTracker;
-                const partEnd = partStart + pt.text.length;
-                localTracker = partEnd;
-
-                if (typedChars <= partStart) return null;
-
-                const visLen = Math.max(0, Math.min(pt.text.length, typedChars - partStart));
-                const visText = pt.text.slice(0, visLen);
-
                 if (pt.isHighlight) {
                   return (
                     <span key={ptIdx} className="text-amber-400 font-mono text-xs font-semibold">
-                      {visText}
+                      {pt.text}
                     </span>
                   );
                 }
-
-                return <React.Fragment key={ptIdx}>{visText}</React.Fragment>;
+                return <React.Fragment key={ptIdx}>{pt.text}</React.Fragment>;
               })}
-              {isCurrentTypingP && !isTypingFinished && (
-                <span className="inline-block w-2 h-4 ml-0.5 bg-amber-400 animate-pulse align-middle" />
-              )}
             </p>
           );
         }
@@ -219,7 +127,7 @@ export default function AboutFounderSection() {
                   <span>Bachelor Of Engineering ( Computer-Science ) & Quantitative Intelligence</span>
                 </div>
 
-                <TypewriterBio />
+                <StaticBio />
 
                 {/* Core Values */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/10 font-mono text-xs">
