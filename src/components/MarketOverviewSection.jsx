@@ -52,16 +52,16 @@ export default function MarketOverviewSection() {
     return null;
   };
 
-  // Helper to parse individual CSV line respecting quotes
+  // Helper to parse individual CSV line respecting double quotes
   const parseCSVLine = (line) => {
     const result = [];
     let current = '';
     let inQuotes = false;
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-      if (char === '"' || char === "'") {
-        if (inQuotes && line[i + 1] === char) {
-          current += char;
+      if (char === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          current += '"';
           i++;
         } else {
           inQuotes = !inQuotes;
@@ -74,7 +74,7 @@ export default function MarketOverviewSection() {
       }
     }
     result.push(current.trim());
-    return result.map(c => c.replace(/^["'](.*)["']$/, '$1').trim());
+    return result.map(c => c.replace(/^"(.*)"$/, '$1').trim());
   };
 
   // Helper to dynamically parse all CSV lines without hardcoded row limits
@@ -217,9 +217,11 @@ export default function MarketOverviewSection() {
                 {upcomingHoliday.isToday ? (
                   <div>
                     <span className="text-rose-500 font-black text-2xl font-mono block uppercase">MARKET CLOSED TODAY</span>
-                    <span className="text-[11px] text-gray-400 font-mono block mt-1">
-                      {upcomingHoliday.wish || `Happy ${upcomingHoliday.holiday}!`}
-                    </span>
+                    {upcomingHoliday.wish ? (
+                      <span className="text-[11px] text-gray-400 font-mono block mt-1">
+                        {upcomingHoliday.wish}
+                      </span>
+                    ) : null}
                   </div>
                 ) : upcomingHoliday.daysDiff !== null ? (
                   <div>
