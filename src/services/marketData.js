@@ -32,9 +32,15 @@ let lastMuhuratFetchTime = 0;
 // Fetch Muhurat Trading date dynamically from Google Sheet (H3 cell / columns G & H)
 async function fetchDynamicMuhuratDate() {
   const now = Date.now();
-  if (now - lastMuhuratFetchTime < 3600000) return; // Cache for 1 hour
+  if (now - lastMuhuratFetchTime < 30000) return; // Cache for 30 seconds
   try {
-    const res = await fetch(`${HOLIDAY_CSV_URL}&t=${now}`);
+    const res = await fetch(`${HOLIDAY_CSV_URL}&t=${now}`, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      }
+    });
     if (res.ok) {
       const text = await res.text();
       const lines = text.split('\n');
