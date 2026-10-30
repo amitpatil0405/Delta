@@ -37,7 +37,6 @@ export default function MarketOverviewSection() {
   const { marketStatus } = useMarket();
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [lastSyncTime, setLastSyncTime] = useState('');
 
   // Parse date string into local midnight Date object
   const parseHolidayDate = (dateStr) => {
@@ -109,29 +108,48 @@ export default function MarketOverviewSection() {
     return parsedList.length > 0 ? parsedList : FALLBACK_HOLIDAYS;
   };
 
-  const fetchHolidays = async () => {
-    setLoading(true);
+  const fetchHolidays = async (isBackground = false) => {
+    if (!isBackground) setLoading(true);
     try {
-      const res = await fetch(`${HOLIDAY_CSV_URL}&t=${Date.now()}`);
+      const res = await fetch(`${HOLIDAY_CSV_URL}&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      });
       if (!res.ok) throw new Error('Failed to fetch holiday calendar');
       const text = await res.text();
       const parsed = parseCSV(text);
       setHolidays(parsed);
     } catch (err) {
       console.warn('Using fallback holiday calendar data:', err);
-      setHolidays(FALLBACK_HOLIDAYS);
+      if (!isBackground) {
+        setHolidays(prev => (prev.length > 0 ? prev : FALLBACK_HOLIDAYS));
+      }
     } finally {
-      setLoading(false);
-      const now = new Date();
-      setLastSyncTime(now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' IST');
+      if (!isBackground) setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchHolidays();
-    // Synchronize background updates with 1-day interval (86400000 ms)
-    const interval = setInterval(fetchHolidays, 86400000);
-    return () => clearInterval(interval);
+    fetchHolidays(false);
+
+    // Auto-poll silently every 30 seconds in the background
+    const interval = setInterval(() => {
+      fetchHolidays(true);
+    }, 30000);
+
+    // Silently refresh on window focus
+    const handleFocus = () => {
+      fetchHolidays(true);
+    };
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+    };
   }, []);
 
   // Determine current date & find next upcoming holiday
