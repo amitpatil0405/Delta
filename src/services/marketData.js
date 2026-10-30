@@ -6,6 +6,8 @@
  * Uses Yahoo Finance primary API endpoints query1 & query2 with CORS proxies fallback.
  */
 
+const HOLIDAY_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=170756965';
+
 const SCHEDULED_HOLIDAYS_2026 = [
   '2026-01-26', // Republic Day
   '2026-03-03', // Holi
@@ -24,12 +26,49 @@ const SCHEDULED_HOLIDAYS_2026 = [
   '2026-12-25', // Christmas
 ];
 
-const MUHURAT_TRADING_DATES_2026 = [
-  '2026-11-08' // Diwali Muhurat Trading Session
-];
+let dynamicMuhuratDateStr = '2026-11-08'; // Default fallback (08 November 2026)
+let lastMuhuratFetchTime = 0;
+
+// Fetch Muhurat Trading date dynamically from Google Sheet (H3 cell / columns G & H)
+async function fetchDynamicMuhuratDate() {
+  const now = Date.now();
+  if (now - lastMuhuratFetchTime < 3600000) return; // Cache for 1 hour
+  try {
+    const res = await fetch(`${HOLIDAY_CSV_URL}&t=${now}`);
+    if (res.ok) {
+      const text = await res.text();
+      const lines = text.split('\n');
+      for (const line of lines) {
+        if (line.includes('Muhurat Trading')) {
+          // Extract date from CSV line containing 'Muhurat Trading'
+          const parts = line.split(',').map(p => p.replace(/^["'](.*)["']$/, '$1').trim());
+          for (const p of parts) {
+            const parsed = new Date(p);
+            if (!isNaN(parsed.getTime()) && p.length > 5 && (p.includes('202') || p.includes('203'))) {
+              const y = parsed.getFullYear();
+              const m = String(parsed.getMonth() + 1).padStart(2, '0');
+              const d = String(parsed.getDate()).padStart(2, '0');
+              dynamicMuhuratDateStr = `${y}-${m}-${d}`;
+              lastMuhuratFetchTime = now;
+              return;
+            }
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.warn('Using cached/default Muhurat Trading date:', e);
+  }
+}
+
+// Trigger initial async fetch
+fetchDynamicMuhuratDate().catch(() => {});
 
 // IST Helper to determine market status dynamically
 export function getISTMarketStatus() {
+  // Trigger non-blocking refresh
+  fetchDynamicMuhuratDate().catch(() => {});
+
   const now = new Date();
 
   const utcHours = now.getUTCHours();
@@ -51,7 +90,7 @@ export function getISTMarketStatus() {
   const dateNum = String(istDate.getUTCDate()).padStart(2, '0');
   const dateStrYYYYMMDD = `${year}-${month}-${dateNum}`;
 
-  const isMuhuratTrading = MUHURAT_TRADING_DATES_2026.includes(dateStrYYYYMMDD);
+  const isMuhuratTrading = dateStrYYYYMMDD === dynamicMuhuratDateStr;
   const isWeekend = day === 0 || day === 6;
   const isHoliday = SCHEDULED_HOLIDAYS_2026.includes(dateStrYYYYMMDD);
 
