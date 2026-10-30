@@ -38,7 +38,6 @@ export default function MarketOverviewSection() {
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
   const [lastSyncTime, setLastSyncTime] = useState('');
-  const [selectedYear, setSelectedYear] = useState('2026');
 
   // Parse date string into local midnight Date object
   const parseHolidayDate = (dateStr) => {
@@ -78,23 +77,32 @@ export default function MarketOverviewSection() {
     return result.map(c => c.replace(/^["'](.*)["']$/, '$1').trim());
   };
 
-  // Helper to parse CSV text
+  // Helper to dynamically parse all CSV lines without hardcoded row limits
   const parseCSV = (csvText) => {
     const lines = csvText.split('\n').map(l => l.trim()).filter(Boolean);
     const parsedList = [];
 
     for (let i = 0; i < lines.length; i++) {
       const row = parseCSVLine(lines[i]);
-      // Skip title header row if present
+      // Dynamically match any row where the first column is a numeric serial number or valid date in column 2
       if (row.length >= 4 && !isNaN(parseInt(row[0]))) {
-        const fallbackMatch = FALLBACK_HOLIDAYS.find(f => f.srNo === row[0]);
-        parsedList.push({
-          srNo: row[0],
-          dateStr: row[1],
-          weekday: row[2],
-          holiday: row[3],
-          wish: row[4] && row[4].trim() ? row[4].trim() : (fallbackMatch ? fallbackMatch.wish : '')
-        });
+        const srNo = row[0].trim();
+        const dateStr = row[1] ? row[1].trim() : '';
+        const weekday = row[2] ? row[2].trim() : '';
+        const holiday = row[3] ? row[3].trim() : '';
+        const wishRaw = row[4] ? row[4].trim() : '';
+
+        const fallbackMatch = FALLBACK_HOLIDAYS.find(f => f.srNo === srNo);
+
+        if (dateStr && holiday) {
+          parsedList.push({
+            srNo,
+            dateStr,
+            weekday,
+            holiday,
+            wish: wishRaw || (fallbackMatch ? fallbackMatch.wish : '')
+          });
+        }
       }
     }
 
@@ -254,10 +262,10 @@ export default function MarketOverviewSection() {
               </div>
               <div>
                 <h3 className="text-xl font-bold font-mono text-white uppercase">
-                  COMPLETE 2026 TRADING HOLIDAY SCHEDULE
+                  COMPLETE TRADING HOLIDAY SCHEDULE
                 </h3>
                 <p className="text-xs text-gray-400 font-mono">
-                  Official list of 15 scheduled stock exchange holidays
+                  Official list of scheduled stock exchange holidays ({processedHolidays.length} Holidays)
                 </p>
               </div>
             </div>
