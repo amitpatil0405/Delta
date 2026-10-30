@@ -24,6 +24,10 @@ const SCHEDULED_HOLIDAYS_2026 = [
   '2026-12-25', // Christmas
 ];
 
+const MUHURAT_TRADING_DATES_2026 = [
+  '2026-11-08' // Diwali Muhurat Trading Session
+];
+
 // IST Helper to determine market status dynamically
 export function getISTMarketStatus() {
   const now = new Date();
@@ -47,10 +51,13 @@ export function getISTMarketStatus() {
   const dateNum = String(istDate.getUTCDate()).padStart(2, '0');
   const dateStrYYYYMMDD = `${year}-${month}-${dateNum}`;
 
+  const isMuhuratTrading = MUHURAT_TRADING_DATES_2026.includes(dateStrYYYYMMDD);
   const isWeekend = day === 0 || day === 6;
   const isHoliday = SCHEDULED_HOLIDAYS_2026.includes(dateStrYYYYMMDD);
 
-  if (isHoliday) {
+  if (isMuhuratTrading) {
+    return { status: 'MUHURAT TRADING', isOpen: true, detail: 'Diwali Muhurat Trading Session', istTime: formatISTTime(istHours, istMins) };
+  } else if (isHoliday) {
     return { status: 'MARKET CLOSED', isOpen: false, detail: 'Trading Holiday - Market Closed', istTime: formatISTTime(istHours, istMins) };
   } else if (isWeekend) {
     return { status: 'MARKET CLOSED', isOpen: false, detail: 'Weekend - Market Closed', istTime: formatISTTime(istHours, istMins) };
