@@ -103,7 +103,7 @@ export default function TrainingSection() {
           </p>
         </div>
 
-        {/* Banner Callout: Live Market Training Provided & Class Schedule */}
+        {/* Banner Callout: Live Market Training Provided & Class Schedule Notice */}
         <div className="mb-12 rounded-2xl p-6 sm:p-8 border border-amber-500/40 bg-[#0a0a0c]/90 shadow-[0_0_35px_rgba(217,119,6,0.15)] space-y-6">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center space-x-4">
@@ -125,64 +125,18 @@ export default function TrainingSection() {
                 </p>
               </div>
             </div>
-
-            <div className="shrink-0 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-amber-400" />
-              <span>Total Course Duration: 2 Months</span>
-            </div>
           </div>
 
-          {/* Dedicated Schedule Badge Grid */}
-          <div className="pt-5 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
-            {/* Core Lectures Box */}
-            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex items-start space-x-3 overflow-hidden">
-              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5">
-                <Clock className="w-5 h-5" />
-              </div>
-              <div className="relative z-10">
-                <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
-                  CORE LECTURES
-                </span>
-                <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
-                  Tuesday, Wednesday, Thursday (7:30 PM to 8:30 PM)
-                </span>
-              </div>
-            </div>
-
-            {/* Live Session Box */}
-            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex items-start space-x-3 overflow-hidden">
-              <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0 relative z-10 mt-0.5">
-                <Video className="w-5 h-5" />
-              </div>
-              <div className="relative z-10">
-                <span className="text-xs sm:text-sm font-mono font-extrabold text-emerald-400 uppercase tracking-wider block">
-                  LIVE SESSION
-                </span>
-                <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
-                  Friday (11:00 AM to 12:00 PM)
-                </span>
-                <span className="text-xs font-mono text-gray-400 block mt-0.5">
-                  Live positions analysis and discussion
-                </span>
-              </div>
-            </div>
-
-            {/* Program Duration Box */}
-            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex items-start space-x-3 md:col-span-2 lg:col-span-1 overflow-hidden">
-              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5">
+          {/* Schedule Inquiry Notice Card */}
+          <div className="pt-5 border-t border-white/10">
+            <div className="p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/40 flex items-center space-x-3.5">
+              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
                 <Calendar className="w-5 h-5" />
               </div>
-              <div className="relative z-10">
-                <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
-                  PROGRAM DURATION
-                </span>
-                <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
-                  Total Course Duration: 2 Months
-                </span>
-              </div>
+              <p className="text-xs sm:text-sm font-mono font-semibold text-gray-200">
+                Please connect with us to check training schedule time and Program duration
+              </p>
             </div>
-
           </div>
         </div>
 
