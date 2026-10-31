@@ -415,23 +415,35 @@ export default function PortfolioJournalSection() {
     return [yMin, yMax > yMin ? yMax : yMin + 30000];
   }, [pnlCurveData]);
 
-  // Calculate sampled ticks for mobile viewport so only selected ticks/vertical lines show on mobile
-  const mobileTicks = useMemo(() => {
-    if (!pnlCurveData.length) return [];
-    if (pnlCurveData.length <= 5) {
-      return pnlCurveData.map(d => d.trade);
+  // Calculate dynamic X-axis sampled ticks for desktop & mobile to prevent label collision & crowding
+  const xAxisTicks = useMemo(() => {
+    // Only sample actual trade entries (excluding initial blank basecamp label if desired)
+    const validTrades = pnlCurveData.filter(d => d.trade && d.trade.trim() !== '');
+    if (!validTrades.length) return [];
+
+    const targetTickCount = isMobile ? 4 : 10;
+    if (validTrades.length <= targetTickCount) {
+      return validTrades.map(d => d.trade);
     }
+
     const ticks = [];
-    const step = Math.ceil(pnlCurveData.length / 5);
-    for (let i = 0; i < pnlCurveData.length; i += step) {
-      ticks.push(pnlCurveData[i].trade);
+    const step = Math.ceil(validTrades.length / targetTickCount);
+
+    // Always include the first trade
+    ticks.push(validTrades[0].trade);
+
+    for (let i = step; i < validTrades.length - 1; i += step) {
+      ticks.push(validTrades[i].trade);
     }
-    const lastTrade = pnlCurveData[pnlCurveData.length - 1].trade;
+
+    // Always include the latest trade
+    const lastTrade = validTrades[validTrades.length - 1].trade;
     if (!ticks.includes(lastTrade)) {
       ticks.push(lastTrade);
     }
+
     return ticks;
-  }, [pnlCurveData]);
+  }, [pnlCurveData, isMobile]);
 
   // Calculate dynamic zero-baseline gradient offset for smooth Red/Green transition
   const pnlGradientStats = useMemo(() => {
@@ -734,9 +746,9 @@ export default function PortfolioJournalSection() {
                   <XAxis
                     dataKey="trade"
                     stroke="#666"
-                    tick={{ fontSize: 10, fill: '#888' }}
-                    interval={isMobile ? undefined : 0}
-                    ticks={isMobile ? mobileTicks : undefined}
+                    tick={{ fontSize: isMobile ? 9 : 10, fill: '#888' }}
+                    interval={0}
+                    ticks={xAxisTicks}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                   />
