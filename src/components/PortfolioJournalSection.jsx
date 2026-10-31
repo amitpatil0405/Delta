@@ -746,8 +746,13 @@ export default function PortfolioJournalSection() {
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                     domain={chartYDomain}
-                    width={isMobile ? 42 : 60}
-                    tickFormatter={(val) => (Math.abs(val) < 10000 ? '' : val)}
+                    width={isMobile ? 48 : 60}
+                    tickFormatter={(val) => {
+                      if (isMobile) {
+                        return val === 0 ? '0' : val.toLocaleString('en-IN');
+                      }
+                      return Math.abs(val) < 10000 ? '' : val.toLocaleString('en-IN');
+                    }}
                   />
 
                   <RechartsTooltip
