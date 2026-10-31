@@ -1,9 +1,7 @@
 import React from 'react';
-import { ExternalLink, Sparkles, Play, Camera } from 'lucide-react';
+import { ExternalLink, Sparkles, Play } from 'lucide-react';
 import deltafoxOptionsLogo from '../assets/deltafox_options_logo.png';
-import instaQrImg from '../assets/insta_qr_cropped.png';
 import youtubeLogo from '../assets/youtube_logo.png';
-import instaLogo from '../assets/insta_logo.png';
 import { SOCIAL_CONFIG } from '../services/socialMediaService';
 
 export default function DeltaFoxOptionsSection() {
@@ -60,7 +58,7 @@ export default function DeltaFoxOptionsSection() {
 
               {/* Centered Description */}
               <p className="text-gray-300 text-xs sm:text-sm leading-relaxed max-w-lg text-center font-sans">
-                DeltaFox Options is the official media and educational extension of DeltaFox. We deliver quantitative options trading concepts, strategic frameworks, volatility insights, and live trade analytics through our official YouTube and Instagram platforms.
+                DeltaFox Options is the official media and educational extension of DeltaFox. We deliver quantitative options trading concepts, strategic frameworks, volatility insights, and live trade analytics through our official YouTube platform.
               </p>
 
               {/* What We Cover On Our Channels — 2x2 Grid */}
@@ -118,114 +116,53 @@ export default function DeltaFoxOptionsSection() {
 
             </div>
 
-            {/* Right Column — Vertically Balanced Redesigned Social Media Cards */}
-            <div className="lg:col-span-6 flex flex-col justify-center space-y-5 my-auto">
+            {/* Right Column — Vertically Centered Expanded YouTube Showcase Box */}
+            <div className="lg:col-span-6 flex flex-col justify-center my-auto h-full">
 
-              {/* YouTube Card — Directly Displayed Prominent Custom Logo */}
-              <div className="bg-neutral-900/80 border rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col items-center text-center space-y-4 group animate-youtube-card-border transition-all duration-300">
+              {/* YouTube Card — Expanded & Centered to Seamlessly Fill Right Box */}
+              <div className="bg-neutral-900/80 border rounded-2xl p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-2xl flex flex-col items-center justify-center text-center space-y-6 group animate-youtube-card-border transition-all duration-300 w-full h-full min-h-[380px]">
 
-                {/* Responsive Section Tag: Center on Mobile (< md), Top-Left on Desktop (md+) */}
-                <div className="w-full flex justify-center md:justify-start">
-                  <span className="text-[10px] font-mono font-bold text-red-400 tracking-wider uppercase bg-red-500/10 px-2.5 py-1 rounded-md border border-red-500/20 text-center md:text-left">
-                    OFFICIAL YOUTUBE CHANNEL
-                  </span>
+                {/* Section Tag */}
+                <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-mono font-bold tracking-wider uppercase">
+                  <span>OFFICIAL YOUTUBE CHANNEL</span>
                 </div>
 
-                {/* Centered Header Block: Prominent Custom YouTube Logo Image directly without box container */}
-                <div className="flex flex-col items-center space-y-2 pt-1">
+                {/* Centered Custom YouTube Logo Image */}
+                <div className="relative group/logo">
+                  <div className="absolute -inset-3 bg-red-600/20 rounded-full blur-xl group-hover/logo:opacity-100 transition duration-500 opacity-60 pointer-events-none" />
                   <img
                     src={youtubeLogo}
                     alt="YouTube Logo"
-                    className="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-[0_0_20px_rgba(239,68,68,0.45)]"
+                    className="relative w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-[0_0_25px_rgba(239,68,68,0.5)] transition-transform duration-300 group-hover:scale-105"
                   />
-
-                  <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">DeltaFox Options</h2>
-                    <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide mt-1">
-                      {SOCIAL_CONFIG.youtube.handle}
-                    </p>
-                  </div>
                 </div>
 
-                {/* Centered CTA Button with Standard Lucide Play Icon */}
+                {/* Channel Title and Handle */}
+                <div className="space-y-1">
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-mono tracking-tight">
+                    DeltaFox Options
+                  </h2>
+                  <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide">
+                    {SOCIAL_CONFIG.youtube.handle}
+                  </p>
+                </div>
+
+                {/* Highlight Description */}
+                <p className="text-xs sm:text-sm text-gray-400 max-w-md font-sans leading-relaxed">
+                  Watch live systematic trade executions, non-directional options strategy breakdowns, position-sizing models, and volatility analyses.
+                </p>
+
+                {/* Centered CTA Action Button */}
                 <a
                   href={SOCIAL_CONFIG.youtube.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_25px_rgba(220,38,38,0.4)] hover:shadow-[0_0_35px_rgba(220,38,38,0.6)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
                 >
                   <Play className="w-4 h-4 text-white fill-current shrink-0" />
                   <span>SUBSCRIBE & WATCH OUR VIDEOS</span>
                   <ExternalLink className="w-3.5 h-3.5 text-white shrink-0" />
                 </a>
-              </div>
-
-              {/* Instagram Card — Matching Symmetrical Layout Structure */}
-              <div className="bg-neutral-900/80 border rounded-2xl p-5 sm:p-6 relative overflow-hidden shadow-lg flex flex-col justify-between space-y-4 group animate-instagram-card-border transition-all duration-300">
-
-                {/* Responsive Section Tag: Center on Mobile (< md), Top-Left on Desktop (md+) */}
-                <div className="w-full flex justify-center md:justify-start">
-                  <span className="text-[10px] font-mono font-bold text-pink-400 tracking-wider uppercase bg-pink-500/10 px-2.5 py-1 rounded-md border border-pink-500/20 text-center md:text-left">
-                    OFFICIAL INSTAGRAM PAGE
-                  </span>
-                </div>
-
-                {/* Main Content Row: Left Vertical Block (Logo, Handle, Equalized CTA Button) & Right Scanner Card */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-5 my-auto">
-
-                  {/* Left Area: Vertically Rearranged Instagram Block (Top Logo, Middle Handle, Bottom Equalized CTA Button) */}
-                  <div className="flex flex-col items-center justify-center text-center space-y-4 flex-1 w-full my-auto">
-
-                    {/* Header Block: Top Custom Instagram Logo & Middle Handle Name */}
-                    <div className="flex flex-col items-center space-y-2 pt-1">
-                      <img
-                        src={instaLogo}
-                        alt="Instagram Logo"
-                        className="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-[0_0_20px_rgba(236,72,153,0.45)] shrink-0"
-                      />
-
-                      <div>
-                        <h2 className="text-xl sm:text-2xl font-bold text-white font-mono">DeltaFox Options</h2>
-                        <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide mt-1">
-                          {SOCIAL_CONFIG.instagram.handle}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Bottom: CTA Button with Equalized Height/Width/Padding matching YouTube Button */}
-                    <a
-                      href={SOCIAL_CONFIG.instagram.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full max-w-sm inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(219,39,119,0.35)] hover:shadow-[0_0_30px_rgba(219,39,119,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
-                    >
-                      <Camera className="w-4 h-4 text-white shrink-0" />
-                      <span>FOLLOW ON INSTAGRAM</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-white shrink-0" />
-                    </a>
-                  </div>
-
-                  {/* Right Area: Styled QR Code Scanner Card with Standard Lucide Camera Icon Overlay Badge */}
-                  <div className="bg-black/90 border border-amber-500/40 rounded-xl p-3 text-center space-y-1.5 backdrop-blur-md shadow-[0_0_20px_rgba(0,0,0,0.8)] shrink-0 w-36 sm:w-40 group-hover:border-amber-400 transition-colors mx-auto sm:mx-0 my-auto">
-                    <div className="inline-flex items-center justify-center space-x-1.5 px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[8.5px] font-mono uppercase tracking-wider">
-                      <Camera className="w-2.5 h-2.5 text-amber-400" />
-                      <span>SCAN TO FOLLOW</span>
-                    </div>
-
-                    <div className="bg-white p-1.5 rounded-lg shadow-[0_0_15px_rgba(245,158,11,0.2)] border border-amber-500/30">
-                      <img
-                        src={instaQrImg}
-                        alt="Instagram @DeltaFox_Options QR Code"
-                        className="w-full h-auto object-contain rounded"
-                      />
-                    </div>
-
-                    <p className="text-[9px] text-gray-300 font-sans font-medium tracking-wide">
-                      {SOCIAL_CONFIG.instagram.handle}
-                    </p>
-                  </div>
-
-                </div>
 
               </div>
 
