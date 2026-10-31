@@ -758,7 +758,11 @@ export default function PortfolioJournalSection() {
                         }
                         return `${sign}${absVal}`;
                       }
-                      return Math.abs(val) < 10000 ? '' : val;
+                      if (Math.abs(val) < 10000) return '';
+                      const sign = val < 0 ? '-' : '';
+                      const absVal = Math.abs(val);
+                      const kVal = absVal / 1000;
+                      return `${sign}${Number.isInteger(kVal) ? kVal : kVal.toFixed(1)}K`;
                     }}
                   />
 
