@@ -47,7 +47,7 @@ export default function ContactSection() {
             {/* 1. Large/Bold Email Address (Centered) */}
             <a
               href={`mailto:${emailAddress}`}
-              className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white hover:text-amber-400 transition-colors break-all block tracking-wide"
+              className="text-sm min-[360px]:text-base min-[410px]:text-lg sm:text-3xl md:text-4xl font-extrabold text-white hover:text-amber-400 transition-colors whitespace-nowrap block tracking-tight sm:tracking-wide max-w-full"
             >
               {emailAddress}
             </a>
