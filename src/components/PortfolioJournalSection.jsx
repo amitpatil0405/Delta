@@ -742,22 +742,23 @@ export default function PortfolioJournalSection() {
                   />
                   <YAxis
                     stroke="#666"
-                    tick={{ fontSize: isMobile ? 9 : 11, fill: '#888' }}
+                    tick={isMobile ? false : { fontSize: 11, fill: '#888' }}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                     domain={chartYDomain}
-                    width={isMobile ? 36 : 60}
+                    width={isMobile ? 24 : 60}
+                    label={isMobile ? {
+                      value: 'Profit',
+                      angle: -90,
+                      position: 'insideLeft',
+                      fill: '#10b981',
+                      fontSize: 11,
+                      fontWeight: 'bold',
+                      fontFamily: 'monospace',
+                      style: { textAnchor: 'middle' },
+                      offset: 6
+                    } : undefined}
                     tickFormatter={(val) => {
-                      if (isMobile) {
-                        if (val === 0) return '0';
-                        const sign = val < 0 ? '-' : '';
-                        const absVal = Math.abs(val);
-                        if (absVal >= 1000) {
-                          const kVal = absVal / 1000;
-                          return `${sign}${Number.isInteger(kVal) ? kVal : kVal.toFixed(1)}K`;
-                        }
-                        return `${sign}${absVal}`;
-                      }
                       if (Math.abs(val) < 10000) return '';
                       const sign = val < 0 ? '-' : '';
                       const absVal = Math.abs(val);
