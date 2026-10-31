@@ -294,6 +294,19 @@ export default function PortfolioJournalSection() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [hoveredDay, setHoveredDay] = useState(null);
+  const hoverTimeoutRef = useRef(null);
+
+  const handleDayEnter = (day) => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setHoveredDay(day);
+  };
+
+  const handleDayLeave = () => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredDay(null);
+    }, 150);
+  };
 
   // Fetch Global Trades on mount & Periodic Sync (every 10s) from Google Sheet CSV
   useEffect(() => {
@@ -663,7 +676,8 @@ export default function PortfolioJournalSection() {
           startMonthName={startMonthName}
           endMonthName={endMonthName}
           hoveredDay={hoveredDay}
-          setHoveredDay={setHoveredDay}
+          handleDayEnter={handleDayEnter}
+          handleDayLeave={handleDayLeave}
         />
 
         {/* P&L Cumulative Performance Graph (Rendered when closed trades exist) */}
@@ -856,7 +870,8 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
   startMonthName,
   endMonthName,
   hoveredDay,
-  setHoveredDay
+  handleDayEnter,
+  handleDayLeave
 }) {
   return (
     <div
@@ -943,13 +958,20 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
                     return (
                         <div
                         key={d.key}
-                        onMouseEnter={() => setHoveredDay(d)}
-                        onMouseLeave={() => setHoveredDay(null)}
+                        onMouseEnter={() => handleDayEnter(d)}
+                        onMouseLeave={handleDayLeave}
                         className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
                       >
                         {/* Hover Popup positioned directly next to the highlighted box (dynamically sized for large P&L amounts) */}
                         {isHovered && (
-                          <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-white/20 rounded-md p-2 text-[9.5px] font-mono shadow-2xl z-50 w-auto min-w-[220px] max-w-[320px] whitespace-nowrap animate-fadeIn space-y-1.5 text-left pointer-events-none`}>
+                          <div
+                            onMouseEnter={() => handleDayEnter(d)}
+                            onMouseLeave={handleDayLeave}
+                            className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-white/20 rounded-md p-2 text-[9.5px] font-mono shadow-2xl z-50 w-auto min-w-[220px] max-w-[320px] whitespace-nowrap animate-fadeIn space-y-1.5 text-left pointer-events-auto`}
+                          >
+                            {/* Hover bridge pseudo-area to guarantee smooth mouse transition */}
+                            <div className={`absolute top-0 bottom-0 ${isRightHalf ? '-right-3 w-4' : '-left-3 w-4'} pointer-events-auto`} />
+
                             {/* Header */}
                             <div className="flex items-center justify-between border-b border-white/10 pb-1.5 gap-4">
                               <div>
