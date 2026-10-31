@@ -293,28 +293,6 @@ export default function PortfolioJournalSection() {
   });
 
   const [isLoading, setIsLoading] = useState(true);
-  const [activeDay, setActiveDay] = useState(null);
-  const activeDayTimeoutRef = useRef(null);
-
-  const handleDayClick = (day) => {
-    if (activeDayTimeoutRef.current) clearTimeout(activeDayTimeoutRef.current);
-    setActiveDay(prev => (prev && prev.key === day.key ? null : day));
-  };
-
-  const handleDayEnter = (day) => {
-    if (activeDayTimeoutRef.current) clearTimeout(activeDayTimeoutRef.current);
-    // If no cell has been clicked open or cell has 0 trades, show preview on hover
-    if (!activeDay || day.count === 0) {
-      setActiveDay(day);
-    }
-  };
-
-  const handleDayLeave = () => {
-    if (activeDayTimeoutRef.current) clearTimeout(activeDayTimeoutRef.current);
-    activeDayTimeoutRef.current = setTimeout(() => {
-      setActiveDay(null);
-    }, 200);
-  };
 
   // Fetch Global Trades on mount & Periodic Sync (every 10s) from Google Sheet CSV
   useEffect(() => {
@@ -683,10 +661,6 @@ export default function PortfolioJournalSection() {
           heatmapMonths={heatmapMonths}
           startMonthName={startMonthName}
           endMonthName={endMonthName}
-          activeDay={activeDay}
-          handleDayClick={handleDayClick}
-          handleDayEnter={handleDayEnter}
-          handleDayLeave={handleDayLeave}
         />
 
         {/* P&L Cumulative Performance Graph (Rendered when closed trades exist) */}
@@ -877,11 +851,7 @@ export default function PortfolioJournalSection() {
 const DailyHeatmap = React.memo(function DailyHeatmap({
   heatmapMonths,
   startMonthName,
-  endMonthName,
-  activeDay,
-  handleDayClick,
-  handleDayEnter,
-  handleDayLeave
+  endMonthName
 }) {
   return (
     <div
@@ -942,96 +912,22 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
                     const isTraded = d.count > 0;
                     const isProfit = isTraded && d.pnl > 0;
                     const isLoss = isTraded && d.pnl < 0;
-                    const isActive = activeDay && activeDay.key === d.key;
 
                     let boxClass = 'bg-white/5 border-white/5 text-transparent';
                     if (isProfit) {
-                      boxClass = 'bg-emerald-500 border border-black/90';
+                      boxClass = 'bg-emerald-500 border border-black/90 hover:scale-110 hover:brightness-110';
                     } else if (isLoss) {
-                      boxClass = 'bg-rose-500 border border-black/90';
+                      boxClass = 'bg-rose-500 border border-black/90 hover:scale-110 hover:brightness-110';
+                    } else {
+                      boxClass = 'bg-white/5 border-white/5 text-transparent hover:bg-white/10';
                     }
-
-                    if (isActive) {
-                      if (isProfit) {
-                        boxClass = 'bg-emerald-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80 ring-2 ring-emerald-400/50';
-                      } else if (isLoss) {
-                        boxClass = 'bg-rose-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80 ring-2 ring-rose-400/50';
-                      } else {
-                        boxClass = 'bg-white/15 border border-white/10 scale-125 z-20 shadow-lg shadow-black/80 ring-2 ring-white/30';
-                      }
-                    }
-
-                    const totalM = heatmapMonths.length || 12;
-                    const isRightHalf = (d.monthOrder ?? 0) >= Math.floor(totalM / 2);
-                    const popupSideClass = isRightHalf ? "right-full mr-3" : "left-full ml-3";
 
                     return (
-                        <div
+                      <div
                         key={d.key}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDayClick(d);
-                        }}
-                        onMouseEnter={() => handleDayEnter(d)}
-                        onMouseLeave={handleDayLeave}
-                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
-                      >
-                        {/* Details popover positioned directly next to highlighted box (dynamically sized for large P&L amounts) */}
-                        {isActive && (
-                          <div
-                            onClick={(e) => e.stopPropagation()}
-                            onMouseEnter={() => handleDayEnter(d)}
-                            onMouseLeave={handleDayLeave}
-                            className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-white/20 rounded-md p-2 text-[9.5px] font-mono shadow-2xl z-50 w-auto min-w-[220px] max-w-[320px] whitespace-nowrap animate-fadeIn space-y-1.5 text-left pointer-events-auto`}
-                          >
-                            {/* Hover bridge pseudo-area to guarantee smooth mouse transition */}
-                            <div className={`absolute top-0 bottom-0 ${isRightHalf ? '-right-3 w-4' : '-left-3 w-4'} pointer-events-auto`} />
-
-                            {/* Header */}
-                            <div className="flex items-center justify-between border-b border-white/10 pb-1.5 gap-4">
-                              <div>
-                                <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">DATE</div>
-                                <div className="text-white font-bold text-[9.5px]">
-                                  {d.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                </div>
-                              </div>
-                              <div className="text-right shrink-0">
-                                <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">TOTAL</div>
-                                {d.count === 0 ? (
-                                  <span className="text-gray-400 font-bold text-[9.5px]">₹0</span>
-                                ) : (
-                                  <span className={`text-[9.5px] font-extrabold ${d.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
-                                    {d.pnl < 0 ? '-' : '+'}₹{Math.abs(d.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Simple List of Stocks and Profits */}
-                            {d.count === 0 ? (
-                              <div className="text-[8.5px] text-gray-500 py-0.5 italic">
-                                No closed trades.
-                              </div>
-                            ) : (
-                              <div className="space-y-1 max-h-[140px] overflow-y-auto pr-0.5 scrollbar-thin scrollbar-thumb-white/10">
-                                {d.trades.map((item, idx) => {
-                                  const isPos = item.pnl > 0;
-                                  const isNeg = item.pnl < 0;
-                                  return (
-                                    <div key={idx} className="flex items-center justify-between py-0.5 border-b border-white/5 last:border-0 leading-tight gap-4">
-                                      <span className="font-extrabold text-white text-[9px] truncate max-w-[130px]">{item.symbol}</span>
-                                      <span className={`font-bold text-[9px] text-right shrink-0 ${isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'}`}>
-                                        {isNeg ? '-' : isPos ? '+' : ''}₹{Math.abs(item.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                      </span>
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        </div>
-                      );
+                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all select-none ${boxClass}`}
+                      />
+                    );
                     })}
                   </div>
 
