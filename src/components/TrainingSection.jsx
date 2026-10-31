@@ -127,16 +127,74 @@ export default function TrainingSection() {
             </div>
           </div>
 
-          {/* Schedule Inquiry Notice Card */}
-          <div className="pt-5 border-t border-white/10">
-            <div className="p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/40 flex items-center space-x-3.5">
-              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0">
-                <Calendar className="w-5 h-5" />
+          {/* Dedicated Schedule Badge Grid (3 Cards) */}
+          <div className="pt-5 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+            {/* Card 1: Core Lectures */}
+            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex flex-col justify-between overflow-hidden min-h-[110px]">
+              <div className="flex items-start space-x-3">
+                <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div className="relative z-10">
+                  <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
+                    CORE LECTURES
+                  </span>
+                  <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
+                    Tuesday, Wednesday, Thursday (7:30 PM to 8:30 PM)
+                  </span>
+                </div>
               </div>
-              <p className="text-xs sm:text-sm font-mono font-semibold text-gray-200">
-                Please connect with us to check training schedule time and Program duration
-              </p>
             </div>
+
+            {/* Card 2: Live Session */}
+            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex flex-col justify-between overflow-hidden min-h-[110px]">
+              <div className="flex items-start space-x-3">
+                <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0 relative z-10 mt-0.5">
+                  <Video className="w-5 h-5" />
+                </div>
+                <div className="relative z-10">
+                  <span className="text-xs sm:text-sm font-mono font-extrabold text-emerald-400 uppercase tracking-wider block">
+                    LIVE SESSION
+                  </span>
+                  <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
+                    Friday (11:00 AM to 12:00 PM)
+                  </span>
+                  <span className="text-xs font-mono text-gray-400 block mt-0.5">
+                    Live positions analysis and discussion
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3: Program Duration & Clickable Contact Us Link */}
+            <div
+              onClick={scrollToContact}
+              className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 hover:border-amber-400 flex flex-col justify-between overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] group md:col-span-2 lg:col-span-1 min-h-[110px]"
+            >
+              <div className="flex items-start space-x-3">
+                <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5 group-hover:scale-105 transition-transform">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <div className="relative z-10">
+                  <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
+                    PROGRAM DURATION
+                  </span>
+                  <span className="text-xs sm:text-sm font-mono font-semibold text-gray-200 block mt-1">
+                    Please connect with us for schedule & duration details
+                  </span>
+                </div>
+              </div>
+
+              <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between text-xs font-mono">
+                <span className="text-amber-400 font-bold group-hover:underline flex items-center space-x-1">
+                  <span>Contact Us</span>
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </span>
+                <span className="text-gray-400 text-[11px]">Click to connect</span>
+              </div>
+            </div>
+
           </div>
         </div>
 
