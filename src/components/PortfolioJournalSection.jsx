@@ -417,31 +417,32 @@ export default function PortfolioJournalSection() {
 
   // Calculate dynamic X-axis sampled ticks for desktop & mobile to prevent label collision & crowding
   const xAxisTicks = useMemo(() => {
-    // Only sample actual trade entries (excluding initial blank basecamp label if desired)
     const validTrades = pnlCurveData.filter(d => d.trade && d.trade.trim() !== '');
     if (!validTrades.length) return [];
 
-    const targetTickCount = isMobile ? 4 : 10;
-    if (validTrades.length <= targetTickCount) {
-      return validTrades.map(d => d.trade);
+    const n = validTrades.length;
+    // Determine a clean step size (e.g. 5, 10, or 20) based on total trades count
+    let step;
+    if (isMobile) {
+      step = n > 30 ? 10 : n > 15 ? 5 : n > 8 ? 4 : 2;
+    } else {
+      step = n > 60 ? 10 : n > 25 ? 5 : n > 12 ? 4 : 2;
     }
 
     const ticks = [];
-    const step = Math.ceil(validTrades.length / targetTickCount);
-
-    // Always include the first trade
+    // Start with Trade 1
     ticks.push(validTrades[0].trade);
 
-    for (let i = step; i < validTrades.length - 1; i += step) {
-      ticks.push(validTrades[i].trade);
+    // Add clean sequence (e.g. Trade 5, Trade 10, Trade 15...)
+    for (let i = step - 1; i < n; i += step) {
+      const tradeLabel = validTrades[i].trade;
+      if (!ticks.includes(tradeLabel)) {
+        ticks.push(tradeLabel);
+      }
     }
 
-    // Always include the latest trade
-    const lastTrade = validTrades[validTrades.length - 1].trade;
-    if (!ticks.includes(lastTrade)) {
-      ticks.push(lastTrade);
-    }
-
+    // If the last trade naturally matches the step, it's already included.
+    // If it falls too close to the previous tick, omit it to avoid edge crowding.
     return ticks;
   }, [pnlCurveData, isMobile]);
 

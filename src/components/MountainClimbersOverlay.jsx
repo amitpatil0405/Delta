@@ -389,43 +389,6 @@ function MountainClimbersOverlay({
             height="36"
             preserveAspectRatio="xMidYMid meet"
           />
-          {/* Dynamic Tent Tagline */}
-          {tentTagline === 'Preparing' && (
-            <foreignObject x="-25" y="-22" width="90" height="20">
-              <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
-                  Preparing
-                </span>
-              </div>
-            </foreignObject>
-          )}
-          {tentTagline === 'Journey started' && (
-            <foreignObject x="-30" y="-22" width="100" height="20">
-              <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.4)] whitespace-nowrap animate-pulse">
-                  Journey started
-                </span>
-              </div>
-            </foreignObject>
-          )}
-          {tentTagline === 'Taking rest' && (
-            <foreignObject x="-25" y="-22" width="90" height="20">
-              <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
-                  Taking rest
-                </span>
-              </div>
-            </foreignObject>
-          )}
-          {tentTagline === 'Holiday today' && (
-            <foreignObject x="-30" y="-22" width="100" height="20">
-              <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-rose-400 border border-rose-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(244,63,94,0.4)] whitespace-nowrap animate-pulse">
-                  Holiday today
-                </span>
-              </div>
-            </foreignObject>
-          )}
         </g>
 
         {/* Layer 1: Expedition Team Stickman Figures (Rendered BEHIND the ATH Flag) */}
