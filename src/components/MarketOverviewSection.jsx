@@ -105,7 +105,7 @@ export default function MarketOverviewSection() {
       }
     }
 
-    return parsedList.length > 0 ? parsedList : FALLBACK_HOLIDAYS;
+    return parsedList;
   };
 
   const fetchHolidays = async (isBackground = false) => {
@@ -121,9 +121,10 @@ export default function MarketOverviewSection() {
       if (!res.ok) throw new Error('Failed to fetch holiday calendar');
       const text = await res.text();
       const parsed = parseCSV(text);
+      // Directly set parsed list (even if empty, reflecting live empty sheet)
       setHolidays(parsed);
     } catch (err) {
-      console.warn('Using fallback holiday calendar data:', err);
+      console.warn('Using fallback holiday calendar data due to fetch error:', err);
       if (!isBackground) {
         setHolidays(prev => (prev.length > 0 ? prev : FALLBACK_HOLIDAYS));
       }
@@ -156,7 +157,7 @@ export default function MarketOverviewSection() {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  const processedHolidays = (holidays.length > 0 ? holidays : FALLBACK_HOLIDAYS).map(item => {
+  const processedHolidays = holidays.map(item => {
     const d = parseHolidayDate(item.dateStr);
     const isToday = d ? d.getTime() === today.getTime() : false;
     const isPast = d ? d.getTime() < today.getTime() : false;
@@ -172,7 +173,9 @@ export default function MarketOverviewSection() {
   });
 
   // Next upcoming holiday (first holiday where dateObj >= today)
-  const upcomingHoliday = processedHolidays.find(h => h.dateObj && h.dateObj >= today) || processedHolidays[processedHolidays.length - 1];
+  const upcomingHoliday = processedHolidays.length > 0
+    ? (processedHolidays.find(h => h.dateObj && h.dateObj >= today) || processedHolidays[processedHolidays.length - 1])
+    : null;
 
   return (
     <section id="intelligence" className="relative bg-transparent bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 overflow-hidden">
@@ -325,7 +328,17 @@ export default function MarketOverviewSection() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5 text-xs font-mono">
-                {processedHolidays.map((item) => {
+                {processedHolidays.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-12 px-4 text-center text-gray-400 font-mono text-sm">
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        <CalendarIcon className="w-8 h-8 text-gray-600 mb-1" />
+                        <span>No holidays scheduled</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  processedHolidays.map((item) => {
                   const isNextUpcoming = upcomingHoliday && upcomingHoliday.srNo === item.srNo;
                   const isTodayHoliday = item.isToday;
 
@@ -391,7 +404,7 @@ export default function MarketOverviewSection() {
                       </td>
                     </tr>
                   );
-                })}
+                }))}
               </tbody>
             </table>
           </div>
