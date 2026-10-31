@@ -310,13 +310,12 @@ export default function PortfolioJournalSection() {
           const csvText = await sheetRes.text();
           const { trades: parsedSheetTrades, fyConfig: sheetFyConfig } = parseCSVRows(csvText);
 
-          if (parsedSheetTrades.length > 0) {
-            setTrades(parsedSheetTrades);
-            try {
-              localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(parsedSheetTrades));
-            } catch (e) {
-              console.warn('LocalStorage write restriction:', e);
-            }
+          // Unconditionally update trades state (clears old trades if sheet has 0 records)
+          setTrades(parsedSheetTrades);
+          try {
+            localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(parsedSheetTrades));
+          } catch (e) {
+            console.warn('LocalStorage write restriction:', e);
           }
 
           if (sheetFyConfig) {
@@ -667,8 +666,8 @@ export default function PortfolioJournalSection() {
           setHoveredDay={setHoveredDay}
         />
 
-        {/* P&L Cumulative Performance Graph */}
-        {pnlCurveData.length > 0 && (
+        {/* P&L Cumulative Performance Graph (Rendered when closed trades exist) */}
+        {closedTrades.length > 0 && (
           <div
             className="bg-[#0a0a0f]/90 rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative space-y-4"
           >
