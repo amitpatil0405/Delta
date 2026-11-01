@@ -265,7 +265,7 @@ export default function TechnicalAnalysisSection() {
   const StockTabIcon = isOnlyAnnouncement ? Megaphone : FileText;
 
   return (
-    <section id="technical-analysis" className="relative bg-transparent bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 border-t border-white/5 overflow-hidden">
+    <section id="technical-analysis" className="relative bg-transparent bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 overflow-hidden">
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber -top-20 -left-20" />
       <div className="ambient-glow-emerald bottom-0 right-0" />
