@@ -69,11 +69,11 @@ export default function DeltaFoxOptionsSection() {
                 DeltaFox Options is the official media and educational extension of DeltaFox. We deliver quantitative options trading concepts, strategic frameworks, volatility insights, and live trade analytics through our official YouTube and Instagram platforms.
               </p>
 
-              {/* What We Cover On Our Channels — 2x2 Grid */}
+              {/* What We Cover On Our Channel — 2x2 Grid */}
               <div className="w-full pt-1">
                 <div className="text-amber-400 font-mono text-[11px] uppercase tracking-widest font-bold mb-3 text-center flex items-center justify-center space-x-2">
                   <span className="h-px w-8 bg-amber-500/30" />
-                  <span>WHAT WE COVER ON OUR CHANNELS</span>
+                  <span>WHAT WE COVER ON OUR CHANNEL</span>
                   <span className="h-px w-8 bg-amber-500/30" />
                 </div>
 
