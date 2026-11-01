@@ -1,258 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { Mail, Send, CheckCircle2, AlertCircle, Inbox, Trash2, RefreshCw } from 'lucide-react';
-
-const ADMIN_SESSION_KEY = 'deltafox_admin_logged_in';
-const INQUIRIES_DB_KEY = 'deltafox_inquiries_db_id';
-const LOCAL_INQUIRIES_KEY = 'deltafox_local_inquiries';
-const DEFAULT_DB_URL = 'https://api.restful-api.dev/objects/ff808181a067127101a06ca4d7d11100';
-
-const getLocalInquiries = () => {
-  try {
-    const data = localStorage.getItem(LOCAL_INQUIRIES_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch (e) {
-    return [];
-  }
-};
-
-const saveLocalInquiries = (list) => {
-  try {
-    localStorage.setItem(LOCAL_INQUIRIES_KEY, JSON.stringify(list));
-  } catch (e) {}
-};
-
-const createNewCloudObject = async (inquiriesList) => {
-  try {
-    const res = await fetch('https://api.restful-api.dev/objects', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: 'deltafox_inquiries',
-        data: { inquiries: inquiriesList }
-      })
-    });
-    if (res.ok) {
-      const json = await res.json();
-      if (json && json.id) {
-        try {
-          localStorage.setItem(INQUIRIES_DB_KEY, json.id);
-        } catch (e) {}
-        return json.id;
-      }
-    }
-  } catch (err) {
-    console.warn('Could not create new cloud inquiries object:', err);
-  }
-  return null;
-};
+import React, { useState } from 'react';
+import { Mail, Copy, Check } from 'lucide-react';
 
 export default function ContactSection() {
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
+  const [copied, setCopied] = useState(false);
+  const emailAddress = 'deltafox.options@yahoo.com';
+
+  const handleCopyEmail = () => {
     try {
-      return sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true';
+      navigator.clipboard.writeText(emailAddress);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
     } catch (e) {
-      return false;
+      console.warn('Clipboard write failed', e);
     }
-  });
-
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [needsActivation, setNeedsActivation] = useState(false);
-  const [error, setError] = useState('');
-
-  // Admin view inquiries state
-  const [inquiries, setInquiries] = useState([]);
-  const [showInquiriesPanel, setShowInquiriesPanel] = useState(false);
-
-  // Fetch inquiries from Cloud DB / LocalStorage on mount or when panel opens
-  const fetchInquiries = async () => {
-    const localList = getLocalInquiries();
-
-    let dbUrl = DEFAULT_DB_URL;
-    try {
-      const savedId = localStorage.getItem(INQUIRIES_DB_KEY);
-      if (savedId) dbUrl = `https://api.restful-api.dev/objects/${savedId}`;
-    } catch (e) {}
-
-    try {
-      let res = await fetch(dbUrl);
-      if (res.status === 404) {
-        await createNewCloudObject(localList);
-        setInquiries(localList);
-        return;
-      }
-      if (res.ok) {
-        const json = await res.json();
-        if (json && json.data && Array.isArray(json.data.inquiries)) {
-          const combined = [...json.data.inquiries, ...localList];
-          const unique = Array.from(new Map(combined.map(item => [item.id, item])).values());
-          setInquiries(unique);
-          saveLocalInquiries(unique);
-        } else {
-          setInquiries(localList);
-        }
-      } else {
-        setInquiries(localList);
-      }
-    } catch (e) {
-      setInquiries(localList);
-    }
-  };
-
-  useEffect(() => {
-    const checkAdmin = () => {
-      try {
-        setIsAdminLoggedIn(sessionStorage.getItem(ADMIN_SESSION_KEY) === 'true');
-      } catch (e) {
-        setIsAdminLoggedIn(false);
-      }
-    };
-    window.addEventListener('storage', checkAdmin);
-    checkAdmin();
-    fetchInquiries();
-    return () => window.removeEventListener('storage', checkAdmin);
-  }, []);
-
-  const saveInquiryToCloud = async (newInquiry) => {
-    const updatedList = [newInquiry, ...inquiries].slice(0, 100);
-    setInquiries(updatedList);
-    saveLocalInquiries(updatedList);
-
-    let dbUrl = DEFAULT_DB_URL;
-    try {
-      const savedId = localStorage.getItem(INQUIRIES_DB_KEY);
-      if (savedId) dbUrl = `https://api.restful-api.dev/objects/${savedId}`;
-    } catch (e) {}
-
-    try {
-      let res = await fetch(dbUrl, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: 'deltafox_inquiries',
-          data: { inquiries: updatedList }
-        })
-      });
-      if (res.status === 404) {
-        await createNewCloudObject(updatedList);
-      }
-    } catch (err) {
-      console.warn('Could not save inquiry to cloud:', err);
-    }
-  };
-
-  const handleDeleteInquiry = async (inquiryId) => {
-    if (window.confirm('Delete this inquiry record?')) {
-      const updated = inquiries.filter(i => i.id !== inquiryId);
-      setInquiries(updated);
-      saveLocalInquiries(updated);
-
-      let dbUrl = DEFAULT_DB_URL;
-      try {
-        const savedId = localStorage.getItem(INQUIRIES_DB_KEY);
-        if (savedId) dbUrl = `https://api.restful-api.dev/objects/${savedId}`;
-      } catch (e) {}
-
-      try {
-        let res = await fetch(dbUrl, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: 'deltafox_inquiries',
-            data: { inquiries: updated }
-          })
-        });
-        if (res.status === 404) {
-          await createNewCloudObject(updated);
-        }
-      } catch (err) {
-        console.warn('Could not update cloud inquiries:', err);
-      }
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
-      setError('Please fill in all required fields.');
-      return;
-    }
-    if (!formData.email.includes('@') || !formData.email.includes('.')) {
-      setError('Please provide a valid email address.');
-      return;
-    }
-
-    setError('');
-    setIsSubmitting(true);
-
-    const inquiryRecord = {
-      id: `inq_${Date.now()}`,
-      date: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-      name: formData.name,
-      email: formData.email,
-      subject: formData.subject || 'DeltaFox Inquiry',
-      message: formData.message
-    };
-
-    // 1. Save locally and to cloud database for Admin visibility
-    await saveInquiryToCloud(inquiryRecord);
-
-    // 2. Submit via FormSubmit API to send email directly to deltafox.options@yahoo.com
-    // Note: Omitting _replyto header override prevents Yahoo Mail anti-spoofing filter from flagging user emails as spam
-    try {
-      const response = await fetch('https://formsubmit.co/ajax/deltafox.options@yahoo.com', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-          'User Name': formData.name,
-          'User Email Address': formData.email,
-          'Inquiry Subject': formData.subject || 'DeltaFox Inquiry',
-          'User Message Details': formData.message,
-          _subject: formData.subject ? `[DELTAFOX INQUIRY] ${formData.subject}` : `[DELTAFOX INQUIRY] New Message from ${formData.name}`,
-          _template: 'table',
-          _captcha: 'false'
-        })
-      });
-      const result = await response.json().catch(() => null);
-      if (result && (
-        result.success === 'false' ||
-        result.success === false ||
-        (result.message && (
-          result.message.toLowerCase().includes('activation') ||
-          result.message.toLowerCase().includes('confirm') ||
-          result.message.toLowerCase().includes('web server')
-        ))
-      )) {
-        setNeedsActivation(true);
-      } else {
-        setNeedsActivation(false);
-      }
-    } catch (err) {
-      console.warn('FormSubmit endpoint dispatch attempt completed:', err);
-    }
-
-    setIsSubmitting(false);
-    setSubmitted(true);
   };
 
   return (
-    <section id="contact" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid border-t border-white/5 relative overflow-hidden">
+    <section id="contact" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid relative overflow-hidden">
       {/* Ambient Radial Glow Lighting */}
       <div className="ambient-glow-amber top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
       <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
 
-        {/* Header & Admin Controls */}
+        {/* Header */}
         <div className="text-center space-y-4 mb-12">
           <div className="inline-flex items-center space-x-2 text-amber-400 font-mono text-xs uppercase tracking-widest">
             <Mail className="w-4 h-4" />
@@ -264,187 +34,61 @@ export default function ContactSection() {
           <p className="text-sm text-gray-400 max-w-lg mx-auto font-sans">
             Connect with us regarding training programs, options trading strategies, or platform inquiries.
           </p>
-
-          {isAdminLoggedIn && (
-            <div className="pt-2">
-              <button
-                onClick={() => {
-                  setShowInquiriesPanel(!showInquiriesPanel);
-                  fetchInquiries();
-                }}
-                className="inline-flex items-center space-x-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400 text-xs font-mono font-bold hover:bg-amber-500/20 transition-all"
-              >
-                <Inbox className="w-4 h-4" />
-                <span>{showInquiriesPanel ? 'HIDE INQUIRIES' : `VIEW RECEIVED INQUIRIES (${inquiries.length})`}</span>
-              </button>
-            </div>
-          )}
         </div>
 
-        {/* Central Admin Received Inquiries Panel */}
-        {isAdminLoggedIn && showInquiriesPanel && (
-          <div className="glass-card rounded-3xl p-6 mb-10 border border-amber-500/40 space-y-4 font-mono text-xs">
-            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-              <div className="flex items-center space-x-2 text-amber-400 font-bold">
-                <Inbox className="w-4 h-4" />
-                <span>RECEIVED USER INQUIRIES — CENTRAL ADMIN PANEL</span>
-              </div>
-              <button
-                onClick={fetchInquiries}
-                className="inline-flex items-center space-x-1 text-gray-400 hover:text-white text-[11px]"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>REFRESH</span>
-              </button>
-            </div>
-
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px] font-sans flex items-start space-x-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-amber-400 mt-0.5" />
-              <div>
-                <strong className="font-mono text-amber-400 uppercase">Yahoo Mail Inbox Tip:</strong> To guarantee all incoming inquiries land 100% in your Inbox (and never Spam), add <strong className="text-white">notifications@formsubmit.co</strong> to your Yahoo Contacts or create a Yahoo filter: <em>"If Sender contains formsubmit.co -&gt; Move to Inbox"</em>.
-              </div>
-            </div>
-
-            {inquiries.length === 0 ? (
-              <p className="py-8 text-center text-gray-500">NO INQUIRIES RECORDED YET.</p>
-            ) : (
-              <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
-                {inquiries.map((inq) => (
-                  <div key={inq.id} className="p-4 rounded-xl bg-neutral-900/90 border border-white/10 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-amber-400 font-bold">{inq.name} ({inq.email})</span>
-                      <div className="flex items-center space-x-3">
-                        <span className="text-[10px] text-gray-500">{inq.date}</span>
-                        <button
-                          onClick={() => handleDeleteInquiry(inq.id)}
-                          className="text-gray-500 hover:text-rose-400 transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="text-gray-300 font-bold text-[11px]">SUBJECT: {inq.subject}</div>
-                    <p className="text-gray-400 font-sans text-xs bg-black/40 p-3 rounded-lg border border-white/5 whitespace-pre-wrap">
-                      {inq.message}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Form Container with Pulsing Neon Aura Layer (Centered Compact Layout) */}
+        {/* Outer Glowing Glassmorphism Container */}
         <div className="relative rounded-3xl max-w-3xl mx-auto w-full">
           {/* Dedicated Pulsing Neon Background Aura Layer */}
           <div className="absolute -inset-1 rounded-3xl bg-amber-500/10 shadow-[0_0_50px_rgba(255,102,0,0.6),0_0_100px_rgba(255,102,0,0.3)] animate-pulse pointer-events-none" />
 
-          {/* Borderless Form Container */}
-          <div className="relative bg-[#0a0a0c]/95 rounded-3xl p-6 sm:p-10 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
+          {/* Borderless Glassmorphism Container Content */}
+          <div className="relative bg-[#0a0a0c]/95 rounded-3xl p-6 sm:p-12 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden text-center flex flex-col items-center space-y-6 font-mono">
 
-          {submitted ? (
-            <div className="py-12 text-center space-y-4 font-mono">
-              <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto animate-bounce" />
-              <h3 className="text-2xl font-bold text-white uppercase tracking-wider">INQUIRY SENT</h3>
+            {/* 1. Large/Bold Email Address (Centered) */}
+            <a
+              href={`mailto:${emailAddress}`}
+              className="text-sm min-[360px]:text-base min-[410px]:text-lg sm:text-3xl md:text-4xl font-extrabold text-white hover:text-amber-400 transition-colors whitespace-nowrap block tracking-tight sm:tracking-wide max-w-full"
+            >
+              {emailAddress}
+            </a>
 
-              <p className="text-xs sm:text-sm text-gray-300 max-w-md mx-auto font-sans leading-relaxed">
-                Your message has been received, and you will get a response from <strong className="text-amber-400">deltafox.options@yahoo.com</strong>
-              </p>
-
-              {needsActivation && (
-                <div className="mt-4 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-left text-xs space-y-1 font-sans max-w-md mx-auto">
-                  <p className="font-bold font-mono text-amber-400 text-xs uppercase flex items-center gap-1.5">
-                    <AlertCircle className="w-4 h-4 shrink-0" />
-                    Action Required for DeltaFox Admin
-                  </p>
-                  <p className="text-gray-300 text-[11px] leading-relaxed">
-                    FormSubmit sent an initial activation link to <strong className="text-amber-400">deltafox.options@yahoo.com</strong>.
-                    Please check your Yahoo Mail inbox or Spam folder and click <strong>"Activate Form"</strong> to begin receiving user inquiries directly in your email.
-                  </p>
-                </div>
-              )}
-
+            {/* 2. "COPY EMAIL" Button (Centered directly below email address) */}
+            <div>
               <button
-                onClick={() => {
-                  setSubmitted(false);
-                  setNeedsActivation(false);
-                  setFormData({ name: '', email: '', subject: '', message: '' });
-                }}
-                className="mt-6 px-6 py-2.5 bg-neutral-900 border border-amber-500/40 text-amber-400 text-xs font-bold rounded-xl hover:bg-neutral-800 transition-all uppercase tracking-wider"
+                onClick={handleCopyEmail}
+                className="inline-flex items-center space-x-2 px-6 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/40 text-amber-400 text-xs font-bold hover:bg-amber-500/20 transition-all uppercase tracking-wider"
               >
-                SEND ANOTHER MESSAGE
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    <span className="text-emerald-400">COPIED TO CLIPBOARD</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4" />
+                    <span>COPY EMAIL</span>
+                  </>
+                )}
               </button>
             </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6 font-mono text-xs">
 
-              {error && (
-                <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 flex items-center space-x-2">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{error}</span>
-                </div>
-              )}
+            {/* 3. Brief Inquiry Note */}
+            <p className="text-xs sm:text-sm text-gray-300 font-sans leading-relaxed max-w-xl mx-auto pt-1">
+              For training programs, systematic options trading inquiries or general platform support, feel free to drop us a direct email.
+            </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-gray-400 mb-2 uppercase">FULL NAME *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Enter your name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full bg-neutral-900/90 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500"
-                  />
-                </div>
+            {/* Subtle Divider */}
+            <div className="w-full max-w-lg border-t border-white/10 my-2" />
 
-                <div>
-                  <label className="block text-gray-400 mb-2 uppercase">EMAIL ADDRESS *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="name@company.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-neutral-900/90 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-              </div>
+            {/* 4. Additional Professional Theory / Note */}
+            <p className="text-xs sm:text-sm text-gray-300 font-sans leading-relaxed max-w-2xl mx-auto">
+              At DeltaFox, we believe in complete transparency and a data-driven, systematic approach to financial markets. Whether you are looking to master non-directional options strategies or have questions regarding our trading psycology, strategies and market intelligence, our team is always ready to assist you.
+            </p>
 
-              <div>
-                <label className="block text-gray-400 mb-2 uppercase">SUBJECT</label>
-                <input
-                  type="text"
-                  placeholder="Inquiry subject / Training Enrollment"
-                  value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  className="w-full bg-neutral-900/90 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-400 mb-2 uppercase">MESSAGE *</label>
-                <textarea
-                  required
-                  rows={5}
-                  placeholder="Enter your message details or training inquiry..."
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  className="w-full bg-neutral-900/90 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-amber-500"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full py-4 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-black font-extrabold text-sm rounded-xl hover:brightness-110 transition-all shadow-[0_0_25px_rgba(217,119,6,0.3)] flex items-center justify-center space-x-2 uppercase tracking-wider disabled:opacity-50"
-              >
-                <Send className="w-4 h-4" />
-                <span>{isSubmitting ? 'SENDING INQUIRY...' : 'Submit enquiry'}</span>
-              </button>
-
-            </form>
-          )}
+            {/* 5. Final Navigation Reference */}
+            <p className="text-xs sm:text-sm text-amber-400/90 font-sans leading-relaxed max-w-2xl mx-auto font-medium">
+              Visit the DeltaFox Options page to check out and subscribe our official YouTube channel for live trade executions, position-sizing frameworks and systematic options strategies.
+            </p>
 
           </div>
         </div>
