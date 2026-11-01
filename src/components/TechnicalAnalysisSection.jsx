@@ -219,7 +219,7 @@ export default function TechnicalAnalysisSection() {
               TECHNICAL ANALYSIS & MARKET SETUPS.
             </h2>
             <p className="text-gray-400 text-sm md:text-base mt-2 max-w-3xl font-light">
-              Technical analysis and trade setup justifications recorded before taking positions in individual stocks.
+              Systematic quantitative insights and pre-trade technical roadmaps for individual large-cap options.
             </p>
           </div>
 
