@@ -111,16 +111,10 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     }
   };
 
-  // Dynamic market status indicator (Orange for Pre-open, Green for Open, Red for Closed, Gold for Muhurat)
+  // Dynamic market status indicator (Orange for Pre-open, Green for Open, Red for Closed)
   const getStatusBadge = () => {
     const status = marketStatus?.status || 'MARKET CLOSED';
-    if (status.includes('MUHURAT')) {
-      return {
-        dotBg: 'bg-amber-400',
-        text: 'MUHURAT TRADING',
-        textColor: 'text-amber-400'
-      };
-    } else if (status.includes('PRE-MARKET')) {
+    if (status.includes('PRE-MARKET')) {
       return {
         dotBg: 'bg-amber-500',
         text: 'PRE-OPEN',
@@ -240,7 +234,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
 
           {/* Mobile Hamburger Toggle */}
           <div className="lg:hidden flex items-center space-x-3">
-            <div className="sm:hidden flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-neutral-900 border border-white/10 text-[10px] font-mono">
+            <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-neutral-900 border border-white/10 text-[10px] font-mono">
               <span className="relative flex h-2 w-2">
                 <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusBadge.dotBg}`}></span>
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${statusBadge.dotBg}`}></span>

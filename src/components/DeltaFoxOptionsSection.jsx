@@ -8,13 +8,19 @@ export default function DeltaFoxOptionsSection() {
   return (
     <section
       id="deltafox-options"
-      className="relative pt-3 sm:pt-4 lg:pt-4 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-16 sm:scroll-mt-20 selection:bg-amber-500/30 overflow-hidden bg-transparent bg-subpage-grid"
+      className="relative min-h-[85vh] sm:min-h-screen pt-2 sm:pt-4 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-12 sm:scroll-mt-16 selection:bg-amber-500/30 flex flex-col justify-center -mt-4 sm:-mt-6"
     >
-      {/* Main Outer Container */}
-      <div className="relative rounded-3xl max-w-[1400px] mx-auto w-full mt-1 lg:mt-[4px]">
+      {/* Background ambient glow effects */}
+      <div className="ambient-glow-amber top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
 
-        {/* Dark Glassmorphic Card with Slim Glowing Orange Border */}
-        <div className="relative bg-[#0a0a0c]/85 backdrop-blur-md rounded-3xl p-5 sm:p-7 lg:p-8 xl:p-9 border border-amber-500/60 animate-orange-border-glow overflow-hidden">
+      {/* Main Outer Container with Pulsing Neon Aura Layer */}
+      <div className="relative rounded-3xl max-w-[1400px] mx-auto w-full">
+
+        {/* Dedicated Pulsing Neon Background Aura Layer (Matching Contact Us Style) */}
+        <div className="absolute -inset-1 rounded-3xl bg-amber-500/10 shadow-[0_0_50px_rgba(255,102,0,0.6),0_0_100px_rgba(255,102,0,0.3)] animate-pulse pointer-events-none" />
+
+        {/* Borderless Dark Glassmorphic Card (Frosted Glass with backdrop-blur) */}
+        <div className="relative bg-[#0a0a0c]/70 backdrop-blur-md rounded-3xl p-5 sm:p-7 lg:p-9 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden">
 
           {/* Subtle top accent bar */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-80" />
@@ -52,7 +58,7 @@ export default function DeltaFoxOptionsSection() {
                   DELTAFOX OPTIONS
                 </h1>
                 <p className="text-amber-400 font-mono text-xs sm:text-sm font-semibold tracking-wide uppercase">
-                  Official Media & Options Hub of DeltaFox
+                  OFFICIAL MEDIA & OPTIONS HUB OF DELTAFOX
                 </p>
               </div>
 
@@ -61,11 +67,11 @@ export default function DeltaFoxOptionsSection() {
                 DeltaFox Options is the official media and educational extension of DeltaFox. We deliver quantitative options trading concepts, strategic frameworks, volatility insights, and live trade analytics through our official YouTube platform.
               </p>
 
-              {/* What We Cover On Our Channels — 2x2 Grid */}
+              {/* What We Cover On Our Channel — 2x2 Grid */}
               <div className="w-full pt-1">
                 <div className="text-amber-400 font-mono text-[11px] uppercase tracking-widest font-bold mb-3 text-center flex items-center justify-center space-x-2">
                   <span className="h-px w-8 bg-amber-500/30" />
-                  <span>WHAT WE COVER ON OUR CHANNELS</span>
+                  <span>WHAT WE COVER ON OUR CHANNEL</span>
                   <span className="h-px w-8 bg-amber-500/30" />
                 </div>
 
@@ -116,54 +122,51 @@ export default function DeltaFoxOptionsSection() {
 
             </div>
 
-            {/* Right Column — Vertically Centered Expanded YouTube Showcase Box */}
-            <div className="lg:col-span-6 flex flex-col justify-center my-auto h-full">
+            {/* Right Column — YouTube Card Exclusively */}
+            <div className="lg:col-span-6 flex flex-col justify-center items-center my-auto w-full">
 
-              {/* YouTube Card — Expanded & Centered to Seamlessly Fill Right Box */}
-              <div className="bg-neutral-900/80 border rounded-2xl p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-2xl flex flex-col items-center justify-center text-center space-y-6 group animate-youtube-card-border transition-all duration-300 w-full h-full min-h-[380px]">
+              {/* YouTube Card — Directly Displayed Prominent Custom Logo */}
+              <div className="w-full max-w-lg bg-neutral-900/80 border rounded-2xl p-6 sm:p-8 lg:p-10 relative overflow-hidden shadow-lg flex flex-col items-center text-center space-y-6 group animate-youtube-card-border transition-all duration-300">
 
                 {/* Section Tag */}
-                <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-md bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-mono font-bold tracking-wider uppercase">
-                  <span>OFFICIAL YOUTUBE CHANNEL</span>
+                <div className="flex justify-center">
+                  <span className="text-[10px] font-mono font-bold text-red-400 tracking-wider uppercase bg-red-500/10 px-3 py-1 rounded-md border border-red-500/20 text-center">
+                    OFFICIAL YOUTUBE CHANNEL
+                  </span>
                 </div>
 
-                {/* Centered Custom YouTube Logo Image */}
-                <div className="relative group/logo">
-                  <div className="absolute -inset-3 bg-red-600/20 rounded-full blur-xl group-hover/logo:opacity-100 transition duration-500 opacity-60 pointer-events-none" />
+                {/* Centered Header Block: Prominent Custom YouTube Logo Image directly without box container */}
+                <div className="flex flex-col items-center space-y-3 pt-1">
                   <img
                     src={youtubeLogo}
                     alt="YouTube Logo"
-                    className="relative w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-[0_0_25px_rgba(239,68,68,0.5)] transition-transform duration-300 group-hover:scale-105"
+                    className="w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-[0_0_25px_rgba(239,68,68,0.5)]"
                   />
+
+                  <div className="space-y-1">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-white font-mono">DeltaFox Options</h2>
+                    <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide">
+                      {SOCIAL_CONFIG.youtube.handle}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Channel Title and Handle */}
-                <div className="space-y-1">
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-white font-mono tracking-tight">
-                    DeltaFox Options
-                  </h2>
-                  <p className="text-sm sm:text-base text-gray-300 font-sans font-medium tracking-wide">
-                    {SOCIAL_CONFIG.youtube.handle}
-                  </p>
-                </div>
-
-                {/* Highlight Description */}
-                <p className="text-xs sm:text-sm text-gray-400 max-w-md font-sans leading-relaxed">
+                {/* Description under handle matching reference */}
+                <p className="text-xs sm:text-sm text-gray-300 font-sans leading-relaxed max-w-md text-center">
                   Watch live systematic trade executions, non-directional options strategy breakdowns, position-sizing models, and volatility analyses.
                 </p>
 
-                {/* Centered CTA Action Button */}
+                {/* Centered CTA Button with Standard Lucide Play Icon */}
                 <a
                   href={SOCIAL_CONFIG.youtube.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full max-w-sm inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_25px_rgba(220,38,38,0.4)] hover:shadow-[0_0_35px_rgba(220,38,38,0.6)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+                  className="w-full max-w-md inline-flex items-center justify-center space-x-2.5 px-6 py-3.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(220,38,38,0.35)] hover:shadow-[0_0_30px_rgba(220,38,38,0.55)] hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
                 >
                   <Play className="w-4 h-4 text-white fill-current shrink-0" />
                   <span>SUBSCRIBE & WATCH OUR VIDEOS</span>
                   <ExternalLink className="w-3.5 h-3.5 text-white shrink-0" />
                 </a>
-
               </div>
 
             </div>
