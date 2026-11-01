@@ -70,6 +70,36 @@ function MountainClimbersOverlay({
 
   const originPoint = points[0] || { x: margin.left, y: zeroY };
 
+  // Scoped Large-Screen Media Query: Apply coordinate/position adjustments strictly on large desktop displays (min-width: 1200px)
+  const [isLargeDesktop, setIsLargeDesktop] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(min-width: 1200px)').matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(min-width: 1200px)');
+    const handleMediaChange = (e) => {
+      setIsLargeDesktop(e.matches);
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleMediaChange);
+    } else {
+      mediaQuery.addListener(handleMediaChange);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleMediaChange);
+      } else {
+        mediaQuery.removeListener(handleMediaChange);
+      }
+    };
+  }, []);
+
   const dPath = useMemo(() => {
     return getMonotonePath(points);
   }, [points]);
@@ -379,94 +409,27 @@ function MountainClimbersOverlay({
           ))}
         </g>
 
-        {/* Basecamp Tent Graphic placed at Exact 0 P&L Y-Axis Line */}
-        <g transform={`translate(${margin.left - 42}, ${zeroY - 32})`}>
+        {/* Basecamp Tent Graphic placed at Exact 0 P&L Y-Axis Line (Scoped Large-Screen Media Query) */}
+        <g
+          className="tent-marker"
+          transform={`translate(${isLargeDesktop ? margin.left - 42 : margin.left - 42}, ${isLargeDesktop ? zeroY - 32 : zeroY - 32})`}
+        >
           <image
             href={tentImg}
             x="0"
             y="0"
-            width="38"
-            height="36"
+            width={isLargeDesktop ? 38 : 38}
+            height={isLargeDesktop ? 36 : 36}
             preserveAspectRatio="xMidYMid meet"
           />
         </g>
 
-        {/* Layer 1: Expedition Team Stickman Figures (Rendered BEHIND the ATH Flag) */}
-        {points.length > 0 && !isResting && (
-          <g className="climber-figures">
-            {/* Follower Mountaineer */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-              {/* Head */}
-              <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
-              {/* Torso */}
-              <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" />
-
-              {/* Leg 1 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${followerThigh1}, 0, 4)`}>
-                <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
-                <g transform={`rotate(${followerShin1}, -2, 8)`}>
-                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
-                </g>
-              </g>
-
-              {/* Leg 2 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${followerThigh2}, 0, 4)`}>
-                <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
-                <g transform={`rotate(${followerShin2}, 2, 8)`}>
-                  <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
-                </g>
-              </g>
-
-              {/* Arm 1 - Updated stroke to solid blue #0284c7 matching body */}
-              <g transform={`rotate(${followerArm1}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#0284c7" strokeWidth="1.5" />
-              </g>
-
-              {/* Arm 2 - Updated stroke to solid blue #0284c7 matching body */}
-              <g transform={`rotate(${followerArm2}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="5" y2="3" stroke="#0284c7" strokeWidth="1.5" />
-              </g>
-            </g>
-
-            {/* Lead Mountaineer */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-              {/* Head */}
-              <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
-              {/* Torso */}
-              <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" />
-
-              {/* Leg 1 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${leaderThigh1}, 0, 4)`}>
-                <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" />
-                <g transform={`rotate(${leaderShin1}, -2, 8)`}>
-                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" />
-                </g>
-              </g>
-
-              {/* Leg 2 (Jointed Thigh + Shin) */}
-              <g transform={`rotate(${leaderThigh2}, 0, 4)`}>
-                <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" />
-                <g transform={`rotate(${leaderShin2}, 2, 8)`}>
-                  <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" />
-                </g>
-              </g>
-
-              {/* Arm 1 */}
-              <g transform={`rotate(${leaderArm1}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
-              </g>
-
-              {/* Arm 2 */}
-              <g transform={`rotate(${leaderArm2}, 0, -2)`}>
-                <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
-              </g>
-            </g>
-          </g>
-        )}
-
-        {/* Layer 2: Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) - Rendered ABOVE climbers */}
+        {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) connected directly to curve line (Scoped Large-Screen Media Query) */}
         {highestTradePoint && highestTradePoint.pnl > 0 && (
-          <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y})`}>
+          <g
+            className="ath-flag-marker"
+            transform={`translate(${isLargeDesktop ? highestTradePoint.x : highestTradePoint.x}, ${isLargeDesktop ? highestTradePoint.y : highestTradePoint.y})`}
+          >
             {/* Anchor dot directly on curve line */}
             <circle cx="0" cy="0" r="3.5" fill="#10b981" stroke="#ffffff" strokeWidth="1.2" className="drop-shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
 
