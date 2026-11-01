@@ -10,7 +10,6 @@ export default function TechnicalAnalysisSection() {
   const [stockData, setStockData] = useState(FALLBACK_STOCK_DATA);
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [lastSyncTime, setLastSyncTime] = useState('');
 
   const fetchAllSheetData = async () => {
     setLoading(true);
@@ -27,7 +26,6 @@ export default function TechnicalAnalysisSection() {
       console.error('Error fetching technical analysis CSV feeds:', e);
     } finally {
       setLoading(false);
-      setLastSyncTime(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     }
   };
 
@@ -209,26 +207,17 @@ export default function TechnicalAnalysisSection() {
       <div className="max-w-[1700px] w-full mx-auto px-4 sm:px-6 lg:px-8 space-y-8 relative z-10">
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-mono text-amber-400 tracking-widest uppercase mb-2">
-              <LineChart className="w-4 h-4 text-amber-400" />
-              SYSTEMATIC MARKET & STOCK ANALYSIS
-            </div>
-            <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white uppercase">
-              TECHNICAL ANALYSIS & MARKET SETUPS.
-            </h2>
-            <p className="text-gray-400 text-sm md:text-base mt-2 max-w-3xl font-light">
-              Systematic quantitative insights and pre-trade technical roadmaps for individual large-cap options.
-            </p>
+        <div>
+          <div className="flex items-center gap-2 text-xs font-mono text-amber-400 tracking-widest uppercase mb-2">
+            <LineChart className="w-4 h-4 text-amber-400" />
+            SYSTEMATIC MARKET & STOCK ANALYSIS
           </div>
-
-          <div className="flex items-center self-start md:self-auto">
-            <div className="flex items-center gap-2 bg-[#0a0a0c]/90 border border-amber-500/30 px-3.5 py-2 rounded-lg text-xs font-mono text-gray-300 whitespace-nowrap">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-              <span>LIVE SYNCED: {lastSyncTime || 'LIVE'}</span>
-            </div>
-          </div>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight text-white uppercase">
+            TECHNICAL ANALYSIS & MARKET SETUPS.
+          </h2>
+          <p className="text-gray-400 text-sm md:text-base mt-2 max-w-3xl font-light">
+            Systematic quantitative insights and pre-trade technical roadmaps for individual large-cap options.
+          </p>
         </div>
 
         {/* STOCK ANALYSIS & ANNOUNCEMENTS SECTION */}
