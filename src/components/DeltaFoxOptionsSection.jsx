@@ -1,7 +1,7 @@
 import React from 'react';
 import { ExternalLink, Sparkles, Play } from 'lucide-react';
 import deltafoxOptionsLogo from '../assets/deltafox_options_logo.png';
-import youtubeSubscribeBadge from '../assets/youtube_subscribe_badge.png';
+import youtubeLogo from '../assets/youtube_logo.png';
 import { SOCIAL_CONFIG } from '../services/socialMediaService';
 
 export default function DeltaFoxOptionsSection() {
@@ -127,13 +127,13 @@ export default function DeltaFoxOptionsSection() {
                   <span>OFFICIAL YOUTUBE CHANNEL</span>
                 </div>
 
-                {/* Centered Custom YouTube Subscribe Badge */}
-                <div className="relative group/logo w-full max-w-[280px] sm:max-w-[320px] flex items-center justify-center">
-                  <div className="absolute -inset-3 bg-red-600/20 rounded-2xl blur-xl group-hover/logo:opacity-100 transition duration-500 opacity-60 pointer-events-none" />
+                {/* Centered Custom YouTube Logo Image */}
+                <div className="relative group/logo">
+                  <div className="absolute -inset-3 bg-red-600/20 rounded-full blur-xl group-hover/logo:opacity-100 transition duration-500 opacity-60 pointer-events-none" />
                   <img
-                    src={youtubeSubscribeBadge}
-                    alt="YouTube Subscribe"
-                    className="relative w-full h-auto object-contain drop-shadow-[0_0_25px_rgba(239,68,68,0.5)] transition-transform duration-300 group-hover:scale-105"
+                    src={youtubeLogo}
+                    alt="YouTube Logo"
+                    className="relative w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-[0_0_25px_rgba(239,68,68,0.5)] transition-transform duration-300 group-hover:scale-105"
                   />
                 </div>
 
