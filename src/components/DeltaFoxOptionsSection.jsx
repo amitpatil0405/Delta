@@ -8,7 +8,7 @@ export default function DeltaFoxOptionsSection() {
   return (
     <section
       id="deltafox-options"
-      className="relative pt-3 sm:pt-4 lg:pt-4 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-16 sm:scroll-mt-20 selection:bg-amber-500/30 overflow-hidden bg-transparent bg-subpage-grid"
+      className="relative pt-3 sm:pt-4 lg:pt-4 pb-12 sm:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 max-w-[1700px] mx-auto scroll-mt-16 sm:scroll-mt-20 selection:bg-amber-500/30 overflow-hidden bg-transparent bg-subpage-grid min-[1400px]:min-h-[calc(100vh-5rem)] min-[1400px]:flex min-[1400px]:flex-col min-[1400px]:justify-center"
     >
       {/* Main Outer Container */}
       <div className="relative rounded-3xl max-w-[1400px] mx-auto w-full mt-1 lg:mt-[4px]">
@@ -65,7 +65,7 @@ export default function DeltaFoxOptionsSection() {
               <div className="w-full pt-1">
                 <div className="text-amber-400 font-mono text-[11px] uppercase tracking-widest font-bold mb-3 text-center flex items-center justify-center space-x-2">
                   <span className="h-px w-8 bg-amber-500/30" />
-                  <span>WHAT WE COVER ON OUR CHANNELS</span>
+                  <span>WHAT WE COVER ON OUR CHANNEL</span>
                   <span className="h-px w-8 bg-amber-500/30" />
                 </div>
 
