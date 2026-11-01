@@ -333,7 +333,7 @@ export default function MarketOverviewSection() {
                     <td colSpan={5} className="py-12 px-4 text-center text-gray-400 font-mono text-sm">
                       <div className="flex flex-col items-center justify-center space-y-2">
                         <CalendarIcon className="w-8 h-8 text-gray-600 mb-1" />
-                        <span>No holidays scheduled</span>
+                        <span>No holiday data</span>
                       </div>
                     </td>
                   </tr>
