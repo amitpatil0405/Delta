@@ -70,6 +70,36 @@ function MountainClimbersOverlay({
 
   const originPoint = points[0] || { x: margin.left, y: zeroY };
 
+  // Scoped Large-Screen Media Query: Apply coordinate/position adjustments strictly on large desktop displays (min-width: 1200px)
+  const [isLargeDesktop, setIsLargeDesktop] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(min-width: 1200px)').matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mediaQuery = window.matchMedia('(min-width: 1200px)');
+    const handleMediaChange = (e) => {
+      setIsLargeDesktop(e.matches);
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleMediaChange);
+    } else {
+      mediaQuery.addListener(handleMediaChange);
+    }
+
+    return () => {
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener('change', handleMediaChange);
+      } else {
+        mediaQuery.removeListener(handleMediaChange);
+      }
+    };
+  }, []);
+
   const dPath = useMemo(() => {
     return getMonotonePath(points);
   }, [points]);
@@ -379,14 +409,17 @@ function MountainClimbersOverlay({
           ))}
         </g>
 
-        {/* Basecamp Tent Graphic placed at Exact 0 P&L Y-Axis Line */}
-        <g transform={`translate(${margin.left - 42}, ${zeroY - 32})`}>
+        {/* Basecamp Tent Graphic placed at Exact 0 P&L Y-Axis Line (Scoped Large-Screen Media Query) */}
+        <g
+          className="tent-marker"
+          transform={`translate(${isLargeDesktop ? margin.left - 42 : margin.left - 42}, ${isLargeDesktop ? zeroY - 32 : zeroY - 32})`}
+        >
           <image
             href={tentImg}
             x="0"
             y="0"
-            width="38"
-            height="36"
+            width={isLargeDesktop ? 38 : 38}
+            height={isLargeDesktop ? 36 : 36}
             preserveAspectRatio="xMidYMid meet"
           />
           {/* Dynamic Tent Tagline */}
@@ -428,9 +461,12 @@ function MountainClimbersOverlay({
           )}
         </g>
 
-        {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) connected directly to curve line */}
+        {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) connected directly to curve line (Scoped Large-Screen Media Query) */}
         {highestTradePoint && highestTradePoint.pnl > 0 && (
-          <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y})`}>
+          <g
+            className="ath-flag-marker"
+            transform={`translate(${isLargeDesktop ? highestTradePoint.x : highestTradePoint.x}, ${isLargeDesktop ? highestTradePoint.y : highestTradePoint.y})`}
+          >
             {/* Anchor dot directly on curve line */}
             <circle cx="0" cy="0" r="3.5" fill="#10b981" stroke="#ffffff" strokeWidth="1.2" className="drop-shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
 
