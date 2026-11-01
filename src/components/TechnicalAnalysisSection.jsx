@@ -343,10 +343,7 @@ export default function TechnicalAnalysisSection() {
                       </span>
                     </div>
 
-                    <div className="bg-black/60 border border-white/5 rounded-xl p-4 font-mono text-xs text-gray-300 leading-relaxed space-y-2">
-                      <span className="text-amber-400 font-bold block text-[11px] uppercase tracking-wider">
-                        DESCRIPTION OF TECHNICAL ANALYSIS BEFORE TAKING POSITION:
-                      </span>
+                    <div className="bg-black/60 border border-white/5 rounded-xl p-4 font-mono text-xs text-gray-300 leading-relaxed">
                       <p className="text-gray-200 text-sm font-sans font-medium leading-relaxed whitespace-pre-line">
                         {item.description}
                       </p>
