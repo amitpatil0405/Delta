@@ -293,6 +293,7 @@ export default function PortfolioJournalSection() {
   });
 
   const [isLoading, setIsLoading] = useState(true);
+  const [hoveredDay, setHoveredDay] = useState(null);
 
   // Fetch Global Trades on mount & Periodic Sync (every 10s) from Google Sheet CSV
   useEffect(() => {
@@ -309,12 +310,13 @@ export default function PortfolioJournalSection() {
           const csvText = await sheetRes.text();
           const { trades: parsedSheetTrades, fyConfig: sheetFyConfig } = parseCSVRows(csvText);
 
-          // Unconditionally update trades state (clears old trades if sheet has 0 records)
-          setTrades(parsedSheetTrades);
-          try {
-            localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(parsedSheetTrades));
-          } catch (e) {
-            console.warn('LocalStorage write restriction:', e);
+          if (parsedSheetTrades.length > 0) {
+            setTrades(parsedSheetTrades);
+            try {
+              localStorage.setItem(TRADES_STORAGE_KEY, JSON.stringify(parsedSheetTrades));
+            } catch (e) {
+              console.warn('LocalStorage write restriction:', e);
+            }
           }
 
           if (sheetFyConfig) {
@@ -415,36 +417,23 @@ export default function PortfolioJournalSection() {
     return [yMin, yMax > yMin ? yMax : yMin + 30000];
   }, [pnlCurveData]);
 
-  // Calculate dynamic X-axis sampled ticks for desktop & mobile to prevent label collision & crowding
-  const xAxisTicks = useMemo(() => {
-    const validTrades = pnlCurveData.filter(d => d.trade && d.trade.trim() !== '');
-    if (!validTrades.length) return [];
-
-    const n = validTrades.length;
-    // Determine a clean step size (e.g. 5, 10, or 20) based on total trades count
-    let step;
-    if (isMobile) {
-      step = n > 30 ? 10 : n > 15 ? 5 : n > 8 ? 4 : 2;
-    } else {
-      step = n > 60 ? 10 : n > 25 ? 5 : n > 12 ? 4 : 2;
+  // Calculate sampled ticks for mobile viewport so only selected ticks/vertical lines show on mobile
+  const mobileTicks = useMemo(() => {
+    if (!pnlCurveData.length) return [];
+    if (pnlCurveData.length <= 5) {
+      return pnlCurveData.map(d => d.trade);
     }
-
     const ticks = [];
-    // Start with Trade 1
-    ticks.push(validTrades[0].trade);
-
-    // Add clean sequence (e.g. Trade 5, Trade 10, Trade 15...)
-    for (let i = step - 1; i < n; i += step) {
-      const tradeLabel = validTrades[i].trade;
-      if (!ticks.includes(tradeLabel)) {
-        ticks.push(tradeLabel);
-      }
+    const step = Math.ceil(pnlCurveData.length / 5);
+    for (let i = 0; i < pnlCurveData.length; i += step) {
+      ticks.push(pnlCurveData[i].trade);
     }
-
-    // If the last trade naturally matches the step, it's already included.
-    // If it falls too close to the previous tick, omit it to avoid edge crowding.
+    const lastTrade = pnlCurveData[pnlCurveData.length - 1].trade;
+    if (!ticks.includes(lastTrade)) {
+      ticks.push(lastTrade);
+    }
     return ticks;
-  }, [pnlCurveData, isMobile]);
+  }, [pnlCurveData]);
 
   // Calculate dynamic zero-baseline gradient offset for smooth Red/Green transition
   const pnlGradientStats = useMemo(() => {
@@ -573,7 +562,7 @@ export default function PortfolioJournalSection() {
   const endMonthName = `${MONTH_NAMES[fyConfig.endMonth]} ${fyConfig.endYear}`;
 
   return (
-    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid relative overflow-hidden">
+    <section id="portfolio" className="pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid border-t border-white/5 relative overflow-hidden">
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber top-10 right-10" />
       <div className="ambient-glow-emerald bottom-10 left-10" />
@@ -674,10 +663,12 @@ export default function PortfolioJournalSection() {
           heatmapMonths={heatmapMonths}
           startMonthName={startMonthName}
           endMonthName={endMonthName}
+          hoveredDay={hoveredDay}
+          setHoveredDay={setHoveredDay}
         />
 
-        {/* P&L Cumulative Performance Graph (Rendered when closed trades exist) */}
-        {closedTrades.length > 0 && (
+        {/* P&L Cumulative Performance Graph */}
+        {pnlCurveData.length > 0 && (
           <div
             className="bg-[#0a0a0f]/90 rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative space-y-4"
           >
@@ -747,37 +738,20 @@ export default function PortfolioJournalSection() {
                   <XAxis
                     dataKey="trade"
                     stroke="#666"
-                    tick={{ fontSize: isMobile ? 9 : 10, fill: '#888' }}
-                    interval={0}
-                    ticks={xAxisTicks}
+                    tick={{ fontSize: 10, fill: '#888' }}
+                    interval={isMobile ? undefined : 0}
+                    ticks={isMobile ? mobileTicks : undefined}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                   />
                   <YAxis
                     stroke="#666"
-                    tick={isMobile ? false : { fontSize: 11, fill: '#888' }}
+                    tick={{ fontSize: isMobile ? 9 : 11, fill: '#888' }}
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                     domain={chartYDomain}
-                    width={isMobile ? 24 : 60}
-                    label={isMobile ? {
-                      value: 'Profit',
-                      angle: -90,
-                      position: 'insideLeft',
-                      fill: '#10b981',
-                      fontSize: 11,
-                      fontWeight: 'bold',
-                      fontFamily: 'monospace',
-                      style: { textAnchor: 'middle' },
-                      offset: 6
-                    } : undefined}
-                    tickFormatter={(val) => {
-                      if (Math.abs(val) < 10000) return '';
-                      const sign = val < 0 ? '-' : '';
-                      const absVal = Math.abs(val);
-                      const kVal = absVal / 1000;
-                      return `${sign}${Number.isInteger(kVal) ? kVal : kVal.toFixed(1)}K`;
-                    }}
+                    width={isMobile ? 42 : 60}
+                    tickFormatter={(val) => (Math.abs(val) < 10000 ? '' : val)}
                   />
 
                   <RechartsTooltip
@@ -881,7 +855,9 @@ export default function PortfolioJournalSection() {
 const DailyHeatmap = React.memo(function DailyHeatmap({
   heatmapMonths,
   startMonthName,
-  endMonthName
+  endMonthName,
+  hoveredDay,
+  setHoveredDay
 }) {
   return (
     <div
@@ -942,22 +918,84 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
                     const isTraded = d.count > 0;
                     const isProfit = isTraded && d.pnl > 0;
                     const isLoss = isTraded && d.pnl < 0;
+                    const isHovered = hoveredDay && hoveredDay.key === d.key;
 
                     let boxClass = 'bg-white/5 border-white/5 text-transparent';
                     if (isProfit) {
-                      boxClass = 'bg-emerald-500 border border-black/90 hover:scale-110 hover:brightness-110';
+                      boxClass = 'bg-emerald-500 border border-black/90';
                     } else if (isLoss) {
-                      boxClass = 'bg-rose-500 border border-black/90 hover:scale-110 hover:brightness-110';
-                    } else {
-                      boxClass = 'bg-white/5 border-white/5 text-transparent hover:bg-white/10';
+                      boxClass = 'bg-rose-500 border border-black/90';
                     }
 
+                    if (isHovered) {
+                      if (isProfit) {
+                        boxClass = 'bg-emerald-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
+                      } else if (isLoss) {
+                        boxClass = 'bg-rose-600 border border-black/90 scale-125 z-20 shadow-lg shadow-black/80';
+                      } else {
+                        boxClass = 'bg-white/15 border border-white/10 scale-125 z-20 shadow-lg shadow-black/80';
+                      }
+                    }
+
+                    const totalM = heatmapMonths.length || 12;
+                    const isRightHalf = (d.monthOrder ?? 0) >= Math.floor(totalM / 2);
+                    const popupSideClass = isRightHalf ? "right-full mr-3" : "left-full ml-3";
+
                     return (
-                      <div
+                        <div
                         key={d.key}
-                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all select-none ${boxClass}`}
-                      />
-                    );
+                        onMouseEnter={() => setHoveredDay(d)}
+                        onMouseLeave={() => setHoveredDay(null)}
+                        className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all cursor-pointer relative ${boxClass}`}
+                      >
+                        {/* Hover Popup positioned directly next to the highlighted box (dynamically sized for large P&L amounts) */}
+                        {isHovered && (
+                          <div className={`hidden md:block absolute ${popupSideClass} top-1/2 -translate-y-1/2 bg-[#0c0c0e] border border-white/20 rounded-md p-2 text-[9.5px] font-mono shadow-2xl z-50 w-auto min-w-[220px] max-w-[320px] whitespace-nowrap animate-fadeIn space-y-1.5 text-left pointer-events-none`}>
+                            {/* Header */}
+                            <div className="flex items-center justify-between border-b border-white/10 pb-1.5 gap-4">
+                              <div>
+                                <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">DATE</div>
+                                <div className="text-white font-bold text-[9.5px]">
+                                  {d.date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <div className="text-[7.5px] text-gray-400 uppercase tracking-widest font-bold">TOTAL</div>
+                                {d.count === 0 ? (
+                                  <span className="text-gray-400 font-bold text-[9.5px]">₹0</span>
+                                ) : (
+                                  <span className={`text-[9.5px] font-extrabold ${d.pnl >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                                    {d.pnl < 0 ? '-' : '+'}₹{Math.abs(d.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Simple List of Stocks and Profits */}
+                            {d.count === 0 ? (
+                              <div className="text-[8.5px] text-gray-500 py-0.5 italic">
+                                No closed trades.
+                              </div>
+                            ) : (
+                              <div className="space-y-1 max-h-[140px] overflow-y-auto pr-0.5 scrollbar-thin scrollbar-thumb-white/10">
+                                {d.trades.map((item, idx) => {
+                                  const isPos = item.pnl > 0;
+                                  const isNeg = item.pnl < 0;
+                                  return (
+                                    <div key={idx} className="flex items-center justify-between py-0.5 border-b border-white/5 last:border-0 leading-tight gap-4">
+                                      <span className="font-extrabold text-white text-[9px] truncate max-w-[130px]">{item.symbol}</span>
+                                      <span className={`font-bold text-[9px] text-right shrink-0 ${isPos ? 'text-emerald-400' : isNeg ? 'text-rose-400' : 'text-gray-300'}`}>
+                                        {isNeg ? '-' : isPos ? '+' : ''}₹{Math.abs(item.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                      </span>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        </div>
+                      );
                     })}
                   </div>
 
@@ -1072,11 +1110,11 @@ const JournalRecordsTable = React.memo(function JournalRecordsTable({
         <table className="w-full text-left font-mono text-xs">
           <thead>
             <tr className="text-gray-400 border-b border-white/10 text-[10px] uppercase">
-              <th className="py-3 px-3 text-center">DATE</th>
-              <th className="py-3 px-3 text-center">DAY</th>
-              <th className="py-3 px-3 text-left">SYMBOL</th>
-              <th className="py-3 px-3 text-left">STRATEGY</th>
-              <th className="py-3 px-3 text-center">EXPIRY</th>
+              <th className="py-3 px-3">DATE</th>
+              <th className="py-3 px-3">DAY</th>
+              <th className="py-3 px-3">SYMBOL</th>
+              <th className="py-3 px-3">STRATEGY</th>
+              <th className="py-3 px-3">EXPIRY</th>
               <th className="py-3 px-3 text-right">QUANTITY</th>
               <th className="py-3 px-3 text-center">
                 <div>PROBABILITY OF</div>
@@ -1160,11 +1198,11 @@ const JournalRecordsTable = React.memo(function JournalRecordsTable({
                     }}
                     className="hover:bg-white/5 transition-colors"
                   >
-                    <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.date || '-'}</td>
-                    <td className="py-3 px-3 text-center text-amber-400 font-bold whitespace-nowrap">{t.day || '-'}</td>
-                    <td className="py-3 px-3 text-left font-bold text-white whitespace-nowrap">{t.symbol || '-'}</td>
-                    <td className="py-3 px-3 text-left text-amber-400 whitespace-nowrap">{t.strategy || '-'}</td>
-                    <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.expiry || '-'}</td>
+                    <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.date || '-'}</td>
+                    <td className="py-3 px-3 text-amber-400 font-bold whitespace-nowrap">{t.day || '-'}</td>
+                    <td className="py-3 px-3 font-bold text-white whitespace-nowrap">{t.symbol || '-'}</td>
+                    <td className="py-3 px-3 text-amber-400 whitespace-nowrap">{t.strategy || '-'}</td>
+                    <td className="py-3 px-3 text-gray-400 whitespace-nowrap">{t.expiry || '-'}</td>
                     <td className="py-3 px-3 text-right text-gray-300 font-bold">{t.qty || 0}</td>
                     <td className="py-3 px-3 text-center text-emerald-400 font-bold">{Number(t.pop || 70).toFixed(1)}%</td>
                     <td className="py-3 px-3 text-center text-gray-400 whitespace-nowrap">{t.tradeCloseDate || '-'}</td>
