@@ -81,7 +81,7 @@ export default function TrainingSection() {
   };
 
   return (
-    <section id="training" className="relative pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid border-t border-white/5 overflow-hidden">
+    <section id="training" className="relative pt-8 sm:pt-10 pb-16 scroll-mt-16 sm:scroll-mt-20 bg-transparent bg-subpage-grid overflow-hidden">
 
       {/* Ambient Radial Glow Lighting */}
       <div className="ambient-glow-amber top-10 left-10" />
@@ -103,7 +103,7 @@ export default function TrainingSection() {
           </p>
         </div>
 
-        {/* Banner Callout: Live Market Training Provided & Class Schedule */}
+        {/* Banner Callout: Live Market Training Provided & Class Schedule Notice */}
         <div className="mb-12 rounded-2xl p-6 sm:p-8 border border-amber-500/40 bg-[#0a0a0c]/90 shadow-[0_0_35px_rgba(217,119,6,0.15)] space-y-6">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div className="flex items-start sm:items-center space-x-4">
@@ -125,61 +125,76 @@ export default function TrainingSection() {
                 </p>
               </div>
             </div>
-
-            <div className="shrink-0 px-4 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-amber-400" />
-              <span>Total Course Duration: 2 Months</span>
-            </div>
           </div>
 
-          {/* Dedicated Schedule Badge Grid */}
+          {/* Dedicated Schedule Badge Grid (3 Cards) */}
           <div className="pt-5 border-t border-white/10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
-            {/* Core Lectures Box */}
-            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex items-start space-x-3 overflow-hidden">
-              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5">
-                <Clock className="w-5 h-5" />
-              </div>
-              <div className="relative z-10">
-                <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
-                  CORE LECTURES
-                </span>
-                <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
-                  Tuesday, Wednesday, Thursday (7:30 PM to 8:30 PM)
-                </span>
-              </div>
-            </div>
-
-            {/* Live Session Box */}
-            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex items-start space-x-3 overflow-hidden">
-              <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0 relative z-10 mt-0.5">
-                <Video className="w-5 h-5" />
-              </div>
-              <div className="relative z-10">
-                <span className="text-xs sm:text-sm font-mono font-extrabold text-emerald-400 uppercase tracking-wider block">
-                  LIVE SESSION
-                </span>
-                <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
-                  Friday (11:00 AM to 12:00 PM)
-                </span>
-                <span className="text-xs font-mono text-gray-400 block mt-0.5">
-                  Live positions analysis and discussion
-                </span>
+            {/* Card 1: Core Lectures */}
+            <div className="relative p-5 sm:p-6 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex flex-col justify-between overflow-hidden h-full min-h-[145px]">
+              <div>
+                <div className="flex items-center space-x-3">
+                  <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <div className="relative z-10">
+                    <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
+                      CORE LECTURES
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-300 font-mono mt-3.5 leading-relaxed">
+                  In-depth conceptual foundation covering Option Greeks, volatility surface pricing, and systematic derivative mechanics.
+                </p>
               </div>
             </div>
 
-            {/* Program Duration Box */}
-            <div className="relative p-4 sm:p-5 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex items-start space-x-3 md:col-span-2 lg:col-span-1 overflow-hidden">
-              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 mt-0.5">
-                <Calendar className="w-5 h-5" />
+            {/* Card 2: Live Session */}
+            <div className="relative p-5 sm:p-6 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 flex flex-col justify-between overflow-hidden h-full min-h-[145px]">
+              <div>
+                <div className="flex items-center space-x-3">
+                  <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0 relative z-10">
+                    <Video className="w-5 h-5" />
+                  </div>
+                  <div className="relative z-10">
+                    <span className="text-xs sm:text-sm font-mono font-extrabold text-emerald-400 uppercase tracking-wider block">
+                      LIVE SESSION
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-300 font-mono mt-3.5 leading-relaxed">
+                  Primary focus on live market positioning, risk adjustments, and practical order execution rather than raw theory.
+                </p>
               </div>
-              <div className="relative z-10">
-                <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
-                  PROGRAM DURATION
+            </div>
+
+            {/* Card 3: Program Duration & Clickable Contact Us Link */}
+            <div
+              onClick={scrollToContact}
+              className="relative p-5 sm:p-6 rounded-xl bg-[#0a0a0c]/90 border border-amber-500/50 hover:border-amber-400 flex flex-col justify-between overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-[0_0_20px_rgba(245,158,11,0.2)] group md:col-span-2 lg:col-span-1 h-full min-h-[145px]"
+            >
+              <div>
+                <div className="flex items-center space-x-3">
+                  <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 shrink-0 relative z-10 group-hover:scale-105 transition-transform">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div className="relative z-10">
+                    <span className="text-xs sm:text-sm font-mono font-extrabold text-amber-400 uppercase tracking-wider block">
+                      PROGRAM DURATION
+                    </span>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-300 font-mono mt-3.5 leading-relaxed">
+                  Please connect with us for schedule & duration details
+                </p>
+              </div>
+
+              <div className="mt-4 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs font-mono">
+                <span className="text-amber-400 font-bold group-hover:underline flex items-center space-x-1">
+                  <span>Contact Us</span>
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </span>
-                <span className="text-xs sm:text-sm font-mono font-bold text-white block mt-1">
-                  Total Course Duration: 2 Months
-                </span>
+                <span className="text-gray-400 text-[11px]">Click to connect</span>
               </div>
             </div>
 

@@ -230,7 +230,7 @@ function MountainClimbersOverlay({
       setTentTagline(tagline);
 
       if (isMoving) {
-        setWalkPhase((prev) => (prev + 0.15) % (Math.PI * 2));
+        setWalkPhase((prev) => (prev + 0.07) % (Math.PI * 2));
       } else {
         setWalkPhase(0);
       }
@@ -389,46 +389,82 @@ function MountainClimbersOverlay({
             height="36"
             preserveAspectRatio="xMidYMid meet"
           />
-          {/* Dynamic Tent Tagline */}
-          {tentTagline === 'Preparing' && (
-            <foreignObject x="-25" y="-22" width="90" height="20">
-              <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
-                  Preparing
-                </span>
-              </div>
-            </foreignObject>
-          )}
-          {tentTagline === 'Journey started' && (
-            <foreignObject x="-30" y="-22" width="100" height="20">
-              <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-emerald-400 border border-emerald-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(16,185,129,0.4)] whitespace-nowrap animate-pulse">
-                  Journey started
-                </span>
-              </div>
-            </foreignObject>
-          )}
-          {tentTagline === 'Taking rest' && (
-            <foreignObject x="-25" y="-22" width="90" height="20">
-              <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-amber-400 border border-amber-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(245,158,11,0.4)] whitespace-nowrap animate-pulse">
-                  Taking rest
-                </span>
-              </div>
-            </foreignObject>
-          )}
-          {tentTagline === 'Holiday today' && (
-            <foreignObject x="-30" y="-22" width="100" height="20">
-              <div className="flex items-center justify-center">
-                <span className="bg-[#0c0c0e]/95 text-rose-400 border border-rose-500/60 text-[7.5px] font-mono font-extrabold px-1.5 py-0.5 rounded shadow-[0_0_10px_rgba(244,63,94,0.4)] whitespace-nowrap animate-pulse">
-                  Holiday today
-                </span>
-              </div>
-            </foreignObject>
-          )}
         </g>
 
-        {/* Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) connected directly to curve line */}
+        {/* Layer 1: Expedition Team Stickman Figures (Rendered BEHIND the ATH Flag) */}
+        {points.length > 0 && !isResting && (
+          <g className="climber-figures">
+            {/* Follower Mountaineer */}
+            <g transform={`translate(${followerPos.x}, ${followerPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+              {/* Head */}
+              <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
+              {/* Torso */}
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" />
+
+              {/* Leg 1 (Jointed Thigh + Shin) */}
+              <g transform={`rotate(${followerThigh1}, 0, 4)`}>
+                <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
+                <g transform={`rotate(${followerShin1}, -2, 8)`}>
+                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
+                </g>
+              </g>
+
+              {/* Leg 2 (Jointed Thigh + Shin) */}
+              <g transform={`rotate(${followerThigh2}, 0, 4)`}>
+                <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
+                <g transform={`rotate(${followerShin2}, 2, 8)`}>
+                  <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
+                </g>
+              </g>
+
+              {/* Arm 1 - Updated stroke to solid blue #0284c7 matching body */}
+              <g transform={`rotate(${followerArm1}, 0, -2)`}>
+                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#0284c7" strokeWidth="1.5" />
+              </g>
+
+              {/* Arm 2 - Updated stroke to solid blue #0284c7 matching body */}
+              <g transform={`rotate(${followerArm2}, 0, -2)`}>
+                <line x1="0" y1="-2" x2="5" y2="3" stroke="#0284c7" strokeWidth="1.5" />
+              </g>
+            </g>
+
+            {/* Lead Mountaineer */}
+            <g transform={`translate(${leadPos.x}, ${leadPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
+              {/* Head */}
+              <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
+              {/* Torso */}
+              <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" />
+
+              {/* Leg 1 (Jointed Thigh + Shin) */}
+              <g transform={`rotate(${leaderThigh1}, 0, 4)`}>
+                <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" />
+                <g transform={`rotate(${leaderShin1}, -2, 8)`}>
+                  <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" />
+                </g>
+              </g>
+
+              {/* Leg 2 (Jointed Thigh + Shin) */}
+              <g transform={`rotate(${leaderThigh2}, 0, 4)`}>
+                <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" />
+                <g transform={`rotate(${leaderShin2}, 2, 8)`}>
+                  <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" />
+                </g>
+              </g>
+
+              {/* Arm 1 */}
+              <g transform={`rotate(${leaderArm1}, 0, -2)`}>
+                <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
+              </g>
+
+              {/* Arm 2 */}
+              <g transform={`rotate(${leaderArm2}, 0, -2)`}>
+                <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
+              </g>
+            </g>
+          </g>
+        )}
+
+        {/* Layer 2: Highest Peak Landmark Flag (ALL-TIME HIGH SUMMIT) - Rendered ABOVE climbers */}
         {highestTradePoint && highestTradePoint.pnl > 0 && (
           <g transform={`translate(${highestTradePoint.x}, ${highestTradePoint.y})`}>
             {/* Anchor dot directly on curve line */}
@@ -451,78 +487,9 @@ function MountainClimbersOverlay({
           </g>
         )}
 
-        {/* Expedition Team (Follower & Lead Mountaineers) - Hidden only when resting or holiday */}
+        {/* Layer 3: Position Banner Badges & Summit Celebration Text (Rendered TOP-MOST above Flag and Climbers) */}
         {points.length > 0 && !isResting && (
-          <g className="climber-team">
-            {/* Follower Mountaineer */}
-            <g transform={`translate(${followerPos.x}, ${followerPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-                  {/* Head */}
-                  <circle cx="0" cy="-7" r="3" fill="#38bdf8" stroke="#0284c7" strokeWidth="0.8" />
-                  {/* Torso */}
-                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#0284c7" strokeWidth="2.5" />
-
-                  {/* Leg 1 (Jointed Thigh + Shin) */}
-                  <g transform={`rotate(${followerThigh1}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
-                    <g transform={`rotate(${followerShin1}, -2, 8)`}>
-                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
-                    </g>
-                  </g>
-
-                  {/* Leg 2 (Jointed Thigh + Shin) */}
-                  <g transform={`rotate(${followerThigh2}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="2" y2="8" stroke="#0284c7" strokeWidth="1.8" />
-                    <g transform={`rotate(${followerShin2}, 2, 8)`}>
-                      <line x1="2" y1="8" x2="2" y2="13" stroke="#0284c7" strokeWidth="1.6" />
-                    </g>
-                  </g>
-
-                  {/* Arm 1 */}
-                  <g transform={`rotate(${followerArm1}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
-                  </g>
-
-                  {/* Arm 2 */}
-                  <g transform={`rotate(${followerArm2}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#cbd5e1" strokeWidth="1.5" />
-                  </g>
-                </g>
-
-            {/* Lead Mountaineer */}
-            <g transform={`translate(${leadPos.x}, ${leadPos.y - 13.0}) scale(${isDescending ? '-1,1' : '1,1'})`}>
-                  {/* Head */}
-                  <circle cx="0" cy="-7" r="3" fill="#f59e0b" stroke="#b45309" strokeWidth="0.8" />
-                  {/* Torso */}
-                  <line x1="0" y1="-4" x2="0" y2="4" stroke="#d97706" strokeWidth="2.5" />
-
-                  {/* Leg 1 (Jointed Thigh + Shin) */}
-                  <g transform={`rotate(${leaderThigh1}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="-2" y2="8" stroke="#d97706" strokeWidth="1.8" />
-                    <g transform={`rotate(${leaderShin1}, -2, 8)`}>
-                      <line x1="-2" y1="8" x2="-2" y2="13" stroke="#d97706" strokeWidth="1.6" />
-                    </g>
-                  </g>
-
-                  {/* Leg 2 (Jointed Thigh + Shin) */}
-                  <g transform={`rotate(${leaderThigh2}, 0, 4)`}>
-                    <line x1="0" y1="4" x2="2" y2="8" stroke="#d97706" strokeWidth="1.8" />
-                    <g transform={`rotate(${leaderShin2}, 2, 8)`}>
-                      <line x1="2" y1="8" x2="2" y2="13" stroke="#d97706" strokeWidth="1.6" />
-                    </g>
-                  </g>
-
-                  {/* Arm 1 */}
-                  <g transform={`rotate(${leaderArm1}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="-5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
-                  </g>
-
-                  {/* Arm 2 */}
-                  <g transform={`rotate(${leaderArm2}, 0, -2)`}>
-                    <line x1="0" y1="-2" x2="5" y2="3" stroke="#f59e0b" strokeWidth="1.5" />
-                  </g>
-                </g>
-
-            {/* Individual Badges & Summit Celebration Text */}
+          <g className="climber-badges">
             {isAtEndpointCelebrating ? (
               <foreignObject
                 x={Math.max(10, Math.min(leadPos.x, followerPos.x) - 195)}
