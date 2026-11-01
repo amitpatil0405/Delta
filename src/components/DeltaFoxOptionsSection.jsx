@@ -1,7 +1,6 @@
 import React from 'react';
 import { ExternalLink, Sparkles, Play } from 'lucide-react';
 import deltafoxOptionsLogo from '../assets/deltafox_options_logo.png';
-import youtubeLogo from '../assets/youtube_logo.png';
 import { SOCIAL_CONFIG } from '../services/socialMediaService';
 
 export default function DeltaFoxOptionsSection() {
@@ -127,14 +126,23 @@ export default function DeltaFoxOptionsSection() {
                   <span>OFFICIAL YOUTUBE CHANNEL</span>
                 </div>
 
-                {/* Centered Custom YouTube Logo Image */}
+                {/* Centered Professional Vector YouTube Icon */}
                 <div className="relative group/logo">
-                  <div className="absolute -inset-3 bg-red-600/20 rounded-full blur-xl group-hover/logo:opacity-100 transition duration-500 opacity-60 pointer-events-none" />
-                  <img
-                    src={youtubeLogo}
-                    alt="YouTube Logo"
-                    className="relative w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-[0_0_25px_rgba(239,68,68,0.5)] transition-transform duration-300 group-hover:scale-105"
-                  />
+                  <div className="absolute -inset-4 bg-red-600/25 rounded-3xl blur-2xl group-hover/logo:opacity-100 transition duration-500 opacity-60 pointer-events-none" />
+                  <svg
+                    viewBox="0 0 288 202"
+                    className="relative w-24 sm:w-28 h-auto object-contain drop-shadow-[0_0_20px_rgba(255,0,0,0.45)] transition-transform duration-300 group-hover:scale-105"
+                    aria-label="YouTube"
+                  >
+                    <path
+                      d="M281.4 31.6C278.1 19.3 268.4 9.6 256.1 6.3 233.8 0 144 0 144 0S54.2 0 31.9 6.3C19.6 9.6 9.9 19.3 6.6 31.6 0 54 0 101 0 101s0 47 6.6 69.4c3.3 12.3 13 22 25.3 25.3 22.3 6.3 112.1 6.3 112.1 6.3s89.8 0 112.1-6.3c12.3-3.3 22-13 25.3-25.3 6.6-22.4 6.6-69.4 6.6-69.4s0-47-6.6-69.4z"
+                      fill="#FF0000"
+                    />
+                    <polygon
+                      points="115.2,143.9 190.1,101 115.2,58.1"
+                      fill="#FFFFFF"
+                    />
+                  </svg>
                 </div>
 
                 {/* Channel Title and Handle */}
