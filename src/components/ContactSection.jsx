@@ -52,9 +52,10 @@ export default function ContactSection() {
             {/* 2. Styled Email Address directly below the sentence */}
             <a
               href={`mailto:${emailAddress}`}
-              className="text-sm min-[360px]:text-base min-[410px]:text-lg sm:text-3xl md:text-4xl font-extrabold text-white hover:text-amber-400 transition-colors whitespace-nowrap block tracking-tight sm:tracking-wide max-w-full"
+              className="text-sm min-[360px]:text-base min-[410px]:text-lg sm:text-3xl md:text-4xl font-extrabold text-white hover:text-amber-400 transition-colors whitespace-nowrap block tracking-tight sm:tracking-wide max-w-full font-sans"
+              style={{ fontFamily: "'Inter', 'Roboto', system-ui, sans-serif", fontWeight: 700 }}
             >
-              𝗱𝗲𝗹𝘁𝗮𝗳𝗼𝘅.𝗼𝗽𝘁𝗶𝗼𝗻𝘀@𝘆𝗮𝗵𝖔𝙤.𝗰𝐨𝖒
+              deltafox.options@yahoo.com
             </a>
 
             {/* 3. "COPY EMAIL" Button directly below the styled email address */}
