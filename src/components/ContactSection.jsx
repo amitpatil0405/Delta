@@ -44,15 +44,20 @@ export default function ContactSection() {
           {/* Borderless Glassmorphism Container Content */}
           <div className="relative bg-[#0a0a0c]/95 rounded-3xl p-6 sm:p-12 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden text-center flex flex-col items-center space-y-6 font-mono">
 
-            {/* 1. Large/Bold Email Address (Centered) */}
+            {/* 1. Brief Inquiry Note at very top inside contact box */}
+            <p className="text-xs sm:text-sm text-gray-300 font-sans leading-relaxed max-w-xl mx-auto">
+              For training programs, systematic options trading inquiries or general platform support, feel free to drop us a direct email.
+            </p>
+
+            {/* 2. Styled Email Address directly below the sentence */}
             <a
               href={`mailto:${emailAddress}`}
               className="text-sm min-[360px]:text-base min-[410px]:text-lg sm:text-3xl md:text-4xl font-extrabold text-white hover:text-amber-400 transition-colors whitespace-nowrap block tracking-tight sm:tracking-wide max-w-full"
             >
-              {emailAddress}
+              𝗱𝗲𝗹𝘁𝗮𝗳𝗼𝘅.𝗼𝗽𝘁𝗶𝗼𝗻𝘀@𝘆𝗮𝗵𝖔𝙤.𝗰𝐨𝖒
             </a>
 
-            {/* 2. "COPY EMAIL" Button (Centered directly below email address) */}
+            {/* 3. "COPY EMAIL" Button directly below the styled email address */}
             <div>
               <button
                 onClick={handleCopyEmail}
@@ -71,11 +76,6 @@ export default function ContactSection() {
                 )}
               </button>
             </div>
-
-            {/* 3. Brief Inquiry Note */}
-            <p className="text-xs sm:text-sm text-gray-300 font-sans leading-relaxed max-w-xl mx-auto pt-1">
-              For training programs, systematic options trading inquiries or general platform support, feel free to drop us a direct email.
-            </p>
 
             {/* Subtle Divider */}
             <div className="w-full max-w-lg border-t border-white/10 my-2" />
