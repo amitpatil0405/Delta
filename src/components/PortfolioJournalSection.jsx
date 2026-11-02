@@ -875,10 +875,96 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
   startMonthName,
   endMonthName
 }) {
+  const containerRef = React.useRef(null);
+  const [tooltipState, setTooltipState] = React.useState(null);
+
+  const handleCellMouseEnter = React.useCallback((e, day) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
+    if (!containerRef.current) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const cellRect = e.currentTarget.getBoundingClientRect();
+
+    const rawX = cellRect.left + cellRect.width / 2 - containerRect.left;
+    const clampedX = Math.max(110, Math.min(containerRect.width - 110, rawX));
+    const cellTopInContainer = cellRect.top - containerRect.top;
+
+    setTooltipState({
+      day,
+      x: clampedX,
+      y: cellTopInContainer - 10
+    });
+  }, []);
+
+  const handleCellMouseMove = React.useCallback((e, day) => {
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) return;
+    if (!containerRef.current) return;
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const cellRect = e.currentTarget.getBoundingClientRect();
+
+    const rawX = cellRect.left + cellRect.width / 2 - containerRect.left;
+    const clampedX = Math.max(110, Math.min(containerRect.width - 110, rawX));
+    const cellTopInContainer = cellRect.top - containerRect.top;
+
+    setTooltipState({
+      day,
+      x: clampedX,
+      y: cellTopInContainer - 10
+    });
+  }, []);
+
+  const handleCellMouseLeave = React.useCallback(() => {
+    setTooltipState(null);
+  }, []);
+
   return (
     <div
+      ref={containerRef}
+      onMouseLeave={handleCellMouseLeave}
       className="bg-[#0a0a0f]/90 rounded-2xl p-6 border border-amber-500/50 hover:border-amber-400 hover:shadow-[0_0_35px_rgba(255,102,0,0.45)] transition-all duration-300 relative space-y-4"
     >
+      {/* Desktop-only Hover Tooltip */}
+      {tooltipState && (
+        <div
+          className="hidden lg:block absolute z-50 pointer-events-none transition-transform duration-75 ease-out -translate-x-1/2 -translate-y-full"
+          style={{
+            left: `${tooltipState.x}px`,
+            top: `${tooltipState.y}px`
+          }}
+        >
+          <div className="bg-[#0c0d12]/95 border border-white/20 shadow-2xl rounded-lg px-3 py-2 text-center whitespace-nowrap min-w-[150px]">
+            <div className="text-[11px] font-mono text-gray-300 tracking-wide">
+              {tooltipState.day.dateObj ? (
+                tooltipState.day.dateObj.toLocaleDateString('en-GB', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric'
+                })
+              ) : (
+                tooltipState.day.dateStr
+              )}
+            </div>
+            <div className="mt-0.5 text-xs font-mono font-bold">
+              {tooltipState.day.count > 0 ? (
+                tooltipState.day.pnl > 0 ? (
+                  <span className="text-emerald-400">
+                    +₹{tooltipState.day.pnl.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                ) : tooltipState.day.pnl < 0 ? (
+                  <span className="text-rose-400">
+                    -₹{Math.abs(tooltipState.day.pnl).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                ) : (
+                  <span className="text-gray-300">₹0.00</span>
+                )
+              ) : (
+                <span className="text-gray-400">₹0 / No Trades</span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="relative space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
           <div className="flex items-start sm:items-center space-x-2">
@@ -947,6 +1033,9 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
                     return (
                       <div
                         key={d.key}
+                        onMouseEnter={(e) => handleCellMouseEnter(e, d)}
+                        onMouseMove={(e) => handleCellMouseMove(e, d)}
+                        onMouseLeave={handleCellMouseLeave}
                         className={`w-3 h-3 sm:w-3.5 sm:h-3.5 xl:w-4 xl:h-4 flex-shrink-0 aspect-square rounded-[2px] sm:rounded-[3px] border transition-all select-none ${boxClass}`}
                       />
                     );
