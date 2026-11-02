@@ -931,17 +931,17 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
             top: `${tooltipState.y}px`
           }}
         >
-          <div className="bg-[#0c0d12]/95 border border-white/20 shadow-2xl rounded-lg px-3 py-2 text-center whitespace-nowrap min-w-[150px]">
+          <div className="bg-[#0c0d12]/95 border border-white/20 shadow-2xl rounded-lg px-3 py-2 text-center whitespace-nowrap min-w-[160px]">
             <div className="text-[11px] font-mono text-gray-300 tracking-wide">
-              {tooltipState.day.dateObj ? (
-                tooltipState.day.dateObj.toLocaleDateString('en-GB', {
+              {tooltipState.day.date ? (
+                tooltipState.day.date.toLocaleDateString('en-US', {
                   weekday: 'long',
-                  day: 'numeric',
                   month: 'long',
+                  day: 'numeric',
                   year: 'numeric'
                 })
               ) : (
-                tooltipState.day.dateStr
+                tooltipState.day.key
               )}
             </div>
             <div className="mt-0.5 text-xs font-mono font-bold">
@@ -958,7 +958,7 @@ const DailyHeatmap = React.memo(function DailyHeatmap({
                   <span className="text-gray-300">₹0.00</span>
                 )
               ) : (
-                <span className="text-gray-400">₹0 / No Trades</span>
+                <span className="text-gray-400">No Trades</span>
               )}
             </div>
           </div>
