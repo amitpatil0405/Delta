@@ -36,9 +36,9 @@ export default function Footer({ onNavigate }) {
           </div>
 
           <div className="space-y-2 sm:space-y-3">
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-white font-mono tracking-tight uppercase leading-tight">
-              TRADE WITH LOGIC.{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 italic font-serif">
+            <h2 className="text-lg min-[420px]:text-xl sm:text-3xl md:text-4xl font-extrabold font-mono tracking-tight uppercase leading-tight">
+              <span className="inline-block whitespace-nowrap text-white">TRADE WITH LOGIC.</span>{' '}
+              <span className="inline-block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500">
                 MOVE WITH THE MARKET.
               </span>
             </h2>
