@@ -36,14 +36,16 @@ export default function Footer({ onNavigate }) {
           </div>
 
           <div className="space-y-2 sm:space-y-3">
-            <h2 className="text-lg min-[420px]:text-xl sm:text-3xl md:text-4xl font-extrabold font-mono tracking-tight uppercase leading-tight">
-              <span className="inline-block whitespace-nowrap text-white">TRADE WITH LOGIC.</span>{' '}
-              <span className="inline-block whitespace-nowrap text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold tracking-tight uppercase leading-tight flex flex-col items-center">
+              <span className="font-mono text-white whitespace-nowrap">
+                TRADE WITH LOGIC.
+              </span>
+              <span className="italic font-serif text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500 whitespace-nowrap">
                 MOVE WITH THE MARKET.
               </span>
             </h2>
 
-            <p className="text-xs sm:text-sm text-gray-300 max-w-lg mx-auto font-mono tracking-wide">
+            <p className="text-[10px] min-[380px]:text-[11px] sm:text-sm text-gray-300 w-full max-w-2xl mx-auto font-mono tracking-tighter min-[380px]:tracking-normal sm:tracking-wide whitespace-nowrap">
               Systematic Options Trading • Market Intelligence • Risk Management
             </p>
           </div>
