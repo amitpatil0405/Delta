@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BarChart3, ChevronRight, BookOpen } from 'lucide-react';
 
-export default function HeroSection({ onExplorePortfolio, onExploreStrategies }) {
+export default function HeroSection({ portfolioEnabled = true, onExplorePortfolio, onExploreStrategies }) {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -63,14 +63,16 @@ export default function HeroSection({ onExplorePortfolio, onExploreStrategies })
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          <button
-            onClick={onExplorePortfolio}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all duration-300 shadow-[0_0_30px_rgba(217,119,6,0.4)] flex items-center justify-center space-x-3 group active:scale-95"
-          >
-            <BookOpen className="w-4 h-4 text-black" />
-            <span>VIEW TRADING PORTFOLIO</span>
-            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
+          {portfolioEnabled && (
+            <button
+              onClick={onExplorePortfolio}
+              className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold tracking-wider uppercase text-black bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:brightness-110 transition-all duration-300 shadow-[0_0_30px_rgba(217,119,6,0.4)] flex items-center justify-center space-x-3 group active:scale-95"
+            >
+              <BookOpen className="w-4 h-4 text-black" />
+              <span>VIEW TRADING PORTFOLIO</span>
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </button>
+          )}
 
           <button
             onClick={onExploreStrategies}

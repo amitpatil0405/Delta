@@ -63,7 +63,8 @@ function AppContent() {
       <main className="flex-1 relative z-10">
         {/* 1. Hero Viewport */}
         <HeroSection
-          onExplorePortfolio={() => handleNavigate(portfolioEnabled ? 'portfolio' : 'strategies')}
+          portfolioEnabled={portfolioEnabled}
+          onExplorePortfolio={() => handleNavigate('portfolio')}
           onExploreStrategies={() => handleNavigate('strategies')}
         />
 
