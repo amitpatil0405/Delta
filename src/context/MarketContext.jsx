@@ -64,11 +64,110 @@ const INITIAL_SECTOR_WATCHLIST = [
   }
 ];
 
+const PORTFOLIO_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
+const PORTFOLIO_ENABLED_STORAGE_KEY = 'deltafox_portfolio_enabled';
+
+// Parse cell R1 (row 0, column 17) to determine if Portfolio is Enabled or Disabled
+function parsePortfolioEnabledFromCSV(csvText) {
+  if (!csvText || typeof csvText !== 'string') return true;
+  const firstLine = csvText.trim().split('\n')[0];
+  if (!firstLine) return true;
+
+  const cols = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let c = 0; c < firstLine.length; c++) {
+    const char = firstLine[c];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      cols.push(cur.trim());
+      cur = '';
+    } else {
+      cur += char;
+    }
+  }
+  cols.push(cur.trim());
+
+  // Direct check for cell R1 (column index 17, 0-indexed A=0, ..., R=17)
+  let statusVal = cols[17] || '';
+
+  // Fallback check: look for column containing "status" (case-insensitive) and read next column
+  if (!statusVal) {
+    for (let i = 0; i < cols.length; i++) {
+      if (cols[i] && cols[i].toLowerCase() === 'status' && cols[i + 1]) {
+        statusVal = cols[i + 1];
+        break;
+      }
+    }
+  }
+
+  const cleanVal = statusVal.toLowerCase().trim();
+  if (cleanVal === 'disable' || cleanVal === 'disabled') {
+    return false;
+  }
+  return true;
+}
+
 export function MarketProvider({ children }) {
   const [activeSymbol, setActiveSymbol] = useState('NIFTY 50');
   const [watchlistSectors, setWatchlistSectors] = useState(INITIAL_SECTOR_WATCHLIST);
   const [marketStatus, setMarketStatus] = useState(getISTMarketStatus());
   const [lastUpdated, setLastUpdated] = useState(new Date().toLocaleTimeString('en-IN'));
+  const [portfolioEnabled, setPortfolioEnabled] = useState(() => {
+    try {
+      const saved = localStorage.getItem(PORTFOLIO_ENABLED_STORAGE_KEY);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch (e) {
+      console.warn('LocalStorage read error:', e);
+    }
+    return true;
+  });
+
+  // Fetch and poll Google Sheet R1 cell status every 10s & on window focus
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkPortfolioStatus = async () => {
+      try {
+        const url = `${PORTFOLIO_SHEET_CSV_URL}&_t=${Date.now()}`;
+        const res = await fetch(url, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        });
+        if (res.ok) {
+          const text = await res.text();
+          const isEnabled = parsePortfolioEnabledFromCSV(text);
+          if (isMounted) {
+            setPortfolioEnabled(isEnabled);
+            try {
+              localStorage.setItem(PORTFOLIO_ENABLED_STORAGE_KEY, String(isEnabled));
+            } catch (e) {
+              console.warn('LocalStorage write error:', e);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Error checking portfolio status from sheet R1:', err);
+      }
+    };
+
+    checkPortfolioStatus();
+    const interval = setInterval(checkPortfolioStatus, 10000);
+    const handleFocus = () => checkPortfolioStatus();
+    window.addEventListener('focus', handleFocus, { passive: true });
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
 
   // Continuously refresh quotes for all watchlist stocks every 3s
   useEffect(() => {
@@ -233,7 +332,8 @@ export function MarketProvider({ children }) {
         removeStockFromWatchlist,
         allAvailableSymbols,
         marketStatus,
-        lastUpdated
+        lastUpdated,
+        portfolioEnabled
       }}
     >
       {children}

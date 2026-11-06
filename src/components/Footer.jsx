@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import logoImg from '../assets/logo.png';
 import { ShieldAlert, X } from 'lucide-react';
+import { useMarket } from '../context/MarketContext';
 
 export default function Footer({ onNavigate }) {
+  const { portfolioEnabled } = useMarket();
   const [activeLegalTab, setActiveLegalTab] = useState(null);
 
   const handleLinkClick = (id) => {
@@ -76,7 +78,9 @@ export default function Footer({ onNavigate }) {
               <ul className="space-y-2">
                 <li><button onClick={() => handleLinkClick('home')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Home</button></li>
                 <li><button onClick={() => handleLinkClick('technical-analysis')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Technical Analysis</button></li>
-                <li><button onClick={() => handleLinkClick('portfolio')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Trading Portfolio</button></li>
+                {portfolioEnabled && (
+                  <li><button onClick={() => handleLinkClick('portfolio')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Trading Portfolio</button></li>
+                )}
                 <li><button onClick={() => handleLinkClick('deltafox-options')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">DeltaFox Options</button></li>
                 <li><button onClick={() => handleLinkClick('intelligence')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Holiday calendar</button></li>
               </ul>
