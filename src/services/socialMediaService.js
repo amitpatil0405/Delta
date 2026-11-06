@@ -3,8 +3,8 @@
  * Direct configuration for official YouTube and Instagram platforms.
  */
 
-const YOUTUBE_HANDLE = '@deltafox.trading';
-const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@deltafox.trading';
+const YOUTUBE_HANDLE = '@deltafox.options';
+const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@deltafox.options';
 const INSTAGRAM_HANDLE = '@DeltaFox_Options';
 const INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/deltafox_options/';
 
