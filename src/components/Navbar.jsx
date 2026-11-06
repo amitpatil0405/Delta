@@ -10,7 +10,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
   const [currentSection, setCurrentSection] = useState(activePage);
   const [hoveredSection, setHoveredSection] = useState(null);
   const [liveTime, setLiveTime] = useState({ dateLine: '', timeLine: '' });
-  const { marketStatus } = useMarket();
+  const { marketStatus, portfolioEnabled } = useMarket();
 
   useEffect(() => {
     setCurrentSection(activePage);
@@ -52,7 +52,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     const sectionIds = [
       'home',
       'technical-analysis',
-      'portfolio',
+      ...(portfolioEnabled ? ['portfolio'] : []),
       'deltafox-options',
       'intelligence',
       'strategies',
@@ -85,12 +85,12 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
     };
-  }, []);
+  }, [portfolioEnabled]);
 
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'technical-analysis', label: 'Technical analysis' },
-    { id: 'portfolio', label: 'Portfolio' },
+    ...(portfolioEnabled ? [{ id: 'portfolio', label: 'Portfolio' }] : []),
     { id: 'deltafox-options', label: 'DeltaFox Options' },
     { id: 'intelligence', label: 'Holiday calendar' },
     { id: 'strategies', label: 'Strategies' },
