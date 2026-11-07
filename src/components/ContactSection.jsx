@@ -32,7 +32,7 @@ export default function ContactSection() {
             CONTACT DELTAFOX
           </h2>
           <p className="text-sm text-gray-400 max-w-lg mx-auto font-sans">
-            Connect with us regarding training programs, options trading strategies, or platform inquiries.
+            Connect with us regarding training programs, options trading strategies, or inquiries.
           </p>
         </div>
 
@@ -46,7 +46,7 @@ export default function ContactSection() {
 
             {/* 1. Brief Inquiry Note at very top inside contact box */}
             <p className="text-xs sm:text-sm text-gray-300 font-sans leading-relaxed max-w-xl mx-auto">
-              For training programs, systematic options trading inquiries or general platform support, feel free to drop us a direct email.
+              For training programs, systematic options trading inquiries or general support, feel free to drop us a direct email.
             </p>
 
             {/* 2. Styled Email Address directly below the sentence */}
