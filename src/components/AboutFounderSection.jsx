@@ -80,7 +80,7 @@ export default function AboutFounderSection() {
         </div>
 
         {/* Founder Presentation Card with Background Image */}
-        <div className="rounded-3xl p-8 sm:p-12 border border-amber-500/30 relative overflow-hidden bg-[#0a0a0c]">
+        <div className="rounded-3xl p-8 sm:p-12 border border-amber-500/40 hover:border-amber-400 hover:shadow-[0_0_40px_rgba(245,158,11,0.25)] transition-all duration-500 relative overflow-hidden bg-[#0a0a0c]">
 
           {/* Background Image */}
           <div
@@ -102,7 +102,7 @@ export default function AboutFounderSection() {
 
               {/* Founder Photo Presentation */}
               <div className="lg:col-span-5 flex flex-col items-center">
-                <div className="relative w-64 h-80 rounded-2xl overflow-hidden border-2 border-amber-500/50 shadow-[0_0_35px_rgba(217,119,6,0.25)] group mb-4">
+                <div className="relative w-64 h-80 rounded-2xl overflow-hidden border border-amber-500/50 shadow-[0_0_30px_rgba(217,119,6,0.25)] hover:border-amber-400 hover:shadow-[0_0_40px_rgba(245,158,11,0.4)] transition-all duration-500 group mb-4">
                   <img
                     src={myPic}
                     alt="MR. AMIT PATIL - Founder of DeltaFox"
@@ -113,9 +113,10 @@ export default function AboutFounderSection() {
                   <h3 className="text-2xl font-extrabold text-white font-mono tracking-wide">
                     MR. AMIT PATIL
                   </h3>
-                  <p className="text-xs font-mono text-amber-400 font-semibold tracking-wider uppercase">
-                    Founder, Derivatives Trader & Quantitative Strategist
-                  </p>
+                  <div className="flex flex-col items-center justify-center text-center space-y-0.5 text-xs font-mono text-amber-400 font-semibold tracking-wider uppercase">
+                    <span>Founder, DeltaFox</span>
+                    <span>Derivatives Trader & Quantitative Strategist</span>
+                  </div>
                 </div>
               </div>
 
