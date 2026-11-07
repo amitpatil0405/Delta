@@ -47,8 +47,12 @@ export default function Footer({ onNavigate }) {
               </span>
             </h2>
 
-            <p className="text-[10px] min-[380px]:text-[11px] sm:text-sm text-gray-300 w-full max-w-2xl mx-auto font-mono tracking-tighter min-[380px]:tracking-normal sm:tracking-wide whitespace-nowrap">
-              Systematic Options Trading • Market Intelligence • Risk Management
+            <p className="text-xs sm:text-sm text-gray-300 w-full max-w-2xl mx-auto font-mono px-4 sm:px-0 sm:tracking-wide sm:whitespace-nowrap leading-relaxed text-center">
+              <span>Systematic Options Trading</span>
+              <span className="mx-1.5 sm:mx-2 text-amber-500/70">•</span>
+              <span>Market Intelligence</span>
+              <span className="mx-1.5 sm:mx-2 text-amber-500/70">•</span>
+              <span>Risk Management</span>
             </p>
           </div>
 
