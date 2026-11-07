@@ -73,20 +73,6 @@ function MountainClimbersOverlay({
         className="w-full h-full overflow-visible"
       >
         <path d={dPath} fill="none" stroke="none" />
-
-        {/* Clean text label showing "0" at the start of chart at P&L = 0 level */}
-        <g className="origin-marker">
-          <text
-            x="62"
-            y={zeroY + 4}
-            textAnchor="end"
-            fill="#888"
-            fontSize="11"
-            fontFamily="monospace"
-          >
-            0
-          </text>
-        </g>
       </svg>
     </div>
   );
