@@ -416,9 +416,11 @@ export default function PortfolioJournalSection() {
     })
   ];
 
-  // Calculate explicit Y domain and step to ensure 100% pixel-perfect alignment with Overlay
+  // Calculate explicit Y domain and ticks anchored strictly around zero (0)
   const chartYDomainInfo = useMemo(() => {
-    if (pnlCurveData.length === 0) return { domain: [-15000, 45000], step: 15000 };
+    if (pnlCurveData.length === 0) {
+      return { domain: [-15000, 45000], step: 15000, ticks: [-15000, 0, 15000, 30000, 45000] };
+    }
     const vals = pnlCurveData.map(d => d.pnl);
     const rawMin = Math.min(...vals, 0);
     const rawMax = Math.max(...vals, 0);
@@ -437,17 +439,31 @@ export default function PortfolioJournalSection() {
       step = Math.max(15000, niceFraction * Math.pow(10, exponent));
     }
 
-    const padding = step * 0.25;
-    const yMin = Math.floor((rawMin - padding) / step) * step;
-    const yMax = Math.ceil((rawMax + padding) / step) * step;
+    // Clean multiples of step anchored around 0 with buffer so curve does not hit container edges
+    const yMin = Math.floor((rawMin - (rawMin < 0 ? step * 0.1 : 0)) / step) * step;
+    const yMax = Math.ceil((rawMax + (rawMax > 0 ? step * 0.1 : 0)) / step) * step;
+
+    const actualMax = yMax > yMin ? yMax : yMin + step * 2;
+    const ticks = [];
+    for (let t = yMin; t <= actualMax + step * 0.001; t += step) {
+      ticks.push(Math.round(t));
+    }
+    // Guarantee 0 is present in ticks
+    if (!ticks.includes(0)) {
+      ticks.push(0);
+      ticks.sort((a, b) => a - b);
+    }
+
     return {
-      domain: [yMin, yMax > yMin ? yMax : yMin + step * 2],
-      step
+      domain: [yMin, actualMax],
+      step,
+      ticks
     };
   }, [pnlCurveData]);
 
   const chartYDomain = chartYDomainInfo.domain;
   const chartYStep = chartYDomainInfo.step;
+  const chartYTicks = chartYDomainInfo.ticks;
 
   // Calculate dynamic X-axis sampled ticks for desktop & mobile to prevent label collision & crowding
   const xAxisTicks = useMemo(() => {
@@ -786,6 +802,7 @@ export default function PortfolioJournalSection() {
                     axisLine={{ stroke: '#333' }}
                     tickLine={false}
                     domain={chartYDomain}
+                    ticks={chartYTicks}
                     width={isMobile ? 24 : 60}
                     label={isMobile ? {
                       value: 'Profit',
@@ -799,8 +816,7 @@ export default function PortfolioJournalSection() {
                       offset: 6
                     } : undefined}
                     tickFormatter={(val) => {
-                      // Suppress ticks near zero to avoid collision with the 0 baseline origin marker
-                      if (Math.abs(val) < 1 || (chartYStep && Math.abs(val) <= chartYStep * 0.35)) return '';
+                      if (Math.abs(val) < 1) return '0';
                       const sign = val < 0 ? '-' : '';
                       const absVal = Math.abs(val);
                       const kVal = absVal / 1000;
