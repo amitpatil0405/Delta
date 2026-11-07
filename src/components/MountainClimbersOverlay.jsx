@@ -33,8 +33,8 @@ function MountainClimbersOverlay({
   const width = containerWidth > 0 ? containerWidth : 800;
   const height = containerHeight > 0 ? containerHeight : 320;
 
-  // Margin synchronized with Recharts AreaChart (top: 10, right: 25, left: 10 + YAxis(60), bottom: 55)
-  const margin = { top: 10, right: 25, left: 70, bottom: 55 };
+  // Margin synchronized with Recharts AreaChart (top: 10, right: 25, left: margin.left(10) + YAxis(60) = 70, bottom: 25)
+  const margin = { top: 10, right: 25, left: 70, bottom: 25 };
   const chartW = Math.max(10, width - margin.left - margin.right);
   const chartH = Math.max(10, height - margin.top - margin.bottom);
 

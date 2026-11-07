@@ -37,9 +37,24 @@ function CountUpNumber({ value, decimals = 0, prefix = '', suffix = '', duration
 
   const rawTarget = typeof value === 'number' ? value : parseFloat(value) || 0;
   const absVal = Math.abs(displayValue);
-  const formattedNumber = isCurrency
-    ? absVal.toLocaleString('en-IN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
-    : absVal.toFixed(decimals);
+  const ONE_CRORE = 10000000;
+
+  let formattedNumber = '';
+  let unitSuffix = suffix;
+
+  if (isCurrency) {
+    if (absVal >= ONE_CRORE) {
+      formattedNumber = (absVal / ONE_CRORE).toFixed(2);
+      unitSuffix = ' Cr' + suffix;
+    } else {
+      formattedNumber = absVal.toLocaleString('en-IN', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+  } else {
+    formattedNumber = absVal.toFixed(decimals);
+  }
 
   let sign = '';
   if (isSigned) {
@@ -51,7 +66,7 @@ function CountUpNumber({ value, decimals = 0, prefix = '', suffix = '', duration
 
   return (
     <span ref={ref} className="inline-block">
-      {sign}{prefix}{formattedNumber}{suffix}
+      {sign}{prefix}{formattedNumber}{unitSuffix}
     </span>
   );
 }
@@ -401,18 +416,38 @@ export default function PortfolioJournalSection() {
     })
   ];
 
-  // Calculate explicit Y domain to ensure 100% pixel-perfect alignment with Overlay
-  const chartYDomain = useMemo(() => {
-    if (pnlCurveData.length === 0) return [-15000, 45000];
+  // Calculate explicit Y domain and step to ensure 100% pixel-perfect alignment with Overlay
+  const chartYDomainInfo = useMemo(() => {
+    if (pnlCurveData.length === 0) return { domain: [-15000, 45000], step: 15000 };
     const vals = pnlCurveData.map(d => d.pnl);
     const rawMin = Math.min(...vals, 0);
     const rawMax = Math.max(...vals, 0);
 
-    const step = 15000;
-    const yMin = Math.floor((rawMin - 5000) / step) * step;
-    const yMax = Math.ceil((rawMax + 5000) / step) * step;
-    return [yMin, yMax > yMin ? yMax : yMin + 30000];
+    const range = rawMax - rawMin;
+    let step = 15000;
+    if (range > 75000) {
+      const rawStep = range / 4;
+      const exponent = Math.floor(Math.log10(rawStep));
+      const fraction = rawStep / Math.pow(10, exponent);
+      let niceFraction;
+      if (fraction <= 1.5) niceFraction = 1;
+      else if (fraction <= 3.5) niceFraction = 2.5;
+      else if (fraction <= 7.5) niceFraction = 5;
+      else niceFraction = 10;
+      step = Math.max(15000, niceFraction * Math.pow(10, exponent));
+    }
+
+    const padding = step * 0.25;
+    const yMin = Math.floor((rawMin - padding) / step) * step;
+    const yMax = Math.ceil((rawMax + padding) / step) * step;
+    return {
+      domain: [yMin, yMax > yMin ? yMax : yMin + step * 2],
+      step
+    };
   }, [pnlCurveData]);
+
+  const chartYDomain = chartYDomainInfo.domain;
+  const chartYStep = chartYDomainInfo.step;
 
   // Calculate dynamic X-axis sampled ticks for desktop & mobile to prevent label collision & crowding
   const xAxisTicks = useMemo(() => {
@@ -764,7 +799,8 @@ export default function PortfolioJournalSection() {
                       offset: 6
                     } : undefined}
                     tickFormatter={(val) => {
-                      if (Math.abs(val) < 10000) return '';
+                      // Suppress ticks near zero to avoid collision with the 0 baseline origin marker
+                      if (Math.abs(val) < 1 || (chartYStep && Math.abs(val) <= chartYStep * 0.35)) return '';
                       const sign = val < 0 ? '-' : '';
                       const absVal = Math.abs(val);
                       const kVal = absVal / 1000;
