@@ -451,7 +451,7 @@ export default function DeltaFox3DScene() {
   return (
     <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden transition-opacity duration-700 opacity-80">
       {/* Dark Tint & Vignette Overlay to prevent 3D background from over-highlighting */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70 z-10 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/60 to-black/60 z-10 pointer-events-none" />
       <ThreeErrorBoundary>
         {shouldRenderCanvas && (
           <Canvas
