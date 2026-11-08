@@ -200,6 +200,9 @@ export default function TechnicalAnalysisSection() {
 
   return (
     <section id="technical-analysis" className="relative bg-transparent bg-subpage-grid text-white scroll-mt-16 sm:scroll-mt-20 pt-8 sm:pt-10 pb-16 overflow-hidden">
+      {/* Smooth top fade mask to seamlessly blend background & subpage grid with Hero section */}
+      <div className="absolute top-0 inset-x-0 h-28 bg-gradient-to-b from-[#050505] to-transparent pointer-events-none z-0" />
+
       {/* Soft Ambient Radial Glow */}
       <div className="ambient-glow-amber -top-20 -left-20" />
       <div className="ambient-glow-emerald bottom-0 right-0" />
