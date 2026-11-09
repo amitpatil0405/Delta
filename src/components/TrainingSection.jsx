@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio, Smartphone, CreditCard, Calendar, Clock, Video } from 'lucide-react';
+import { BookOpen, GraduationCap, CheckCircle, ShieldCheck, TrendingUp, Layers, Mail, Radio, Calendar, Clock, Video } from 'lucide-react';
 
 export default function TrainingSection() {
   const [selectedModule, setSelectedModule] = useState(0);
@@ -342,13 +342,14 @@ export default function TrainingSection() {
 
                 {/* Full Package & CTA Row */}
                 <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div>
+                  <div className="text-center sm:text-left w-full sm:w-auto">
                     <span className="text-xs font-mono text-gray-400 uppercase tracking-wider block">
-                      Full Program Package (Basic to Advanced)
+                      <span className="block sm:inline">FULL PROGRAM PACKAGE</span>{' '}
+                      <span className="block sm:inline">(BASIC TO ADVANCED)</span>
                     </span>
-                    <div className="flex items-baseline space-x-2 mt-1">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-baseline justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-2 mt-1">
                       <span className="text-3xl sm:text-4xl font-black font-mono text-amber-400">₹19,999</span>
-                      <span className="text-xs font-mono text-emerald-400 font-bold">(One-time payment for all 4 modules)</span>
+                      <span className="text-xs font-mono text-emerald-400 font-bold text-center sm:text-left">(One-time payment for all 4 modules)</span>
                     </div>
                   </div>
 
@@ -359,26 +360,6 @@ export default function TrainingSection() {
                     <Mail className="w-4 h-4" />
                     <span>Join Training Program</span>
                   </button>
-                </div>
-              </div>
-
-              {/* Payment Highlights */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
-                <div className="flex items-center space-x-2 text-xs text-gray-300 font-mono">
-                  <Smartphone className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>PhonePe / GPay / UPI</span>
-                </div>
-                <div className="flex items-center space-x-2 text-xs text-gray-300 font-mono">
-                  <CreditCard className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span className="truncate">AMIT MAHADEV PATIL</span>
-                </div>
-                <div className="flex items-center space-x-2 text-xs text-gray-300 font-mono">
-                  <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-                  <span>Live Market Mentorship</span>
-                </div>
-                <div className="flex items-center space-x-2 text-xs text-gray-300 font-mono">
-                  <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                  <span>Instant Study Material</span>
                 </div>
               </div>
 
