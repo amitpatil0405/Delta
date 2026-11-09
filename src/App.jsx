@@ -16,7 +16,7 @@ import Footer from './components/Footer';
 
 function AppContent() {
   const [activePage, setActivePage] = useState('home');
-  const { portfolioEnabled, deltafoxOptionsEnabled } = useMarket();
+  const { portfolioEnabled, deltafoxOptionsEnabled, trainingEnabled } = useMarket();
 
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -42,6 +42,13 @@ function AppContent() {
     }
   }, [deltafoxOptionsEnabled, activePage]);
 
+  // Guard active page if Training is disabled
+  useEffect(() => {
+    if (!trainingEnabled && activePage === 'training') {
+      setActivePage('home');
+    }
+  }, [trainingEnabled, activePage]);
+
   const handleNavigate = (id) => {
     // Restrict access to Portfolio page route when disabled
     if (id === 'portfolio' && !portfolioEnabled) {
@@ -52,6 +59,13 @@ function AppContent() {
 
     // Restrict access to DeltaFox Options route when disabled
     if (id === 'deltafox-options' && !deltafoxOptionsEnabled) {
+      setActivePage('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Restrict access to Training route when disabled
+    if (id === 'training' && !trainingEnabled) {
       setActivePage('home');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -97,8 +111,8 @@ function AppContent() {
         {/* 5. 3D Scroll-Driven Options Strategies & Payoff Diagrams */}
         <OptionsStrategiesSection />
 
-        {/* 6. Training & Options Education */}
-        <TrainingSection />
+        {/* 6. Training & Options Education (Dynamically controlled via Google Sheet X1 cell) */}
+        {trainingEnabled && <TrainingSection />}
 
         {/* 7. The DeltaFox Blueprint: Trader Mindset & Market Cycles */}
         <BlueprintSection />

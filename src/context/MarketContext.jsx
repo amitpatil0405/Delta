@@ -67,6 +67,7 @@ const INITIAL_SECTOR_WATCHLIST = [
 const PORTFOLIO_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
 const PORTFOLIO_ENABLED_STORAGE_KEY = 'deltafox_portfolio_enabled';
 const DELTAFOX_OPTIONS_ENABLED_STORAGE_KEY = 'deltafox_options_enabled';
+const TRAINING_ENABLED_STORAGE_KEY = 'deltafox_training_enabled';
 
 // Parse CSV first row into columns
 function parseCSVFirstLineCols(csvText) {
@@ -104,6 +105,31 @@ function parsePortfolioEnabledFromCSV(csvText) {
   if (!statusVal) {
     for (let i = 0; i < cols.length; i++) {
       if (cols[i] && cols[i].toLowerCase() === 'status' && cols[i + 1]) {
+        statusVal = cols[i + 1];
+        break;
+      }
+    }
+  }
+
+  const cleanVal = statusVal.toLowerCase().trim();
+  if (cleanVal === 'disable' || cleanVal === 'disabled') {
+    return false;
+  }
+  return true;
+}
+
+// Parse cell X1 (row 0, column 23) to determine if Training is Enabled or Disabled
+function parseTrainingEnabledFromCSV(csvText) {
+  const cols = parseCSVFirstLineCols(csvText);
+  if (!cols.length) return true;
+
+  // Direct check for cell X1 (column index 23, 0-indexed A=0, ..., X=23)
+  let statusVal = cols[23] || '';
+
+  // Fallback check: look for column containing "training" (case-insensitive) and read next column
+  if (!statusVal) {
+    for (let i = 0; i < cols.length; i++) {
+      if (cols[i] && cols[i].toLowerCase().includes('training') && cols[i + 1]) {
         statusVal = cols[i + 1];
         break;
       }
@@ -169,8 +195,19 @@ export function MarketProvider({ children }) {
     }
     return true;
   });
+  const [trainingEnabled, setTrainingEnabled] = useState(() => {
+    try {
+      const saved = localStorage.getItem(TRAINING_ENABLED_STORAGE_KEY);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch (e) {
+      console.warn('LocalStorage read error:', e);
+    }
+    return true;
+  });
 
-  // Fetch and poll Google Sheet R1 & U1 cell statuses every 10s & on window focus
+  // Fetch and poll Google Sheet R1, U1 & X1 cell statuses every 10s & on window focus
   useEffect(() => {
     let isMounted = true;
 
@@ -188,19 +225,22 @@ export function MarketProvider({ children }) {
           const text = await res.text();
           const isPortEnabled = parsePortfolioEnabledFromCSV(text);
           const isOptionsEnabled = parseDeltaFoxOptionsEnabledFromCSV(text);
+          const isTrainEnabled = parseTrainingEnabledFromCSV(text);
           if (isMounted) {
             setPortfolioEnabled(isPortEnabled);
             setDeltafoxOptionsEnabled(isOptionsEnabled);
+            setTrainingEnabled(isTrainEnabled);
             try {
               localStorage.setItem(PORTFOLIO_ENABLED_STORAGE_KEY, String(isPortEnabled));
               localStorage.setItem(DELTAFOX_OPTIONS_ENABLED_STORAGE_KEY, String(isOptionsEnabled));
+              localStorage.setItem(TRAINING_ENABLED_STORAGE_KEY, String(isTrainEnabled));
             } catch (e) {
               console.warn('LocalStorage write error:', e);
             }
           }
         }
       } catch (err) {
-        console.warn('Error checking portfolio / deltafox options status from sheet:', err);
+        console.warn('Error checking portfolio / deltafox options / training status from sheet:', err);
       }
     };
 
@@ -381,7 +421,8 @@ export function MarketProvider({ children }) {
         marketStatus,
         lastUpdated,
         portfolioEnabled,
-        deltafoxOptionsEnabled
+        deltafoxOptionsEnabled,
+        trainingEnabled
       }}
     >
       {children}

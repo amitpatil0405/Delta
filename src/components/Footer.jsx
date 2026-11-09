@@ -4,7 +4,7 @@ import { ShieldAlert, X } from 'lucide-react';
 import { useMarket } from '../context/MarketContext';
 
 export default function Footer({ onNavigate }) {
-  const { portfolioEnabled, deltafoxOptionsEnabled } = useMarket();
+  const { portfolioEnabled, deltafoxOptionsEnabled, trainingEnabled } = useMarket();
   const [activeLegalTab, setActiveLegalTab] = useState(null);
 
   const handleLinkClick = (id) => {
@@ -97,7 +97,9 @@ export default function Footer({ onNavigate }) {
               <span className="text-white font-bold block uppercase tracking-wider text-[11px] font-roboto-mono">RESOURCES</span>
               <ul className="space-y-2">
                 <li><button onClick={() => handleLinkClick('strategies')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Strategies</button></li>
-                <li><button onClick={() => handleLinkClick('training')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Training</button></li>
+                {trainingEnabled && (
+                  <li><button onClick={() => handleLinkClick('training')} className="font-roboto-mono text-xs text-gray-400 hover:text-amber-400 transition-colors text-left">Training</button></li>
+                )}
               </ul>
             </div>
 
