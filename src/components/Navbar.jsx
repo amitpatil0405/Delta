@@ -10,7 +10,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
   const [currentSection, setCurrentSection] = useState(activePage);
   const [hoveredSection, setHoveredSection] = useState(null);
   const [liveTime, setLiveTime] = useState({ dateLine: '', timeLine: '' });
-  const { marketStatus, portfolioEnabled } = useMarket();
+  const { marketStatus, portfolioEnabled, deltafoxOptionsEnabled } = useMarket();
 
   useEffect(() => {
     setCurrentSection(activePage);
@@ -53,7 +53,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       'home',
       'technical-analysis',
       ...(portfolioEnabled ? ['portfolio'] : []),
-      'deltafox-options',
+      ...(deltafoxOptionsEnabled ? ['deltafox-options'] : []),
       'intelligence',
       'strategies',
       'training',
@@ -85,13 +85,13 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
     };
-  }, [portfolioEnabled]);
+  }, [portfolioEnabled, deltafoxOptionsEnabled]);
 
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'technical-analysis', label: 'Technical analysis' },
     ...(portfolioEnabled ? [{ id: 'portfolio', label: 'Portfolio' }] : []),
-    { id: 'deltafox-options', label: 'DeltaFox Options' },
+    ...(deltafoxOptionsEnabled ? [{ id: 'deltafox-options', label: 'DeltaFox Options' }] : []),
     { id: 'intelligence', label: 'Holiday calendar' },
     { id: 'strategies', label: 'Strategies' },
     { id: 'training', label: 'Training' },
