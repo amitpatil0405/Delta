@@ -66,12 +66,13 @@ const INITIAL_SECTOR_WATCHLIST = [
 
 const PORTFOLIO_SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/11yWyePTkedJFZfCarfziaSo0lIHm1yWB3yHhKMLEBbY/gviz/tq?tqx=out:csv&gid=0';
 const PORTFOLIO_ENABLED_STORAGE_KEY = 'deltafox_portfolio_enabled';
+const DELTAFOX_OPTIONS_ENABLED_STORAGE_KEY = 'deltafox_options_enabled';
 
-// Parse cell R1 (row 0, column 17) to determine if Portfolio is Enabled or Disabled
-function parsePortfolioEnabledFromCSV(csvText) {
-  if (!csvText || typeof csvText !== 'string') return true;
+// Parse CSV first row into columns
+function parseCSVFirstLineCols(csvText) {
+  if (!csvText || typeof csvText !== 'string') return [];
   const firstLine = csvText.trim().split('\n')[0];
-  if (!firstLine) return true;
+  if (!firstLine) return [];
 
   const cols = [];
   let cur = '';
@@ -88,6 +89,13 @@ function parsePortfolioEnabledFromCSV(csvText) {
     }
   }
   cols.push(cur.trim());
+  return cols;
+}
+
+// Parse cell R1 (row 0, column 17) to determine if Portfolio is Enabled or Disabled
+function parsePortfolioEnabledFromCSV(csvText) {
+  const cols = parseCSVFirstLineCols(csvText);
+  if (!cols.length) return true;
 
   // Direct check for cell R1 (column index 17, 0-indexed A=0, ..., R=17)
   let statusVal = cols[17] || '';
@@ -96,6 +104,31 @@ function parsePortfolioEnabledFromCSV(csvText) {
   if (!statusVal) {
     for (let i = 0; i < cols.length; i++) {
       if (cols[i] && cols[i].toLowerCase() === 'status' && cols[i + 1]) {
+        statusVal = cols[i + 1];
+        break;
+      }
+    }
+  }
+
+  const cleanVal = statusVal.toLowerCase().trim();
+  if (cleanVal === 'disable' || cleanVal === 'disabled') {
+    return false;
+  }
+  return true;
+}
+
+// Parse cell U1 (row 0, column 20) to determine if DeltaFox Options is Enabled or Disabled
+function parseDeltaFoxOptionsEnabledFromCSV(csvText) {
+  const cols = parseCSVFirstLineCols(csvText);
+  if (!cols.length) return true;
+
+  // Direct check for cell U1 (column index 20, 0-indexed A=0, ..., U=20)
+  let statusVal = cols[20] || '';
+
+  // Fallback check: look for column containing "deltafox options" (case-insensitive) and read next column
+  if (!statusVal) {
+    for (let i = 0; i < cols.length; i++) {
+      if (cols[i] && cols[i].toLowerCase().includes('deltafox options') && cols[i + 1]) {
         statusVal = cols[i + 1];
         break;
       }
@@ -125,12 +158,23 @@ export function MarketProvider({ children }) {
     }
     return true;
   });
+  const [deltafoxOptionsEnabled, setDeltafoxOptionsEnabled] = useState(() => {
+    try {
+      const saved = localStorage.getItem(DELTAFOX_OPTIONS_ENABLED_STORAGE_KEY);
+      if (saved !== null) {
+        return saved === 'true';
+      }
+    } catch (e) {
+      console.warn('LocalStorage read error:', e);
+    }
+    return true;
+  });
 
-  // Fetch and poll Google Sheet R1 cell status every 10s & on window focus
+  // Fetch and poll Google Sheet R1 & U1 cell statuses every 10s & on window focus
   useEffect(() => {
     let isMounted = true;
 
-    const checkPortfolioStatus = async () => {
+    const checkSheetStatuses = async () => {
       try {
         const url = `${PORTFOLIO_SHEET_CSV_URL}&_t=${Date.now()}`;
         const res = await fetch(url, {
@@ -142,24 +186,27 @@ export function MarketProvider({ children }) {
         });
         if (res.ok) {
           const text = await res.text();
-          const isEnabled = parsePortfolioEnabledFromCSV(text);
+          const isPortEnabled = parsePortfolioEnabledFromCSV(text);
+          const isOptionsEnabled = parseDeltaFoxOptionsEnabledFromCSV(text);
           if (isMounted) {
-            setPortfolioEnabled(isEnabled);
+            setPortfolioEnabled(isPortEnabled);
+            setDeltafoxOptionsEnabled(isOptionsEnabled);
             try {
-              localStorage.setItem(PORTFOLIO_ENABLED_STORAGE_KEY, String(isEnabled));
+              localStorage.setItem(PORTFOLIO_ENABLED_STORAGE_KEY, String(isPortEnabled));
+              localStorage.setItem(DELTAFOX_OPTIONS_ENABLED_STORAGE_KEY, String(isOptionsEnabled));
             } catch (e) {
               console.warn('LocalStorage write error:', e);
             }
           }
         }
       } catch (err) {
-        console.warn('Error checking portfolio status from sheet R1:', err);
+        console.warn('Error checking portfolio / deltafox options status from sheet:', err);
       }
     };
 
-    checkPortfolioStatus();
-    const interval = setInterval(checkPortfolioStatus, 10000);
-    const handleFocus = () => checkPortfolioStatus();
+    checkSheetStatuses();
+    const interval = setInterval(checkSheetStatuses, 10000);
+    const handleFocus = () => checkSheetStatuses();
     window.addEventListener('focus', handleFocus, { passive: true });
 
     return () => {
@@ -333,7 +380,8 @@ export function MarketProvider({ children }) {
         allAvailableSymbols,
         marketStatus,
         lastUpdated,
-        portfolioEnabled
+        portfolioEnabled,
+        deltafoxOptionsEnabled
       }}
     >
       {children}
