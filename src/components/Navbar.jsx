@@ -10,7 +10,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
   const [currentSection, setCurrentSection] = useState(activePage);
   const [hoveredSection, setHoveredSection] = useState(null);
   const [liveTime, setLiveTime] = useState({ dateLine: '', timeLine: '' });
-  const { marketStatus, portfolioEnabled, deltafoxOptionsEnabled } = useMarket();
+  const { marketStatus, portfolioEnabled, deltafoxOptionsEnabled, trainingEnabled } = useMarket();
 
   useEffect(() => {
     setCurrentSection(activePage);
@@ -56,7 +56,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       ...(deltafoxOptionsEnabled ? ['deltafox-options'] : []),
       'intelligence',
       'strategies',
-      'training',
+      ...(trainingEnabled ? ['training'] : []),
       'about',
       'contact'
     ];
@@ -85,7 +85,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
       window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
     };
-  }, [portfolioEnabled, deltafoxOptionsEnabled]);
+  }, [portfolioEnabled, deltafoxOptionsEnabled, trainingEnabled]);
 
   const navItems = [
     { id: 'home', label: 'Home' },
@@ -94,7 +94,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
     ...(deltafoxOptionsEnabled ? [{ id: 'deltafox-options', label: 'DeltaFox Options' }] : []),
     { id: 'intelligence', label: 'Holiday calendar' },
     { id: 'strategies', label: 'Strategies' },
-    { id: 'training', label: 'Training' },
+    ...(trainingEnabled ? [{ id: 'training', label: 'Training' }] : []),
     { id: 'about', label: 'About us' },
     { id: 'contact', label: 'Contact' }
   ];
