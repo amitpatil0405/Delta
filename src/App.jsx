@@ -16,7 +16,7 @@ import Footer from './components/Footer';
 
 function AppContent() {
   const [activePage, setActivePage] = useState('home');
-  const { portfolioEnabled } = useMarket();
+  const { portfolioEnabled, deltafoxOptionsEnabled } = useMarket();
 
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
@@ -35,9 +35,23 @@ function AppContent() {
     }
   }, [portfolioEnabled, activePage]);
 
+  // Guard active page if DeltaFox Options is disabled
+  useEffect(() => {
+    if (!deltafoxOptionsEnabled && activePage === 'deltafox-options') {
+      setActivePage('home');
+    }
+  }, [deltafoxOptionsEnabled, activePage]);
+
   const handleNavigate = (id) => {
     // Restrict access to Portfolio page route when disabled
     if (id === 'portfolio' && !portfolioEnabled) {
+      setActivePage('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Restrict access to DeltaFox Options route when disabled
+    if (id === 'deltafox-options' && !deltafoxOptionsEnabled) {
       setActivePage('home');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -74,8 +88,8 @@ function AppContent() {
         {/* 3. Portfolio & Trading Journal (Dynamically controlled via Google Sheet R1 cell) */}
         {portfolioEnabled && <PortfolioJournalSection />}
 
-        {/* 4. DeltaFox Options Media Hub & Social Integration */}
-        <DeltaFoxOptionsSection />
+        {/* 4. DeltaFox Options Media Hub & Social Integration (Dynamically controlled via Google Sheet U1 cell) */}
+        {deltafoxOptionsEnabled && <DeltaFoxOptionsSection />}
 
         {/* 5. Holiday Calendar (Market Overview & Scheduled Closures) */}
         <MarketOverviewSection />
