@@ -638,7 +638,7 @@ export default function PortfolioJournalSection() {
               <span>Institutional Trading Journal</span>
             </div>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">
-              PORTFOLIO & TRADING JOURNAL
+              P&L & TRADING JOURNAL
             </h2>
             <p className="mt-1.5 text-sm text-gray-400 max-w-xl">
               Track trade execution, entry/exit, financial year statement ({startMonthName} – {endMonthName}), and disciplined P&L analytics directly synced from trade database.
