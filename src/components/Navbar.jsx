@@ -90,7 +90,7 @@ export default function Navbar({ activePage = 'home', onNavigate }) {
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'technical-analysis', label: 'Technical analysis' },
-    ...(portfolioEnabled ? [{ id: 'portfolio', label: 'Portfolio' }] : []),
+    ...(portfolioEnabled ? [{ id: 'portfolio', label: 'Trade Journal' }] : []),
     ...(deltafoxOptionsEnabled ? [{ id: 'deltafox-options', label: 'DeltaFox Options' }] : []),
     { id: 'intelligence', label: 'Holiday calendar' },
     { id: 'strategies', label: 'Strategies' },
