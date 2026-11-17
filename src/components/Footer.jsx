@@ -121,10 +121,10 @@ export default function Footer({ onNavigate }) {
                 <div className="text-[11px] text-gray-400 pt-1">
                   <span>Email: </span>
                   <a
-                    href="mailto:deltafox.options@yahoo.com"
+                    href="mailto:amit.patil@deltafox.in"
                     className="text-amber-400 hover:text-amber-300 transition-colors break-all"
                   >
-                    deltafox.options@yahoo.com
+                    amit.patil@deltafox.in
                   </a>
                 </div>
                 <div className="text-[11px] text-gray-400">
