@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { Mail, Copy, Check } from 'lucide-react';
 
 export default function ContactSection() {
-  const [copied, setCopied] = useState(false);
-  const emailAddress = 'deltafox.options@yahoo.com';
+  const [copiedEmail1, setCopiedEmail1] = useState(false);
+  const [copiedEmail2, setCopiedEmail2] = useState(false);
+
+  const emailAddress1 = 'deltafox.options@yahoo.com';
+  const emailAddress2 = 'support@deltafox.in';
 
   const handleCopyEmail = () => {
     try {
