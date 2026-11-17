@@ -3,7 +3,7 @@ import { Mail, Copy, Check } from 'lucide-react';
 
 export default function ContactSection() {
   const [copied, setCopied] = useState(false);
-  const emailAddress = 'deltafox.options@yahoo.com';
+  const emailAddress = 'support@deltafox.in';
 
   const handleCopyEmail = () => {
     try {
