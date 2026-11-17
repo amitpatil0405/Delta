@@ -3,7 +3,7 @@ import { Mail, Copy, Check } from 'lucide-react';
 
 export default function ContactSection() {
   const [copied, setCopied] = useState(false);
-  const emailAddress = 'amit.patil@deltafox.in';
+  const emailAddress = 'support@deltafox.in';
 
   const handleCopyEmail = () => {
     try {
@@ -55,7 +55,7 @@ export default function ContactSection() {
               className="text-sm min-[360px]:text-base min-[410px]:text-lg sm:text-3xl md:text-4xl font-extrabold text-white hover:text-amber-400 transition-colors whitespace-nowrap block tracking-tight sm:tracking-wide max-w-full font-sans"
               style={{ fontFamily: "'Inter', 'Roboto', system-ui, sans-serif", fontWeight: 700 }}
             >
-              deltafox.options@yahoo.com
+              support@deltafox.in
             </a>
 
             {/* 3. "COPY EMAIL" Button directly below the styled email address */}
