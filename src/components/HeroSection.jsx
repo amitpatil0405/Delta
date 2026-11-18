@@ -26,7 +26,7 @@ export default function HeroSection({ portfolioEnabled = true, onExplorePortfoli
           }`}
         >
           <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-          <span>Systematic Options Trading & Portfolio Intelligence</span>
+          <span>Systematic Options Trading & Market Intelligence</span>
         </div>
 
         {/* Main Brand Title & Headings */}
@@ -46,7 +46,7 @@ export default function HeroSection({ portfolioEnabled = true, onExplorePortfoli
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          Systematic Options Trading • Portfolio Journal • Risk Management
+          Systematic Options Trading • Trade Journal • Risk Management
         </p>
 
         <p
